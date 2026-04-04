@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .granite
+
+.env
+.env.*
+!.env.example
