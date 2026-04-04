@@ -1,0 +1,74 @@
+---
+description: MATE FE — Apps in Toss 워크플로·스택·Git·MCP 전역 규칙
+alwaysApply: true
+---
+
+# MATE FE (Apps in Toss)
+
+원문 동기화: 루트 `AI_RULES.md`. 불일치 시 `AI_RULES.md`를 따른다.
+
+## 0. 핵심 원칙
+
+이 프로젝트는 **앱인토스 앱**이다.
+
+작업 전 순서:
+
+1. Apps in Toss 공식 문서 확인
+2. TDS 확인
+3. MCP 확인
+4. 구현
+
+추측 금지. **공식 문서 기반**으로만 작업한다.
+
+## 1. 기본 규칙
+
+- 결과 중심 (설명보다 코드/패치 우선)
+- 기존 코드 스타일/구조 우선
+- 불필요한 라이브러리 추가 금지
+- 타입 안정성 (`any` 남용 금지), 에러 처리 포함
+- 영향 범위 간단히 설명
+
+## 2. 기술 스택
+
+- **pnpm만** 사용 · Vite + React (Next.js 기준 금지)
+- API: **ky** (`fetch` 직접 최소화), 로직은 컴포넌트 밖으로 분리
+- 서버 상태: **TanStack Query** · `useEffect`로 데이터 직접 관리 지양 · mutation 후 invalidate
+- 전역: **Zustand 최소** · 서버 데이터는 Query
+- 스타일: Tailwind · **TDS 우선 → Tailwind 보완**
+- 라우팅: **TanStack Router** · 경로 하드코딩 금지
+- 구조: **FSD** (`shared` / `features` / `entities` / `pages`)
+
+## 3. UI
+
+- 컨트롤·모달 등 **TDS 먼저** · 임의 디자인 금지
+- 모바일/웹뷰(터치·스크롤) 고려
+
+## 4. 앱인토스 / MCP
+
+- 앱인토스 기능은 **MCP 확인 후** 구현
+- 일반 웹으로 플랫폼 제약 단정 금지
+- 문서 없으면 **확인 필요**로 명시
+
+## 5. 테스트
+
+- 구현 시 테스트 포인트 제시 · 사용자 흐름(E2E 관점)
+
+## 6. Git
+
+- Conventional: `feat` / `fix` / `refactor` / `chore`
+- 브랜치: `type/#이슈번호` (예: `feat/#12`)
+- Issue/PR: `[TYPE] 제목` · Merge: **Squash** · 최소 1인 승인 · PR은 디코 웹훅용으로 읽기 쉽게
+
+## 7. 답변 방식
+
+- 구현: 접근 → 코드 → 후속
+- 버그: 원인 → 수정 → 검증
+- 리팩터: 문제 → 개선 → 코드
+
+## 8. 금지
+
+- TDS 없이 UI · pnpm 외 패키지 매니저 · 서버 데이터를 Zustand에 저장 · FSD 파괴 · 무단 대규모 리팩터 · 앱인토스 문맥 무시
+
+## 9. AI 역할
+
+코드·리뷰 · TDS/MCP 우선 가이드 · Query/Zustand 분리 · PR·커밋 정리 파트너
