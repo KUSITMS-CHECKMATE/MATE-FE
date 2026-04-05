@@ -1,5 +1,14 @@
 # React + TypeScript + Vite
 
+## MATE FE · 환경 변수 (Doppler)
+
+로컬/CI에서 시크릿은 **Doppler**로 주입합니다. `pnpm dev` 등은 실행할 때마다 최신 값을 가져옵니다.
+
+- **팀원 온보딩(처음 세팅):** [`docs/TEAM_ONBOARDING.md`](docs/TEAM_ONBOARDING.md)
+- **Doppler 상세:** [`docs/DOPPLER.md`](docs/DOPPLER.md)
+
+---
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

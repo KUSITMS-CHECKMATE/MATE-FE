@@ -4,11 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "granite dev",
-    "build": "ait build",
+    "doppler:setup": "doppler setup",
+    "doppler:whoami": "doppler me",
+    "dev": "doppler run -- granite dev",
+    "dev:plain": "granite dev",
+    "build": "doppler run -- ait build",
+    "build:plain": "ait build",
+    "compile:web": "tsc -b && vite build",
+    "build:vite": "doppler run -- pnpm run compile:web",
+    "build:vite:plain": "pnpm run compile:web",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "ait deploy"
+    "preview": "doppler run -- vite preview",
+    "preview:plain": "vite preview",
+    "deploy": "doppler run -- ait deploy",
+    "deploy:plain": "ait deploy"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "^2.4.1",
