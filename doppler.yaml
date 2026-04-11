@@ -1,0 +1,10 @@
+# Doppler 프로젝트 연결용 예시입니다.
+# 1) 복사: cp doppler.yaml.example doppler.yaml
+# 2) 아래 project / config 를 대시보드 값으로 바꾸거나
+# 3) pnpm doppler:setup 으로 대화형 설정 (doppler.yaml 자동 생성)
+#
+# doppler.yaml 은 시크릿이 아니라 프로젝트 식별자만 담으므로 보통 Git 에 커밋합니다.
+
+setup:
+  project: mate-fe
+  config: dev
