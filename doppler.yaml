@@ -6,5 +6,5 @@
 # doppler.yaml 은 시크릿이 아니라 프로젝트 식별자만 담으므로 보통 Git 에 커밋합니다.
 
 setup:
-  project: mate-fe
+  project: mate_env
   config: dev
