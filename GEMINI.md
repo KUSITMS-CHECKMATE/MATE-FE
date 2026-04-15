@@ -88,8 +88,31 @@
 
 ## 5. 테스트
 
-- 기능 구현 시 테스트 포인트 제시
-- 사용자 흐름 기준 (Playwright/E2E 관점)
+### 도구 및 설정
+
+- E2E: **Playwright** — `e2e/` 폴더, `playwright.config.ts`
+- 뷰포트: 390×844 (모바일 기준), 브라우저: Chromium
+- 개발 서버: `pnpm exec vite` 자동 실행 (granite dev 아님)
+- Fixture: `e2e/fixtures.ts` (공통 확장 포인트)
+
+### 실행 명령
+
+```bash
+pnpm test:e2e          # 헤드리스
+pnpm test:e2e:ui       # UI 모드 (시각적 디버깅)
+pnpm test:e2e:debug    # 스텝별 디버그
+```
+
+### AI 워크플로 규칙
+
+1. 페이지·기능 수정 시 → 관련 `e2e/*.spec.ts` 작성 또는 업데이트 **먼저**
+2. 수정 완료 후 → "Playwright 테스트를 실행할까요?" 확인 후 실행
+3. 테스트 실패 → **커밋 금지**, 원인 분석 후 수정
+
+### 참고 — 앱인토스 환경
+
+- `getSafeAreaInsets is not a constant handler` 콘솔 에러는 네이티브 브릿지 미존재 때문으로 테스트 실패 원인 아님
+- 토스 앱 내 WebView 전용 네이티브 기능은 Playwright로 검증 불가 — 별도 표시
 
 ---
 
