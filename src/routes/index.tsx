@@ -1,7 +1,1 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/discovery" });
-  },
-});
+// 홈 페이지 라우트 (/)

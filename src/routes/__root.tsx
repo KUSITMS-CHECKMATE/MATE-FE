@@ -1,16 +1,1 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { Providers } from '@/providers'
-
-function RootComponent() {
-  return (
-    <Providers>
-      <div className="min-h-screen">
-        <Outlet />
-      </div>
-    </Providers>
-  )
-}
-
-export const Route = createRootRoute({
-  component: RootComponent,
-})
+// 루트 레이아웃 - 모든 페이지에 공통으로 적용되는 레이아웃 (헤더, 바텀탭 등)
