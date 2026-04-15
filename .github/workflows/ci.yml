@@ -34,6 +34,7 @@ jobs:
     env:
       DOPPLER_PROJECT: ${{ vars.DOPPLER_PROJECT }}
       DOPPLER_CONFIG: ${{ vars.DOPPLER_CONFIG }}
+      # 여기서 주입하지 말고, CLI 사용 단계에서 주입하는 것이 더 깔끔합니다.
     steps:
       - uses: actions/checkout@v4
 
@@ -46,11 +47,14 @@ jobs:
           node-version: "22"
           cache: "pnpm"
 
+      # 수정된 부분: with -> env
       - uses: dopplerhq/cli-action@v3
-        with:
-          doppler_token: ${{ secrets.DOPPLER_TOKEN }}
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
       - run: pnpm install --frozen-lockfile
 
-      # Doppler 최신 시크릿으로 Vite 빌드 (토스 CLI 없이도 동작)
+      # 빌드 실행 시에도 Doppler 토큰이 필요할 수 있으므로 env를 추가해줍니다.
       - run: pnpm build:vite
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
