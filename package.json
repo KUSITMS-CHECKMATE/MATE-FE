@@ -17,7 +17,10 @@
     "preview": "doppler run -- vite preview",
     "preview:plain": "vite preview",
     "deploy": "doppler run -- ait deploy",
-    "deploy:plain": "ait deploy"
+    "deploy:plain": "ait deploy",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "^2.4.1",
@@ -34,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^24.12.0",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
