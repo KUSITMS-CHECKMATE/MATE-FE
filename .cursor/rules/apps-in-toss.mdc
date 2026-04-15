@@ -51,7 +51,11 @@ alwaysApply: true
 
 ## 5. 테스트
 
-- 구현 시 테스트 포인트 제시 · 사용자 흐름(E2E 관점)
+- E2E: **Playwright** · `e2e/*.spec.ts` · `playwright.config.ts`
+- 뷰포트 390×844(모바일) · Chromium · `pnpm exec vite` 자동 서버
+- 명령: `pnpm test:e2e` / `test:e2e:ui` / `test:e2e:debug`
+- **수정 시 → spec 먼저 작성/업데이트 → 확인 후 실행 → 실패 시 커밋 금지**
+- `getSafeAreaInsets` 콘솔 에러는 네이티브 브릿지 미존재 — 테스트 실패 아님
 
 ## 6. Git
 
