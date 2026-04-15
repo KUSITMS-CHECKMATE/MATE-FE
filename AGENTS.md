@@ -26,8 +26,16 @@ Check TDS for buttons, inputs, modals. Consider mobile/webview (touch, scroll).
 
 Conventional commits (`feat|fix|refactor|chore`). Branches: `type/#issue`. PR titles: `[TYPE] title`. **Squash merge**. PR descriptions readable for Discord webhook.
 
+## Testing (Playwright E2E)
+
+- Tool: **Playwright** · test files in `e2e/*.spec.ts` · config: `playwright.config.ts`
+- Viewport: 390×844 (mobile), browser: Chromium, dev server: `pnpm exec vite` (not granite dev)
+- Commands: `pnpm test:e2e` / `pnpm test:e2e:ui` / `pnpm test:e2e:debug`
+- **Workflow:** write/update spec first → ask to run tests → fix before committing if tests fail
+- `getSafeAreaInsets is not a constant handler` console errors = expected in plain browser (no native bridge) — not a test failure
+
 ## Do not
 
-Implement UI without checking TDS; use npm/yarn; store server data in Zustand; break FSD; large refactors without scope; ignore Apps in Toss constraints.
+Implement UI without checking TDS; use npm/yarn; store server data in Zustand; break FSD; large refactors without scope; ignore Apps in Toss constraints; commit with failing Playwright tests.
 
 For Korean prose norms and full bullet list, read `AI_RULES.md`.
