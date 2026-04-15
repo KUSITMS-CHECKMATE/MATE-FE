@@ -30,6 +30,7 @@
     "@toss/tds-colors": "^0.1.0",
     "@toss/tds-mobile": "^2.3.0",
     "@toss/tds-mobile-ait": "^2.3.0",
+    "framer-motion": "^12.38.0",
     "ky": "^1.14.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
