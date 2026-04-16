@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"pnpm exec granite --help 2>&1\",\"description\":\"Check granite CLI help options\"}",
-  "error": "Exit code 1\nUnknown Syntax Error: Unsupported option name (\"--help\").\n\n$ granite dev [--host #0] [--port #0] [--experimental-mode]\n$ granite build\n[rerun: b6]",
-  "timestamp": "2026-04-11T03:44:51.422Z",
-  "retry_count": 1
-}
