@@ -5,7 +5,9 @@ import { queryClient } from '@/shared/lib/queryClient'
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="min-h-screen">
+        <Outlet />
+      </div>
     </QueryClientProvider>
   )
 }
