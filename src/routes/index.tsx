@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { BottomTabBar } from "@/shared/components/BottomTabBar";
@@ -19,6 +19,7 @@ const DUMMY_TESTS = [
 ];
 
 function HomePage() {
+  const navigate = useNavigate();
   const tests = DUMMY_TESTS;
 
   return (
@@ -67,6 +68,7 @@ function HomePage() {
                 description={test.description}
                 reward={test.reward}
                 thumbnailUrl={test.thumbnailUrl}
+                onClick={() => navigate({ to: "/test/$testId", params: { testId: String(test.id) } })}
               />
             ))}
           </div>
