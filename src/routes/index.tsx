@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { BottomTabBar } from "@/shared/components/BottomTabBar";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -62,6 +63,8 @@ function HomePage() {
           }
         />
       </div>
+
+      <BottomTabBar activeTab="discover" onChange={(key) => console.log(key)} />
     </div>
   );
 }
