@@ -9,7 +9,7 @@ const DUMMY_IMAGES = [
   "https://static.toss.im/3d-emojis/u1F35C.png",
 ];
 
-export const Route = createFileRoute("/test/$testId/")({
+export const Route = createFileRoute("/tester/test/$testId/")({
   component: TestDetailPage,
 });
 

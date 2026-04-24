@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { BottomTabBar } from "@/shared/components/BottomTabBar";
-import { TestCard } from "@/features/discover/components/TestCard";
+import { TestCard } from "@/features/tester/components/TestCard";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -68,7 +68,12 @@ function HomePage() {
                 description={test.description}
                 reward={test.reward}
                 thumbnailUrl={test.thumbnailUrl}
-                onClick={() => navigate({ to: "/test/$testId", params: { testId: String(test.id) } })}
+                onClick={() =>
+                  navigate({
+                    to: "/tester/test/$testId",
+                    params: { testId: String(test.id) },
+                  })
+                }
               />
             ))}
           </div>
@@ -92,7 +97,7 @@ function HomePage() {
         )}
       </div>
 
-      <BottomTabBar activeTab="discover" onChange={(key) => console.log(key)} />
+      <BottomTabBar activeTab="discover" />
     </div>
   );
 }

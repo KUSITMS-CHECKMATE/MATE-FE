@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
@@ -7,21 +8,23 @@ type TabItem = {
   key: TabKey;
   label: string;
   icon: string;
+  to: string;
 };
 
 const TABS: TabItem[] = [
-  { key: "discover", label: "발견", icon: "icon-search-mono" },
-  { key: "test", label: "테스트", icon: "icon-chemistry-mono" },
-  { key: "interest", label: "관심", icon: "icon-heart-mono" },
-  { key: "my", label: "마이", icon: "icon-user-mono" },
+  { key: "discover", label: "발견", icon: "icon-search-mono", to: "/" },
+  { key: "test", label: "테스트", icon: "icon-chemistry-mono", to: "/maker/" },
+  { key: "interest", label: "관심", icon: "icon-heart-mono", to: "/" },
+  { key: "my", label: "마이", icon: "icon-user-mono", to: "/" },
 ];
 
 type Props = {
   activeTab: TabKey;
-  onChange: (key: TabKey) => void;
 };
 
-export function BottomTabBar({ activeTab, onChange }: Props) {
+export function BottomTabBar({ activeTab }: Props) {
+  const navigate = useNavigate();
+
   return (
     <div
       className="w-full h-19 fixed bottom-0 left-0 overflow-visible px-3"
@@ -45,7 +48,7 @@ export function BottomTabBar({ activeTab, onChange }: Props) {
               <button
                 key={tab.key}
                 className="flex-1 h-10.5 flex flex-col gap-px items-center justify-center"
-                onClick={() => onChange(tab.key)}
+                onClick={() => navigate({ to: tab.to as never })}
               >
                 <Asset.Icon
                   frameShape={Asset.frameShape.CleanW24}
