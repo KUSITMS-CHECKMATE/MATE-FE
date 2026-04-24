@@ -48,7 +48,7 @@ export const Route = createFileRoute("/maker/")({
 
 function MakerHomePage() {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col">
       {/* 배너 */}
       <div
         className="w-full h-30 flex flex-row justify-between items-center p-5"
@@ -104,7 +104,7 @@ function MakerHomePage() {
       </div>
 
       {/* 테스트 목록 */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="">
         {DUMMY_TESTS.length > 0 ? (
           <div className="flex flex-col gap-3 px-4 pb-24">
             {DUMMY_TESTS.map((test) => (
