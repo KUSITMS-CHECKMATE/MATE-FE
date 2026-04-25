@@ -3,17 +3,20 @@ import { FixedBottomCTA, CTAButton, ProgressStepper, ProgressStep } from "@toss/
 import { PHASES, PHASE_LABELS, STEP_PHASE } from "../model/types";
 import type { Step } from "../model/types";
 
-export type CTAMode = "confirm" | "double" | "hidden";
+export type CTAMode = "confirm" | "double" | "submit" | "hidden";
 
 interface FunnelLayoutProps {
   children: ReactNode;
   onConfirm?: () => void;
   onNext?: () => void;
   onCancel?: () => void;
+  onSubmit?: () => void;
   currentStep: Step;
   ctaMode: CTAMode;
   isConfirmDisabled?: boolean;
   isNextDisabled?: boolean;
+  isSubmitDisabled?: boolean;
+  submitLabel?: string;
 }
 
 export function FunnelLayout({
@@ -21,10 +24,13 @@ export function FunnelLayout({
   onConfirm,
   onNext,
   onCancel,
+  onSubmit,
   currentStep,
   ctaMode,
   isConfirmDisabled = false,
   isNextDisabled = false,
+  isSubmitDisabled = false,
+  submitLabel,
 }: FunnelLayoutProps) {
   const currentPhase = STEP_PHASE[currentStep];
   const phaseIndex = PHASES.indexOf(currentPhase);
@@ -39,7 +45,7 @@ export function FunnelLayout({
       </ProgressStepper>
 
       {/* 컨텐츠 영역 */}
-      <main className="flex-1 pb-4">{children}</main>
+      <main className="flex flex-col flex-1 pb-4">{children}</main>
 
       {/* 하단 CTA */}
       {ctaMode === "confirm" && (
@@ -64,6 +70,11 @@ export function FunnelLayout({
             </CTAButton>
           }
         />
+      )}
+      {ctaMode === "submit" && (
+        <FixedBottomCTA disabled={isSubmitDisabled} onClick={onSubmit}>
+          {submitLabel}
+        </FixedBottomCTA>
       )}
     </div>
   );

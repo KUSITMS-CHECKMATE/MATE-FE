@@ -1,7 +1,7 @@
 import { adaptive } from "@toss/tds-colors";
 
 /** 질문 단위 스텝 */
-export const STEPS = ["name", "summary", "category"] as const;
+export const STEPS = ["name", "summary", "category", "register"] as const;
 
 export type Step = (typeof STEPS)[number];
 
@@ -22,6 +22,7 @@ export const STEP_PHASE: Record<Step, Phase> = {
   name: "basic",
   summary: "basic",
   category: "basic",
+  register: "register",
 };
 
 export interface Category {
