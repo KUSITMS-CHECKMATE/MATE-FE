@@ -29,6 +29,7 @@ export function CategorySelectSheet({ selectedCategories, onToggle, onConfirm, o
       <div className="flex-1 overflow-y-auto">
         {CATEGORIES.map((category) => {
           const isSelected = selectedCategories.includes(category.id);
+          const isImageIcon = category.iconName.startsWith("http");
           return (
             <ListRow
               key={category.id}
@@ -37,7 +38,13 @@ export function CategorySelectSheet({ selectedCategories, onToggle, onConfirm, o
               role="checkbox"
               aria-checked={isSelected}
               onClick={() => onToggle(category.id)}
-              left={<ListRow.AssetIcon size="xsmall" shape="original" name={category.iconName} />}
+              left={
+                isImageIcon ? (
+                  <ListRow.AssetImage src={category.iconName} shape="squircle" size="xsmall" />
+                ) : (
+                  <ListRow.AssetIcon size="xsmall" shape="original" name={category.iconName} color={"iconColor" in category ? category.iconColor : undefined} />
+                )
+              }
               contents={<ListRow.Texts type="1RowTypeA" top={category.label} />}
               right={<Checkbox.Line size={24} checked={isSelected} readOnly />}
               verticalPadding="large"

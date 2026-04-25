@@ -62,6 +62,7 @@ export function TestCreateFunnel() {
   const isAllComplete = form.name.trim().length > 0 && form.summary.trim().length > 0 && form.categories.length > 0;
 
   const ctaMode: CTAMode = (() => {
+    if (isCategorySheetOpen) return "hidden";
     if (isFocused) return "confirm";
     if (!hasInteracted) return "double";
     if (funnel.step === "category" && isAllComplete) return "double";
