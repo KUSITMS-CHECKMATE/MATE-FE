@@ -1,12 +1,33 @@
 import { Asset, Badge, IconButton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-type Props = {
+interface Props {
   title: string;
   participantCount: number;
   maxParticipantCount: number;
   status: "active" | "ended";
   onClick?: () => void;
+}
+
+const STATUS_CONFIG = {
+  active: {
+    badgeColor: "green" as const,
+    badgeLabel: "진행중",
+    titleColor: adaptive.grey800,
+    iconName: "icon-user-two-align-mono",
+    iconColor: adaptive.grey600,
+    participantColor: adaptive.grey700,
+    participantWeight: "semibold" as const,
+  },
+  ended: {
+    badgeColor: "elephant" as const,
+    badgeLabel: "종료",
+    titleColor: adaptive.grey700,
+    iconName: "icon-user-two",
+    iconColor: undefined,
+    participantColor: adaptive.grey600,
+    participantWeight: "medium" as const,
+  },
 };
 
 export function MakerTestCard({
@@ -16,7 +37,8 @@ export function MakerTestCard({
   status,
   onClick,
 }: Props) {
-  const isActive = status === "active";
+  const config = STATUS_CONFIG[status];
+  const participantLabel = `${participantCount}/${maxParticipantCount} 명 참여`;
 
   return (
     <div
@@ -26,12 +48,8 @@ export function MakerTestCard({
       {/* 제목 영역 */}
       <div className="flex flex-col gap-1">
         <div className="flex flex-row justify-between items-center">
-          <Badge
-            size="small"
-            variant="weak"
-            color={isActive ? "green" : "elephant"}
-          >
-            {isActive ? "진행중" : "종료"}
+          <Badge size="small" variant="weak" color={config.badgeColor}>
+            {config.badgeLabel}
           </Badge>
           <IconButton
             src="https://static.toss.im/icons/png/4x/icon-arrow-right-grey-impact-fill.png"
@@ -43,7 +61,7 @@ export function MakerTestCard({
         </div>
         <Text
           display="block"
-          color={isActive ? adaptive.grey800 : adaptive.grey700}
+          color={config.titleColor}
           typography="t5"
           fontWeight="bold"
         >
@@ -61,18 +79,18 @@ export function MakerTestCard({
         <Asset.Icon
           frameShape={Asset.frameShape.CleanW20}
           backgroundColor="transparent"
-          name={isActive ? "icon-user-two-align-mono" : "icon-user-two"}
-          color={isActive ? adaptive.grey600 : undefined}
+          name={config.iconName}
+          color={config.iconColor}
           aria-hidden={true}
           ratio="1/1"
         />
         <Text
           display="block"
-          color={isActive ? adaptive.grey700 : adaptive.grey600}
+          color={config.participantColor}
           typography="t7"
-          fontWeight={isActive ? "semibold" : "medium"}
+          fontWeight={config.participantWeight}
         >
-          {participantCount}/{maxParticipantCount} 명 참여
+          {participantLabel}
         </Text>
       </div>
     </div>
