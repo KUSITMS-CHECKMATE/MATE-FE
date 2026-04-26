@@ -1,5 +1,7 @@
+import { adaptive } from "@toss/tds-colors";
+
 /** 질문 단위 스텝 */
-export const STEPS = ["name", "summary", "category", "image"] as const;
+export const STEPS = ["name", "summary", "category", "image", "register"] as const;
 
 export type Step = (typeof STEPS)[number];
 
@@ -21,6 +23,7 @@ export const STEP_PHASE: Record<Step, Phase> = {
   summary: "basic",
   category: "basic",
   image: "image",
+  register: "register",
 };
 
 export interface Category {
@@ -39,16 +42,16 @@ export const CATEGORIES = [
   { id: "food", label: "음식", iconName: "icon-tosst-logo" },
   { id: "game", label: "게임", iconName: "icon-game-dark" },
   { id: "content", label: "콘텐츠", iconName: "icon-popcorn" },
-  { id: "community", label: "커뮤니티", iconName: "icon-user-nearby-mono" },
+  { id: "community", label: "커뮤니티", iconName: "icon-user-nearby-mono", iconColor: adaptive.blue500 },
   { id: "ai", label: "AI", iconName: "icon-twinkle-graident" },
   { id: "education", label: "교육", iconName: "https://static.toss.im/2d-emojis/png/4x/u1F4DA.png" },
   { id: "travel", label: "여행", iconName: "icon-plane-blue500" },
-  { id: "social", label: "소셜", iconName: "icn-earth-line-mono" },
+  { id: "social", label: "소셜", iconName: "icn-earth-line-mono", iconColor: adaptive.teal300 },
   { id: "convenience", label: "편의", iconName: "icon-u1FA84" },
   { id: "information", label: "정보", iconName: "icon-search-blue" },
-  { id: "business", label: "비즈니스", iconName: "icon-u1F4BC" },
+  { id: "business", label: "비즈니스", iconName: "https://static.toss.im/2d-emojis/png/4x/u1F4BC.png" },
   { id: "transportation", label: "교통", iconName: "icon-car-red" },
-  { id: "public", label: "공공·행정", iconName: "" },
+  { id: "public", label: "공공·행정", iconName: "https://static.toss.im/2d-emojis/png/4x/u1F5C2.png" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
