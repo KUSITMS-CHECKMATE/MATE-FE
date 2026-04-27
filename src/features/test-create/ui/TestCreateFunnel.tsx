@@ -101,8 +101,11 @@ export function TestCreateFunnel() {
   const handleBlur = () => {
     blurTimerRef.current = setTimeout(() => {
       setIsFocused(false);
+      if (funnel.step === "service" && !showServiceDescription && form.serviceName.trim().length > 0) {
+        setShowServiceDescription(true);
+      }
       blurTimerRef.current = null;
-    }, 400);
+    }, 100);
   };
 
   return (
