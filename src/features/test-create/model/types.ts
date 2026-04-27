@@ -1,7 +1,7 @@
 import { adaptive } from "@toss/tds-colors";
 
 /** 질문 단위 스텝 */
-export const STEPS = ["name", "summary", "category", "image", "register"] as const;
+export const STEPS = ["name", "summary", "category", "service", "image", "register"] as const;
 
 export type Step = (typeof STEPS)[number];
 
@@ -22,6 +22,7 @@ export const STEP_PHASE: Record<Step, Phase> = {
   name: "basic",
   summary: "basic",
   category: "basic",
+  service: "service",
   image: "image",
   register: "register",
 };
@@ -62,6 +63,7 @@ export interface TestCreateFormData {
   name: string;
   summary: string;
   description: string;
+  serviceName: string;
   categories: CategoryId[];
   imageFile: File | null;
 }

@@ -17,6 +17,7 @@ interface FunnelLayoutProps {
   isNextDisabled?: boolean;
   isSubmitDisabled?: boolean;
   submitLabel?: string;
+  cancelLabel?: string;
 }
 
 export function FunnelLayout({
@@ -31,6 +32,7 @@ export function FunnelLayout({
   isNextDisabled = false,
   isSubmitDisabled = false,
   submitLabel,
+  cancelLabel = "취소",
 }: FunnelLayoutProps) {
   const currentPhase = STEP_PHASE[currentStep];
   const phaseIndex = PHASES.indexOf(currentPhase);
@@ -61,7 +63,7 @@ export function FunnelLayout({
         <FixedBottomCTA.Double
           leftButton={
             <CTAButton color="dark" variant="weak" onClick={onCancel}>
-              취소
+              {cancelLabel}
             </CTAButton>
           }
           rightButton={
