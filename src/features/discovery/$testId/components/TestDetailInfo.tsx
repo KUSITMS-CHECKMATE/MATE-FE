@@ -22,7 +22,9 @@ export function TestDetailInfo({ reward, description }: Props) {
             type="2RowTypeF"
             top="보상 머니"
             topProps={{ color: adaptive.grey500 }}
-            bottom={<Paragraph.Text>{reward.toLocaleString()}원</Paragraph.Text>}
+            bottom={
+              <Paragraph.Text>{reward.toLocaleString()}원</Paragraph.Text>
+            }
             bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
           />
         }
@@ -32,7 +34,11 @@ export function TestDetailInfo({ reward, description }: Props) {
 
       <ListRow
         left={
-          <ListRow.AssetIcon name="icon-document-line-fill" variant="fill" />
+          <ListRow.AssetIcon
+            size="medium"
+            name="icon-document-teal"
+            backgroundColor={adaptive.teal100}
+          />
         }
         contents={
           <ListRow.Texts
