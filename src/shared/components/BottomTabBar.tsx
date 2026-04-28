@@ -46,11 +46,11 @@ export function BottomTabBar({ activeTab }: Props) {
               <button
                 key={tab.key}
                 className="flex-1 h-10.5 flex flex-col gap-px items-center justify-center"
-                onClick={() => navigate({ to: tab.to as never })}
+                onClick={() => navigate({ to: tab.to })}
               >
                 <Asset.Icon
                   frameShape={Asset.frameShape.CleanW24}
-                  name={tab.icon as never}
+                  name={tab.icon}
                   color={isActive ? adaptive.grey800 : adaptive.grey400}
                   aria-hidden={true}
                 />
