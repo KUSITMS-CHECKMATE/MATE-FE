@@ -4,14 +4,7 @@ import { adaptive } from "@toss/tds-colors";
 
 type TabKey = "discover" | "test" | "interest" | "my";
 
-type TabItem = {
-  key: TabKey;
-  label: string;
-  icon: string;
-  to: string;
-};
-
-const TABS: TabItem[] = [
+const TABS = [
   {
     key: "discover",
     label: "발견",
@@ -21,7 +14,7 @@ const TABS: TabItem[] = [
   { key: "test", label: "테스트", icon: "icon-chemistry-mono", to: "/test" },
   { key: "interest", label: "관심", icon: "icon-heart-mono", to: "/interest" },
   { key: "my", label: "마이", icon: "icon-user-mono", to: "/my" },
-];
+] as const;
 
 type Props = {
   activeTab: TabKey;
