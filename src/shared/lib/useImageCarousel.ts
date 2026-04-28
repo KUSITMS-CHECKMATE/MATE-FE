@@ -9,6 +9,7 @@ export function useImageCarousel(length: number) {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (length === 0) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) < 30) return;
     if (diff > 0) {
