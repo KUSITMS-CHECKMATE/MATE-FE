@@ -1,1 +1,6 @@
-// 홈 페이지 라우트 (/)
+import { createFileRoute } from '@tanstack/react-router'
+import { TestCreateFunnel } from '@/features/test-create/ui/TestCreateFunnel'
+
+export const Route = createFileRoute('/')({
+  component: TestCreateFunnel,
+})

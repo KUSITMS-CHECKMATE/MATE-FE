@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FunnelLayout, type CTAMode } from "./FunnelLayout";
 import { CategorySelectSheet } from "./CategorySelectSheet";
+import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
+import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
+import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep } from "./TestRegisterStep";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { useFunnel } from "../model/useFunnel";
@@ -13,6 +16,10 @@ export function TestCreateFunnel() {
   const [isFocused, setIsFocused] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
+  const [showServiceDescription, setShowServiceDescription] = useState(false);
+  const [isServiceIntroSheetOpen, setIsServiceIntroSheetOpen] = useState(false);
+  const [hasTestImages, setHasTestImages] = useState(false);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isConfirmDisabled = (() => {
     switch (funnel.step) {
@@ -20,6 +27,8 @@ export function TestCreateFunnel() {
         return form.name.trim().length === 0;
       case "summary":
         return form.summary.trim().length === 0;
+      case "service":
+        return !showServiceDescription && form.serviceName.trim().length === 0;
       default:
         return false;
     }
@@ -30,39 +39,103 @@ export function TestCreateFunnel() {
   const ctaMode: CTAMode = (() => {
     if (isCategorySheetOpen) return "hidden";
     if (funnel.step === "register") return "submit";
+    if (funnel.step === "image") return "double";
     if (isFocused) return "confirm";
+    if (funnel.step === "service" && showServiceDescription) return "double";
+    if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
     if (funnel.step === "category" && isAllComplete) return "double";
     return "hidden";
   })();
 
   const handleFocus = () => {
+    if (blurTimerRef.current) {
+      clearTimeout(blurTimerRef.current);
+      blurTimerRef.current = null;
+    }
     setIsFocused(true);
     setHasInteracted(true);
   };
 
   const handleBlur = () => {
-    // 확인 버튼 클릭 이벤트가 먼저 처리되도록 딜레이
-    setTimeout(() => setIsFocused(false), 150);
+    blurTimerRef.current = setTimeout(() => {
+      setIsFocused(false);
+      if (funnel.step === "service" && !showServiceDescription && form.serviceName.trim().length > 0) {
+        setShowServiceDescription(true);
+      }
+      blurTimerRef.current = null;
+    }, 100);
   };
+
+  const dismissKeyboard = () => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) {
+      active.blur();
+    }
+    setIsFocused(false);
+  };
+
+  const handleHasImagesChange = useCallback((hasImages: boolean) => {
+    setHasTestImages(hasImages);
+  }, []);
 
   return (
     <>
       <FunnelLayout
-        onConfirm={funnel.next}
-        onNext={funnel.next}
+        onConfirm={() => {
+          if (funnel.step === "service") {
+            dismissKeyboard();
+            if (!showServiceDescription && form.serviceName.trim().length > 0) {
+              setShowServiceDescription(true);
+            }
+          } else {
+            funnel.next();
+          }
+        }}
+        onNext={() => {
+          if (funnel.step === "service" && form.serviceName.trim().length === 0) {
+            setIsServiceIntroSheetOpen(true);
+          } else {
+            funnel.next();
+          }
+        }}
+        onCancel={funnel.prev}
         onSubmit={() => {
           // TODO: 테스트 만들기 제출
         }}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         isConfirmDisabled={isConfirmDisabled}
-        isNextDisabled={!isAllComplete}
+        isNextDisabled={
+          funnel.step === "service"
+            ? false
+            : funnel.step === "image"
+              ? !hasTestImages
+              : !isAllComplete
+        }
+        cancelLabel={funnel.step === "service" || funnel.step === "image" ? "이전" : "취소"}
         isSubmitDisabled
         submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
           <TestRegisterStep />
+        ) : funnel.step === "image" ? (
+          <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <TestImageStep onHasImagesChange={handleHasImagesChange} />
+          </motion.div>
+        ) : funnel.step === "service" ? (
+          <motion.div key="service" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <ServiceDescriptionStep
+              showDescriptionField={showServiceDescription}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onServiceNameConfirm={() => {
+                if (!showServiceDescription && form.serviceName.trim().length > 0) {
+                  setShowServiceDescription(true);
+                }
+              }}
+            />
+          </motion.div>
         ) : (
           <TestBasicInfoStep
             step={funnel.step}
@@ -74,7 +147,6 @@ export function TestCreateFunnel() {
         )}
       </FunnelLayout>
 
-      {/* 카테고리 선택 시트 */}
       <AnimatePresence>
         {isCategorySheetOpen && (
           <CategorySelectSheet
@@ -88,6 +160,12 @@ export function TestCreateFunnel() {
           />
         )}
       </AnimatePresence>
+
+      <ServiceDescriptionNudgeSheet
+        open={isServiceIntroSheetOpen}
+        onClose={() => setIsServiceIntroSheetOpen(false)}
+        onSkip={() => { setIsServiceIntroSheetOpen(false); funnel.next(); }}
+      />
     </>
   );
 }

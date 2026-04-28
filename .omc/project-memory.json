@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775878780587,
+  "lastScanned": 1777352497550,
   "projectRoot": "/Users/hongseogju/Desktop/MATE-FE",
   "techStack": {
     "languages": [
@@ -33,6 +33,11 @@
         "category": "frontend"
       },
       {
+        "name": "@playwright/test",
+        "version": "1.59.1",
+        "category": "testing"
+      },
+      {
         "name": "vite",
         "version": "8.0.1",
         "category": "build"
@@ -60,7 +65,10 @@
       "preview": "doppler run -- vite preview",
       "preview:plain": "vite preview",
       "deploy": "doppler run -- ait deploy",
-      "deploy:plain": "ait deploy"
+      "deploy:plain": "ait deploy",
+      "test:e2e": "playwright test",
+      "test:e2e:ui": "playwright test --ui",
+      "test:e2e:debug": "playwright test --debug"
     }
   },
   "conventions": {
@@ -88,7 +96,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 3,
-      "lastAccessed": 1775878780488,
+      "lastAccessed": 1777352497443,
       "keyFiles": [
         "favicon.svg",
         "icons.svg",
@@ -99,17 +107,29 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1775878780491,
+      "lastAccessed": 1777352497445,
       "keyFiles": [
         "DOPPLER.md",
         "TEAM_ONBOARDING.md"
+      ]
+    },
+    "e2e": {
+      "path": "e2e",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1777352497512,
+      "keyFiles": [
+        "fixtures.ts",
+        "home.spec.ts",
+        "profile.spec.ts",
+        "test-create.spec.ts"
       ]
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 2,
-      "lastAccessed": 1775878780492,
+      "lastAccessed": 1777352497528,
       "keyFiles": [
         "favicon.svg",
         "icons.svg"
@@ -118,8 +138,8 @@
     "src": {
       "path": "src",
       "purpose": "Source code",
-      "fileCount": 5,
-      "lastAccessed": 1775878780572,
+      "fileCount": 6,
+      "lastAccessed": 1777352497529,
       "keyFiles": [
         "App.css",
         "App.tsx",
@@ -128,11 +148,18 @@
         "providers.tsx"
       ]
     },
+    "test-results": {
+      "path": "test-results",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1777352497531,
+      "keyFiles": []
+    },
     "dist/assets": {
       "path": "dist/assets",
       "purpose": "Static assets",
       "fileCount": 2,
-      "lastAccessed": 1775878780574,
+      "lastAccessed": 1777352497545,
       "keyFiles": [
         "index-BKZpACbR.js",
         "index-C6QjICAY.css"
@@ -142,7 +169,7 @@
       "path": "src/assets",
       "purpose": "Static assets",
       "fileCount": 3,
-      "lastAccessed": 1775878780576,
+      "lastAccessed": 1777352497546,
       "keyFiles": [
         "hero.png",
         "react.svg",
@@ -152,67 +179,38 @@
     "src/routes": {
       "path": "src/routes",
       "purpose": "Route handlers",
-      "fileCount": 2,
-      "lastAccessed": 1775878780578,
+      "fileCount": 3,
+      "lastAccessed": 1777352497546,
       "keyFiles": [
         "__root.tsx",
-        "index.tsx"
+        "index.tsx",
+        "test-create.tsx"
       ]
     }
   },
   "hotPaths": [
     {
-      "path": "vite.config.ts",
+      "path": "src/features/test-create/ui/TestCreateFunnel.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1777353668018,
+      "type": "file"
+    },
+    {
+      "path": "src/features/test-create/ui/ServiceDescriptionStep.tsx",
       "accessCount": 2,
-      "lastAccessed": 1775881957476,
+      "lastAccessed": 1777352920235,
       "type": "file"
     },
     {
-      "path": "package.json",
+      "path": "src/features/test-create/ui/PhotoSelectSheet.tsx",
       "accessCount": 1,
-      "lastAccessed": 1775878806181,
+      "lastAccessed": 1777353290403,
       "type": "file"
     },
     {
-      "path": "granite.config.ts",
+      "path": "src/features/test-create/ui/TestImageStep.tsx",
       "accessCount": 1,
-      "lastAccessed": 1775878810558,
-      "type": "file"
-    },
-    {
-      "path": "docs/TEAM_ONBOARDING.md",
-      "accessCount": 1,
-      "lastAccessed": 1775878819232,
-      "type": "file"
-    },
-    {
-      "path": "docs/DOPPLER.md",
-      "accessCount": 1,
-      "lastAccessed": 1775878819272,
-      "type": "file"
-    },
-    {
-      "path": "doppler.yaml.example",
-      "accessCount": 1,
-      "lastAccessed": 1775878838628,
-      "type": "file"
-    },
-    {
-      "path": "index.html",
-      "accessCount": 1,
-      "lastAccessed": 1775881741581,
-      "type": "file"
-    },
-    {
-      "path": "src/main.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775881742597,
-      "type": "file"
-    },
-    {
-      "path": "src/App.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775881880506,
+      "lastAccessed": 1777353372053,
       "type": "file"
     }
   ],
