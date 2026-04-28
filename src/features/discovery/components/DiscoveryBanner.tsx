@@ -1,7 +1,7 @@
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-export function HomeBanner() {
+export function DiscoveryBanner() {
   return (
     <div className="w-full h-30 bg-linear-to-b from-[#fff6de] to-[#fae7b2] flex items-center overflow-hidden gap-6">
       <Asset.Image

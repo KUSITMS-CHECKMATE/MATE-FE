@@ -1,7 +1,7 @@
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-export function MakerBanner() {
+export function TestBanner() {
   return (
     <div
       className="w-full h-30 flex flex-row justify-between items-center p-5"

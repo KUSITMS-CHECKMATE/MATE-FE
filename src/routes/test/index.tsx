@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { IconButton } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { BottomTabBar } from "@/shared/components/BottomTabBar";
-import { MakerBanner } from "@/features/maker/components/MakerBanner";
-import { MakerTestList } from "@/features/maker/components/MakerTestList";
+import { TestBanner } from "@/features/test/components/TestBanner";
+import { TestList } from "@/features/test/components/TestList";
 
 const DUMMY_TESTS = [
   {
@@ -43,7 +43,7 @@ const DUMMY_TESTS = [
   },
 ];
 
-export const Route = createFileRoute("/maker/")({
+export const Route = createFileRoute("/test/")({
   component: MakerHomePage,
 });
 
@@ -52,8 +52,8 @@ function MakerHomePage() {
 
   return (
     <div className="flex flex-col">
-      <MakerBanner />
-      <MakerTestList tests={tests} />
+      <TestBanner />
+      <TestList tests={tests} />
 
       <div className="flex justify-end fixed right-4 bottom-24 w-full h-fit overflow-visible">
         <IconButton

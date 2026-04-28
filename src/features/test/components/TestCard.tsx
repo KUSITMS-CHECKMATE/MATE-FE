@@ -30,7 +30,7 @@ const STATUS_CONFIG = {
   },
 };
 
-export function MakerTestCard({
+export function TestCard({
   title,
   participantCount,
   maxParticipantCount,

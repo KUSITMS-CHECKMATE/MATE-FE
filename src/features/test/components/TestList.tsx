@@ -1,6 +1,6 @@
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { MakerTestCard } from "./MakerTestCard";
+import { TestCard } from "./TestCard";
 
 interface Test {
   id: number;
@@ -14,7 +14,7 @@ type Props = {
   tests: Test[];
 };
 
-export function MakerTestList({ tests }: Props) {
+export function TestList({ tests }: Props) {
   return (
     <div className="flex flex-col">
       <div className="w-full bg-white px-6 py-6 flex flex-row gap-1">
@@ -30,7 +30,7 @@ export function MakerTestList({ tests }: Props) {
         {tests.length > 0 ? (
           <div className="flex flex-col gap-3 px-4 pb-24">
             {tests.map((test) => (
-              <MakerTestCard
+              <TestCard
                 key={test.id}
                 title={test.title}
                 participantCount={test.participantCount}

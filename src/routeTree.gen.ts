@@ -10,53 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as MakerIndexRouteImport } from './routes/maker/index'
-import { Route as TesterTestTestIdIndexRouteImport } from './routes/tester/test/$testId/index'
+import { Route as TestIndexRouteImport } from './routes/test/index'
+import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
+import { Route as DiscoveryTestIdIndexRouteImport } from './routes/discovery/$testId/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MakerIndexRoute = MakerIndexRouteImport.update({
-  id: '/maker/',
-  path: '/maker/',
+const TestIndexRoute = TestIndexRouteImport.update({
+  id: '/test/',
+  path: '/test/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TesterTestTestIdIndexRoute = TesterTestTestIdIndexRouteImport.update({
-  id: '/tester/test/$testId/',
-  path: '/tester/test/$testId/',
+const DiscoveryIndexRoute = DiscoveryIndexRouteImport.update({
+  id: '/discovery/',
+  path: '/discovery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoveryTestIdIndexRoute = DiscoveryTestIdIndexRouteImport.update({
+  id: '/discovery/$testId/',
+  path: '/discovery/$testId/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/maker/': typeof MakerIndexRoute
-  '/tester/test/$testId/': typeof TesterTestTestIdIndexRoute
+  '/discovery/': typeof DiscoveryIndexRoute
+  '/test/': typeof TestIndexRoute
+  '/discovery/$testId/': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/maker': typeof MakerIndexRoute
-  '/tester/test/$testId': typeof TesterTestTestIdIndexRoute
+  '/discovery': typeof DiscoveryIndexRoute
+  '/test': typeof TestIndexRoute
+  '/discovery/$testId': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/maker/': typeof MakerIndexRoute
-  '/tester/test/$testId/': typeof TesterTestTestIdIndexRoute
+  '/discovery/': typeof DiscoveryIndexRoute
+  '/test/': typeof TestIndexRoute
+  '/discovery/$testId/': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/maker/' | '/tester/test/$testId/'
+  fullPaths: '/' | '/discovery/' | '/test/' | '/discovery/$testId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/maker' | '/tester/test/$testId'
-  id: '__root__' | '/' | '/maker/' | '/tester/test/$testId/'
+  to: '/' | '/discovery' | '/test' | '/discovery/$testId'
+  id: '__root__' | '/' | '/discovery/' | '/test/' | '/discovery/$testId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MakerIndexRoute: typeof MakerIndexRoute
-  TesterTestTestIdIndexRoute: typeof TesterTestTestIdIndexRoute
+  DiscoveryIndexRoute: typeof DiscoveryIndexRoute
+  TestIndexRoute: typeof TestIndexRoute
+  DiscoveryTestIdIndexRoute: typeof DiscoveryTestIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,18 +78,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/maker/': {
-      id: '/maker/'
-      path: '/maker'
-      fullPath: '/maker/'
-      preLoaderRoute: typeof MakerIndexRouteImport
+    '/test/': {
+      id: '/test/'
+      path: '/test'
+      fullPath: '/test/'
+      preLoaderRoute: typeof TestIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tester/test/$testId/': {
-      id: '/tester/test/$testId/'
-      path: '/tester/test/$testId'
-      fullPath: '/tester/test/$testId/'
-      preLoaderRoute: typeof TesterTestTestIdIndexRouteImport
+    '/discovery/': {
+      id: '/discovery/'
+      path: '/discovery'
+      fullPath: '/discovery/'
+      preLoaderRoute: typeof DiscoveryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discovery/$testId/': {
+      id: '/discovery/$testId/'
+      path: '/discovery/$testId'
+      fullPath: '/discovery/$testId/'
+      preLoaderRoute: typeof DiscoveryTestIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -87,8 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MakerIndexRoute: MakerIndexRoute,
-  TesterTestTestIdIndexRoute: TesterTestTestIdIndexRoute,
+  DiscoveryIndexRoute: DiscoveryIndexRoute,
+  TestIndexRoute: TestIndexRoute,
+  DiscoveryTestIdIndexRoute: DiscoveryTestIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

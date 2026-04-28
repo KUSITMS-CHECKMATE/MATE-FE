@@ -12,10 +12,15 @@ type TabItem = {
 };
 
 const TABS: TabItem[] = [
-  { key: "discover", label: "발견", icon: "icon-search-mono", to: "/" },
-  { key: "test", label: "테스트", icon: "icon-chemistry-mono", to: "/maker/" },
-  { key: "interest", label: "관심", icon: "icon-heart-mono", to: "/" },
-  { key: "my", label: "마이", icon: "icon-user-mono", to: "/" },
+  {
+    key: "discover",
+    label: "발견",
+    icon: "icon-search-mono",
+    to: "/discovery",
+  },
+  { key: "test", label: "테스트", icon: "icon-chemistry-mono", to: "/test" },
+  { key: "interest", label: "관심", icon: "icon-heart-mono", to: "/interest" },
+  { key: "my", label: "마이", icon: "icon-user-mono", to: "/my" },
 ];
 
 type Props = {

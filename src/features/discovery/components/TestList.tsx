@@ -40,7 +40,7 @@ export function TestList({ tests }: Props) {
               thumbnailUrl={test.thumbnailUrl}
               onClick={() =>
                 navigate({
-                  to: "/tester/test/$testId",
+                  to: "/discovery/$testId",
                   params: { testId: String(test.id) },
                 })
               }
