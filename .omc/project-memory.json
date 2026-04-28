@@ -191,8 +191,8 @@
   "hotPaths": [
     {
       "path": "src/features/test-create/ui/TestCreateFunnel.tsx",
-      "accessCount": 15,
-      "lastAccessed": 1777353395535,
+      "accessCount": 17,
+      "lastAccessed": 1777353668018,
       "type": "file"
     },
     {
