@@ -32,3 +32,5 @@ dist-ssr
 .omc
 .claude
 .tanstack/
+test-results/
+playwright-report/
