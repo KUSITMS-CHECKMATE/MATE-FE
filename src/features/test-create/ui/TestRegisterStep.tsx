@@ -175,7 +175,7 @@ export function TestRegisterStep({ activeTab, onTabChange }: TestRegisterStepPro
             />
             <div
               className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-              style={{ gap: "12px", padding: "0 20px" }}
+              style={{ gap: "12px", margin: "0 20px" }}
               onScroll={(e) => {
                 const target = e.target as HTMLDivElement;
                 const index = Math.round(target.scrollLeft / target.clientWidth);
@@ -183,7 +183,7 @@ export function TestRegisterStep({ activeTab, onTabChange }: TestRegisterStepPro
               }}
             >
               {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((src, i) => (
-                <div key={i} className="snap-center flex-shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
+                <div key={i} className="snap-start flex-shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
                   <img
                     src={src}
                     aria-hidden={true}
