@@ -46,10 +46,9 @@ export function TestRegisterStep({ activeTab, onTabChange }: TestRegisterStepPro
       id: `${typeId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       typeId,
     }));
-    setPendingQuestions([...savedQuestions, ...created]);
+    setSavedQuestions((prev) => [...prev, ...created]);
     setSelectedQuestionTypes([]);
     setIsQuestionTypeSheetOpen(false);
-    setIsManageSheetOpen(true);
   };
 
   const openEditSheet = () => {
