@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { TestCreateFunnel } from '@/features/test-create/ui/TestCreateFunnel'
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({
-  component: TestCreateFunnel,
-})
+export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    throw redirect({ to: "/discovery" });
+  },
+});

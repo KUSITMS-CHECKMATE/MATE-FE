@@ -1,14 +1,13 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient } from '@/shared/lib/queryClient'
+import { Providers } from '@/providers'
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Providers>
       <div className="min-h-screen">
         <Outlet />
       </div>
-    </QueryClientProvider>
+    </Providers>
   )
 }
 
