@@ -1,5 +1,8 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "@tanstack/react-router";
+import { graniteEvent } from "@apps-in-toss/web-framework";
+import { ConfirmDialog } from "@toss/tds-mobile";
 import { FunnelLayout, type CTAMode } from "./FunnelLayout";
 import { CategorySelectSheet } from "./CategorySelectSheet";
 import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
@@ -11,6 +14,7 @@ import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
 export function TestCreateFunnel() {
+  const navigate = useNavigate();
   const funnel = useFunnel();
   const form = useTestCreateForm();
   const [isFocused, setIsFocused] = useState(false);
@@ -19,7 +23,32 @@ export function TestCreateFunnel() {
   const [showServiceDescription, setShowServiceDescription] = useState(false);
   const [isServiceIntroSheetOpen, setIsServiceIntroSheetOpen] = useState(false);
   const [hasTestImages, setHasTestImages] = useState(false);
+  const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitUnsubscribeRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = graniteEvent.addEventListener("backEvent", {
+      onEvent: () => {
+        setIsExitDialogOpen(true);
+      },
+      onError: (error) => {
+        console.error("backEvent error", error);
+      },
+    });
+    exitUnsubscribeRef.current = unsubscribe;
+    return () => {
+      unsubscribe();
+      exitUnsubscribeRef.current = null;
+    };
+  }, []);
+
+  const handleExitConfirm = () => {
+    exitUnsubscribeRef.current?.();
+    exitUnsubscribeRef.current = null;
+    setIsExitDialogOpen(false);
+    navigate({ to: "/" });
+  };
 
   const isConfirmDisabled = (() => {
     switch (funnel.step) {
@@ -165,6 +194,23 @@ export function TestCreateFunnel() {
         open={isServiceIntroSheetOpen}
         onClose={() => setIsServiceIntroSheetOpen(false)}
         onSkip={() => { setIsServiceIntroSheetOpen(false); funnel.next(); }}
+      />
+
+      <ConfirmDialog
+        open={isExitDialogOpen}
+        title="테스트 등록을 그만할까요?"
+        description="삭제하면 복구할 수 없어요"
+        onClose={() => setIsExitDialogOpen(false)}
+        cancelButton={
+          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
+            닫기
+          </ConfirmDialog.CancelButton>
+        }
+        confirmButton={
+          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={handleExitConfirm}>
+            나가기
+          </ConfirmDialog.ConfirmButton>
+        }
       />
     </>
   );
