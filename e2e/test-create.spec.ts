@@ -23,10 +23,25 @@ test.describe("테스트 생성 퍼널", () => {
     await page.getByRole("checkbox", { name: /일상/ }).click();
     await page.getByRole("button", { name: "선택하기" }).click();
 
-    // 4. 다음으로 → 테스트 등록 단계로 진입
+    // 4. 서비스 소개 단계로 진입
+    await page.getByRole("button", { name: "다음으로" }).click();
+    await expect(page.getByText("서비스를 소개해주세요")).toBeVisible();
+    await page.getByRole("button", { name: "다음으로" }).click();
+    
+    // 넛지 다이얼로그 건너뛰기
+    await expect(page.getByText("서비스 소개를 하면 이런 혜택이 있어요")).toBeVisible();
+    await page.getByRole("button", { name: "다음에" }).click();
+
+    // 5. 테스트 이미지 단계로 진입
+    await expect(page.getByText("테스트를 나타낼 수 있는 이미지를 첨부해주세요")).toBeVisible();
+    await page.evaluate(() => (window as any).__INJECT_MOCK_IMAGE__());
     await page.getByRole("button", { name: "다음으로" }).click();
 
-    // 테스트 등록 화면의 시그니처 요소 확인
+    // 6. 테스트 등록 단계로 진입 (기본 탭: 테스트 정보)
+    await expect(page.getByText("테스트 정보")).toBeVisible();
+    
+    // 질문 목록 탭으로 전환
+    await page.getByText("질문 목록").click();
     await expect(page.getByText("등록한 질문이 없어요")).toBeVisible();
     await expect(page.getByText("질문을 등록하고 테스트를 구성해봐요")).toBeVisible();
     await expect(page.getByRole("button", { name: "테스트 만들기" })).toBeVisible();
@@ -50,13 +65,20 @@ test.describe("테스트 생성 퍼널", () => {
     await page.locator('button:has-text("카테고리")').first().click();
     await page.getByRole("checkbox", { name: /일상/ }).click();
     await page.getByRole("button", { name: "선택하기" }).click();
+    
+    await page.getByRole("button", { name: "다음으로" }).click();
+    await page.getByRole("button", { name: "다음으로" }).click();
+    await page.getByRole("button", { name: "다음에" }).click();
+
+    await expect(page.getByText("테스트를 나타낼 수 있는 이미지를 첨부해주세요")).toBeVisible();
+    await page.evaluate(() => (window as any).__INJECT_MOCK_IMAGE__());
     await page.getByRole("button", { name: "다음으로" }).click();
 
-    // 기본 활성 탭(질문 목록)에서 "만들기" 보임
-    await expect(page.getByText("만들기", { exact: true })).toBeVisible();
-
-    // 테스트 정보 탭으로 전환
-    await page.getByText("테스트 정보").click();
+    // 기본 활성 탭(테스트 정보)에서 질문 관련 텍스트 안 보임
     await expect(page.getByText("등록한 질문이 없어요")).not.toBeVisible();
+
+    // 질문 목록 탭으로 전환
+    await page.getByText("질문 목록").click();
+    await expect(page.getByText("등록한 질문이 없어요")).toBeVisible();
   });
 });

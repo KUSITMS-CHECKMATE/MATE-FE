@@ -17,6 +17,7 @@ import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 import type { EditPhase } from "../model/types";
+import { ROUTES } from "@/shared/constants/routes";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
@@ -36,30 +37,39 @@ export function TestCreateFunnel() {
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    const unsubscribe = graniteEvent.addEventListener("backEvent", {
-      onEvent: () => {
-        setIsExitDialogOpen(true);
-      },
-      onError: (error) => {
-        console.error("backEvent error", error);
-      },
-    });
-    exitUnsubscribeRef.current = unsubscribe;
-    return () => {
-      unsubscribe();
-      exitUnsubscribeRef.current = null;
-    };
+    try {
+      const unsubscribe = graniteEvent.addEventListener("backEvent", {
+        onEvent: () => {
+          setIsExitDialogOpen(true);
+        },
+        onError: (error) => {
+          console.error("backEvent error", error);
+        },
+      });
+      exitUnsubscribeRef.current = unsubscribe;
+      return () => {
+        unsubscribe();
+        exitUnsubscribeRef.current = null;
+      };
+    } catch (e) {
+      console.warn("backEvent listener not supported in browser");
+      return () => {};
+    }
   }, []);
 
   useEffect(() => {
     useTestCreateForm.getState().reset();
+
+    return () => {
+      if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    };
   }, []);
 
   const handleExitConfirm = () => {
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
     setIsExitDialogOpen(false);
-    navigate({ to: "/test" });
+    navigate({ to: ROUTES.TEST });
   };
 
   const isConfirmDisabled = (() => {

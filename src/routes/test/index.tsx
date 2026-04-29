@@ -4,6 +4,7 @@ import { adaptive } from "@toss/tds-colors";
 import { BottomTabBar } from "@/shared/components/BottomTabBar";
 import { TestBanner } from "@/features/test/components/TestBanner";
 import { TestList } from "@/features/test/components/TestList";
+import { ROUTES } from "@/shared/constants/routes";
 
 const DUMMY_TESTS = [
   {
@@ -66,7 +67,7 @@ function MakerHomePage() {
           bgColor="#4365CC"
           aria-label="테스트 등록"
           style={{ borderRadius: "9999px" }}
-          onClick={() => navigate({ to: '/test/create' })}
+          onClick={() => navigate({ to: ROUTES.TEST_CREATE })}
         />
       </div>
 

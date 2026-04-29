@@ -30,6 +30,15 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   const imageListRef = useRef<HTMLDivElement>(null);
   const scrollAnimRef = useRef<number | null>(null);
   const currentTouchX = useRef(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      if (scrollAnimRef.current) cancelAnimationFrame(scrollAnimRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const preventScroll = (e: TouchEvent) => {
@@ -41,6 +50,12 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
 
   useEffect(() => {
     onHasImagesChange?.(imageUris.length > 0);
+    // For E2E testing
+    if (typeof window !== "undefined") {
+      (window as any).__INJECT_MOCK_IMAGE__ = () => {
+        form.setImages(["data:image/png;base64,iVBORw0KGgo="]);
+      };
+    }
   }, [imageUris.length, onHasImagesChange]);
 
   const addImages = (uris: string[]) => {
@@ -169,7 +184,13 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
     currentTouchX.current = touch.clientX;
     startAutoScroll(touch.clientX);
-    updateDragOver(touch.clientX);
+    
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(() => {
+        updateDragOver(currentTouchX.current);
+        rafRef.current = null;
+      });
+    }
   };
 
   const handleTouchEnd = () => {
