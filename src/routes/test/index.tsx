@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { IconButton } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { BottomTabBar } from "@/shared/components/BottomTabBar";
@@ -49,6 +49,7 @@ export const Route = createFileRoute("/test/")({
 
 function MakerHomePage() {
   const tests = DUMMY_TESTS;
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col">
@@ -65,6 +66,7 @@ function MakerHomePage() {
           bgColor="#4365CC"
           aria-label="테스트 등록"
           style={{ borderRadius: "9999px" }}
+          onClick={() => navigate({ to: '/test/create' })}
         />
       </div>
 
