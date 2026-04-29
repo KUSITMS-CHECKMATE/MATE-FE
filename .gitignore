@@ -29,4 +29,8 @@ dist-ssr
 .env.*
 !.env.example
 
+.omc
+.claude
 .tanstack/
+test-results/
+playwright-report/
