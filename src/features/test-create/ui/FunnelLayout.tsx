@@ -4,7 +4,7 @@ import { FixedBottomCTA, CTAButton, ProgressStepper, ProgressStep } from "@toss/
 import { PHASES, PHASE_LABELS, STEP_PHASE } from "../model/types";
 import type { Step } from "../model/types";
 
-export type CTAMode = "confirm" | "double" | "submit" | "hidden";
+export type CTAMode = "confirm" | "double" | "submit" | "submit-double" | "hidden";
 
 interface FunnelLayoutProps {
   children: ReactNode;
@@ -84,6 +84,22 @@ export function FunnelLayout({
             <FixedBottomCTA disabled={isSubmitDisabled} onClick={onSubmit}>
               {submitLabel}
             </FixedBottomCTA>
+          </motion.div>
+        )}
+        {ctaMode === "submit-double" && (
+          <motion.div key="submit-double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA.Double
+              leftButton={
+                <CTAButton color="dark" variant="weak" onClick={onCancel}>
+                  {cancelLabel}
+                </CTAButton>
+              }
+              rightButton={
+                <CTAButton disabled={isSubmitDisabled} onClick={onSubmit}>
+                  {submitLabel}
+                </CTAButton>
+              }
+            />
           </motion.div>
         )}
       </AnimatePresence>

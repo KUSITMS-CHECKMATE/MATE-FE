@@ -8,21 +8,29 @@ import { CategorySelectSheet } from "./CategorySelectSheet";
 import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
 import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
-import { TestRegisterStep } from "./TestRegisterStep";
+import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
+import { EditPhaseSheet } from "./EditPhaseSheet";
+import { BasicInfoEditPage } from "./BasicInfoEditPage";
+import { ServiceDescriptionEditPage } from "./ServiceDescriptionEditPage";
+import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
+import type { EditPhase } from "../model/types";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
   const funnel = useFunnel();
   const form = useTestCreateForm();
+  const [registerTab, setRegisterTab] = useState<RegisterTab>("info");
   const [isFocused, setIsFocused] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
   const [showServiceDescription, setShowServiceDescription] = useState(false);
   const [isServiceIntroSheetOpen, setIsServiceIntroSheetOpen] = useState(false);
   const [hasTestImages, setHasTestImages] = useState(false);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -66,8 +74,9 @@ export function TestCreateFunnel() {
   const isAllComplete = form.name.trim().length > 0 && form.summary.trim().length > 0 && form.categories.length > 0;
 
   const ctaMode: CTAMode = (() => {
+    if (editPhase) return "hidden";
     if (isCategorySheetOpen) return "hidden";
-    if (funnel.step === "register") return "submit";
+    if (funnel.step === "register") return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
     if (isFocused) return "confirm";
     if (funnel.step === "service" && showServiceDescription) return "double";
@@ -128,7 +137,13 @@ export function TestCreateFunnel() {
             funnel.next();
           }
         }}
-        onCancel={funnel.prev}
+        onCancel={() => {
+          if (funnel.step === "register") {
+            setIsEditSheetOpen(true);
+          } else {
+            funnel.prev();
+          }
+        }}
         onSubmit={() => {
           // TODO: 테스트 만들기 제출
         }}
@@ -142,12 +157,12 @@ export function TestCreateFunnel() {
               ? !hasTestImages
               : !isAllComplete
         }
-        cancelLabel={funnel.step === "service" || funnel.step === "image" ? "이전" : "취소"}
+        cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "취소"}
         isSubmitDisabled
         submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
-          <TestRegisterStep />
+          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} />
         ) : funnel.step === "image" ? (
           <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <TestImageStep onHasImagesChange={handleHasImagesChange} />
@@ -195,6 +210,26 @@ export function TestCreateFunnel() {
         onClose={() => setIsServiceIntroSheetOpen(false)}
         onSkip={() => { setIsServiceIntroSheetOpen(false); funnel.next(); }}
       />
+
+      <EditPhaseSheet
+        open={isEditSheetOpen}
+        onClose={() => setIsEditSheetOpen(false)}
+        onConfirm={(phase) => {
+          setEditPhase(phase);
+        }}
+      />
+
+      <AnimatePresence>
+        {editPhase === "basic" && (
+          <BasicInfoEditPage key="edit-basic" onClose={() => setEditPhase(null)} />
+        )}
+        {editPhase === "service" && (
+          <ServiceDescriptionEditPage key="edit-service" onClose={() => setEditPhase(null)} />
+        )}
+        {editPhase === "image" && (
+          <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />
+        )}
+      </AnimatePresence>
 
       <ConfirmDialog
         open={isExitDialogOpen}

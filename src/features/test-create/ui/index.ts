@@ -5,3 +5,6 @@ export { TestRegisterStep } from './TestRegisterStep';
 export { TestBasicInfoStep } from './TestBasicInfoStep';
 export { QuestionTypeSelectSheet } from './QuestionTypeSelectSheet';
 export { QuestionManageSheet } from './QuestionManageSheet';
+export { BasicInfoEditPage } from './BasicInfoEditPage';
+export { ServiceDescriptionEditPage } from './ServiceDescriptionEditPage';
+export { TestImageEditPage } from './TestImageEditPage';

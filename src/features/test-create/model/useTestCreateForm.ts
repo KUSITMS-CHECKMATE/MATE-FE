@@ -9,7 +9,7 @@ export interface TestCreateFormStore extends TestCreateFormData {
   setServiceName: (serviceName: string) => void;
   setCategories: (categories: CategoryId[]) => void;
   toggleCategory: (category: CategoryId) => void;
-  setImageFile: (imageFile: File | null) => void;
+  setImages: (images: string[]) => void;
   reset: () => void;
 }
 
@@ -19,7 +19,7 @@ const initialState: TestCreateFormData = {
   description: '',
   serviceName: '',
   categories: [],
-  imageFile: null,
+  images: [],
 };
 
 export const useTestCreateForm = create<TestCreateFormStore>((set) => ({
@@ -29,7 +29,7 @@ export const useTestCreateForm = create<TestCreateFormStore>((set) => ({
   setDescription: (description) => set({ description }),
   setServiceName: (serviceName) => set({ serviceName }),
   setCategories: (categories) => set({ categories }),
-  setImageFile: (imageFile) => set({ imageFile }),
+  setImages: (images) => set({ images }),
   toggleCategory: (category) =>
     set((state) => {
       const isSelected = state.categories.includes(category);

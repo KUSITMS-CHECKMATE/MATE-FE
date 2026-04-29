@@ -3,6 +3,7 @@ import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/t
 import { adaptive } from "@toss/tds-colors";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
+import { useTestCreateForm } from "../model/useTestCreateForm";
 
 const MAX_IMAGES = 10;
 const EDGE_ZONE = 60;
@@ -12,12 +13,14 @@ const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, 
 
 interface TestImageStepProps {
   onHasImagesChange?: (hasImages: boolean) => void;
+  title?: string;
 }
 
-export function TestImageStep({ onHasImagesChange }: TestImageStepProps) {
+export function TestImageStep({ onHasImagesChange, title = "테스트를 나타낼 수 있는 이미지를 첨부해주세요" }: TestImageStepProps) {
+  const form = useTestCreateForm();
+  const imageUris = form.images;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [imageUris, setImageUris] = useState<string[]>([]);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
@@ -41,14 +44,12 @@ export function TestImageStep({ onHasImagesChange }: TestImageStepProps) {
   }, [imageUris.length, onHasImagesChange]);
 
   const addImages = (uris: string[]) => {
-    setImageUris((prev) => {
-      const remaining = MAX_IMAGES - prev.length;
-      return [...prev, ...uris.slice(0, remaining)];
-    });
+    const remaining = MAX_IMAGES - form.images.length;
+    form.setImages([...form.images, ...uris.slice(0, remaining)]);
   };
 
   const removeImage = (index: number) => {
-    setImageUris((prev) => prev.filter((_, i) => i !== index));
+    form.setImages(form.images.filter((_, i) => i !== index));
     setPreviewIndex((prev) => {
       if (prev === null) return null;
       if (prev === index) return null;
@@ -62,12 +63,10 @@ export function TestImageStep({ onHasImagesChange }: TestImageStepProps) {
 
   const setPreviewedImageAsRepresentative = () => {
     if (previewIndex === null || previewIndex === 0) return;
-    setImageUris((prev) => {
-      const next = [...prev];
-      const [item] = next.splice(previewIndex, 1);
-      next.unshift(item);
-      return next;
-    });
+    const next = [...form.images];
+    const [item] = next.splice(previewIndex, 1);
+    next.unshift(item);
+    form.setImages(next);
     setPreviewIndex(0);
   };
 
@@ -180,12 +179,10 @@ export function TestImageStep({ onHasImagesChange }: TestImageStepProps) {
     if (dragState.current) {
       const { from, over } = dragState.current;
       if (from !== over) {
-        setImageUris((prev) => {
-          const next = [...prev];
-          const [item] = next.splice(from, 1);
-          next.splice(over, 0, item);
-          return next;
-        });
+        const next = [...form.images];
+        const [item] = next.splice(from, 1);
+        next.splice(over, 0, item);
+        form.setImages(next);
       }
       dragState.current = null;
       setDraggingIndex(null);
@@ -215,7 +212,7 @@ export function TestImageStep({ onHasImagesChange }: TestImageStepProps) {
         <Top
           title={
             <Top.TitleParagraph size={22} color={adaptive.grey900}>
-              테스트를 나타낼 수 있는 이미지를 첨부해주세요
+              {title}
             </Top.TitleParagraph>
           }
           subtitleBottom={

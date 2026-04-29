@@ -27,6 +27,9 @@ export const STEP_PHASE: Record<Step, Phase> = {
   register: "register",
 };
 
+/** 등록 화면에서 수정 가능한 단위 */
+export type EditPhase = "basic" | "service" | "image";
+
 export interface Category {
   id: string;
   label: string;

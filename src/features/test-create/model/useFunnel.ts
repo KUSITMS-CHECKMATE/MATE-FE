@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
-import { STEPS, type Step } from './types';
+import { useState, useCallback } from "react";
+import { STEPS, type Step } from "./types";
 
-export function useFunnel(initialStep: Step = 'name') {
+export function useFunnel(initialStep: Step = "name") {
   const [step, setStep] = useState<Step>(initialStep);
 
   const currentIndex = STEPS.indexOf(step);
@@ -22,6 +22,7 @@ export function useFunnel(initialStep: Step = 'name') {
 
   return {
     step,
+    setStep,
     currentIndex,
     next,
     prev,
