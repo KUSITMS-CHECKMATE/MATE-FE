@@ -51,7 +51,7 @@ export function TestCreateFunnel() {
         unsubscribe();
         exitUnsubscribeRef.current = null;
       };
-    } catch (e) {
+    } catch {
       console.warn("backEvent listener not supported in browser");
       return () => {};
     }

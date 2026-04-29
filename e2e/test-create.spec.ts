@@ -34,6 +34,7 @@ test.describe("테스트 생성 퍼널", () => {
 
     // 5. 테스트 이미지 단계로 진입
     await expect(page.getByText("테스트를 나타낼 수 있는 이미지를 첨부해주세요")).toBeVisible();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await page.evaluate(() => (window as any).__INJECT_MOCK_IMAGE__());
     await page.getByRole("button", { name: "다음으로" }).click();
 
@@ -71,6 +72,7 @@ test.describe("테스트 생성 퍼널", () => {
     await page.getByRole("button", { name: "다음에" }).click();
 
     await expect(page.getByText("테스트를 나타낼 수 있는 이미지를 첨부해주세요")).toBeVisible();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await page.evaluate(() => (window as any).__INJECT_MOCK_IMAGE__());
     await page.getByRole("button", { name: "다음으로" }).click();
 

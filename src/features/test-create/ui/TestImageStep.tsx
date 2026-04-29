@@ -52,11 +52,12 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     onHasImagesChange?.(imageUris.length > 0);
     // For E2E testing
     if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).__INJECT_MOCK_IMAGE__ = () => {
         form.setImages(["data:image/png;base64,iVBORw0KGgo="]);
       };
     }
-  }, [imageUris.length, onHasImagesChange]);
+  }, [imageUris.length, onHasImagesChange, form]);
 
   const addImages = (uris: string[]) => {
     const remaining = MAX_IMAGES - form.images.length;
