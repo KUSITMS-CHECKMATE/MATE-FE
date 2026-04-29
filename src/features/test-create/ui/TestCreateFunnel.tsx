@@ -51,6 +51,10 @@ export function TestCreateFunnel() {
     };
   }, []);
 
+  useEffect(() => {
+    useTestCreateForm.getState().reset();
+  }, []);
+
   const handleExitConfirm = () => {
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
