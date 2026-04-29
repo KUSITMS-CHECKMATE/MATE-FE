@@ -3,15 +3,15 @@ import { TextField } from "@toss/tds-mobile";
 import { useTestCreateForm, type TestCreateFormStore } from "../model/useTestCreateForm";
 import { STEPS, CATEGORIES, type Step } from "../model/types";
 
-type InputStep = Exclude<Step, "register">;
+type BasicStep = Extract<Step, "name" | "summary" | "category">;
 
-const STEP_CONFIG: Record<InputStep, { label: string; placeholder: string; maxLength?: number; help?: string }> = {
+const STEP_CONFIG: Record<BasicStep, { label: string; placeholder: string; maxLength?: number; help?: string }> = {
   name: { label: "테스트 이름", placeholder: "테스트 이름" },
   summary: { label: "테스트 한줄 소개", placeholder: "테스트 한줄 소개", maxLength: 60, help: "최대 60자" },
   category: { label: "카테고리", placeholder: "" },
 };
 
-function getStepValue(step: InputStep, form: TestCreateFormStore): string {
+function getStepValue(step: BasicStep, form: TestCreateFormStore): string {
   switch (step) {
     case "name":
       return form.name;
@@ -22,7 +22,7 @@ function getStepValue(step: InputStep, form: TestCreateFormStore): string {
   }
 }
 
-function setStepValue(step: InputStep, form: TestCreateFormStore, value: string) {
+function setStepValue(step: BasicStep, form: TestCreateFormStore, value: string) {
   switch (step) {
     case "name":
       form.setName(value);
@@ -34,7 +34,7 @@ function setStepValue(step: InputStep, form: TestCreateFormStore, value: string)
 }
 
 interface TestBasicInfoStepProps {
-  step: InputStep;
+  step: BasicStep;
   currentIndex: number;
   onOpenCategorySheet: () => void;
   onFocus: () => void;
@@ -49,8 +49,8 @@ export function TestBasicInfoStep({ step, currentIndex, onOpenCategorySheet, onF
     .filter(Boolean)
     .join(", ");
 
-  const completedInputSteps = STEPS.slice(0, currentIndex).filter(
-    (s): s is InputStep => s !== "register",
+  const completedBasicSteps = STEPS.slice(0, currentIndex).filter(
+    (s): s is BasicStep => s === "name" || s === "summary" || s === "category",
   );
 
   return (
@@ -83,7 +83,7 @@ export function TestBasicInfoStep({ step, currentIndex, onOpenCategorySheet, onF
       )}
 
       {/* 완료된 항목들 (최신순으로 위에) */}
-      {[...completedInputSteps].reverse().map((s) => {
+      {[...completedBasicSteps].reverse().map((s) => {
         if (s === "category") {
           return <TextField.Button key={s} variant="line" label="카테고리" value={categoryDisplayValue} placeholder="카테고리" onClick={onOpenCategorySheet} />;
         }
