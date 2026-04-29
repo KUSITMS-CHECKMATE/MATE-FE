@@ -1,18 +1,11 @@
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import type { UserTest } from "../model";
 import { TestCard } from "./TestCard";
 
-interface Test {
-  id: number;
-  title: string;
-  participantCount: number;
-  maxParticipantCount: number;
-  status: "active" | "ended";
+interface Props {
+  tests: UserTest[];
 }
-
-type Props = {
-  tests: Test[];
-};
 
 export function TestList({ tests }: Props) {
   return (

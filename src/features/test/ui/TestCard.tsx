@@ -1,11 +1,12 @@
 import { Asset, Badge, IconButton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import type { TestStatus } from "../model";
 
 interface Props {
   title: string;
   participantCount: number;
   maxParticipantCount: number;
-  status: "active" | "ended";
+  status: TestStatus;
   onClick?: () => void;
 }
 
