@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures";
 
 test.describe("테스트 생성 퍼널", () => {
   test("이름 → 한줄 소개 → 카테고리 → 테스트 등록 단계로 진입한다", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test/create");
 
     // 1. 이름 입력
     const nameField = page.getByPlaceholder("테스트 이름");
@@ -34,7 +34,7 @@ test.describe("테스트 생성 퍼널", () => {
   });
 
   test("테스트 등록 화면에서 탭 전환이 가능하다", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test/create");
 
     // 빠르게 register 단계까지 진입
     const nameField = page.getByPlaceholder("테스트 이름");

@@ -9,60 +9,167 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestCreateRouteImport } from './routes/test-create'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TestIndexRouteImport } from './routes/test/index'
+import { Route as MyIndexRouteImport } from './routes/my/index'
+import { Route as InterestIndexRouteImport } from './routes/interest/index'
+import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
+import { Route as TestCreateRouteImport } from './routes/test/create'
+import { Route as DiscoveryTestIdIndexRouteImport } from './routes/discovery/$testId/index'
 
-const TestCreateRoute = TestCreateRouteImport.update({
-  id: '/test-create',
-  path: '/test-create',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestIndexRoute = TestIndexRouteImport.update({
+  id: '/test/',
+  path: '/test/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyIndexRoute = MyIndexRouteImport.update({
+  id: '/my/',
+  path: '/my/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InterestIndexRoute = InterestIndexRouteImport.update({
+  id: '/interest/',
+  path: '/interest/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoveryIndexRoute = DiscoveryIndexRouteImport.update({
+  id: '/discovery/',
+  path: '/discovery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestCreateRoute = TestCreateRouteImport.update({
+  id: '/test/create',
+  path: '/test/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoveryTestIdIndexRoute = DiscoveryTestIdIndexRouteImport.update({
+  id: '/discovery/$testId/',
+  path: '/discovery/$testId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/test-create': typeof TestCreateRoute
+  '/test/create': typeof TestCreateRoute
+  '/discovery/': typeof DiscoveryIndexRoute
+  '/interest/': typeof InterestIndexRoute
+  '/my/': typeof MyIndexRoute
+  '/test/': typeof TestIndexRoute
+  '/discovery/$testId/': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/test-create': typeof TestCreateRoute
+  '/test/create': typeof TestCreateRoute
+  '/discovery': typeof DiscoveryIndexRoute
+  '/interest': typeof InterestIndexRoute
+  '/my': typeof MyIndexRoute
+  '/test': typeof TestIndexRoute
+  '/discovery/$testId': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/test-create': typeof TestCreateRoute
+  '/test/create': typeof TestCreateRoute
+  '/discovery/': typeof DiscoveryIndexRoute
+  '/interest/': typeof InterestIndexRoute
+  '/my/': typeof MyIndexRoute
+  '/test/': typeof TestIndexRoute
+  '/discovery/$testId/': typeof DiscoveryTestIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test-create'
+  fullPaths:
+    | '/'
+    | '/test/create'
+    | '/discovery/'
+    | '/interest/'
+    | '/my/'
+    | '/test/'
+    | '/discovery/$testId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test-create'
-  id: '__root__' | '/' | '/test-create'
+  to:
+    | '/'
+    | '/test/create'
+    | '/discovery'
+    | '/interest'
+    | '/my'
+    | '/test'
+    | '/discovery/$testId'
+  id:
+    | '__root__'
+    | '/'
+    | '/test/create'
+    | '/discovery/'
+    | '/interest/'
+    | '/my/'
+    | '/test/'
+    | '/discovery/$testId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TestCreateRoute: typeof TestCreateRoute
+  DiscoveryIndexRoute: typeof DiscoveryIndexRoute
+  InterestIndexRoute: typeof InterestIndexRoute
+  MyIndexRoute: typeof MyIndexRoute
+  TestIndexRoute: typeof TestIndexRoute
+  DiscoveryTestIdIndexRoute: typeof DiscoveryTestIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-create': {
-      id: '/test-create'
-      path: '/test-create'
-      fullPath: '/test-create'
-      preLoaderRoute: typeof TestCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/': {
+      id: '/test/'
+      path: '/test'
+      fullPath: '/test/'
+      preLoaderRoute: typeof TestIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my/': {
+      id: '/my/'
+      path: '/my'
+      fullPath: '/my/'
+      preLoaderRoute: typeof MyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/interest/': {
+      id: '/interest/'
+      path: '/interest'
+      fullPath: '/interest/'
+      preLoaderRoute: typeof InterestIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discovery/': {
+      id: '/discovery/'
+      path: '/discovery'
+      fullPath: '/discovery/'
+      preLoaderRoute: typeof DiscoveryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/create': {
+      id: '/test/create'
+      path: '/test/create'
+      fullPath: '/test/create'
+      preLoaderRoute: typeof TestCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discovery/$testId/': {
+      id: '/discovery/$testId/'
+      path: '/discovery/$testId'
+      fullPath: '/discovery/$testId/'
+      preLoaderRoute: typeof DiscoveryTestIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -71,6 +178,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TestCreateRoute: TestCreateRoute,
+  DiscoveryIndexRoute: DiscoveryIndexRoute,
+  InterestIndexRoute: InterestIndexRoute,
+  MyIndexRoute: MyIndexRoute,
+  TestIndexRoute: TestIndexRoute,
+  DiscoveryTestIdIndexRoute: DiscoveryTestIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
