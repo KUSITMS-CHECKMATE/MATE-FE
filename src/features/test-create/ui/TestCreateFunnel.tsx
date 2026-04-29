@@ -55,7 +55,7 @@ export function TestCreateFunnel() {
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
     setIsExitDialogOpen(false);
-    navigate({ to: "/" });
+    navigate({ to: "/test" });
   };
 
   const isConfirmDisabled = (() => {
