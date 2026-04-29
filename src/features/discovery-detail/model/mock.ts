@@ -9,4 +9,4 @@ export const MOCK_TEST_DETAIL = {
     "https://static.toss.im/3d-emojis/u1F35C.png",
     "https://static.toss.im/3d-emojis/u1F35C.png",
   ],
-} as const;
+};

@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BottomCTA } from "@toss/tds-mobile";
 import { MOCK_TEST_DETAIL } from "@/features/discovery-detail/model";
-import { TestDetailHeader, TestDetailInfo } from "@/features/discovery-detail/ui";
+import {
+  TestDetailHeader,
+  TestDetailInfo,
+} from "@/features/discovery-detail/ui";
 import { ImageCarousel } from "@/shared/ui/ImageCarousel";
 
 export const Route = createFileRoute("/discovery/$testId")({
@@ -16,9 +19,9 @@ function TestDetailPage() {
       <div className="flex-1 overflow-y-auto pb-22.5">
         <TestDetailHeader
           title={MOCK_TEST_DETAIL.title}
-          tags={[...MOCK_TEST_DETAIL.tags]}
+          tags={MOCK_TEST_DETAIL.tags}
         />
-        <ImageCarousel images={[...MOCK_TEST_DETAIL.images]} />
+        <ImageCarousel images={MOCK_TEST_DETAIL.images} />
         <TestDetailInfo
           reward={MOCK_TEST_DETAIL.reward}
           description={MOCK_TEST_DETAIL.description}
