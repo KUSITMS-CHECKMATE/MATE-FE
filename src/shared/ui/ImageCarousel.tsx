@@ -2,9 +2,9 @@ import { Asset } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useImageCarousel } from "@/shared/lib/useImageCarousel";
 
-type Props = {
+interface Props {
   images: string[];
-};
+}
 
 export function ImageCarousel({ images }: Props) {
   const { currentIndex, touchHandlers } = useImageCarousel(images.length);
@@ -27,7 +27,11 @@ export function ImageCarousel({ images }: Props) {
             frameShape={{ width: 12, height: 12 }}
             backgroundColor="transparent"
             name="icon-circle-16-mono"
-            color={i === currentIndex ? adaptive.greyOpacity500 : adaptive.greyOpacity300}
+            color={
+              i === currentIndex
+                ? adaptive.greyOpacity500
+                : adaptive.greyOpacity300
+            }
             aria-hidden={true}
             ratio="1/1"
           />
