@@ -1,10 +1,10 @@
 import { ListRow, Paragraph } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-type Props = {
+interface Props {
   reward: number;
   description: string;
-};
+}
 
 export function TestDetailInfo({ reward, description }: Props) {
   return (

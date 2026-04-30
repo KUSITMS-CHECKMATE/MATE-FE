@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BottomTabBar } from "@/shared/components/BottomTabBar";
+import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 
 export const Route = createFileRoute("/interest/")({
   component: InterestPage,

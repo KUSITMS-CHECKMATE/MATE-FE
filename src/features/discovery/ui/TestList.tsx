@@ -1,18 +1,11 @@
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
+import type { DiscoveryTest } from "../model";
 import { TestCard } from "./TestCard";
 
-interface Test {
-  id: number;
-  title: string;
-  description: string;
-  reward: number;
-  thumbnailUrl: string;
-}
-
 interface Props {
-  tests: Test[];
+  tests: DiscoveryTest[];
 }
 
 export function TestList({ tests }: Props) {
