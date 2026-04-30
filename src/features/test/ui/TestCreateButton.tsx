@@ -9,7 +9,6 @@ export function TestCreateButton({ onClick }: Props) {
   return (
     <div className="flex justify-end fixed right-4 bottom-24 w-full h-fit overflow-visible">
       <IconButton
-        className="pointer-events-auto"
         src="https://static.toss.im/icons/png/4x/icon-plus-thin-mono.png"
         iconSize={24}
         variant="fill"
