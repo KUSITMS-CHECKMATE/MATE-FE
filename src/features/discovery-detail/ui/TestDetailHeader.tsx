@@ -1,10 +1,10 @@
 import { Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-type Props = {
+interface Props {
   title: string;
   tags: string[];
-};
+}
 
 export function TestDetailHeader({ title, tags }: Props) {
   return (
@@ -24,7 +24,12 @@ export function TestDetailHeader({ title, tags }: Props) {
         />
       }
       lower={
-        <Top.LowerButton color="primary" size="small" variant="weak" display="inline">
+        <Top.LowerButton
+          color="primary"
+          size="small"
+          variant="weak"
+          display="inline"
+        >
           어떤 서비스인가요?
         </Top.LowerButton>
       }
