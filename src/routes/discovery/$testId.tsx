@@ -12,8 +12,6 @@ export const Route = createFileRoute("/discovery/$testId")({
 });
 
 function TestDetailPage() {
-  // const { testId } = Route.useParams();
-
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-1 overflow-y-auto pb-22.5">
