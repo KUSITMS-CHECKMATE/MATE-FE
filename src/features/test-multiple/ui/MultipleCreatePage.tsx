@@ -8,12 +8,6 @@ import { MultipleQuestionEditorOverlay } from "./MultipleQuestionEditorOverlay";
 import { MultipleCreateTopSection } from "./MultipleCreateTopSection";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 
-function revokeChoiceImageUrl(imageUrl: string) {
-  if (imageUrl.startsWith("blob:")) {
-    URL.revokeObjectURL(imageUrl);
-  }
-}
-
 interface MultipleCreatePageProps {
   questionId: string;
   onClose: () => void;
@@ -110,17 +104,13 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
         onEditChoice={handleOpenEditChoiceEditor}
         onToggleChoiceManageMode={handleToggleChoiceManageMode}
         onDeleteChoice={(choiceId) => {
-          const deletedChoice = visibleChoices.find((choice) => choice.id === choiceId);
-          if (deletedChoice?.imageUrl) revokeChoiceImageUrl(deletedChoice.imageUrl);
           setActiveChoices(visibleChoices.filter((choice) => choice.id !== choiceId));
         }}
         onReorderChoices={(nextChoices) => setActiveChoices(nextChoices)}
         onRemoveChoiceImage={(choiceId) =>
           setActiveChoices((prev) =>
             prev.map((choice) =>
-              choice.id === choiceId
-                ? (revokeChoiceImageUrl(choice.imageUrl), { ...choice, imageUrl: "" })
-                : choice,
+              choice.id === choiceId ? { ...choice, imageUrl: "" } : choice,
             ),
           )
         }
@@ -167,10 +157,7 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
                 setActiveChoices((prev) =>
                   prev.map((choice) =>
                     choice.id === editingChoice.id
-                      ? (() => {
-                          if (choice.imageUrl !== imageUrl) revokeChoiceImageUrl(choice.imageUrl);
-                          return { ...choice, name: choiceName, imageUrl };
-                        })()
+                      ? { ...choice, name: choiceName, imageUrl }
                       : choice,
                   ),
                 );
