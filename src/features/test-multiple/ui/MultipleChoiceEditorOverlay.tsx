@@ -34,6 +34,7 @@ export function MultipleChoiceEditorOverlay({
   const [choiceName, setChoiceName] = useState(initialChoiceName);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
 
   const isCreateDisabled = choiceName.trim().length === 0;
 
@@ -161,7 +162,15 @@ export function MultipleChoiceEditorOverlay({
         }
       />
 
-      <BottomSheet open={isPhotoSheetOpen} onClose={() => setIsPhotoSheetOpen(false)}>
+      <BottomSheet
+        open={isPhotoSheetOpen}
+        onClose={() => setIsPhotoSheetOpen(false)}
+        onExited={() => {
+          if (pendingPhotoAction === "camera") handleCamera();
+          else if (pendingPhotoAction === "album") handleAlbum();
+          setPendingPhotoAction(null);
+        }}
+      >
         <ListRow
           as="button"
           className="w-full"
@@ -177,8 +186,8 @@ export function MultipleChoiceEditorOverlay({
           contents={<ListRow.Texts type="1RowTypeA" top="사진 촬영하기" />}
           verticalPadding="large"
           onClick={() => {
+            setPendingPhotoAction("camera");
             setIsPhotoSheetOpen(false);
-            setTimeout(handleCamera, 300);
           }}
         />
         <ListRow
@@ -196,8 +205,8 @@ export function MultipleChoiceEditorOverlay({
           contents={<ListRow.Texts type="1RowTypeA" top="앨범에서 선택하기" />}
           verticalPadding="large"
           onClick={() => {
+            setPendingPhotoAction("album");
             setIsPhotoSheetOpen(false);
-            setTimeout(handleAlbum, 300);
           }}
         />
         <Spacing size={24} />
