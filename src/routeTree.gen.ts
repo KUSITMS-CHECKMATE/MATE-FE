@@ -14,6 +14,7 @@ import { Route as TestIndexRouteImport } from './routes/test/index'
 import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as InterestIndexRouteImport } from './routes/interest/index'
 import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
+import { Route as TestCreateMultipleRouteImport } from './routes/test/create-multiple'
 import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
 
@@ -42,6 +43,11 @@ const DiscoveryIndexRoute = DiscoveryIndexRouteImport.update({
   path: '/discovery/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestCreateMultipleRoute = TestCreateMultipleRouteImport.update({
+  id: '/test/create-multiple',
+  path: '/test/create-multiple',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestCreateRoute = TestCreateRouteImport.update({
   id: '/test/create',
   path: '/test/create',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/test/create': typeof TestCreateRoute
+  '/test/create-multiple': typeof TestCreateMultipleRoute
   '/discovery/': typeof DiscoveryIndexRoute
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/test/create': typeof TestCreateRoute
+  '/test/create-multiple': typeof TestCreateMultipleRoute
   '/discovery': typeof DiscoveryIndexRoute
   '/interest': typeof InterestIndexRoute
   '/my': typeof MyIndexRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/test/create': typeof TestCreateRoute
+  '/test/create-multiple': typeof TestCreateMultipleRoute
   '/discovery/': typeof DiscoveryIndexRoute
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/discovery/$testId'
     | '/test/create'
+    | '/test/create-multiple'
     | '/discovery/'
     | '/interest/'
     | '/my/'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/discovery/$testId'
     | '/test/create'
+    | '/test/create-multiple'
     | '/discovery'
     | '/interest'
     | '/my'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/discovery/$testId'
     | '/test/create'
+    | '/test/create-multiple'
     | '/discovery/'
     | '/interest/'
     | '/my/'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiscoveryTestIdRoute: typeof DiscoveryTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
+  TestCreateMultipleRoute: typeof TestCreateMultipleRoute
   DiscoveryIndexRoute: typeof DiscoveryIndexRoute
   InterestIndexRoute: typeof InterestIndexRoute
   MyIndexRoute: typeof MyIndexRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoveryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test/create-multiple': {
+      id: '/test/create-multiple'
+      path: '/test/create-multiple'
+      fullPath: '/test/create-multiple'
+      preLoaderRoute: typeof TestCreateMultipleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test/create': {
       id: '/test/create'
       path: '/test/create'
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscoveryTestIdRoute: DiscoveryTestIdRoute,
   TestCreateRoute: TestCreateRoute,
+  TestCreateMultipleRoute: TestCreateMultipleRoute,
   DiscoveryIndexRoute: DiscoveryIndexRoute,
   InterestIndexRoute: InterestIndexRoute,
   MyIndexRoute: MyIndexRoute,
