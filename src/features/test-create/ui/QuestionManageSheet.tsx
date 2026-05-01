@@ -5,15 +5,9 @@ import { adaptive } from "@toss/tds-colors";
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { QUESTION_TYPES, type QuestionTypeId } from "../model/types";
+import { QUESTION_TYPES, type PendingQuestion } from "../model/types";
 
 type ManageTab = "delete" | "reorder";
-
-export interface PendingQuestion {
-  id: string;
-  typeId: QuestionTypeId;
-  title?: string;
-}
 
 interface QuestionManageSheetProps {
   questions: PendingQuestion[];
@@ -42,7 +36,7 @@ function SortableQuestionItem({ question }: { question: PendingQuestion }) {
         contents={
           <ListRow.Texts
             type="2RowTypeA"
-            top={question.title ?? "질문 제목"}
+            top={question.data?.title ?? "미입력"}
             topProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
             bottom={type.label}
             bottomProps={{ color: adaptive.grey600 }}
@@ -132,7 +126,7 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
                 contents={
                   <ListRow.Texts
                     type="2RowTypeA"
-                    top={q.title ?? "질문 제목"}
+                    top={q.data?.title ?? "미입력"}
                     topProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
                     bottom={type.label}
                     bottomProps={{ color: adaptive.grey600 }}

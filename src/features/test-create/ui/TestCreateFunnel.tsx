@@ -33,7 +33,7 @@ export function TestCreateFunnel() {
   const [hasTestImages, setHasTestImages] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
-  const [activeQuestionType, setActiveQuestionType] = useState<QuestionTypeId | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<{ id: string; typeId: QuestionTypeId } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -91,7 +91,7 @@ export function TestCreateFunnel() {
 
   const ctaMode: CTAMode = (() => {
     if (editPhase) return "hidden";
-    if (activeQuestionType) return "hidden";
+    if (activeQuestion) return "hidden";
     if (isCategorySheetOpen) return "hidden";
     if (funnel.step === "register") return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
@@ -179,7 +179,7 @@ export function TestCreateFunnel() {
         submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
-          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} onEnterQuestion={setActiveQuestionType} />
+          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} onEnterQuestion={setActiveQuestion} />
         ) : funnel.step === "image" ? (
           <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <TestImageStep onHasImagesChange={handleHasImagesChange} />
@@ -246,9 +246,15 @@ export function TestCreateFunnel() {
         {editPhase === "image" && (
           <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />
         )}
-        {activeQuestionType === "multiple" && (
-          <MultipleCreatePage key="question-multiple" onClose={() => setActiveQuestionType(null)} />
+        {activeQuestion?.typeId === "multiple" && (
+          <MultipleCreatePage key="question-multiple" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
         )}
+        {activeQuestion?.typeId === "subjective" && <></>}
+        {activeQuestion?.typeId === "scale" && <></>}
+        {activeQuestion?.typeId === "ab" && <></>}
+        {activeQuestion?.typeId === "card" && <></>}
+        {activeQuestion?.typeId === "tree" && <></>}
+        {activeQuestion?.typeId === "fivesec" && <></>}
       </AnimatePresence>
 
       <ConfirmDialog
