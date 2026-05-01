@@ -12,9 +12,10 @@ export type RegisterTab = "info" | "questions";
 interface TestRegisterStepProps {
   activeTab: RegisterTab;
   onTabChange: (tab: RegisterTab) => void;
+  onEnterQuestion: (typeId: QuestionTypeId) => void;
 }
 
-export function TestRegisterStep({ activeTab, onTabChange }: TestRegisterStepProps) {
+export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: TestRegisterStepProps) {
   const form = useTestCreateForm();
   const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
   const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<QuestionTypeId[]>([]);
@@ -112,9 +113,7 @@ export function TestRegisterStep({ activeTab, onTabChange }: TestRegisterStepPro
                         <Button
                           size="small"
                           variant="weak"
-                          onClick={() => {
-                            /* TODO: 질문 입력 화면 진입 */
-                          }}
+                          onClick={() => onEnterQuestion(q.typeId)}
                         >
                           입력
                         </Button>

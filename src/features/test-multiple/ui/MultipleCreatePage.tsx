@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { MultipleChoiceItem } from "../model/types";
 import { MultipleCreateBottomCTA } from "./MultipleCreateBottomCTA";
 import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
@@ -7,7 +7,11 @@ import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
 import { MultipleQuestionEditorOverlay } from "./MultipleQuestionEditorOverlay";
 import { MultipleCreateTopSection } from "./MultipleCreateTopSection";
 
-export function MultipleCreatePage() {
+interface MultipleCreatePageProps {
+  onClose: () => void;
+}
+
+export function MultipleCreatePage({ onClose }: MultipleCreatePageProps) {
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(false);
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(false);
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
@@ -53,7 +57,13 @@ export function MultipleCreatePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white pb-28">
+    <motion.div
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white pb-28"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <MultipleCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
@@ -126,7 +136,7 @@ export function MultipleCreatePage() {
               )
         }
       />
-      <MultipleCreateBottomCTA isCompleteDisabled={isCompleteDisabled} />
+      <MultipleCreateBottomCTA isCompleteDisabled={isCompleteDisabled} onCancel={onClose} onComplete={onClose} />
 
       <AnimatePresence>
         {isQuestionEditorOpen && (
@@ -186,6 +196,6 @@ export function MultipleCreatePage() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
