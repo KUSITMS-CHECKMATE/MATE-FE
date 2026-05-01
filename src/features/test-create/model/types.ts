@@ -81,6 +81,17 @@ export const QUESTION_TYPES = [
 
 export type QuestionTypeId = (typeof QUESTION_TYPES)[number]["id"];
 
+import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
+
+export type QuestionData = { typeId: "multiple" } & MultipleQuestionData;
+// 추후: | { typeId: "subjective" } & SubjectiveQuestionData
+
+export interface PendingQuestion {
+  id: string;
+  typeId: QuestionTypeId;
+  data?: QuestionData;
+}
+
 export interface TestCreateFormData {
   name: string;
   summary: string;

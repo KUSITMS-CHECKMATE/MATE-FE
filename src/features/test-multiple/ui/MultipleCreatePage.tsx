@@ -6,28 +6,44 @@ import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
 import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
 import { MultipleQuestionEditorOverlay } from "./MultipleQuestionEditorOverlay";
 import { MultipleCreateTopSection } from "./MultipleCreateTopSection";
+import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+
+function revokeChoiceImageUrl(imageUrl: string) {
+  if (imageUrl.startsWith("blob:")) {
+    URL.revokeObjectURL(imageUrl);
+  }
+}
 
 interface MultipleCreatePageProps {
+  questionId: string;
   onClose: () => void;
 }
 
-export function MultipleCreatePage({ onClose }: MultipleCreatePageProps) {
-  const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(false);
-  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(false);
+export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePageProps) {
+  const { updateQuestion, questions } = useTestCreateForm();
+  const existing = questions.find((q) => q.id === questionId)?.data;
+
+  const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(existing?.typeId === "multiple" ? existing.isOtherInputEnabled : false);
+  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(existing?.typeId === "multiple" ? existing.isMultiSelectEnabled : false);
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [isChoiceEditorOpen, setIsChoiceEditorOpen] = useState(false);
-  const [questionTitle, setQuestionTitle] = useState("");
-  const [questionDescription, setQuestionDescription] = useState("");
-  const [choices, setChoices] = useState<MultipleChoiceItem[]>([]);
+  const [questionTitle, setQuestionTitle] = useState(existing?.typeId === "multiple" ? existing.title : "");
+  const [questionDescription, setQuestionDescription] = useState(existing?.typeId === "multiple" ? existing.description : "");
+  const [choices, setChoices] = useState<MultipleChoiceItem[]>(existing?.typeId === "multiple" ? existing.choices : []);
   const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
   const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
-  const [minSelectCount, setMinSelectCount] = useState(1);
-  const [maxSelectCount, setMaxSelectCount] = useState(2);
+  const [minSelectCount, setMinSelectCount] = useState(existing?.typeId === "multiple" ? existing.minSelectCount : 1);
+  const [maxSelectCount, setMaxSelectCount] = useState(existing?.typeId === "multiple" ? existing.maxSelectCount : 2);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
 
   const visibleChoices = isChoiceManageMode ? draftChoices : choices;
   const editingChoice = visibleChoices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length === 0;
+
+  const setActiveChoices = (updater: MultipleChoiceItem[] | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[])) => {
+    if (isChoiceManageMode) setDraftChoices(updater);
+    else setChoices(updater);
+  };
 
   const handleOpenCreateChoiceEditor = () => {
     setEditingChoiceId(null);
@@ -48,12 +64,6 @@ export function MultipleCreatePage({ onClose }: MultipleCreatePageProps) {
 
     setDraftChoices(choices);
     setIsChoiceManageMode(true);
-  };
-
-  const revokeChoiceImageUrl = (imageUrl: string) => {
-    if (imageUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(imageUrl);
-    }
   };
 
   return (
@@ -101,42 +111,37 @@ export function MultipleCreatePage({ onClose }: MultipleCreatePageProps) {
         onToggleChoiceManageMode={handleToggleChoiceManageMode}
         onDeleteChoice={(choiceId) => {
           const deletedChoice = visibleChoices.find((choice) => choice.id === choiceId);
-          if (deletedChoice?.imageUrl) {
-            revokeChoiceImageUrl(deletedChoice.imageUrl);
-          }
-          const nextChoices = visibleChoices.filter((choice) => choice.id !== choiceId);
-          if (isChoiceManageMode) {
-            setDraftChoices(nextChoices);
-          } else {
-            setChoices(nextChoices);
-          }
+          if (deletedChoice?.imageUrl) revokeChoiceImageUrl(deletedChoice.imageUrl);
+          setActiveChoices(visibleChoices.filter((choice) => choice.id !== choiceId));
         }}
-        onReorderChoices={(nextChoices) => {
-          if (isChoiceManageMode) {
-            setDraftChoices(nextChoices);
-          } else {
-            setChoices(nextChoices);
-          }
-        }}
+        onReorderChoices={(nextChoices) => setActiveChoices(nextChoices)}
         onRemoveChoiceImage={(choiceId) =>
-          isChoiceManageMode
-            ? setDraftChoices((prev) =>
-                prev.map((choice) =>
-                  choice.id === choiceId
-                    ? (revokeChoiceImageUrl(choice.imageUrl), { ...choice, imageUrl: "" })
-                    : choice,
-                ),
-              )
-            : setChoices((prev) =>
-                prev.map((choice) =>
-                  choice.id === choiceId
-                    ? (revokeChoiceImageUrl(choice.imageUrl), { ...choice, imageUrl: "" })
-                    : choice,
-                ),
-              )
+          setActiveChoices((prev) =>
+            prev.map((choice) =>
+              choice.id === choiceId
+                ? (revokeChoiceImageUrl(choice.imageUrl), { ...choice, imageUrl: "" })
+                : choice,
+            ),
+          )
         }
       />
-      <MultipleCreateBottomCTA isCompleteDisabled={isCompleteDisabled} onCancel={onClose} onComplete={onClose} />
+      <MultipleCreateBottomCTA
+        isCompleteDisabled={isCompleteDisabled}
+        onCancel={onClose}
+        onComplete={() => {
+          updateQuestion(questionId, {
+            typeId: "multiple",
+            title: questionTitle,
+            description: questionDescription,
+            choices,
+            isMultiSelectEnabled,
+            isOtherInputEnabled,
+            minSelectCount,
+            maxSelectCount,
+          });
+          onClose();
+        }}
+      />
 
       <AnimatePresence>
         {isQuestionEditorOpen && (
@@ -159,35 +164,23 @@ export function MultipleCreatePage({ onClose }: MultipleCreatePageProps) {
             submitLabel={editingChoice ? "수정하기" : "만들기"}
             onCreate={({ choiceName, imageUrl }) => {
               if (editingChoice) {
-                const updateChoices = (prev: MultipleChoiceItem[]) =>
+                setActiveChoices((prev) =>
                   prev.map((choice) =>
                     choice.id === editingChoice.id
                       ? (() => {
-                          if (choice.imageUrl !== imageUrl) {
-                            revokeChoiceImageUrl(choice.imageUrl);
-                          }
+                          if (choice.imageUrl !== imageUrl) revokeChoiceImageUrl(choice.imageUrl);
                           return { ...choice, name: choiceName, imageUrl };
                         })()
                       : choice,
-                  );
-
-                if (isChoiceManageMode) {
-                  setDraftChoices(updateChoices);
-                } else {
-                  setChoices(updateChoices);
-                }
+                  ),
+                );
               } else {
                 const nextChoice = {
                   id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
                   name: choiceName,
                   imageUrl,
                 };
-
-                if (isChoiceManageMode) {
-                  setDraftChoices((prev) => [...prev, nextChoice]);
-                } else {
-                  setChoices((prev) => [...prev, nextChoice]);
-                }
+                setActiveChoices((prev) => [...prev, nextChoice]);
                 setMaxSelectCount((prev) => Math.min(Math.max(prev, 2), Math.max(choices.length + 1, 1)));
               }
               setIsChoiceEditorOpen(false);

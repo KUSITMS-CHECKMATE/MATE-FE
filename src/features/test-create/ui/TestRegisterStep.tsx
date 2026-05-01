@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
-import { QuestionManageSheet, type PendingQuestion } from "./QuestionManageSheet";
-import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId } from "../model/types";
+import { QuestionManageSheet } from "./QuestionManageSheet";
+import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId, type PendingQuestion } from "../model/types";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
 export type RegisterTab = "info" | "questions";
@@ -12,7 +12,7 @@ export type RegisterTab = "info" | "questions";
 interface TestRegisterStepProps {
   activeTab: RegisterTab;
   onTabChange: (tab: RegisterTab) => void;
-  onEnterQuestion: (typeId: QuestionTypeId) => void;
+  onEnterQuestion: (question: { id: string; typeId: QuestionTypeId }) => void;
 }
 
 export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: TestRegisterStepProps) {
@@ -21,10 +21,9 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
   const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<QuestionTypeId[]>([]);
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
-  const [savedQuestions, setSavedQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const hasQuestions = savedQuestions.length > 0;
+  const hasQuestions = form.questions.length > 0;
 
   const selectedCategoryLabels = useMemo(() => {
     return form.categories.map((catId) => {
@@ -43,17 +42,13 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
   };
 
   const handleConfirmQuestionTypes = () => {
-    const created: PendingQuestion[] = selectedQuestionTypes.map((typeId) => ({
-      id: `${typeId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      typeId,
-    }));
-    setSavedQuestions((prev) => [...prev, ...created]);
+    form.addQuestions(selectedQuestionTypes);
     setSelectedQuestionTypes([]);
     setIsQuestionTypeSheetOpen(false);
   };
 
   const openEditSheet = () => {
-    setPendingQuestions([...savedQuestions]);
+    setPendingQuestions([...form.questions]);
     setIsManageSheetOpen(true);
   };
 
@@ -63,7 +58,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
   };
 
   const handleSaveManage = () => {
-    setSavedQuestions(pendingQuestions);
+    form.reorderQuestions(pendingQuestions);
     closeManageSheet();
   };
 
@@ -92,9 +87,10 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
 
             {hasQuestions ? (
               <>
-                {savedQuestions.map((q) => {
+                {form.questions.map((q) => {
                   const type = QUESTION_TYPES.find((t) => t.id === q.typeId);
                   if (!type) return null;
+                  const isFilled = !!q.data?.title?.trim();
                   return (
                     <ListRow
                       key={q.id}
@@ -103,7 +99,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
                       contents={
                         <ListRow.Texts
                           type="2RowTypeA"
-                          top={q.title ?? "미입력"}
+                          top={isFilled ? q.data!.title : "미입력"}
                           topProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
                           bottom={type.label}
                           bottomProps={{ color: adaptive.grey600 }}
@@ -113,9 +109,10 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
                         <Button
                           size="small"
                           variant="weak"
-                          onClick={() => onEnterQuestion(q.typeId)}
+                          color={isFilled ? "dark" : undefined}
+                          onClick={() => onEnterQuestion({ id: q.id, typeId: q.typeId })}
                         >
-                          입력
+                          {isFilled ? "수정" : "입력"}
                         </Button>
                       }
                       verticalPadding="large"
@@ -182,7 +179,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
               }}
             >
               {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((src, i) => (
-                <div key={i} className="snap-start flex-shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
+                <div key={i} className="snap-start shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
                   <img
                     src={src}
                     aria-hidden={true}
@@ -192,7 +189,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
               ))}
             </div>
             <Spacing size={16} />
-            <div className="flex justify-center gap-[6px]">
+            <div className="flex justify-center gap-1.5">
               {Array.from({ length: Math.max(form.images.length, 1) }).map((_, i) => (
                 <Asset.Icon
                   key={i}
