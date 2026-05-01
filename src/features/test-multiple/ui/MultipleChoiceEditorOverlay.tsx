@@ -1,12 +1,15 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import {
   Asset,
+  BottomSheet,
   Button,
   CTAButton,
   FixedBottomCTA,
   ListRow,
   Paragraph,
+  Spacing,
   Text,
   TextField,
   Top,
@@ -30,26 +33,35 @@ export function MultipleChoiceEditorOverlay({
 }: MultipleChoiceEditorOverlayProps) {
   const [choiceName, setChoiceName] = useState(initialChoiceName);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
 
   const isCreateDisabled = choiceName.trim().length === 0;
 
-  const handlePickImage = () => {
-    inputRef.current?.click();
+  const handleCamera = async () => {
+    try {
+      const response = await openCamera({ base64: true, maxWidth: 1280 });
+      setImageUrl(`data:image/jpeg;base64,${response.dataUri}`);
+    } catch (error) {
+      if (error instanceof OpenCameraPermissionError) {
+        await openCamera.openPermissionDialog();
+      } else {
+        console.error("[handleCamera] error:", error);
+      }
+    }
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const nextUrl = URL.createObjectURL(file);
-    setImageUrl(nextUrl);
-  };
-
-  const handleRemoveImage = () => {
-    setImageUrl("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
+  const handleAlbum = async () => {
+    try {
+      const response = await fetchAlbumPhotos({ base64: true, maxWidth: 1280, maxCount: 1 });
+      if (response[0]) {
+        setImageUrl(`data:image/jpeg;base64,${response[0].dataUri}`);
+      }
+    } catch (error) {
+      if (error instanceof FetchAlbumPhotosPermissionError) {
+        await fetchAlbumPhotos.openPermissionDialog();
+      } else {
+        console.error("[handleAlbum] error:", error);
+      }
     }
   };
 
@@ -88,14 +100,12 @@ export function MultipleChoiceEditorOverlay({
             </Text>
             <div
               className="relative h-24 w-[170px] overflow-hidden rounded-2xl"
-              style={{
-                boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
-              }}
+              style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
             >
               <img src={imageUrl} alt="선택지 이미지 미리보기" className="h-full w-full object-cover" />
               <button
                 type="button"
-                onClick={handleRemoveImage}
+                onClick={() => setImageUrl("")}
                 className="absolute right-1.5 top-1.5"
                 aria-label="이미지 삭제"
               >
@@ -126,21 +136,13 @@ export function MultipleChoiceEditorOverlay({
               />
             }
             right={
-              <Button color="dark" variant="weak" onClick={handlePickImage}>
+              <Button color="dark" variant="weak" onClick={() => setIsPhotoSheetOpen(true)}>
                 업로드
               </Button>
             }
             verticalPadding="large"
           />
         )}
-
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageChange}
-        />
       </main>
 
       <FixedBottomCTA.Double
@@ -152,17 +154,54 @@ export function MultipleChoiceEditorOverlay({
         rightButton={
           <CTAButton
             disabled={isCreateDisabled}
-            onClick={() =>
-              onCreate({
-                choiceName: choiceName.trim(),
-                imageUrl,
-              })
-            }
+            onClick={() => onCreate({ choiceName: choiceName.trim(), imageUrl })}
           >
             {submitLabel}
           </CTAButton>
         }
       />
+
+      <BottomSheet open={isPhotoSheetOpen} onClose={() => setIsPhotoSheetOpen(false)}>
+        <ListRow
+          as="button"
+          className="w-full"
+          left={
+            <Asset.Image
+              frameShape={Asset.frameShape.CleanW24}
+              backgroundColor="transparent"
+              src="https://static.toss.im/2d-emojis/png/4x/u1F4F7.png"
+              aria-hidden
+              style={{ aspectRatio: "1/1" }}
+            />
+          }
+          contents={<ListRow.Texts type="1RowTypeA" top="사진 촬영하기" />}
+          verticalPadding="large"
+          onClick={() => {
+            setIsPhotoSheetOpen(false);
+            setTimeout(handleCamera, 300);
+          }}
+        />
+        <ListRow
+          as="button"
+          className="w-full"
+          left={
+            <Asset.Icon
+              frameShape={Asset.frameShape.CleanW24}
+              backgroundColor="transparent"
+              name="icon-picture"
+              aria-hidden
+              ratio="1/1"
+            />
+          }
+          contents={<ListRow.Texts type="1RowTypeA" top="앨범에서 선택하기" />}
+          verticalPadding="large"
+          onClick={() => {
+            setIsPhotoSheetOpen(false);
+            setTimeout(handleAlbum, 300);
+          }}
+        />
+        <Spacing size={24} />
+      </BottomSheet>
     </motion.div>
   );
 }
