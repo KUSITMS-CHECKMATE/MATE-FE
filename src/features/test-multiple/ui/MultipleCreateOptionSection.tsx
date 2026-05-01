@@ -1,8 +1,31 @@
-import { Asset, Border, ListHeader, ListRow, NumericSpinner, Switch, Text, TextButton } from "@toss/tds-mobile";
+import {
+  Asset,
+  Border,
+  ListHeader,
+  ListRow,
+  NumericSpinner,
+  Switch,
+  Text,
+  TextButton,
+} from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "../model/types";
-import { DndContext, DragOverlay, PointerSensor, closestCenter, type DragEndEvent, type DragStartEvent, useSensor, useSensors } from "@dnd-kit/core";
-import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  closestCenter,
+  type DragEndEvent,
+  type DragStartEvent,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 
@@ -27,7 +50,14 @@ function ChoiceRow({
   onRemoveChoiceImage,
   isOverlay = false,
 }: ChoiceRowProps) {
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: choice.id,
     disabled: !isManageMode,
   });
@@ -47,7 +77,11 @@ function ChoiceRow({
             <div
               aria-label={`${choice.name} 순서 이동`}
               className="cursor-grab touch-none"
-              style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}
+              style={{
+                touchAction: "none",
+                WebkitUserSelect: "none",
+                userSelect: "none",
+              }}
               {...attributes}
               {...listeners}
             >
@@ -62,7 +96,11 @@ function ChoiceRow({
             <ListRow.AssetIcon
               size="xsmall"
               shape="original"
-              name={isMultiSelectEnabled ? "icon-square-line-mono" : "icon-circle-empty-mono"}
+              name={
+                isMultiSelectEnabled
+                  ? "icon-square-line-mono"
+                  : "icon-circle-empty-mono"
+              }
               color={adaptive.grey400}
             />
           )
@@ -76,7 +114,11 @@ function ChoiceRow({
         }
         right={
           isManageMode ? (
-            <button type="button" onClick={() => onDeleteChoice(choice.id)} aria-label={`${choice.name} 삭제`}>
+            <button
+              type="button"
+              onClick={() => onDeleteChoice(choice.id)}
+              aria-label={`${choice.name} 삭제`}
+            >
               <Asset.Icon
                 frameShape={Asset.frameShape.CleanW20}
                 backgroundColor="transparent"
@@ -86,7 +128,11 @@ function ChoiceRow({
               />
             </button>
           ) : (
-            <button type="button" onClick={() => onEditChoice(choice.id)} aria-label={`${choice.name} 수정`}>
+            <button
+              type="button"
+              onClick={() => onEditChoice(choice.id)}
+              aria-label={`${choice.name} 수정`}
+            >
               <Asset.Icon
                 frameShape={Asset.frameShape.CleanW20}
                 backgroundColor="transparent"
@@ -103,12 +149,16 @@ function ChoiceRow({
       {choice.imageUrl ? (
         <div className="w-full bg-white px-4 pb-1 pl-12">
           <div
-            className="relative h-[185px] w-full overflow-hidden rounded-2xl p-1.5"
+            className="relative h-[185px] w-full overflow-hidden rounded-2xl"
             style={{
               boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
             }}
           >
-            <img src={choice.imageUrl} alt={`${choice.name} 이미지`} className="h-full w-full rounded-[10px] object-cover" />
+            <img
+              src={choice.imageUrl}
+              alt={`${choice.name} 이미지`}
+              className="h-full w-full rounded-2xl object-cover"
+            />
             <button
               type="button"
               onClick={() => onRemoveChoiceImage(choice.id)}
@@ -167,11 +217,14 @@ export function MultipleCreateOptionSection({
   onDeleteChoice,
   onReorderChoices,
 }: MultipleCreateOptionSectionProps) {
-  const maxSelectableCount = Math.max(choices.length, 2);
+  const maxSelectableCount = choices.length;
   const hasChoices = choices.length > 0;
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  );
   const [activeChoiceId, setActiveChoiceId] = useState<string | null>(null);
-  const activeChoice = choices.find((choice) => choice.id === activeChoiceId) ?? null;
+  const activeChoice =
+    choices.find((choice) => choice.id === activeChoiceId) ?? null;
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveChoiceId(String(event.active.id));
@@ -197,7 +250,11 @@ export function MultipleCreateOptionSection({
           rightAlignment="center"
           titleWidthRatio={0.6}
           title={
-            <ListHeaderTitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey600}>
+            <ListHeaderTitleParagraph
+              typography="t5"
+              fontWeight="medium"
+              color={adaptive.grey600}
+            >
               선택지 목록
             </ListHeaderTitleParagraph>
           }
@@ -221,8 +278,21 @@ export function MultipleCreateOptionSection({
 
       {!isChoiceManageMode ? (
         <ListRow
-          left={<ListRow.AssetIcon shape="original" name="icon-plus-grey-fill" color={adaptive.grey400} variant="fill" />}
-          contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
+          left={
+            <ListRow.AssetIcon
+              shape="original"
+              name="icon-plus-grey-fill"
+              color={adaptive.grey400}
+              variant="fill"
+            />
+          }
+          contents={
+            <ListRow.Texts
+              type="1RowTypeA"
+              top="추가하기"
+              topProps={{ color: adaptive.grey700 }}
+            />
+          }
           verticalPadding="large"
           onClick={onOpenChoiceEditor}
         />
@@ -235,7 +305,10 @@ export function MultipleCreateOptionSection({
         onDragEnd={handleDragEnd}
         onDragCancel={() => setActiveChoiceId(null)}
       >
-        <SortableContext items={choices.map((choice) => choice.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext
+          items={choices.map((choice) => choice.id)}
+          strategy={verticalListSortingStrategy}
+        >
           {choices.map((choice) => (
             <ChoiceRow
               key={choice.id}
@@ -270,7 +343,13 @@ export function MultipleCreateOptionSection({
           <ListRow
             role="switch"
             aria-checked={isOtherInputEnabled}
-            contents={<ListRow.Texts type="1RowTypeB" top="기타 (직접 입력)" topProps={{ color: adaptive.grey800 }} />}
+            contents={
+              <ListRow.Texts
+                type="1RowTypeB"
+                top="기타 (직접 입력)"
+                topProps={{ color: adaptive.grey800 }}
+              />
+            }
             right={
               <Switch
                 checked={isOtherInputEnabled}
@@ -285,7 +364,13 @@ export function MultipleCreateOptionSection({
           <ListRow
             role="switch"
             aria-checked={isMultiSelectEnabled}
-            contents={<ListRow.Texts type="1RowTypeB" top="중복 선택 가능" topProps={{ color: adaptive.grey700 }} />}
+            contents={
+              <ListRow.Texts
+                type="1RowTypeB"
+                top="중복 선택 가능"
+                topProps={{ color: adaptive.grey700 }}
+              />
+            }
             right={
               <Switch
                 checked={isMultiSelectEnabled}
@@ -296,8 +381,12 @@ export function MultipleCreateOptionSection({
 
           {isMultiSelectEnabled ? (
             <>
-              <div className="flex h-[62px] items-center justify-between bg-white px-4">
-                <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
+              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
+                <Text
+                  color={adaptive.grey700}
+                  typography="t5"
+                  fontWeight="semibold"
+                >
                   최소 선택
                 </Text>
                 <NumericSpinner
@@ -309,9 +398,12 @@ export function MultipleCreateOptionSection({
                   onNumberChange={onChangeMinSelectCount}
                 />
               </div>
-
-              <div className="flex h-[62px] items-center justify-between bg-white px-4">
-                <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
+              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
+                <Text
+                  color={adaptive.grey700}
+                  typography="t5"
+                  fontWeight="semibold"
+                >
                   최대 선택
                 </Text>
                 <NumericSpinner
