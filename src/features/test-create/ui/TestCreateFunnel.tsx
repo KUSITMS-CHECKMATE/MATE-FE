@@ -19,6 +19,7 @@ import { useTestCreateForm } from "../model/useTestCreateForm";
 import type { EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/test-multiple/ui";
+import { TreeCreatePage } from "@/features/test-tree/ui";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
@@ -253,7 +254,9 @@ export function TestCreateFunnel() {
         {activeQuestion?.typeId === "scale" && <></>}
         {activeQuestion?.typeId === "ab" && <></>}
         {activeQuestion?.typeId === "card" && <></>}
-        {activeQuestion?.typeId === "tree" && <></>}
+        {activeQuestion?.typeId === "tree" && (
+          <TreeCreatePage key="question-tree" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
+        )}
         {activeQuestion?.typeId === "fivesec" && <></>}
       </AnimatePresence>
 
