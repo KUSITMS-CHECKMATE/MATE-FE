@@ -64,7 +64,8 @@ export function TreeNodeAddSheet({
         labelOption="sustain"
         value={name}
         placeholder="기능 이름"
-        onChange={(e) => setName(e.target.value)}
+        maxLength={17}
+        onChange={(e) => setName(e.target.value.slice(0, 17))}
         onClear={() => setName("")}
       />
     </BottomSheet>

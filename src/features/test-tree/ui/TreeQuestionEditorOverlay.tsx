@@ -45,7 +45,8 @@ export function TreeQuestionEditorOverlay({
           value={title}
           placeholder="질문 제목"
           autoFocus
-          onChange={(e) => setTitle(e.target.value)}
+          maxLength={34}
+          onChange={(e) => setTitle(e.target.value.slice(0, 34))}
           onClear={() => setTitle("")}
         />
         <TextField.Clearable
@@ -55,7 +56,8 @@ export function TreeQuestionEditorOverlay({
           value={description}
           placeholder="설명"
           prefix="(선택)"
-          onChange={(e) => setDescription(e.target.value)}
+          maxLength={50}
+          onChange={(e) => setDescription(e.target.value.slice(0, 50))}
           onClear={() => setDescription("")}
         />
       </main>
