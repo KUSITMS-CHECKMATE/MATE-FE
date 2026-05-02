@@ -272,7 +272,7 @@ export function FivesecMultipleChoiceSection({
 
           {isMultiSelectEnabled ? (
             <>
-              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
+              <div className="flex h-15.5 items-center justify-between bg-white px-4">
                 <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
                   최소 선택
                 </Text>
@@ -286,7 +286,7 @@ export function FivesecMultipleChoiceSection({
                 />
               </div>
               <Border />
-              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
+              <div className="flex h-15.5 items-center justify-between bg-white px-4">
                 <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
                   최대 선택
                 </Text>
@@ -302,11 +302,9 @@ export function FivesecMultipleChoiceSection({
             </>
           ) : null}
 
-          <div className="shrink-0">
-            <div className="h-[27px]" />
-            <Border className="w-full" />
-            <div className="h-[12px]" />
-          </div>
+          <div className="h-6.75" />
+          <Border />
+          <div className="h-3" />
 
           <ListRow
             role="switch"

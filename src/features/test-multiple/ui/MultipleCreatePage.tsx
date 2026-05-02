@@ -13,28 +13,51 @@ interface MultipleCreatePageProps {
   onClose: () => void;
 }
 
-export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePageProps) {
+export function MultipleCreatePage({
+  questionId,
+  onClose,
+}: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
 
-  const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(existing?.typeId === "multiple" ? existing.isOtherInputEnabled : false);
-  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(existing?.typeId === "multiple" ? existing.isMultiSelectEnabled : false);
+  const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
+    existing?.typeId === "multiple" ? existing.isOtherInputEnabled : false,
+  );
+  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
+    existing?.typeId === "multiple" ? existing.isMultiSelectEnabled : false,
+  );
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [isChoiceEditorOpen, setIsChoiceEditorOpen] = useState(false);
-  const [questionTitle, setQuestionTitle] = useState(existing?.typeId === "multiple" ? existing.title : "");
-  const [questionDescription, setQuestionDescription] = useState(existing?.typeId === "multiple" ? existing.description : "");
-  const [choices, setChoices] = useState<MultipleChoiceItem[]>(existing?.typeId === "multiple" ? existing.choices : []);
+  const [questionTitle, setQuestionTitle] = useState(
+    existing?.typeId === "multiple" ? existing.title : "",
+  );
+  const [questionDescription, setQuestionDescription] = useState(
+    existing?.typeId === "multiple" ? existing.description : "",
+  );
+  const [choices, setChoices] = useState<MultipleChoiceItem[]>(
+    existing?.typeId === "multiple" ? existing.choices : [],
+  );
   const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
   const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
-  const [minSelectCount, setMinSelectCount] = useState(existing?.typeId === "multiple" ? existing.minSelectCount : 1);
-  const [maxSelectCount, setMaxSelectCount] = useState(existing?.typeId === "multiple" ? existing.maxSelectCount : 2);
+  const [minSelectCount, setMinSelectCount] = useState(
+    existing?.typeId === "multiple" ? existing.minSelectCount : 1,
+  );
+  const [maxSelectCount, setMaxSelectCount] = useState(
+    existing?.typeId === "multiple" ? existing.maxSelectCount : 2,
+  );
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
 
   const visibleChoices = isChoiceManageMode ? draftChoices : choices;
-  const editingChoice = visibleChoices.find((choice) => choice.id === editingChoiceId) ?? null;
-  const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length === 0;
+  const editingChoice =
+    visibleChoices.find((choice) => choice.id === editingChoiceId) ?? null;
+  const isCompleteDisabled =
+    questionTitle.trim().length === 0 || choices.length < 2;
 
-  const setActiveChoices = (updater: MultipleChoiceItem[] | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[])) => {
+  const setActiveChoices = (
+    updater:
+      | MultipleChoiceItem[]
+      | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[]),
+  ) => {
     if (isChoiceManageMode) setDraftChoices(updater);
     else setChoices(updater);
   };
@@ -62,7 +85,7 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white pb-28"
+      className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -85,7 +108,9 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
           setIsMultiSelectEnabled(checked);
           if (!checked) {
             setMinSelectCount(1);
-            setMaxSelectCount(Math.max(Math.min(2, Math.max(choices.length, 1)), 1));
+            setMaxSelectCount(
+              Math.max(Math.min(2, Math.max(choices.length, 1)), 1),
+            );
           }
         }}
         onChangeMinSelectCount={(value) => {
@@ -104,7 +129,9 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
         onEditChoice={handleOpenEditChoiceEditor}
         onToggleChoiceManageMode={handleToggleChoiceManageMode}
         onDeleteChoice={(choiceId) => {
-          setActiveChoices(visibleChoices.filter((choice) => choice.id !== choiceId));
+          setActiveChoices(
+            visibleChoices.filter((choice) => choice.id !== choiceId),
+          );
         }}
         onReorderChoices={(nextChoices) => setActiveChoices(nextChoices)}
         onRemoveChoiceImage={(choiceId) =>
@@ -168,7 +195,9 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
                   imageUrl,
                 };
                 setActiveChoices((prev) => [...prev, nextChoice]);
-                setMaxSelectCount((prev) => Math.min(Math.max(prev, 2), Math.max(choices.length + 1, 1)));
+                setMaxSelectCount((prev) =>
+                  Math.min(Math.max(prev, 2), Math.max(choices.length + 1, 1)),
+                );
               }
               setIsChoiceEditorOpen(false);
               setEditingChoiceId(null);

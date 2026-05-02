@@ -192,7 +192,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white pb-28"
+      className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -227,7 +227,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
         }
       />
 
-      <Border className="w-full shrink-0" variant="height16" />
+      <Border variant="height16" />
 
       {imageUrl ? (
         <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
@@ -257,7 +257,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
         </div>
       ) : (
         <ListRow
-          className="shrink-0"
+          className=""
           contents={
             <ListRow.Texts
               type="1RowTypeA"
@@ -322,7 +322,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
           />
 
           <Spacing size={12} />
-          <Border className="w-full shrink-0" />
+          <Border />
           <Spacing size={12} />
 
           <ListRow
