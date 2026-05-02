@@ -1,5 +1,8 @@
-import { Asset, Border, ListHeader, ListRow, Switch, TextField } from "@toss/tds-mobile";
+import { Border, IconButton, ListHeader, ListRow, Switch, Text, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+
+const SCALE_POINT_CONNECTOR_ICON_SRC =
+  "https://static.toss.im/icons/png/4x/icon-o-mono.png";
 
 interface ScaleCreateOptionSectionProps {
   scaleCount: 5 | 7;
@@ -28,29 +31,26 @@ export function ScaleCreateOptionSection({
         rightAlignment="center"
         titleWidthRatio={0.6}
         title={
-          <ListHeader.TitleParagraph color={adaptive.grey600}>
+          <ListHeader.TitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey600}>
             척도 설정
           </ListHeader.TitleParagraph>
         }
         className="w-full"
       />
 
-      <div className="flex w-full items-end justify-between px-3 py-3">
+      <div className="flex w-full items-end justify-center px-3 py-3">
         {Array.from({ length: scaleCount }, (_, i) => i + 1).map((point) => (
           <div key={point} className="flex flex-col items-center gap-1">
-            <Asset.Icon
-              frameShape={Asset.frameShape.CleanW24}
-              backgroundColor="transparent"
-              name="icon-o-mono"
-              color={adaptive.grey600}
-              aria-hidden
-            />
-            <span
-              className="text-[13px] font-bold"
-              style={{ color: adaptive.grey500 }}
-            >
+            <Text color={adaptive.grey500} typography="t7" fontWeight="bold">
               {point}
-            </span>
+            </Text>
+            <IconButton
+              src={SCALE_POINT_CONNECTOR_ICON_SRC}
+              iconSize={24}
+              variant="clear"
+              color={adaptive.grey600}
+              aria-label={`${point}점 척도 표시`}
+            />
           </div>
         ))}
       </div>
