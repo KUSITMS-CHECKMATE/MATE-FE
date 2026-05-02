@@ -246,7 +246,6 @@ export function MultipleCreateOptionSection({
     <>
       <div className="pr-5">
         <ListHeader
-          className="shrink-0 w-full"
           descriptionPosition="bottom"
           rightAlignment="center"
           titleWidthRatio={0.6}
@@ -273,10 +272,11 @@ export function MultipleCreateOptionSection({
               </TextButton>
             </div>
           }
+          className="w-full"
         />
       </div>
 
-      {!isChoiceManageMode && choices.length < 10 ? (
+      {!isChoiceManageMode ? (
         <ListRow
           left={
             <ListRow.AssetIcon
@@ -323,7 +323,7 @@ export function MultipleCreateOptionSection({
         </SortableContext>
         <DragOverlay>
           {activeChoice && isChoiceManageMode ? (
-            <div className="w-[calc(100vw-32px)] max-w-89.5 rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.16)]">
+            <div className="w-[calc(100vw-32px)] max-w-[358px] rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.16)]">
               <ChoiceRow
                 choice={activeChoice}
                 isMultiSelectEnabled={isMultiSelectEnabled}
@@ -341,7 +341,6 @@ export function MultipleCreateOptionSection({
       {!isChoiceManageMode ? (
         <>
           <ListRow
-            className="shrink-0"
             role="switch"
             aria-checked={isOtherInputEnabled}
             contents={
@@ -363,7 +362,6 @@ export function MultipleCreateOptionSection({
           <Border />
 
           <ListRow
-            className="shrink-0"
             role="switch"
             aria-checked={isMultiSelectEnabled}
             contents={
@@ -383,7 +381,7 @@ export function MultipleCreateOptionSection({
 
           {isMultiSelectEnabled ? (
             <>
-              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-7">
+              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
                 <Text
                   color={adaptive.grey700}
                   typography="t5"
@@ -400,7 +398,7 @@ export function MultipleCreateOptionSection({
                   onNumberChange={onChangeMinSelectCount}
                 />
               </div>
-              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-7">
+              <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-4">
                 <Text
                   color={adaptive.grey700}
                   typography="t5"

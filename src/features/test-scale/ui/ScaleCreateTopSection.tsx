@@ -1,17 +1,17 @@
 import { Border, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-interface TreeCreateTopSectionProps {
+interface ScaleCreateTopSectionProps {
   questionTitle: string;
   questionDescription: string;
   onOpenQuestionEditor: () => void;
 }
 
-export function TreeCreateTopSection({
+export function ScaleCreateTopSection({
   questionTitle,
   questionDescription,
   onOpenQuestionEditor,
-}: TreeCreateTopSectionProps) {
+}: ScaleCreateTopSectionProps) {
   const hasQuestionTitle = questionTitle.trim().length > 0;
   const displayTitle = hasQuestionTitle ? questionTitle : "제목이 없어요";
   const displayDescription =
@@ -27,7 +27,7 @@ export function TreeCreateTopSection({
         }
         subtitleTop={
           <Top.SubtitleParagraph size={15} color={adaptive.grey500}>
-            트리 테스트
+            척도
           </Top.SubtitleParagraph>
         }
         subtitleBottom={
@@ -47,7 +47,6 @@ export function TreeCreateTopSection({
           </Top.LowerButton>
         }
       />
-
       <Border variant="height16" />
     </>
   );
