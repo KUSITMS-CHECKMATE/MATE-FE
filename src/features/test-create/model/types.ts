@@ -83,10 +83,12 @@ export type QuestionTypeId = (typeof QUESTION_TYPES)[number]["id"];
 
 import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
 import type { ScaleQuestionData } from "@/features/test-scale/model/types";
+import type { AbQuestionData } from "@/features/test-ab/model/types";
 
 export type QuestionData =
   | ({ typeId: "multiple" } & MultipleQuestionData)
-  | ({ typeId: "scale" } & ScaleQuestionData);
+  | ({ typeId: "scale" } & ScaleQuestionData)
+  | ({ typeId: "ab" } & AbQuestionData);
 
 export interface PendingQuestion {
   id: string;
