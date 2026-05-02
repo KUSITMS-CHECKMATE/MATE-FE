@@ -1,16 +1,16 @@
 import { CTAButton, FixedBottomCTA } from "@toss/tds-mobile";
 
-interface TreeCreateBottomCTAProps {
+interface SubjectiveCreateBottomCTAProps {
   isCompleteDisabled: boolean;
   onCancel: () => void;
   onComplete: () => void;
 }
 
-export function TreeCreateBottomCTA({
+export function SubjectiveCreateBottomCTA({
   isCompleteDisabled,
   onCancel,
   onComplete,
-}: TreeCreateBottomCTAProps) {
+}: SubjectiveCreateBottomCTAProps) {
   return (
     <FixedBottomCTA.Double
       leftButton={

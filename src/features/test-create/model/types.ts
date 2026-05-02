@@ -82,12 +82,11 @@ export const QUESTION_TYPES = [
 export type QuestionTypeId = (typeof QUESTION_TYPES)[number]["id"];
 
 import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
-import type { TreeQuestionData } from "@/features/test-tree/model/types";
+import type { SubjectiveQuestionData } from "@/features/test-subjective/model/types";
 
 export type QuestionData =
   | ({ typeId: "multiple" } & MultipleQuestionData)
-  | ({ typeId: "tree" } & TreeQuestionData);
-// 추후: | { typeId: "subjective" } & SubjectiveQuestionData
+  | ({ typeId: "subjective" } & SubjectiveQuestionData);
 
 export interface PendingQuestion {
   id: string;
