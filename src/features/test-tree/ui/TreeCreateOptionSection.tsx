@@ -165,10 +165,11 @@ export function TreeCreateOptionSection({
                 aria-selected={isSelected}
                 aria-label={node.name}
                 onClick={() => onSelectNode(node.id)}
-                className="rounded-full px-3.5 py-1.5 text-[14px] font-semibold transition-colors"
+                className="px-3.5 py-1.5 text-[14px] font-semibold transition-colors"
                 style={{
                   backgroundColor: isSelected ? adaptive.grey900 : adaptive.greyOpacity100,
                   color: isSelected ? adaptive.grey50 : adaptive.grey700,
+                  borderRadius: "9999px",
                 }}
               >
                 {node.name}
