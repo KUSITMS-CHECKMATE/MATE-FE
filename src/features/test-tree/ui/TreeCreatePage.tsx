@@ -161,9 +161,10 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
       />
 
       <TreeNodeAddSheet
+        key={nodeSheetMode ? `${nodeSheetMode.kind}-${'nodeId' in nodeSheetMode ? nodeSheetMode.nodeId : 'root'}` : 'closed'}
         open={nodeSheetMode !== null}
-        title={nodeSheetMode?.kind === "rename" ? "기능 이름 수정" : "기능 추가하기"}
-        initialName={nodeSheetMode?.kind === "rename" ? nodeSheetMode.initialName : ""}
+        title={sheetTitle}
+        initialName={sheetInitialName}
         onClose={() => setNodeSheetMode(null)}
         onConfirm={handleNodeSheetConfirm}
       />

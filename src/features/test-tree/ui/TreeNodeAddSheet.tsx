@@ -21,12 +21,10 @@ export function TreeNodeAddSheet({
 
   useEffect(() => {
     if (!open) return;
-    setName(initialName);
     const id = window.setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
     return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const isConfirmDisabled = name.trim().length === 0;
