@@ -47,7 +47,7 @@ export function ScaleCreateTopSection({
           </Top.LowerButton>
         }
       />
-      <Border variant="height16" />
+      <Border variant="height16" className="shrink-0" />
     </>
   );
 }
