@@ -20,6 +20,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState(existingScale?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingScale?.description ?? "");
+  const [questionImageUrl, setQuestionImageUrl] = useState(existingScale?.imageUrl ?? "");
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
   const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "");
   const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "");
@@ -58,6 +59,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
             scaleCount,
             minLabel,
             maxLabel,
+            ...(questionImageUrl.trim() ? { imageUrl: questionImageUrl.trim() } : {}),
           });
           onClose();
         }}
@@ -68,10 +70,12 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
           <ScaleQuestionEditorOverlay
             initialTitle={questionTitle}
             initialDescription={questionDescription}
+            initialImageUrl={questionImageUrl}
             onClose={() => setIsQuestionEditorOpen(false)}
-            onSave={({ title, description }) => {
+            onSave={({ title, description, imageUrl }) => {
               setQuestionTitle(title);
               setQuestionDescription(description);
+              setQuestionImageUrl(imageUrl);
               setIsQuestionEditorOpen(false);
             }}
           />
