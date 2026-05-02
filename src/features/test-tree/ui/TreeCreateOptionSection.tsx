@@ -72,21 +72,15 @@ function TreeNodeRow({ node, depth, isManageMode, onEditNode, onAddChildNode, on
                 aria-label={`${node.name} 이름 수정`}
                 onClick={() => onEditNode(node.id)}
               />
-              <button
-                type="button"
+              <IconButton
+                src="https://static.toss.im/icons/png/4x/icon-plus-thin-mono.png"
+                variant="clear"
+                iconSize={16}
+                color={isAddDisabled ? adaptive.grey300 : adaptive.grey600}
+                disabled={isAddDisabled}
                 aria-label={`${node.name} 하위 항목 추가`}
                 onClick={() => onAddChildNode(node.id)}
-                disabled={isAddDisabled}
-                className="flex items-center justify-center disabled:cursor-not-allowed"
-              >
-                <Asset.Icon
-                  frameShape={Asset.frameShape.CleanW20}
-                  backgroundColor="transparent"
-                  name="icon-plus-thin-mono"
-                  color={isAddDisabled ? adaptive.grey300 : adaptive.grey600}
-                  aria-hidden
-                />
-              </button>
+              />
             </>
           )}
         </div>
@@ -171,11 +165,10 @@ export function TreeCreateOptionSection({
                 aria-selected={isSelected}
                 aria-label={node.name}
                 onClick={() => onSelectNode(node.id)}
-                className="px-3.5 py-1.5 text-[14px] font-semibold transition-colors"
+                className="rounded-full px-3.5 py-1.5 text-[14px] font-semibold transition-colors"
                 style={{
                   backgroundColor: isSelected ? adaptive.grey900 : adaptive.greyOpacity100,
                   color: isSelected ? adaptive.grey50 : adaptive.grey700,
-                  borderRadius: "9999px",
                 }}
               >
                 {node.name}
