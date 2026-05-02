@@ -340,7 +340,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
                 >
                   {item.originalIndex === 0 && (
                     <div style={{ position: "absolute", bottom: 0, left: 0 }}>
-                      <Badge size="small" variant="weak" color="elephant">
+                      <Badge size="small" variant="fill" color="elephant">
                         대표
                       </Badge>
                     </div>
