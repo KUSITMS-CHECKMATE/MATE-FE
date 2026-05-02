@@ -83,10 +83,12 @@ export type QuestionTypeId = (typeof QUESTION_TYPES)[number]["id"];
 
 import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
 import type { SubjectiveQuestionData } from "@/features/test-subjective/model/types";
+import type { FivesecQuestionData } from "@/features/test-fivesec/model/types";
 
 export type QuestionData =
   | ({ typeId: "multiple" } & MultipleQuestionData)
-  | ({ typeId: "subjective" } & SubjectiveQuestionData);
+  | ({ typeId: "subjective" } & SubjectiveQuestionData)
+  | ({ typeId: "fivesec" } & FivesecQuestionData);
 
 export interface PendingQuestion {
   id: string;

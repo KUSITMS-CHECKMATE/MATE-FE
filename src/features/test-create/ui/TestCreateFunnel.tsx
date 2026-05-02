@@ -20,6 +20,7 @@ import type { EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/test-multiple/ui";
 import { SubjectiveCreatePage } from "@/features/test-subjective/ui";
+import { FivesecCreatePage } from "@/features/test-fivesec/ui";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
@@ -257,7 +258,9 @@ export function TestCreateFunnel() {
         {activeQuestion?.typeId === "ab" && <></>}
         {activeQuestion?.typeId === "card" && <></>}
         {activeQuestion?.typeId === "tree" && <></>}
-        {activeQuestion?.typeId === "fivesec" && <></>}
+        {activeQuestion?.typeId === "fivesec" && (
+          <FivesecCreatePage key="question-fivesec" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
+        )}
       </AnimatePresence>
 
       <ConfirmDialog
