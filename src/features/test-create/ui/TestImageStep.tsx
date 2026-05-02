@@ -1,19 +1,113 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
+import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragOverlay, type DragEndEvent, type Modifier } from "@dnd-kit/core";
+import { SortableContext, useSortable, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
 const MAX_IMAGES = 10;
-const EDGE_ZONE = 60;
-const MAX_SCROLL_SPEED = 8;
-
 const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, #ffffff))";
+
+const restrictToHorizontalAxis: Modifier = ({ transform }) => ({ ...transform, y: 0 });
 
 interface TestImageStepProps {
   onHasImagesChange?: (hasImages: boolean) => void;
   title?: string;
+}
+
+interface SortableImageItemProps {
+  uri: string;
+  index: number;
+  onPreview: (index: number) => void;
+  onRemove: (index: number) => void;
+}
+
+function SortableImageItem({ uri, index, onPreview, onRemove }: SortableImageItemProps) {
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id: uri });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0 : 1,
+        touchAction: "manipulation",
+        position: "relative",
+        width: 88,
+        height: 88,
+        flexShrink: 0,
+        borderRadius: 16,
+      }}
+      {...attributes}
+      {...listeners}
+    >
+      <button
+        type="button"
+        className="block h-full w-full cursor-pointer border-0 bg-transparent p-0"
+        onClick={() => onPreview(index)}
+        aria-label={`이미지 ${index + 1} 미리보기`}
+      >
+        <div style={{ width: "100%", height: "100%", borderRadius: 16, overflow: "hidden" }}>
+          <img
+            src={uri}
+            alt={`선택된 이미지 ${index + 1}`}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      </button>
+      <div
+        style={{
+          position: "absolute",
+          top: 6,
+          left: 6,
+          right: 6,
+          bottom: 6,
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "flex-start",
+          pointerEvents: "none",
+        }}
+      >
+        {index === 0 && (
+          <div style={{ position: "absolute", bottom: 0, left: 0 }}>
+            <Badge size="small" variant="fill" color="elephant">
+              대표
+            </Badge>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(index);
+          }}
+          style={{
+            display: "flex",
+            background: "none",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            pointerEvents: "auto",
+          }}
+          aria-label={`이미지 ${index + 1} 삭제`}
+        >
+          <Asset.Icon
+            frameShape={Asset.frameShape.CircleXSmall}
+            backgroundColor={adaptive.greyOpacity600}
+            name="icon-sweetshop-x-white"
+            scale={0.66}
+            aria-hidden={true}
+          />
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function TestImageStep({ onHasImagesChange, title = "테스트를 나타낼 수 있는 이미지를 첨부해주세요" }: TestImageStepProps) {
@@ -21,36 +115,19 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   const imageUris = form.images;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [activeUri, setActiveUri] = useState<string | null>(null);
 
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const touchStartPos = useRef({ x: 0, y: 0 });
-  const dragState = useRef<{ from: number; over: number } | null>(null);
-  const imageListRef = useRef<HTMLDivElement>(null);
-  const scrollAnimRef = useRef<number | null>(null);
-  const currentTouchX = useRef(0);
-  const rafRef = useRef<number | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { delay: 250, tolerance: 5 } }));
 
   useEffect(() => {
-    return () => {
-      if (longPressTimer.current) clearTimeout(longPressTimer.current);
-      if (scrollAnimRef.current) cancelAnimationFrame(scrollAnimRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    const preventScroll = (e: TouchEvent) => {
-      if (dragState.current) e.preventDefault();
-    };
-    document.addEventListener("touchmove", preventScroll, { passive: false });
-    return () => document.removeEventListener("touchmove", preventScroll);
-  }, []);
+    if (!activeUri) return;
+    const preventDefault = (e: TouchEvent) => e.preventDefault();
+    document.addEventListener("touchmove", preventDefault, { passive: false });
+    return () => document.removeEventListener("touchmove", preventDefault);
+  }, [activeUri]);
 
   useEffect(() => {
     onHasImagesChange?.(imageUris.length > 0);
-    // For E2E testing
     if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).__INJECT_MOCK_IMAGE__ = () => {
@@ -72,6 +149,16 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
       if (prev > index) return prev - 1;
       return prev;
     });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveUri(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = imageUris.indexOf(active.id as string);
+    const newIndex = imageUris.indexOf(over.id as string);
+    if (oldIndex === -1 || newIndex === -1) return;
+    form.setImages(arrayMove(imageUris, oldIndex, newIndex));
   };
 
   const previewUri = previewIndex !== null ? imageUris[previewIndex] : null;
@@ -114,120 +201,6 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
   };
 
-  const stopAutoScroll = () => {
-    if (scrollAnimRef.current !== null) {
-      cancelAnimationFrame(scrollAnimRef.current);
-      scrollAnimRef.current = null;
-    }
-  };
-
-  const updateDragOver = (touchX: number) => {
-    if (!imageListRef.current || !dragState.current) return;
-    const items = imageListRef.current.querySelectorAll("[data-drag-item]");
-    for (let i = 0; i < items.length; i++) {
-      const rect = items[i].getBoundingClientRect();
-      if (touchX >= rect.left && touchX <= rect.right) {
-        if (dragState.current.over !== i) {
-          dragState.current.over = i;
-          setDragOverIndex(i);
-        }
-        break;
-      }
-    }
-  };
-
-  const startAutoScroll = (touchX: number) => {
-    if (!imageListRef.current || !dragState.current) return;
-    const containerRect = imageListRef.current.getBoundingClientRect();
-
-    let speed = 0;
-    if (touchX < containerRect.left + EDGE_ZONE) {
-      const ratio = Math.max(0, touchX - containerRect.left) / EDGE_ZONE;
-      speed = -MAX_SCROLL_SPEED * (1 - ratio);
-    } else if (touchX > containerRect.right - EDGE_ZONE) {
-      const ratio = Math.max(0, containerRect.right - touchX) / EDGE_ZONE;
-      speed = MAX_SCROLL_SPEED * (1 - ratio);
-    }
-
-    stopAutoScroll();
-
-    if (speed !== 0) {
-      const scroll = () => {
-        if (!dragState.current || !imageListRef.current) return;
-        imageListRef.current.scrollLeft += speed;
-        updateDragOver(currentTouchX.current);
-        scrollAnimRef.current = requestAnimationFrame(scroll);
-      };
-      scrollAnimRef.current = requestAnimationFrame(scroll);
-    }
-  };
-
-  const handleTouchStart = (index: number) => (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    touchStartPos.current = { x: touch.clientX, y: touch.clientY };
-    longPressTimer.current = setTimeout(() => {
-      dragState.current = { from: index, over: index };
-      setDraggingIndex(index);
-      setDragOverIndex(index);
-    }, 500);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    if (!dragState.current) {
-      const dx = Math.abs(touch.clientX - touchStartPos.current.x);
-      const dy = Math.abs(touch.clientY - touchStartPos.current.y);
-      if (dx > 8 || dy > 8) {
-        clearTimeout(longPressTimer.current!);
-        longPressTimer.current = null;
-      }
-      return;
-    }
-    currentTouchX.current = touch.clientX;
-    startAutoScroll(touch.clientX);
-    
-    if (!rafRef.current) {
-      rafRef.current = requestAnimationFrame(() => {
-        updateDragOver(currentTouchX.current);
-        rafRef.current = null;
-      });
-    }
-  };
-
-  const handleTouchEnd = () => {
-    clearTimeout(longPressTimer.current!);
-    longPressTimer.current = null;
-    stopAutoScroll();
-    if (dragState.current) {
-      const { from, over } = dragState.current;
-      if (from !== over) {
-        const next = [...form.images];
-        const [item] = next.splice(from, 1);
-        next.splice(over, 0, item);
-        form.setImages(next);
-      }
-      dragState.current = null;
-      setDraggingIndex(null);
-      setDragOverIndex(null);
-    }
-  };
-
-  const handleTouchCancel = () => {
-    handleTouchEnd();
-  };
-
-  // 드래그 중: draggingIndex 아이템을 dragOverIndex 위치로 시각적으로 재배열
-  // ghost 아이템이 반투명하게 미리보기 위치를 표시, 나머지 아이템은 자동으로 밀림
-  const visualItems =
-    draggingIndex !== null && dragOverIndex !== null
-      ? (() => {
-          const items = imageUris.map((uri, i) => ({ uri, originalIndex: i, isGhost: false }));
-          const [dragged] = items.splice(draggingIndex, 1);
-          items.splice(dragOverIndex, 0, { ...dragged, isGhost: true });
-          return items;
-        })()
-      : imageUris.map((uri, i) => ({ uri, originalIndex: i, isGhost: false }));
-
   return (
     <>
       <div>
@@ -244,136 +217,81 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
           }
         />
 
-        <div ref={imageListRef} className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
-          {imageUris.length < MAX_IMAGES && (
-            <button
-              type="button"
-              style={{
-                width: 88,
-                height: 88,
-                backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
-                borderRadius: 16,
-                padding: 16,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 4,
-                flexShrink: 0,
-              }}
-              onClick={() => setIsSheetOpen(true)}
-            >
-              <Asset.Icon
-                frameShape={Asset.frameShape.CleanW24}
-                backgroundColor="transparent"
-                name="icon-camera-mono"
-                color={adaptive.grey600}
-                aria-hidden={true}
-                ratio="1/1"
-              />
-              <div style={{ display: "flex" }}>
-                <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
-                  {imageUris.length}
-                </Text>
-                <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
-                  /{MAX_IMAGES}
-                </Text>
-              </div>
-            </button>
-          )}
-
-          {visualItems.map((item) => (
-            <div
-              key={item.originalIndex}
-              data-drag-item
-              onTouchStart={handleTouchStart(item.originalIndex)}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onTouchCancel={handleTouchCancel}
-              onContextMenu={(e) => e.preventDefault()}
-              style={{
-                position: "relative",
-                width: 88,
-                height: 88,
-                flexShrink: 0,
-                borderRadius: 16,
-                opacity: item.isGhost ? 0.4 : 1,
-                transition: "opacity 0.15s",
-              }}
-            >
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToHorizontalAxis]}
+          onDragStart={({ active }) => setActiveUri(active.id as string)}
+          onDragEnd={handleDragEnd}
+          onDragCancel={() => setActiveUri(null)}
+        >
+          <div
+            className="px-5 flex flex-nowrap gap-2 scrollbar-hide"
+            style={{ overflowX: activeUri ? "hidden" : "auto" }}
+          >
+            {imageUris.length < MAX_IMAGES && (
               <button
                 type="button"
-                className="block h-full w-full cursor-pointer border-0 bg-transparent p-0"
-                onClick={() => setPreviewIndex(item.originalIndex)}
-                aria-label={`이미지 ${item.originalIndex + 1} 미리보기`}
+                style={{
+                  width: 88,
+                  height: 88,
+                  backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
+                  borderRadius: 16,
+                  padding: 16,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 4,
+                  flexShrink: 0,
+                }}
+                onClick={() => setIsSheetOpen(true)}
               >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: 16,
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src={item.uri}
-                    alt={`선택된 이미지 ${item.originalIndex + 1}`}
-                    draggable={false}
-                    onDragStart={(e) => e.preventDefault()}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
+                <Asset.Icon
+                  frameShape={Asset.frameShape.CleanW24}
+                  backgroundColor="transparent"
+                  name="icon-camera-mono"
+                  color={adaptive.grey600}
+                  aria-hidden={true}
+                  ratio="1/1"
+                />
+                <div style={{ display: "flex" }}>
+                  <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
+                    {imageUris.length}
+                  </Text>
+                  <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
+                    /{MAX_IMAGES}
+                  </Text>
                 </div>
               </button>
-              {!item.isGhost && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 6,
-                    left: 6,
-                    right: 6,
-                    bottom: 6,
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-start",
-                    pointerEvents: "none",
-                  }}
-                >
-                  {item.originalIndex === 0 && (
-                    <div style={{ position: "absolute", bottom: 0, left: 0 }}>
-                      <Badge size="small" variant="fill" color="elephant">
-                        대표
-                      </Badge>
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeImage(item.originalIndex);
-                    }}
-                    style={{
-                      display: "flex",
-                      background: "none",
-                      border: "none",
-                      padding: 0,
-                      cursor: "pointer",
-                      pointerEvents: "auto",
-                    }}
-                    aria-label={`이미지 ${item.originalIndex + 1} 삭제`}
-                  >
-                    <Asset.Icon
-                      frameShape={Asset.frameShape.CircleXSmall}
-                      backgroundColor={adaptive.greyOpacity600}
-                      name="icon-sweetshop-x-white"
-                      scale={0.66}
-                      aria-hidden={true}
-                    />
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+            )}
+
+            <SortableContext items={imageUris} strategy={horizontalListSortingStrategy}>
+              {imageUris.map((uri, index) => (
+                <SortableImageItem
+                  key={uri}
+                  uri={uri}
+                  index={index}
+                  onPreview={setPreviewIndex}
+                  onRemove={removeImage}
+                />
+              ))}
+            </SortableContext>
+          </div>
+
+          <DragOverlay>
+            {activeUri ? (
+              <div style={{ width: 88, height: 88, borderRadius: 16, overflow: "hidden", opacity: 0.9 }}>
+                <img
+                  src={activeUri}
+                  alt=""
+                  draggable={false}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </div>
 
       <PhotoSelectSheet
@@ -408,12 +326,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
                 boxSizing: "border-box",
               }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  backgroundColor: PREVIEW_SURFACE,
-                }}
-              >
+              <div style={{ width: "100%", backgroundColor: PREVIEW_SURFACE }}>
                 <div
                   style={{
                     position: "relative",
