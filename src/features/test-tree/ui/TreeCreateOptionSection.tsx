@@ -133,8 +133,8 @@ export function TreeCreateOptionSection({
                 typography="t5"
                 fontWeight="medium"
                 size="small"
-                disabled={!hasNodes}
-                onClick={hasNodes ? onToggleManageMode : undefined}
+                disabled={!isManageMode && !hasNodes}
+                onClick={isManageMode || hasNodes ? onToggleManageMode : undefined}
               >
                 {isManageMode ? "저장하기" : "수정하기"}
               </TextButton>
