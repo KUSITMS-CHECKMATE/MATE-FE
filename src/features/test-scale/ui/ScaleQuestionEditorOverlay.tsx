@@ -104,19 +104,30 @@ export function ScaleQuestionEditorOverlay({
         />
 
         {imageUrl.trim().length > 0 ? (
-          <div className="flex items-center justify-between gap-4 bg-white px-4 py-4">
+          <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
             <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
               이미지
             </Text>
-            <button type="button" onClick={() => setImageUrl("")} aria-label="이미지 삭제" className="flex shrink-0 border-0 bg-transparent p-0">
-              <Asset.Icon
-                frameShape={Asset.frameShape.CircleXSmall}
-                backgroundColor={adaptive.greyOpacity600}
-                name="icon-sweetshop-x-white"
-                scale={0.66}
-                aria-hidden={true}
-              />
-            </button>
+            <div
+              className="relative h-24 w-[170px] overflow-hidden rounded-2xl"
+              style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
+            >
+              <img src={imageUrl} alt="질문 이미지 미리보기" className="h-full w-full object-cover" />
+              <button
+                type="button"
+                onClick={() => setImageUrl("")}
+                className="absolute right-1.5 top-1.5"
+                aria-label="이미지 삭제"
+              >
+                <Asset.Icon
+                  frameShape={Asset.frameShape.CircleXSmall}
+                  backgroundColor={adaptive.greyOpacity600}
+                  name="icon-sweetshop-x-white"
+                  scale={0.66}
+                  aria-hidden
+                />
+              </button>
+            </div>
           </div>
         ) : (
           <ListRow
