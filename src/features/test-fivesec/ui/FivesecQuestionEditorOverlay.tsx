@@ -42,6 +42,7 @@ export function FivesecQuestionEditorOverlay({
           labelOption="sustain"
           value={title}
           placeholder="질문 제목"
+          maxLength={34}
           autoFocus
           onChange={(e) => setTitle(e.target.value)}
           onClear={() => setTitle("")}
@@ -52,6 +53,7 @@ export function FivesecQuestionEditorOverlay({
           labelOption="sustain"
           value={description}
           placeholder="설명"
+          maxLength={50}
           prefix="(선택)"
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
