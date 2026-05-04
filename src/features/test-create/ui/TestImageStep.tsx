@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
@@ -13,6 +13,29 @@ const MAX_IMAGES = 10;
 const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, #ffffff))";
 
 const restrictToHorizontalAxis: Modifier = ({ transform }) => ({ ...transform, y: 0 });
+
+let imageIdSeed = 0;
+const imageUriIdMap = new Map<string, string>();
+
+const getImageUriId = (uri: string) => {
+  const cachedId = imageUriIdMap.get(uri);
+  if (cachedId !== undefined) return cachedId;
+
+  const id = `image-${imageIdSeed++}`;
+  imageUriIdMap.set(uri, id);
+  return id;
+};
+
+const getImageSortableIds = (uris: string[]) => {
+  const occurrenceByUri = new Map<string, number>();
+
+  return uris.map((uri) => {
+    const occurrence = occurrenceByUri.get(uri) ?? 0;
+    occurrenceByUri.set(uri, occurrence + 1);
+
+    return `${getImageUriId(uri)}-${occurrence}`;
+  });
+};
 
 interface TestImageStepProps {
   onHasImagesChange?: (hasImages: boolean) => void;
@@ -119,6 +142,7 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
 export function TestImageStep({ onHasImagesChange, title = "테스트를 나타낼 수 있는 이미지를 첨부해주세요" }: TestImageStepProps) {
   const form = useTestCreateForm();
   const imageUris = form.images;
+  const imageListRef = useRef<HTMLDivElement | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -140,9 +164,22 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
   }, [imageUris.length, onHasImagesChange, form]);
 
+  const preserveImageListScroll = (scrollLeft: number | undefined) => {
+    if (scrollLeft === undefined) return;
+
+    requestAnimationFrame(() => {
+      if (imageListRef.current !== null) {
+        imageListRef.current.scrollLeft = scrollLeft;
+      }
+    });
+  };
+
   const addImages = (uris: string[]) => {
     const remaining = MAX_IMAGES - form.images.length;
-    form.setImages([...form.images, ...uris.slice(0, remaining)]);
+    const imagesToAdd = uris.slice(0, remaining);
+    if (imagesToAdd.length === 0) return;
+
+    form.setImages([...form.images, ...imagesToAdd]);
   };
 
   const removeImage = (index: number) => {
@@ -195,7 +232,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
   };
 
-  const ids = imageUris.map((_, i) => `img-${i}`);
+  const ids = getImageSortableIds(imageUris);
   const activeIndex = activeId !== null ? ids.indexOf(activeId) : -1;
   const activeUri = activeIndex !== -1 ? imageUris[activeIndex] : null;
 
@@ -204,16 +241,26 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    const scrollLeft = imageListRef.current?.scrollLeft;
     setActiveId(null);
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      preserveImageListScroll(scrollLeft);
+      return;
+    }
     const oldIndex = ids.indexOf(String(active.id));
     const newIndex = ids.indexOf(String(over.id));
-    if (oldIndex === -1 || newIndex === -1) return;
+    if (oldIndex === -1 || newIndex === -1) {
+      preserveImageListScroll(scrollLeft);
+      return;
+    }
     form.setImages(arrayMove(imageUris, oldIndex, newIndex));
+    preserveImageListScroll(scrollLeft);
   };
 
   const handleDragCancel = () => {
+    const scrollLeft = imageListRef.current?.scrollLeft;
     setActiveId(null);
+    preserveImageListScroll(scrollLeft);
   };
 
   return (
@@ -235,13 +282,14 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
+          accessibility={{ restoreFocus: false }}
           modifiers={[restrictToHorizontalAxis]}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
           <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
-            <div className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
+            <div ref={imageListRef} className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
               {imageUris.length < MAX_IMAGES && (
                 <button
                   type="button"
@@ -281,7 +329,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
 
               {imageUris.map((uri, index) => (
                 <SortableImageItem
-                  key={uri}
+                  key={ids[index]}
                   id={ids[index]}
                   uri={uri}
                   index={index}
@@ -292,7 +340,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
             </div>
           </SortableContext>
 
-          <DragOverlay modifiers={[restrictToHorizontalAxis]}>
+          <DragOverlay modifiers={[restrictToHorizontalAxis]} dropAnimation={null}>
             {activeUri !== null ? (
               <div
                 style={{
