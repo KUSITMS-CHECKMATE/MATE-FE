@@ -114,6 +114,7 @@ export function SubjectiveQuestionEditorOverlay({
           labelOption="sustain"
           value={description}
           placeholder="설명"
+          prefix="(선택)"
           maxLength={55}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
