@@ -33,7 +33,9 @@ export function SubjectiveCreateTopSection({
         }
         subtitleBottom={
           <Top.SubtitleParagraph size={15}>
-            {questionDescription.trim().length > 0 ? questionDescription : "설명이 없어요"}
+            {questionDescription.trim().length > 0
+              ? questionDescription
+              : "설명이 없어요"}
           </Top.SubtitleParagraph>
         }
         lower={
@@ -79,7 +81,7 @@ export function SubjectiveCreateTopSection({
               </div>
             </div>
           </div>
-          <div style={{ height: 16, width: "100%", backgroundColor: "#F4F6F8", flexShrink: 0, display: "block" }} />
+          <Border className="w-full" variant="height16" />
         </>
       ) : (
         <Border className="w-full" variant="height16" />
