@@ -264,7 +264,7 @@ export function FivesecMultipleChoiceSection({
             right={
               <Switch
                 checked={isMultiSelectEnabled}
-                onChange={(e) => onToggleMultiSelect(e.target.checked)}
+                onChange={(_, checked) => onToggleMultiSelect(checked)}
               />
             }
             verticalPadding="large"
@@ -320,7 +320,7 @@ export function FivesecMultipleChoiceSection({
             right={
               <Switch
                 checked
-                onChange={(e) => onToggleMultipleChoice(e.target.checked)}
+                onChange={(_, checked) => onToggleMultipleChoice(checked)}
               />
             }
           />
