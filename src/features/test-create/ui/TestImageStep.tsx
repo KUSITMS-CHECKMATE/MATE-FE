@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
@@ -14,33 +14,8 @@ const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, 
 
 const restrictToHorizontalAxis: Modifier = ({ transform }) => ({ ...transform, y: 0 });
 
-const getImageSortableIds = (
-  uris: string[],
-  imageUriIdMap: Map<string, string>,
-  getNextId: () => string
-) => {
-  const activeUris = new Set(uris);
-  for (const uri of imageUriIdMap.keys()) {
-    if (!activeUris.has(uri)) {
-      imageUriIdMap.delete(uri);
-    }
-  }
-
-  const occurrenceByUri = new Map<string, number>();
-
-  return uris.map((uri) => {
-    let imageId = imageUriIdMap.get(uri);
-    if (imageId === undefined) {
-      imageId = getNextId();
-      imageUriIdMap.set(uri, imageId);
-    }
-
-    const occurrence = occurrenceByUri.get(uri) ?? 0;
-    occurrenceByUri.set(uri, occurrence + 1);
-
-    return `${imageId}-${occurrence}`;
-  });
-};
+const getImageSortableIds = (uris: string[]) =>
+  uris.map((_, index) => `image-${index}`);
 
 interface TestImageStepProps {
   onHasImagesChange?: (hasImages: boolean) => void;
@@ -148,8 +123,6 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   const form = useTestCreateForm();
   const imageUris = form.images;
   const imageListRef = useRef<HTMLDivElement | null>(null);
-  const imageIdSeedRef = useRef(0);
-  const imageUriIdMapRef = useRef(new Map<string, string>());
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -239,15 +212,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
   };
 
-  const ids = useMemo(
-    () =>
-      getImageSortableIds(imageUris, imageUriIdMapRef.current, () => {
-        const id = `image-${imageIdSeedRef.current}`;
-        imageIdSeedRef.current += 1;
-        return id;
-      }),
-    [imageUris]
-  );
+  const ids = getImageSortableIds(imageUris);
   const activeIndex = activeId !== null ? ids.indexOf(activeId) : -1;
   const activeUri = activeIndex !== -1 ? imageUris[activeIndex] : null;
 
