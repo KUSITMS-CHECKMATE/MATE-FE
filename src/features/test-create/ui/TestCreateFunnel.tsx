@@ -21,6 +21,9 @@ import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/test-multiple/ui";
 import { ScaleCreatePage } from "@/features/test-scale/ui";
 import { AbCreatePage } from "@/features/test-ab/ui";
+import { TreeCreatePage } from "@/features/test-tree/ui";
+import { SubjectiveCreatePage } from "@/features/test-subjective/ui";
+import { FivesecCreatePage } from "@/features/test-fivesec/ui";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
@@ -35,7 +38,10 @@ export function TestCreateFunnel() {
   const [hasTestImages, setHasTestImages] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
-  const [activeQuestion, setActiveQuestion] = useState<{ id: string; typeId: QuestionTypeId } | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<{
+    id: string;
+    typeId: QuestionTypeId;
+  } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -89,13 +95,17 @@ export function TestCreateFunnel() {
     }
   })();
 
-  const isAllComplete = form.name.trim().length > 0 && form.summary.trim().length > 0 && form.categories.length > 0;
+  const isAllComplete =
+    form.name.trim().length > 0 &&
+    form.summary.trim().length > 0 &&
+    form.categories.length > 0;
 
   const ctaMode: CTAMode = (() => {
     if (editPhase) return "hidden";
     if (activeQuestion) return "hidden";
     if (isCategorySheetOpen) return "hidden";
-    if (funnel.step === "register") return registerTab === "info" ? "submit-double" : "submit";
+    if (funnel.step === "register")
+      return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
     if (isFocused) return "confirm";
     if (funnel.step === "service" && showServiceDescription) return "double";
@@ -117,7 +127,11 @@ export function TestCreateFunnel() {
   const handleBlur = () => {
     blurTimerRef.current = setTimeout(() => {
       setIsFocused(false);
-      if (funnel.step === "service" && !showServiceDescription && form.serviceName.trim().length > 0) {
+      if (
+        funnel.step === "service" &&
+        !showServiceDescription &&
+        form.serviceName.trim().length > 0
+      ) {
         setShowServiceDescription(true);
       }
       blurTimerRef.current = null;
@@ -150,7 +164,10 @@ export function TestCreateFunnel() {
           }
         }}
         onNext={() => {
-          if (funnel.step === "service" && form.serviceName.trim().length === 0) {
+          if (
+            funnel.step === "service" &&
+            form.serviceName.trim().length === 0
+          ) {
             setIsServiceIntroSheetOpen(true);
           } else {
             funnel.next();
@@ -176,24 +193,47 @@ export function TestCreateFunnel() {
               ? !hasTestImages
               : !isAllComplete
         }
-        cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "취소"}
+        cancelLabel={
+          funnel.step === "register"
+            ? "수정하기"
+            : funnel.step === "service" || funnel.step === "image"
+              ? "이전"
+              : "취소"
+        }
         isSubmitDisabled
         submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
-          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} onEnterQuestion={setActiveQuestion} />
+          <TestRegisterStep
+            activeTab={registerTab}
+            onTabChange={setRegisterTab}
+            onEnterQuestion={setActiveQuestion}
+          />
         ) : funnel.step === "image" ? (
-          <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <motion.div
+            key="image"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
             <TestImageStep onHasImagesChange={handleHasImagesChange} />
           </motion.div>
         ) : funnel.step === "service" ? (
-          <motion.div key="service" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <motion.div
+            key="service"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
             <ServiceDescriptionStep
               showDescriptionField={showServiceDescription}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onServiceNameConfirm={() => {
-                if (!showServiceDescription && form.serviceName.trim().length > 0) {
+                if (
+                  !showServiceDescription &&
+                  form.serviceName.trim().length > 0
+                ) {
                   setShowServiceDescription(true);
                 }
               }}
@@ -227,7 +267,10 @@ export function TestCreateFunnel() {
       <ServiceDescriptionNudgeSheet
         open={isServiceIntroSheetOpen}
         onClose={() => setIsServiceIntroSheetOpen(false)}
-        onSkip={() => { setIsServiceIntroSheetOpen(false); funnel.next(); }}
+        onSkip={() => {
+          setIsServiceIntroSheetOpen(false);
+          funnel.next();
+        }}
       />
 
       <EditPhaseSheet
@@ -240,27 +283,66 @@ export function TestCreateFunnel() {
 
       <AnimatePresence>
         {editPhase === "basic" && (
-          <BasicInfoEditPage key="edit-basic" onClose={() => setEditPhase(null)} />
+          <BasicInfoEditPage
+            key="edit-basic"
+            onClose={() => setEditPhase(null)}
+          />
         )}
         {editPhase === "service" && (
-          <ServiceDescriptionEditPage key="edit-service" onClose={() => setEditPhase(null)} />
+          <ServiceDescriptionEditPage
+            key="edit-service"
+            onClose={() => setEditPhase(null)}
+          />
         )}
         {editPhase === "image" && (
-          <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />
+          <TestImageEditPage
+            key="edit-image"
+            onClose={() => setEditPhase(null)}
+          />
         )}
         {activeQuestion?.typeId === "multiple" && (
-          <MultipleCreatePage key="question-multiple" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
+          <MultipleCreatePage
+            key="question-multiple"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
         )}
-        {activeQuestion?.typeId === "subjective" && <></>}
+        {activeQuestion?.typeId === "subjective" && (
+          <SubjectiveCreatePage
+            key="question-subjective"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
+        )}
         {activeQuestion?.typeId === "scale" && (
-          <ScaleCreatePage key="question-scale" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
+          <ScaleCreatePage
+            key="question-scale"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
         )}
         {activeQuestion?.typeId === "ab" && (
-          <AbCreatePage key="question-ab" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />
+          <AbCreatePage
+            key="question-ab"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
         )}
         {activeQuestion?.typeId === "card" && <></>}
-        {activeQuestion?.typeId === "tree" && <></>}
-        {activeQuestion?.typeId === "fivesec" && <></>}
+        {activeQuestion?.typeId === "tree" && (
+          <TreeCreatePage
+            key="question-tree"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
+        )}
+        {activeQuestion?.typeId === "fivesec" && (
+          <FivesecCreatePage
+            key="question-fivesec"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
+        )}
       </AnimatePresence>
 
       <ConfirmDialog
@@ -269,12 +351,19 @@ export function TestCreateFunnel() {
         description="삭제하면 복구할 수 없어요"
         onClose={() => setIsExitDialogOpen(false)}
         cancelButton={
-          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
+          <ConfirmDialog.CancelButton
+            size="xlarge"
+            onClick={() => setIsExitDialogOpen(false)}
+          >
             닫기
           </ConfirmDialog.CancelButton>
         }
         confirmButton={
-          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={handleExitConfirm}>
+          <ConfirmDialog.ConfirmButton
+            color="danger"
+            size="xlarge"
+            onClick={handleExitConfirm}
+          >
             나가기
           </ConfirmDialog.ConfirmButton>
         }

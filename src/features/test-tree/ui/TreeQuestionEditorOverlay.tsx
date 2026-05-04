@@ -3,19 +3,19 @@ import { motion } from "framer-motion";
 import { CTAButton, FixedBottomCTA, TextField, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-interface MultipleQuestionEditorOverlayProps {
+interface TreeQuestionEditorOverlayProps {
   initialTitle: string;
   initialDescription: string;
   onClose: () => void;
   onSave: (values: { title: string; description: string }) => void;
 }
 
-export function MultipleQuestionEditorOverlay({
+export function TreeQuestionEditorOverlay({
   initialTitle,
   initialDescription,
   onClose,
   onSave,
-}: MultipleQuestionEditorOverlayProps) {
+}: TreeQuestionEditorOverlayProps) {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
 
@@ -44,9 +44,9 @@ export function MultipleQuestionEditorOverlay({
           labelOption="sustain"
           value={title}
           placeholder="질문 제목"
-          maxLength={34}
           autoFocus
-          onChange={(e) => setTitle(e.target.value)}
+          maxLength={34}
+          onChange={(e) => setTitle(e.target.value.slice(0, 34))}
           onClear={() => setTitle("")}
         />
         <TextField.Clearable
@@ -56,8 +56,8 @@ export function MultipleQuestionEditorOverlay({
           value={description}
           placeholder="설명"
           prefix="(선택)"
-          maxLength={55}
-          onChange={(e) => setDescription(e.target.value)}
+          maxLength={50}
+          onChange={(e) => setDescription(e.target.value.slice(0, 50))}
           onClear={() => setDescription("")}
         />
       </main>
