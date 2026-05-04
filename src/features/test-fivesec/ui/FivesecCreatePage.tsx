@@ -33,20 +33,43 @@ interface FivesecCreatePageProps {
   onClose: () => void;
 }
 
-export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProps) {
+export function FivesecCreatePage({
+  questionId,
+  onClose,
+}: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
 
-  const [title, setTitle] = useState(existing?.typeId === "fivesec" ? existing.title : "");
-  const [description, setDescription] = useState(existing?.typeId === "fivesec" ? existing.description : "");
-  const [imageUrl, setImageUrl] = useState(existing?.typeId === "fivesec" ? existing.imageUrl : "");
-  const [duration] = useState(existing?.typeId === "fivesec" ? existing.duration : 5);
-  const [answerExample, setAnswerExample] = useState(existing?.typeId === "fivesec" ? existing.answerExample : "");
-  const [isMultipleAnswer, setIsMultipleAnswer] = useState(existing?.typeId === "fivesec" ? existing.isMultipleAnswer : false);
-  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(existing?.typeId === "fivesec" ? existing.isMultiSelectEnabled : false);
-  const [choices, setChoices] = useState<MultipleChoiceItem[]>(existing?.typeId === "fivesec" ? existing.choices : []);
-  const [minSelectCount, setMinSelectCount] = useState(existing?.typeId === "fivesec" ? existing.minSelectCount : 1);
-  const [maxSelectCount, setMaxSelectCount] = useState(existing?.typeId === "fivesec" ? existing.maxSelectCount : 1);
+  const [title, setTitle] = useState(
+    existing?.typeId === "fivesec" ? existing.title : "",
+  );
+  const [description, setDescription] = useState(
+    existing?.typeId === "fivesec" ? existing.description : "",
+  );
+  const [imageUrl, setImageUrl] = useState(
+    existing?.typeId === "fivesec" ? existing.imageUrl : "",
+  );
+  const [duration] = useState(
+    existing?.typeId === "fivesec" ? existing.duration : 5,
+  );
+  const [answerExample, setAnswerExample] = useState(
+    existing?.typeId === "fivesec" ? existing.answerExample : "",
+  );
+  const [isMultipleAnswer, setIsMultipleAnswer] = useState(
+    existing?.typeId === "fivesec" ? existing.isMultipleAnswer : false,
+  );
+  const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
+    existing?.typeId === "fivesec" ? existing.isMultiSelectEnabled : false,
+  );
+  const [choices, setChoices] = useState<MultipleChoiceItem[]>(
+    existing?.typeId === "fivesec" ? existing.choices : [],
+  );
+  const [minSelectCount, setMinSelectCount] = useState(
+    existing?.typeId === "fivesec" ? existing.minSelectCount : 1,
+  );
+  const [maxSelectCount, setMaxSelectCount] = useState(
+    existing?.typeId === "fivesec" ? existing.maxSelectCount : 1,
+  );
   const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
   const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
@@ -54,13 +77,19 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [choiceNameDraft, setChoiceNameDraft] = useState("");
-  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
-  const [pendingFormatChange, setPendingFormatChange] = useState<boolean | null>(null);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<
+    "camera" | "album" | null
+  >(null);
+  const [pendingFormatChange, setPendingFormatChange] = useState<
+    boolean | null
+  >(null);
 
   const visibleChoices = isChoiceManageMode ? draftChoices : choices;
 
   const setActiveChoices = (
-    updater: MultipleChoiceItem[] | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[]),
+    updater:
+      | MultipleChoiceItem[]
+      | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[]),
   ) => {
     if (isChoiceManageMode) setDraftChoices(updater);
     else setChoices(updater);
@@ -77,8 +106,10 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
   };
 
   const hasTitle = title.trim().length > 0;
-  const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
-  const isCompleteDisabled = !hasTitle || !imageUrl || (isMultipleAnswer && choices.length === 0);
+  const editingChoice =
+    choices.find((choice) => choice.id === editingChoiceId) ?? null;
+  const isCompleteDisabled =
+    !hasTitle || !imageUrl || (isMultipleAnswer && choices.length < 2);
 
   const openChoiceCreateSheet = () => {
     setEditingChoiceId(null);
@@ -106,7 +137,9 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
     if (editingChoice) {
       setChoices((prev) =>
         prev.map((choice) =>
-          choice.id === editingChoice.id ? { ...choice, name: trimmedChoiceName } : choice,
+          choice.id === editingChoice.id
+            ? { ...choice, name: trimmedChoiceName }
+            : choice,
         ),
       );
       closeChoiceSheet();
@@ -145,7 +178,11 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
 
   const handleAlbum = async () => {
     try {
-      const response = await fetchAlbumPhotos({ base64: true, maxWidth: 1280, maxCount: 1 });
+      const response = await fetchAlbumPhotos({
+        base64: true,
+        maxWidth: 1280,
+        maxCount: 1,
+      });
       if (response[0]) {
         setImageUrl(`data:image/jpeg;base64,${response[0].dataUri}`);
       }
@@ -231,14 +268,23 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
 
       {imageUrl ? (
         <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
-          <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
+          <Text
+            display="block"
+            color={adaptive.grey700}
+            typography="t5"
+            fontWeight="medium"
+          >
             이미지
           </Text>
           <div
             className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
             style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
           >
-            <img src={imageUrl} alt="질문 이미지 미리보기" className="h-full w-full object-cover" />
+            <img
+              src={imageUrl}
+              alt="질문 이미지 미리보기"
+              className="h-full w-full object-cover"
+            />
             <button
               type="button"
               onClick={() => setImageUrl("")}
@@ -266,7 +312,12 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
             />
           }
           right={
-            <Button size="small" color="dark" variant="weak" onClick={() => setIsPhotoSheetOpen(true)}>
+            <Button
+              size="small"
+              color="dark"
+              variant="weak"
+              onClick={() => setIsPhotoSheetOpen(true)}
+            >
               업로드
             </Button>
           }
@@ -296,7 +347,9 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
               setMaxSelectCount(1);
             } else {
               const maxChoiceCount = Math.max(choices.length, 1);
-              setMaxSelectCount((current) => Math.min(Math.max(current, 2), maxChoiceCount));
+              setMaxSelectCount((current) =>
+                Math.min(Math.max(current, 2), maxChoiceCount),
+              );
             }
           }}
           onChangeMinSelectCount={(value) => {
@@ -481,16 +534,24 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
         open={pendingFormatChange !== null}
         title="테스트의 형식을 변경할까요?"
         description={
-          pendingFormatChange ? "작성한 답변이 삭제돼요." : "작성한 선택지가 삭제돼요."
+          pendingFormatChange
+            ? "작성한 답변이 삭제돼요."
+            : "작성한 선택지가 삭제돼요."
         }
         onClose={closeFormatChangeDialog}
         cancelButton={
-          <ConfirmDialog.CancelButton size="xlarge" onClick={closeFormatChangeDialog}>
+          <ConfirmDialog.CancelButton
+            size="xlarge"
+            onClick={closeFormatChangeDialog}
+          >
             취소
           </ConfirmDialog.CancelButton>
         }
         confirmButton={
-          <ConfirmDialog.ConfirmButton size="xlarge" onClick={confirmFormatChange}>
+          <ConfirmDialog.ConfirmButton
+            size="xlarge"
+            onClick={confirmFormatChange}
+          >
             변경하기
           </ConfirmDialog.ConfirmButton>
         }
