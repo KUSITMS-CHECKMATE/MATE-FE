@@ -44,6 +44,7 @@ export function MultipleQuestionEditorOverlay({
           labelOption="sustain"
           value={title}
           placeholder="질문 제목"
+          maxLength={34}
           autoFocus
           onChange={(e) => setTitle(e.target.value)}
           onClear={() => setTitle("")}
@@ -55,6 +56,7 @@ export function MultipleQuestionEditorOverlay({
           value={description}
           placeholder="설명"
           prefix="(선택)"
+          maxLength={55}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
         />

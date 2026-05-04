@@ -89,6 +89,7 @@ export function MultipleChoiceEditorOverlay({
           labelOption="sustain"
           value={choiceName}
           placeholder="선택지명"
+          maxLength={17}
           autoFocus
           onChange={(e) => setChoiceName(e.target.value)}
           onClear={() => setChoiceName("")}
@@ -100,7 +101,7 @@ export function MultipleChoiceEditorOverlay({
               이미지
             </Text>
             <div
-              className="relative h-24 w-[170px] overflow-hidden rounded-2xl"
+              className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
               style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
             >
               <img src={imageUrl} alt="선택지 이미지 미리보기" className="h-full w-full object-cover" />
