@@ -32,11 +32,11 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
   );
   const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
 
-  const isCompleteDisabled = questionTitle.trim().length === 0 || placeholder.trim().length === 0;
+  const isCompleteDisabled = questionTitle.trim().length === 0;
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white pb-28"
+      className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

@@ -93,6 +93,7 @@ export function SubjectiveQuestionEditorOverlay({
           labelOption="sustain"
           value={title}
           placeholder="질문 제목"
+          maxLength={34}
           autoFocus
           onChange={(e) => setTitle(e.target.value)}
           onClear={() => setTitle("")}
@@ -103,7 +104,7 @@ export function SubjectiveQuestionEditorOverlay({
           labelOption="sustain"
           value={description}
           placeholder="설명"
-          prefix="(선택)"
+          maxLength={55}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
         />
@@ -168,7 +169,7 @@ export function SubjectiveQuestionEditorOverlay({
         }
         rightButton={
           <CTAButton
-            disabled={title.trim().length === 0}
+            disabled={title.trim().length === 0 || description.trim().length === 0}
             onClick={() => onSave({ title: title.trim(), description: description.trim(), imageUrl })}
           >
             저장하기
