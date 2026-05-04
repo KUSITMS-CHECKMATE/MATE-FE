@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
-import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragOverlay, type DragEndEvent, type Modifier } from "@dnd-kit/core";
+import { DndContext, DragOverlay, TouchSensor, useSensor, useSensors, closestCenter, type DragStartEvent, type DragEndEvent, type Modifier } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
 const MAX_IMAGES = 10;
+
 const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, #ffffff))";
 
 const restrictToHorizontalAxis: Modifier = ({ transform }) => ({ ...transform, y: 0 });
@@ -19,31 +20,34 @@ interface TestImageStepProps {
 }
 
 interface SortableImageItemProps {
+  id: string;
   uri: string;
   index: number;
   onPreview: (index: number) => void;
   onRemove: (index: number) => void;
 }
 
-function SortableImageItem({ uri, index, onPreview, onRemove }: SortableImageItemProps) {
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id: uri });
+function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImageItemProps) {
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id });
 
   return (
     <div
       ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      data-drag-item
+      onContextMenu={(e) => e.preventDefault()}
       style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0 : 1,
-        touchAction: "manipulation",
         position: "relative",
         width: 88,
         height: 88,
         flexShrink: 0,
         borderRadius: 16,
+        opacity: isDragging ? 0.4 : 1,
+        transform: CSS.Transform.toString(transform),
+        transition,
+        touchAction: "none",
       }}
-      {...attributes}
-      {...listeners}
     >
       <button
         type="button"
@@ -61,51 +65,54 @@ function SortableImageItem({ uri, index, onPreview, onRemove }: SortableImageIte
           />
         </div>
       </button>
-      <div
-        style={{
-          position: "absolute",
-          top: 6,
-          left: 6,
-          right: 6,
-          bottom: 6,
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "flex-start",
-          pointerEvents: "none",
-        }}
-      >
-        {index === 0 && (
-          <div style={{ position: "absolute", bottom: 0, left: 0 }}>
-            <Badge size="small" variant="fill" color="elephant">
-              대표
-            </Badge>
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(index);
-          }}
+      {!isDragging && (
+        <div
           style={{
+            position: "absolute",
+            top: 6,
+            left: 6,
+            right: 6,
+            bottom: 6,
             display: "flex",
-            background: "none",
-            border: "none",
-            padding: 0,
-            cursor: "pointer",
-            pointerEvents: "auto",
+            justifyContent: "flex-end",
+            alignItems: "flex-start",
+            pointerEvents: "none",
           }}
-          aria-label={`이미지 ${index + 1} 삭제`}
         >
-          <Asset.Icon
-            frameShape={Asset.frameShape.CircleXSmall}
-            backgroundColor={adaptive.greyOpacity600}
-            name="icon-sweetshop-x-white"
-            scale={0.66}
-            aria-hidden={true}
-          />
-        </button>
-      </div>
+          {index === 0 && (
+            <div style={{ position: "absolute", bottom: 0, left: 0 }}>
+              <Badge size="small" variant="fill" color="elephant">
+                대표
+              </Badge>
+            </div>
+          )}
+          <button
+            type="button"
+            onTouchStart={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(index);
+            }}
+            style={{
+              display: "flex",
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              pointerEvents: "auto",
+            }}
+            aria-label={`이미지 ${index + 1} 삭제`}
+          >
+            <Asset.Icon
+              frameShape={Asset.frameShape.CircleXSmall}
+              backgroundColor={adaptive.greyOpacity600}
+              name="icon-sweetshop-x-white"
+              scale={0.66}
+              aria-hidden={true}
+            />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -115,19 +122,17 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   const imageUris = form.images;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [activeUri, setActiveUri] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { delay: 250, tolerance: 5 } }));
-
-  useEffect(() => {
-    if (!activeUri) return;
-    const preventDefault = (e: TouchEvent) => e.preventDefault();
-    document.addEventListener("touchmove", preventDefault, { passive: false });
-    return () => document.removeEventListener("touchmove", preventDefault);
-  }, [activeUri]);
+  const sensors = useSensors(
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 500, tolerance: 8 },
+    })
+  );
 
   useEffect(() => {
     onHasImagesChange?.(imageUris.length > 0);
+    // For E2E testing
     if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).__INJECT_MOCK_IMAGE__ = () => {
@@ -149,16 +154,6 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
       if (prev > index) return prev - 1;
       return prev;
     });
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    setActiveUri(null);
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = imageUris.indexOf(active.id as string);
-    const newIndex = imageUris.indexOf(over.id as string);
-    if (oldIndex === -1 || newIndex === -1) return;
-    form.setImages(arrayMove(imageUris, oldIndex, newIndex));
   };
 
   const previewUri = previewIndex !== null ? imageUris[previewIndex] : null;
@@ -201,6 +196,27 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     }
   };
 
+  const ids = imageUris.map((_, i) => `img-${i}`);
+  const activeIndex = activeId !== null ? ids.indexOf(activeId) : -1;
+  const activeUri = activeIndex !== -1 ? imageUris[activeIndex] : null;
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setActiveId(String(active.id));
+  };
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setActiveId(null);
+    if (!over || active.id === over.id) return;
+    const oldIndex = ids.indexOf(String(active.id));
+    const newIndex = ids.indexOf(String(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
+    form.setImages(arrayMove(imageUris, oldIndex, newIndex));
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+  };
+
   return (
     <>
       <div>
@@ -221,67 +237,74 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
           sensors={sensors}
           collisionDetection={closestCenter}
           modifiers={[restrictToHorizontalAxis]}
-          onDragStart={({ active }) => setActiveUri(active.id as string)}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
-          onDragCancel={() => setActiveUri(null)}
+          onDragCancel={handleDragCancel}
         >
-          <div
-            className="px-5 flex flex-nowrap gap-2 scrollbar-hide"
-            style={{ overflowX: activeUri ? "hidden" : "auto" }}
-          >
-            {imageUris.length < MAX_IMAGES && (
-              <button
-                type="button"
-                style={{
-                  width: 88,
-                  height: 88,
-                  backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
-                  borderRadius: 16,
-                  padding: 16,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 4,
-                  flexShrink: 0,
-                }}
-                onClick={() => setIsSheetOpen(true)}
-              >
-                <Asset.Icon
-                  frameShape={Asset.frameShape.CleanW24}
-                  backgroundColor="transparent"
-                  name="icon-camera-mono"
-                  color={adaptive.grey600}
-                  aria-hidden={true}
-                  ratio="1/1"
-                />
-                <div style={{ display: "flex" }}>
-                  <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
-                    {imageUris.length}
-                  </Text>
-                  <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
-                    /{MAX_IMAGES}
-                  </Text>
-                </div>
-              </button>
-            )}
+          <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
+            <div className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
+              {imageUris.length < MAX_IMAGES && (
+                <button
+                  type="button"
+                  style={{
+                    width: 88,
+                    height: 88,
+                    backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
+                    borderRadius: 16,
+                    padding: 16,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 4,
+                    flexShrink: 0,
+                  }}
+                  onClick={() => setIsSheetOpen(true)}
+                >
+                  <Asset.Icon
+                    frameShape={Asset.frameShape.CleanW24}
+                    backgroundColor="transparent"
+                    name="icon-camera-mono"
+                    color={adaptive.grey600}
+                    aria-hidden={true}
+                    ratio="1/1"
+                  />
+                  <div style={{ display: "flex" }}>
+                    <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
+                      {imageUris.length}
+                    </Text>
+                    <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
+                      /{MAX_IMAGES}
+                    </Text>
+                  </div>
+                </button>
+              )}
 
-            <SortableContext items={imageUris} strategy={horizontalListSortingStrategy}>
               {imageUris.map((uri, index) => (
                 <SortableImageItem
-                  key={uri}
+                  key={index}
+                  id={ids[index]}
                   uri={uri}
                   index={index}
                   onPreview={setPreviewIndex}
                   onRemove={removeImage}
                 />
               ))}
-            </SortableContext>
-          </div>
+            </div>
+          </SortableContext>
 
-          <DragOverlay>
-            {activeUri ? (
-              <div style={{ width: 88, height: 88, borderRadius: 16, overflow: "hidden", opacity: 0.9 }}>
+          <DragOverlay modifiers={[restrictToHorizontalAxis]}>
+            {activeUri !== null ? (
+              <div
+                style={{
+                  width: 88,
+                  height: 88,
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+                  opacity: 0.95,
+                }}
+              >
                 <img
                   src={activeUri}
                   alt=""
