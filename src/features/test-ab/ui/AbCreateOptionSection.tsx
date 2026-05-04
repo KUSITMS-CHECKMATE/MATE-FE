@@ -1,6 +1,11 @@
 import { Asset, Button, ListHeader, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
+const IMAGE_SLOT_HORIZONTAL_PADDING = 22;
+const IMAGE_SLOT_LABEL_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
+const AB_IMAGE_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
+const AB_IMAGE_HEIGHT = 302;
+
 interface AbCreateOptionSectionProps {
   imageUrlA: string;
   imageUrlB: string;
@@ -23,33 +28,36 @@ function AbImageSlot({ label, imageUrl, onUpload, onRemove }: AbImageSlotProps) 
   if (hasImage) {
     return (
       <div
-        className="flex items-start gap-4"
+        className="grid items-start"
         style={{
           width: "100%",
           backgroundColor: adaptive.background,
-          padding: 16,
+          gridTemplateColumns: `${IMAGE_SLOT_LABEL_WIDTH} ${AB_IMAGE_WIDTH}`,
+          padding: `15px ${IMAGE_SLOT_HORIZONTAL_PADDING}px`,
         }}
       >
-        <Text color={adaptive.grey700} typography="t5" fontWeight="medium">
+        <Text color={adaptive.grey700} typography="t5" fontWeight="medium" className="pt-1.5">
           {label}
         </Text>
         <div
-          className="relative"
+          className="relative overflow-hidden"
           style={{
-            flex: 1,
-            height: 302,
-            backgroundImage: `url(${imageUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            borderRadius: 16,
+            width: AB_IMAGE_WIDTH,
+            height: AB_IMAGE_HEIGHT,
+            borderRadius: 14,
             boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
           }}
         >
-          <div style={{ width: 157, height: 289 }} />
+          <img
+            src={imageUrl}
+            alt={`${label} 이미지`}
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
           <button
             type="button"
             onClick={onRemove}
-            className="absolute right-3 top-3"
+            className="absolute right-1.5 top-1.5"
             aria-label={`${label} 이미지 삭제`}
           >
             <Asset.Icon
