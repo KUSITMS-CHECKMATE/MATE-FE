@@ -43,10 +43,9 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
         height: 88,
         flexShrink: 0,
         borderRadius: 16,
-        opacity: isDragging ? 0.4 : 1,
+        opacity: isDragging ? 0 : 1,
         transform: CSS.Transform.toString(transform),
         transition,
-        touchAction: "none",
       }}
     >
       <button
@@ -282,7 +281,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
 
               {imageUris.map((uri, index) => (
                 <SortableImageItem
-                  key={index}
+                  key={uri}
                   id={ids[index]}
                   uri={uri}
                   index={index}
