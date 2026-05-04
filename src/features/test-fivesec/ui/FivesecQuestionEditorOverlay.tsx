@@ -3,23 +3,21 @@ import { motion } from "framer-motion";
 import { CTAButton, FixedBottomCTA, TextField, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-interface MultipleQuestionEditorOverlayProps {
+interface FivesecQuestionEditorOverlayProps {
   initialTitle: string;
   initialDescription: string;
   onClose: () => void;
   onSave: (values: { title: string; description: string }) => void;
 }
 
-export function MultipleQuestionEditorOverlay({
+export function FivesecQuestionEditorOverlay({
   initialTitle,
   initialDescription,
   onClose,
   onSave,
-}: MultipleQuestionEditorOverlayProps) {
+}: FivesecQuestionEditorOverlayProps) {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-
-  const isSaveDisabled = title.trim().length === 0;
 
   return (
     <motion.div
@@ -55,8 +53,8 @@ export function MultipleQuestionEditorOverlay({
           labelOption="sustain"
           value={description}
           placeholder="설명"
+          maxLength={50}
           prefix="(선택)"
-          maxLength={55}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
         />
@@ -70,13 +68,8 @@ export function MultipleQuestionEditorOverlay({
         }
         rightButton={
           <CTAButton
-            disabled={isSaveDisabled}
-            onClick={() =>
-              onSave({
-                title: title.trim(),
-                description: description.trim(),
-              })
-            }
+            disabled={title.trim().length === 0}
+            onClick={() => onSave({ title: title.trim(), description: description.trim() })}
           >
             저장하기
           </CTAButton>

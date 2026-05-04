@@ -15,7 +15,9 @@ export function MultipleCreateTopSection({
   const hasQuestionTitle = questionTitle.trim().length > 0;
   const displayTitle = hasQuestionTitle ? questionTitle : "제목이 없어요";
   const displayDescription =
-    questionDescription.trim().length > 0 ? questionDescription : "설명이 없어요";
+    questionDescription.trim().length > 0
+      ? questionDescription
+      : "설명이 없어요";
 
   return (
     <>
