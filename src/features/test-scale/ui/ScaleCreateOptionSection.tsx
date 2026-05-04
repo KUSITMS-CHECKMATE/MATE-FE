@@ -95,7 +95,8 @@ export function ScaleCreateOptionSection({
         </>
       )}
 
-      <Border />
+      <Border className="shrink-0"/>
+      
 
       <TextField.Clearable
         variant="box"
@@ -104,6 +105,7 @@ export function ScaleCreateOptionSection({
         labelOption="sustain"
         value={minLabel}
         placeholder="예: 전혀 아니다"
+        enterKeyHint="done"
         onChange={(e) => onChangeMinLabel(e.target.value)}
         onClear={() => onChangeMinLabel("")}
       />
@@ -115,6 +117,7 @@ export function ScaleCreateOptionSection({
         labelOption="sustain"
         value={maxLabel}
         placeholder="예: 매우 그렇다"
+        enterKeyHint="done"
         onChange={(e) => onChangeMaxLabel(e.target.value)}
         onClear={() => onChangeMaxLabel("")}
       />

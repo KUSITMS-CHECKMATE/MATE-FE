@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Border } from "@toss/tds-mobile";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
@@ -24,8 +23,30 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
   const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "");
   const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "");
+  const [isFocused, setIsFocused] = useState(false);
+  const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
+  const dismissKeyboard = () => {
+    if (blurTimer.current) clearTimeout(blurTimer.current);
+    setIsFocused(false);
+    (document.activeElement as HTMLElement)?.blur();
+  };
+
+  const handleContainerFocus = (e: React.FocusEvent) => {
+    if (isQuestionEditorOpen) return;
+    if (e.target instanceof HTMLInputElement) {
+      if (blurTimer.current) clearTimeout(blurTimer.current);
+      setIsFocused(true);
+    }
+  };
+
+  const handleContainerBlur = (e: React.FocusEvent) => {
+    if (isQuestionEditorOpen) return;
+    if (e.target instanceof HTMLInputElement) {
+      blurTimer.current = setTimeout(() => setIsFocused(false), 150);
+    }
+  };
 
   return (
     <motion.div
@@ -34,6 +55,8 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
+      onFocus={handleContainerFocus}
+      onBlur={handleContainerBlur}
     >
       <ScaleCreateTopSection
         questionTitle={questionTitle}
@@ -50,6 +73,8 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       />
       <ScaleCreateBottomCTA
         isCompleteDisabled={isCompleteDisabled}
+        isFocused={isFocused}
+        onDismissKeyboard={dismissKeyboard}
         onCancel={onClose}
         onComplete={() => {
           updateQuestion(questionId, {

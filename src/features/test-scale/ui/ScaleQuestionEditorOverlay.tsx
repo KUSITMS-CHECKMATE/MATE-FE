@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import {
   Asset,
@@ -34,8 +34,25 @@ export function ScaleQuestionEditorOverlay({
   const [description, setDescription] = useState(initialDescription);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isSaveDisabled = title.trim().length === 0;
+
+  const handleFocus = () => {
+    if (blurTimer.current) clearTimeout(blurTimer.current);
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    blurTimer.current = setTimeout(() => setIsFocused(false), 150);
+  };
+
+  const dismissKeyboard = () => {
+    if (blurTimer.current) clearTimeout(blurTimer.current);
+    setIsFocused(false);
+    (document.activeElement as HTMLElement)?.blur();
+  };
 
   const handleCamera = async () => {
     try {
@@ -89,6 +106,9 @@ export function ScaleQuestionEditorOverlay({
           value={title}
           placeholder="질문 제목"
           autoFocus
+          enterKeyHint="done"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onChange={(e) => setTitle(e.target.value)}
           onClear={() => setTitle("")}
         />
@@ -99,6 +119,9 @@ export function ScaleQuestionEditorOverlay({
           value={description}
           placeholder="설명"
           prefix="(선택)"
+          enterKeyHint="done"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
         />
@@ -157,27 +180,39 @@ export function ScaleQuestionEditorOverlay({
 
       <PhotoSelectSheet open={isPhotoSheetOpen} onClose={() => setIsPhotoSheetOpen(false)} onCamera={handleCamera} onAlbum={handleAlbum} />
 
-      <FixedBottomCTA.Double
-        leftButton={
-          <CTAButton color="dark" variant="weak" onClick={onClose}>
-            취소
-          </CTAButton>
-        }
-        rightButton={
-          <CTAButton
-            disabled={isSaveDisabled}
-            onClick={() =>
-              onSave({
-                title: title.trim(),
-                description: description.trim(),
-                imageUrl: imageUrl.trim(),
-              })
-            }
-          >
-            저장하기
-          </CTAButton>
-        }
-      />
+      <AnimatePresence mode="wait">
+        {isFocused ? (
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA fixedAboveKeyboard onClick={dismissKeyboard}>
+              확인
+            </FixedBottomCTA>
+          </motion.div>
+        ) : (
+          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA.Double
+              leftButton={
+                <CTAButton color="dark" variant="weak" onClick={onClose}>
+                  취소
+                </CTAButton>
+              }
+              rightButton={
+                <CTAButton
+                  disabled={isSaveDisabled}
+                  onClick={() =>
+                    onSave({
+                      title: title.trim(),
+                      description: description.trim(),
+                      imageUrl: imageUrl.trim(),
+                    })
+                  }
+                >
+                  저장하기
+                </CTAButton>
+              }
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
