@@ -24,7 +24,7 @@ import { AbCreatePage } from "@/features/test-ab/ui";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
-  const funnel = useFunnel("image");
+  const funnel = useFunnel();
   const form = useTestCreateForm();
   const [registerTab, setRegisterTab] = useState<RegisterTab>("info");
   const [isFocused, setIsFocused] = useState(false);
