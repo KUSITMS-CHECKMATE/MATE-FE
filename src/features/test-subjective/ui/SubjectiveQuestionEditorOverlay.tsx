@@ -26,7 +26,11 @@ interface SubjectiveQuestionEditorOverlayProps {
   initialDescription: string;
   initialImageUrl: string;
   onClose: () => void;
-  onSave: (values: { title: string; description: string; imageUrl: string }) => void;
+  onSave: (values: {
+    title: string;
+    description: string;
+    imageUrl: string;
+  }) => void;
 }
 
 export function SubjectiveQuestionEditorOverlay({
@@ -40,7 +44,9 @@ export function SubjectiveQuestionEditorOverlay({
   const [description, setDescription] = useState(initialDescription);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
-  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<
+    "camera" | "album" | null
+  >(null);
 
   const handleCamera = async () => {
     try {
@@ -57,7 +63,11 @@ export function SubjectiveQuestionEditorOverlay({
 
   const handleAlbum = async () => {
     try {
-      const response = await fetchAlbumPhotos({ base64: true, maxWidth: 1280, maxCount: 1 });
+      const response = await fetchAlbumPhotos({
+        base64: true,
+        maxWidth: 1280,
+        maxCount: 1,
+      });
       if (response[0]) {
         setImageUrl(`data:image/jpeg;base64,${response[0].dataUri}`);
       }
@@ -111,14 +121,25 @@ export function SubjectiveQuestionEditorOverlay({
 
         {imageUrl ? (
           <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
-            <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
+            <Text
+              display="block"
+              color={adaptive.grey700}
+              typography="t5"
+              fontWeight="medium"
+            >
               이미지
             </Text>
             <div
               className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
-              style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
+              style={{
+                boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+              }}
             >
-              <img src={imageUrl} alt="질문 이미지 미리보기" className="h-full w-full object-cover" />
+              <img
+                src={imageUrl}
+                alt="질문 이미지 미리보기"
+                className="h-full w-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => setImageUrl("")}
@@ -152,7 +173,12 @@ export function SubjectiveQuestionEditorOverlay({
               />
             }
             right={
-              <Button size="small" color="dark" variant="weak" onClick={() => setIsPhotoSheetOpen(true)}>
+              <Button
+                size="small"
+                color="dark"
+                variant="weak"
+                onClick={() => setIsPhotoSheetOpen(true)}
+              >
                 업로드
               </Button>
             }
@@ -169,8 +195,14 @@ export function SubjectiveQuestionEditorOverlay({
         }
         rightButton={
           <CTAButton
-            disabled={title.trim().length === 0 || description.trim().length === 0}
-            onClick={() => onSave({ title: title.trim(), description: description.trim(), imageUrl })}
+            disabled={title.trim().length === 0}
+            onClick={() =>
+              onSave({
+                title: title.trim(),
+                description: description.trim(),
+                imageUrl,
+              })
+            }
           >
             저장하기
           </CTAButton>
