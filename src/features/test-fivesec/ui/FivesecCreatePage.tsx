@@ -339,7 +339,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
             right={
               <Switch
                 checked={isMultipleAnswer}
-                onChange={(e) => requestFormatChange(e.target.checked)}
+                onChange={(_, checked) => requestFormatChange(checked)}
               />
             }
             verticalPadding="large"
