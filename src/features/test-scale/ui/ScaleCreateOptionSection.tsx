@@ -55,7 +55,7 @@ export function ScaleCreateOptionSection({
         ))}
       </div>
 
-      {!hasLabels && (
+      {!hasLabels ? (
         <ListRow
           contents={
             <ListRow.Texts
@@ -66,6 +66,33 @@ export function ScaleCreateOptionSection({
           }
           verticalPadding="large"
         />
+      ) : (
+        <>
+          {minLabel.trim().length > 0 && (
+            <ListRow
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top={`1점: ${minLabel.trim()}`}
+                  topProps={{ color: adaptive.grey600 }}
+                />
+              }
+              verticalPadding="small"
+            />
+          )}
+          {maxLabel.trim().length > 0 && (
+            <ListRow
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top={`${scaleCount}점: ${maxLabel.trim()}`}
+                  topProps={{ color: adaptive.grey600 }}
+                />
+              }
+              verticalPadding="small"
+            />
+          )}
+        </>
       )}
 
       <Border />
