@@ -49,9 +49,7 @@ export function FivesecCreatePage({
   const [imageUrl, setImageUrl] = useState(
     existing?.typeId === "fivesec" ? existing.imageUrl : "",
   );
-  const [duration] = useState(
-    existing?.typeId === "fivesec" ? existing.duration : 5,
-  );
+  const duration = 5;
   const [answerExample, setAnswerExample] = useState(
     existing?.typeId === "fivesec" ? existing.answerExample : "",
   );
