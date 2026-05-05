@@ -35,7 +35,7 @@ export function isAnswerValid(
     case "scale": {
       const a = answer as Extract<Answer, { type: "scale" }>;
       if (a.value === null) return false;
-      return a.value >= question.data.min && a.value <= question.data.max;
+      return a.value >= 1 && a.value <= question.data.scaleCount;
     }
     case "ab": {
       const a = answer as Extract<Answer, { type: "ab" }>;
