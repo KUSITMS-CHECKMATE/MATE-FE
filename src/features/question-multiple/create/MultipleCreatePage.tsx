@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { MultipleChoiceItem } from "../../model/types";
+import type { MultipleChoiceItem } from "../model/types";
 import { MultipleCreateBottomCTA } from "./MultipleCreateBottomCTA";
 import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
 import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
