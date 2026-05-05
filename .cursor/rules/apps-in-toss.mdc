@@ -37,6 +37,7 @@ alwaysApply: true
 - 스타일: Tailwind · **TDS 우선 → Tailwind 보완**
 - 라우팅: **TanStack Router** · 경로 하드코딩 금지
 - 구조: **FSD** (`shared` / `features` / `entities` / `pages`)
+- 질문 유형 feature는 **`question-{type}` 네이밍** — 내부: `model/` · `create/` · `answer/` 분리. 퍼널(`test-create`, `test-participate`)이 이를 조합. 역방향 의존 금지.
 
 ## 3. UI
 

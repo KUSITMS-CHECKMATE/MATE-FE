@@ -1,7 +1,7 @@
-import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
-import type { SubjectiveQuestionData } from "@/features/test-subjective/model/types";
-import type { TreeQuestionData } from "@/features/test-tree/model/types";
-import type { FivesecQuestionData } from "@/features/test-fivesec/model/types";
+import type { MultipleQuestionData } from "@/features/question-multiple/model/types";
+import type { SubjectiveQuestionData } from "@/features/question-subjective/model/types";
+import type { TreeQuestionData } from "@/features/question-tree/model/types";
+import type { FivesecQuestionData } from "@/features/question-fivesec/model/types";
 
 export interface ScaleQuestionData {
   title: string;

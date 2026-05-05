@@ -145,12 +145,12 @@ export const QUESTION_TYPES = [
 
 export type QuestionTypeId = (typeof QUESTION_TYPES)[number]["id"];
 
-import type { MultipleQuestionData } from "@/features/test-multiple/model/types";
-import type { ScaleQuestionData } from "@/features/test-scale/model/types";
-import type { AbQuestionData } from "@/features/test-ab/model/types";
-import type { TreeQuestionData } from "@/features/test-tree/model/types";
-import type { SubjectiveQuestionData } from "@/features/test-subjective/model/types";
-import type { FivesecQuestionData } from "@/features/test-fivesec/model/types";
+import type { MultipleQuestionData } from "@/features/question-multiple/model/types";
+import type { ScaleQuestionData } from "@/features/question-scale/model/types";
+import type { AbQuestionData } from "@/features/question-ab/model/types";
+import type { TreeQuestionData } from "@/features/question-tree/model/types";
+import type { SubjectiveQuestionData } from "@/features/question-subjective/model/types";
+import type { FivesecQuestionData } from "@/features/question-fivesec/model/types";
 
 export type QuestionData =
   | ({ typeId: "multiple" } & MultipleQuestionData)
