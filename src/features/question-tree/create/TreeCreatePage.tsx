@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { TreeNodeItem } from "../../model/types";
+import type { TreeNodeItem } from "../model/types";
 import { TreeCreateBottomCTA } from "./TreeCreateBottomCTA";
 import { TreeCreateOptionSection } from "./TreeCreateOptionSection";
 import { TreeCreateTopSection } from "./TreeCreateTopSection";

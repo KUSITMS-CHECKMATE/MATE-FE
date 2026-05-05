@@ -9,7 +9,7 @@ import {
   TextButton,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { MultipleChoiceItem } from "../../model/types";
+import type { MultipleChoiceItem } from "../model/types";
 import {
   DndContext,
   DragOverlay,
