@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function EmptyAnswerView({ question }: Props) {
-  const { title, description } = question.data as { title: string; description: string };
+  const { title, description } = question.data;
 
   return (
     <QuestionHeader
