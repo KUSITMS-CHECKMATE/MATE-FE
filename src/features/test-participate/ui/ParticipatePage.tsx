@@ -8,8 +8,7 @@ export function ParticipatePage() {
   const navigate = useNavigate();
   const test = MOCK_PARTICIPATE_TEST;
 
-  const funnel = useParticipateFunnel(test.questions, (answers) => {
-    console.log("[participate] completed", answers);
+  const funnel = useParticipateFunnel(test.questions, () => {
     navigate({ to: ROUTES.DISCOVERY });
   });
 

@@ -2,22 +2,10 @@ import type { MultipleQuestionData } from "@/features/question-multiple/model/ty
 import type { SubjectiveQuestionData } from "@/features/question-subjective/model/types";
 import type { TreeQuestionData } from "@/features/question-tree/model/types";
 import type { FivesecQuestionData } from "@/features/question-fivesec/model/types";
+import type { ScaleQuestionData } from "@/features/question-scale/model/types";
+import type { AbQuestionData } from "@/features/question-ab/model/types";
 
-export interface ScaleQuestionData {
-  title: string;
-  description: string;
-  min: number;
-  max: number;
-  minLabel?: string;
-  maxLabel?: string;
-}
-
-export interface AbQuestionData {
-  title: string;
-  description: string;
-  optionA: { label: string; imageUrl?: string };
-  optionB: { label: string; imageUrl?: string };
-}
+export type { ScaleQuestionData, AbQuestionData };
 
 export interface CardSortCard {
   id: string;
