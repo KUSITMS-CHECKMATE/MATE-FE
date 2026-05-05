@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Asset, BottomCTA, Spacing } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { MOCK_TEST_DETAIL } from "@/features/discovery-detail/model";
@@ -7,12 +7,15 @@ import {
   TestDetailHeader,
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
+import { ROUTES } from "@/shared/constants/routes";
 
 export const Route = createFileRoute("/discovery/$testId")({
   component: TestDetailPage,
 });
 
 function TestDetailPage() {
+  const { testId } = Route.useParams();
+  const navigate = useNavigate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const images = MOCK_TEST_DETAIL.images;
 
@@ -67,7 +70,13 @@ function TestDetailPage() {
       </div>
 
       <div className="fixed bottom-0 left-0 w-full">
-        <BottomCTA.Single>테스트 참여하기</BottomCTA.Single>
+        <BottomCTA.Single
+          onClick={() =>
+            navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId } })
+          }
+        >
+          테스트 참여하기
+        </BottomCTA.Single>
       </div>
     </div>
   );

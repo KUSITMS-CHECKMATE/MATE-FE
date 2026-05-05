@@ -16,6 +16,7 @@ import { Route as InterestIndexRouteImport } from './routes/interest/index'
 import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
 import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
+import { Route as TestParticipateTestIdRouteImport } from './routes/test/participate.$testId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const DiscoveryTestIdRoute = DiscoveryTestIdRouteImport.update({
   path: '/discovery/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestParticipateTestIdRoute = TestParticipateTestIdRouteImport.update({
+  id: '/test/participate/$testId',
+  path: '/test/participate/$testId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
+  '/test/participate/$testId': typeof TestParticipateTestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/interest': typeof InterestIndexRoute
   '/my': typeof MyIndexRoute
   '/test': typeof TestIndexRoute
+  '/test/participate/$testId': typeof TestParticipateTestIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
+  '/test/participate/$testId': typeof TestParticipateTestIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
+    | '/test/participate/$testId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/interest'
     | '/my'
     | '/test'
+    | '/test/participate/$testId'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
+    | '/test/participate/$testId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   InterestIndexRoute: typeof InterestIndexRoute
   MyIndexRoute: typeof MyIndexRoute
   TestIndexRoute: typeof TestIndexRoute
+  TestParticipateTestIdRoute: typeof TestParticipateTestIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoveryTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test/participate/$testId': {
+      id: '/test/participate/$testId'
+      path: '/test/participate/$testId'
+      fullPath: '/test/participate/$testId'
+      preLoaderRoute: typeof TestParticipateTestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   InterestIndexRoute: InterestIndexRoute,
   MyIndexRoute: MyIndexRoute,
   TestIndexRoute: TestIndexRoute,
+  TestParticipateTestIdRoute: TestParticipateTestIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
