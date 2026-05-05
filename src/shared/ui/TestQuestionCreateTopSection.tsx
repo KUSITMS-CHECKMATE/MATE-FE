@@ -1,23 +1,23 @@
 import { Border, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-interface MultipleCreateTopSectionProps {
+interface TestQuestionCreateTopSectionProps {
   questionTitle: string;
   questionDescription: string;
   onOpenQuestionEditor: () => void;
+  subtitle: string;
 }
 
-export function MultipleCreateTopSection({
+export function TestQuestionCreateTopSection({
   questionTitle,
   questionDescription,
   onOpenQuestionEditor,
-}: MultipleCreateTopSectionProps) {
+  subtitle,
+}: TestQuestionCreateTopSectionProps) {
   const hasQuestionTitle = questionTitle.trim().length > 0;
   const displayTitle = hasQuestionTitle ? questionTitle : "제목이 없어요";
   const displayDescription =
-    questionDescription.trim().length > 0
-      ? questionDescription
-      : "설명이 없어요";
+    questionDescription.trim().length > 0 ? questionDescription : "설명이 없어요";
 
   return (
     <>
@@ -29,7 +29,7 @@ export function MultipleCreateTopSection({
         }
         subtitleTop={
           <Top.SubtitleParagraph size={15} color={adaptive.grey500}>
-            객관식
+            {subtitle}
           </Top.SubtitleParagraph>
         }
         subtitleBottom={
@@ -49,8 +49,7 @@ export function MultipleCreateTopSection({
           </Top.LowerButton>
         }
       />
-
-      <Border variant="height16" />
+      <Border variant="height16" className="shrink-0" />
     </>
   );
 }

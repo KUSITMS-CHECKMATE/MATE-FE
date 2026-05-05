@@ -1,6 +1,6 @@
 import { Asset, IconButton, ListHeader, ListRow, Text, TextButton } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { TreeNodeItem } from "../model/types";
+import type { TreeNodeItem } from "../../model/types";
 
 const ListHeaderTitleParagraph = ListHeader.TitleParagraph;
 
