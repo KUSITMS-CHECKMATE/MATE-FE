@@ -23,7 +23,7 @@ import {
   Top,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { MultipleChoiceItem } from "@/features/test-multiple/model/types";
+import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { FivesecQuestionEditorOverlay } from "./FivesecQuestionEditorOverlay";

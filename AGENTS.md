@@ -17,6 +17,7 @@ OpenAI Codex 및 기타 `AGENTS.md`를 읽는 도구용. **전체 규칙은 [`AI
 - Styling: **Tailwind**; UI components **TDS first**, Tailwind for gaps
 - Routing: **TanStack Router**; no hard-coded route strings scattered—use router patterns/constants
 - Layout: **FSD** — `shared`, `features`, `entities`, `pages`
+- Question-type features use **`question-{type}` naming** (not `test-{type}`); each has `model/` · `create/` · `answer/` sub-folders. Funnels (`test-create`, `test-participate`) import from these; reverse imports are forbidden.
 
 ## UI
 

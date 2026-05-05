@@ -24,7 +24,7 @@ import {
   TextButton,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { MultipleChoiceItem } from "@/features/test-multiple/model/types";
+import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 
 const ListHeaderTitleParagraph = ListHeader.TitleParagraph;
 

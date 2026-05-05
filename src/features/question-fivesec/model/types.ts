@@ -1,4 +1,4 @@
-import type { MultipleChoiceItem } from "@/features/test-multiple/model/types";
+import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 
 export interface FivesecQuestionData {
   title: string;

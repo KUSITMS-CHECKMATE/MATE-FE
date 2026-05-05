@@ -18,12 +18,12 @@ import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 import type { EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
-import { MultipleCreatePage } from "@/features/test-multiple/ui";
-import { ScaleCreatePage } from "@/features/test-scale/ui";
-import { AbCreatePage } from "@/features/test-ab/ui";
-import { TreeCreatePage } from "@/features/test-tree/ui";
-import { SubjectiveCreatePage } from "@/features/test-subjective/ui";
-import { FivesecCreatePage } from "@/features/test-fivesec/ui";
+import { MultipleCreatePage } from "@/features/question-multiple/create";
+import { ScaleCreatePage } from "@/features/question-scale/create";
+import { AbCreatePage } from "@/features/question-ab/create";
+import { TreeCreatePage } from "@/features/question-tree/create";
+import { SubjectiveCreatePage } from "@/features/question-subjective/create";
+import { FivesecCreatePage } from "@/features/question-fivesec/create";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
