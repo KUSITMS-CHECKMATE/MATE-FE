@@ -1,22 +1,22 @@
 import { TestQuestionCreateTopSection } from "@/shared/ui/TestQuestionCreateTopSection";
 
-interface MultipleCreateTopSectionProps {
+interface ScaleCreateTopSectionProps {
   questionTitle: string;
   questionDescription: string;
   onOpenQuestionEditor: () => void;
 }
 
-export function MultipleCreateTopSection({
+export function ScaleCreateTopSection({
   questionTitle,
   questionDescription,
   onOpenQuestionEditor,
-}: MultipleCreateTopSectionProps) {
+}: ScaleCreateTopSectionProps) {
   return (
     <TestQuestionCreateTopSection
       questionTitle={questionTitle}
       questionDescription={questionDescription}
       onOpenQuestionEditor={onOpenQuestionEditor}
-      subtitle="객관식"
+      subtitle="척도"
     />
   );
 }
