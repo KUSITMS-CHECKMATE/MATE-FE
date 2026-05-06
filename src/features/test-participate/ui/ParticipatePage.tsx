@@ -12,7 +12,18 @@ export function ParticipatePage() {
     navigate({ to: ROUTES.DISCOVERY });
   });
 
-  const { currentIndex, totalCount, currentQuestion, isFirst, isLast, canGoNext, goNext, goPrev } = funnel;
+  const {
+    currentIndex,
+    totalCount,
+    currentQuestion,
+    currentAnswer,
+    isFirst,
+    isLast,
+    canGoNext,
+    setAnswer,
+    goNext,
+    goPrev,
+  } = funnel;
 
   const progress = (currentIndex + 1) / totalCount;
 
@@ -21,7 +32,11 @@ export function ParticipatePage() {
       <ProgressBar progress={progress} size="normal" />
 
       <main className="flex flex-col flex-1">
-        <QuestionRenderer question={currentQuestion} />
+        <QuestionRenderer
+          question={currentQuestion}
+          answer={currentAnswer}
+          onChange={setAnswer}
+        />
       </main>
 
       {isFirst ? (

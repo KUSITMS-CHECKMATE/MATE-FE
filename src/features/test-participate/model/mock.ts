@@ -37,25 +37,33 @@ export const MOCK_PARTICIPATE_TEST: ParticipateTest = {
       id: "q3",
       type: "tree",
       data: {
-        title: "관심 분야를 선택해주세요",
-        description: "트리에서 한 노드 선택",
+        title: "내 프로필 사진을 수정하려면 어디로 가야할까요?",
+        description: "",
         nodes: [
-          {
-            id: "n1",
-            name: "디자인",
-            children: [
-              { id: "n1-1", name: "UI", children: [] },
-              { id: "n1-2", name: "UX", children: [] },
-            ],
-          },
+          { id: "n1", name: "홈", children: [] },
           {
             id: "n2",
-            name: "개발",
+            name: "송금",
             children: [
-              { id: "n2-1", name: "프론트", children: [] },
-              { id: "n2-2", name: "백엔드", children: [] },
+              { id: "n2-1", name: "은행 송금", children: [] },
+              {
+                id: "n2-2",
+                name: "연락처 송금",
+                children: [
+                  {
+                    id: "n2-2-1",
+                    name: "자동 이체 설정",
+                    children: [
+                      { id: "n2-2-1-1", name: "마지막 뎁스", children: [] },
+                      { id: "n2-2-1-2", name: "마지막 뎁스", children: [] },
+                    ],
+                  },
+                ],
+              },
             ],
           },
+          { id: "n3", name: "투자", children: [] },
+          { id: "n4", name: "설정", children: [] },
         ],
       },
     },

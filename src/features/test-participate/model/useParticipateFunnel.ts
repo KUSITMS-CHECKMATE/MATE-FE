@@ -1,5 +1,8 @@
 import { useCallback, useState } from "react";
-import type { Answer, ParticipateQuestion } from "./types";
+import type { Answer, ParticipateQuestion, QuestionType } from "./types";
+import { isAnswerValid } from "./validation";
+
+const VALIDATED_TYPES = new Set<QuestionType>(["tree"]);
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -25,8 +28,9 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  // 답변 UI는 비어있는 상태이므로 항상 true. 유형별 UI 도입 시 isAnswerValid로 교체.
-  const canGoNext = true;
+  const canGoNext = VALIDATED_TYPES.has(currentQuestion.type)
+    ? isAnswerValid(currentQuestion, currentAnswer)
+    : true;
 
   const setAnswer = useCallback(
     (answer: Answer) => {

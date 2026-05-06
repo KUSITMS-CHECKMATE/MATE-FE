@@ -89,7 +89,7 @@ features/
 
 - 질문 유형 feature는 **`question-{type}` 네이밍** (`test-{type}` 사용 금지)
 - 내부는 `model/`(공유 타입) · `create/`(생성 UI) · `answer/`(응답 UI)로 역할 분리
-- 의존 방향: 퍼널 → `question-*/create`, `question-*/answer` → `question-*/model` (역방향 금지)
+- 내부 의존: 퍼널 → `question-*/create`, `question-*/answer` → `question-*/model`
 
 ---
 
