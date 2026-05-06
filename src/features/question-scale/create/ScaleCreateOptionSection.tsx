@@ -1,8 +1,5 @@
-import { Border, IconButton, ListHeader, ListRow, Switch, Text, TextField } from "@toss/tds-mobile";
+import { Asset, Border, ListHeader, ListRow, Switch, Text, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-
-const SCALE_POINT_CONNECTOR_ICON_SRC =
-  "https://static.toss.im/icons/png/4x/icon-o-mono.png";
 
 interface ScaleCreateOptionSectionProps {
   scaleCount: 5 | 7;
@@ -44,17 +41,16 @@ export function ScaleCreateOptionSection({
             <Text color={adaptive.grey500} typography="t7" fontWeight="bold">
               {point}
             </Text>
-            <IconButton
-              src={SCALE_POINT_CONNECTOR_ICON_SRC}
-              iconSize={24}
-              variant="clear"
+            <Asset.Icon
+              frameShape={Asset.frameShape.CleanW24}
+              backgroundColor="transparent"
+              name="icon-o-mono"
               color={adaptive.grey600}
-              aria-label={`${point}점 척도 표시`}
+              aria-hidden
             />
           </div>
         ))}
       </div>
-
 
       {!hasLabels ? (
         <ListRow
@@ -96,8 +92,8 @@ export function ScaleCreateOptionSection({
         </>
       )}
 
-      <Border className="shrink-0" />
-
+      <Border className="shrink-0"/>
+      
 
       <TextField.Clearable
         variant="box"
