@@ -1,12 +1,16 @@
 import { useNavigate } from "@tanstack/react-router";
 import { CTAButton, FixedBottomCTA, ProgressBar } from "@toss/tds-mobile";
-import { MOCK_PARTICIPATE_TEST, useParticipateFunnel } from "../model";
+import { MOCK_PARTICIPATE_TEST, MOCK_PARTICIPATE_TESTS, useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
 
-export function ParticipatePage() {
+interface Props {
+  testId?: number;
+}
+
+export function ParticipatePage({ testId }: Props) {
   const navigate = useNavigate();
-  const test = MOCK_PARTICIPATE_TEST;
+  const test = (testId != null ? MOCK_PARTICIPATE_TESTS[testId] : undefined) ?? MOCK_PARTICIPATE_TEST;
 
   const funnel = useParticipateFunnel(test.questions, () => {
     navigate({ to: ROUTES.DISCOVERY });
@@ -21,7 +25,11 @@ export function ParticipatePage() {
       <ProgressBar progress={progress} size="normal" />
 
       <main className="flex flex-col flex-1">
-        <QuestionRenderer question={currentQuestion} />
+        <QuestionRenderer
+          question={currentQuestion}
+          answer={funnel.currentAnswer}
+          onChange={funnel.setAnswer}
+        />
       </main>
 
       {isFirst ? (
