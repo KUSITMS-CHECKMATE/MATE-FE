@@ -31,6 +31,10 @@ export function useParticipateFunnel(
         if (currentAnswer?.type !== "multiple") return false;
         return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
       }
+      case "subjective": {
+        if (currentAnswer?.type !== "subjective") return false;
+        return currentAnswer.text.trim().length > 0;
+      }
       default:
         return true;
     }
