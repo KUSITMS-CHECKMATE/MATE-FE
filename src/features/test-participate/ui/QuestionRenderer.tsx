@@ -1,6 +1,7 @@
 import type { Answer, ParticipateQuestion } from "../model/types";
 import { EmptyAnswerView } from "./EmptyAnswerView";
 import { MultipleAnswerView } from "@/features/question-multiple/answer/MultipleAnswerView";
+import { SubjectiveAnswerView } from "@/features/question-subjective/answer/SubjectiveAnswerView";
 
 interface Props {
   question: ParticipateQuestion;
@@ -19,6 +20,13 @@ export function QuestionRenderer({ question, answer, onChange }: Props) {
         />
       );
     case "subjective":
+      return (
+        <SubjectiveAnswerView
+          question={question}
+          answer={answer?.type === "subjective" ? answer : undefined}
+          onChange={onChange}
+        />
+      );
     case "tree":
     case "fivesec":
     case "scale":

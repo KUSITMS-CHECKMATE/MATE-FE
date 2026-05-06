@@ -95,6 +95,28 @@ export const MOCK_PARTICIPATE_TEST: ParticipateTest = {
       },
     },
     {
+      id: "q7",
+      type: "subjective",
+      data: {
+        title: "오늘의 기분이 어떤지 작성해주세요",
+        description: "좋은 하루 보내셨길 바랍니다",
+        imageUrl: "",
+        placeholder: "답변을 작성해주세요",
+        maxLength: null,
+      },
+    },
+    {
+      id: "q8",
+      type: "subjective",
+      data: {
+        title: "이 이미지를 보고 느낀 점을 작성해주세요",
+        description: "자유롭게 작성해주세요",
+        imageUrl: "placeholder",
+        placeholder: "답변을 작성해주세요",
+        maxLength: null,
+      },
+    },
+    {
       id: "q6",
       type: "fivesec",
       data: {
