@@ -108,7 +108,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion }: Te
                       right={
                         <Button
                           size="small"
-                          variant="weak"
+                          variant={isFilled ? "weak" : "fill"}
                           color={isFilled ? "dark" : undefined}
                           onClick={() => onEnterQuestion({ id: q.id, typeId: q.typeId })}
                         >
