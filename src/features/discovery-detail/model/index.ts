@@ -1,1 +1,1 @@
-export { getMockTestDetail, MOCK_TEST_DETAILS } from "./mock";
+export { MOCK_TEST_DETAIL } from "./mock";

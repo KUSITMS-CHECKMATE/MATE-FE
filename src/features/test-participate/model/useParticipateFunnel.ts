@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
-import type { Answer, ParticipateQuestion } from "./types";
+import type { Answer, ParticipateQuestion, QuestionType } from "./types";
 import { isAnswerValid } from "./validation";
+
+const VALIDATED_TYPES = new Set<QuestionType>(["tree"]);
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -12,7 +14,6 @@ export interface UseParticipateFunnelResult {
   canGoNext: boolean;
   setAnswer: (answer: Answer) => void;
   goNext: () => void;
-  goNextWithAnswer: (answer: Answer) => void;
   goPrev: () => void;
 }
 
@@ -27,7 +28,9 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  const canGoNext = isAnswerValid(currentQuestion, currentAnswer);
+  const canGoNext = VALIDATED_TYPES.has(currentQuestion.type)
+    ? isAnswerValid(currentQuestion, currentAnswer)
+    : true;
 
   const setAnswer = useCallback(
     (answer: Answer) => {
@@ -45,20 +48,6 @@ export function useParticipateFunnel(
     setCurrentIndex((i) => i + 1);
   }, [canGoNext, isLast, onComplete, answers]);
 
-  const goNextWithAnswer = useCallback(
-    (answer: Answer) => {
-      if (!isAnswerValid(currentQuestion, answer)) return;
-      const newAnswers = { ...answers, [currentQuestion.id]: answer };
-      setAnswers(newAnswers);
-      if (isLast) {
-        onComplete(newAnswers);
-        return;
-      }
-      setCurrentIndex((i) => i + 1);
-    },
-    [currentQuestion, answers, isLast, onComplete],
-  );
-
   const goPrev = useCallback(() => {
     setCurrentIndex((i) => Math.max(0, i - 1));
   }, []);
@@ -73,7 +62,6 @@ export function useParticipateFunnel(
     canGoNext,
     setAnswer,
     goNext,
-    goNextWithAnswer,
     goPrev,
   };
 }

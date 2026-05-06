@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Asset, BottomCTA, Spacing } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { getMockTestDetail } from "@/features/discovery-detail/model";
+import { MOCK_TEST_DETAIL } from "@/features/discovery-detail/model";
 import {
   TestDetailHeader,
   TestDetailInfo,
@@ -17,15 +17,14 @@ function TestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const testDetail = getMockTestDetail(testId);
-  const images = testDetail.images;
+  const images = MOCK_TEST_DETAIL.images;
 
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-1 overflow-y-auto pb-22.5">
         <TestDetailHeader
-          title={testDetail.title}
-          tags={testDetail.tags}
+          title={MOCK_TEST_DETAIL.title}
+          tags={MOCK_TEST_DETAIL.tags}
         />
 
         <div
@@ -65,8 +64,8 @@ function TestDetailPage() {
         </div>
 
         <TestDetailInfo
-          reward={testDetail.reward}
-          description={testDetail.description}
+          reward={MOCK_TEST_DETAIL.reward}
+          description={MOCK_TEST_DETAIL.description}
         />
       </div>
 

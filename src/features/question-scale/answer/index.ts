@@ -1,1 +1,0 @@
-export { ScaleAnswerPage } from "./ScaleAnswerPage";
