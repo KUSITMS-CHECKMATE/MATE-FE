@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import type { Answer, ParticipateQuestion } from "./types";
-import { isAnswerValid } from "./validation";
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -27,15 +26,14 @@ export function useParticipateFunnel(
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
   const canGoNext = (() => {
-    if (currentQuestion.type === "scale") return isAnswerValid(currentQuestion, currentAnswer);
-    if (currentQuestion.type === "cardsort" && currentQuestion.data.requireAllPlaced) {
-      const cardsortAnswer = currentAnswer?.type === "cardsort" ? currentAnswer : undefined;
-      return (
-        cardsortAnswer !== undefined &&
-        currentQuestion.data.cards.every((card) => cardsortAnswer.placements[card.id] !== undefined)
-      );
+    switch (currentQuestion.type) {
+      case "multiple": {
+        if (currentAnswer?.type !== "multiple") return false;
+        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
+      }
+      default:
+        return true;
     }
-    return true;
   })();
 
   const setAnswer = useCallback(
