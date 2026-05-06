@@ -61,6 +61,41 @@ export const MOCK_PARTICIPATE_TEST: ParticipateTest = {
     },
     {
       id: "q4",
+      type: "multiple",
+      data: {
+        title: "오늘의 기분이 어떤지 체크해주세요",
+        description: "솔직하게 답변해 주세요",
+        choices: [
+          { id: "c1", name: "행복함", imageUrl: "placeholder" },
+          { id: "c2", name: "슬픔", imageUrl: "" },
+          { id: "c3", name: "피곤함", imageUrl: "placeholder" },
+        ],
+        isMultiSelectEnabled: false,
+        isOtherInputEnabled: false,
+        minSelectCount: 1,
+        maxSelectCount: 1,
+      },
+    },
+    {
+      id: "q5",
+      type: "multiple",
+      data: {
+        title: "선호하는 색상을 모두 골라주세요",
+        description: "1개 이상 3개 이하로 선택",
+        choices: [
+          { id: "c1", name: "빨강", imageUrl: "" },
+          { id: "c2", name: "파랑", imageUrl: "" },
+          { id: "c3", name: "초록", imageUrl: "" },
+          { id: "c4", name: "노랑", imageUrl: "" },
+        ],
+        isMultiSelectEnabled: true,
+        isOtherInputEnabled: false,
+        minSelectCount: 1,
+        maxSelectCount: 3,
+      },
+    },
+    {
+      id: "q6",
       type: "fivesec",
       data: {
         title: "5초 안에 떠오르는 것을 골라주세요",
