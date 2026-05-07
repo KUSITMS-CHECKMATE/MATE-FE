@@ -106,6 +106,28 @@ const MOCK_TEST_1: ParticipateTest = {
       },
     },
     {
+      id: "cs1",
+      type: "cardsort",
+      data: {
+        title: "카드를 적절한 카테고리로 분류해주세요",
+        description: "각 카드를 하나의 카테고리에 배치해주세요",
+        cards: [
+          { id: "card1", label: "셔츠" },
+          { id: "card2", label: "가디건" },
+          { id: "card3", label: "슬랙스" },
+          { id: "card4", label: "청바지" },
+          { id: "card5", label: "운동화" },
+          { id: "card6", label: "구두" },
+        ],
+        categories: [
+          { id: "cat1", label: "상의" },
+          { id: "cat2", label: "하의" },
+          { id: "cat3", label: "신발" },
+        ],
+        requireAllPlaced: true,
+      },
+    },
+    {
       id: "q4",
       type: "fivesec",
       data: {
@@ -193,9 +215,56 @@ const MOCK_TEST_2: ParticipateTest = {
   ],
 };
 
+const MOCK_TEST_3: ParticipateTest = {
+  id: 3,
+  title: "카드 소팅 테스트",
+  questions: [
+    {
+      id: "cs1",
+      type: "cardsort",
+      data: {
+        title: "카드를 적절한 카테고리로 분류해주세요",
+        description: "각 카드를 하나의 카테고리에 배치해주세요",
+        cards: [
+          { id: "card1", label: "셔츠" },
+          { id: "card2", label: "가디건" },
+          { id: "card3", label: "슬랙스" },
+          { id: "card4", label: "청바지" },
+          { id: "card5", label: "운동화" },
+          { id: "card6", label: "구두" },
+          { id: "card7", label: "청바지" },
+          { id: "card8", label: "운동화" },
+          { id: "card9", label: "구두" },
+          { id: "card10", label: "청바지" },
+          { id: "card11", label: "운동화" },
+          { id: "card12", label: "구두" },
+        ],
+        categories: [
+          { id: "cat1", label: "상의" },
+          { id: "cat2", label: "하의" },
+          { id: "cat3", label: "신발" },
+        ],
+        requireAllPlaced: true,
+      },
+    },
+    {
+      id: "s1",
+      type: "scale",
+      data: {
+        title: "분류 작업이 얼마나 직관적이었나요?",
+        description: "1~5점 중에서 생각한 점수를 알려주세요.",
+        scaleCount: 5,
+        minLabel: "전혀 직관적이지 않다",
+        maxLabel: "매우 직관적이다",
+      },
+    },
+  ],
+};
+
 export const MOCK_PARTICIPATE_TESTS: Record<number, ParticipateTest> = {
   1: MOCK_TEST_1,
   2: MOCK_TEST_2,
+  3: MOCK_TEST_3,
 };
 
 export const MOCK_PARTICIPATE_TEST = MOCK_TEST_1;

@@ -26,10 +26,17 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  const canGoNext =
-    currentQuestion.type === "scale"
-      ? isAnswerValid(currentQuestion, currentAnswer)
-      : true;
+  const canGoNext = (() => {
+    if (currentQuestion.type === "scale") return isAnswerValid(currentQuestion, currentAnswer);
+    if (currentQuestion.type === "cardsort" && currentQuestion.data.requireAllPlaced) {
+      const cardsortAnswer = currentAnswer?.type === "cardsort" ? currentAnswer : undefined;
+      return (
+        cardsortAnswer !== undefined &&
+        currentQuestion.data.cards.every((card) => cardsortAnswer.placements[card.id] !== undefined)
+      );
+    }
+    return true;
+  })();
 
   const setAnswer = useCallback(
     (answer: Answer) => {

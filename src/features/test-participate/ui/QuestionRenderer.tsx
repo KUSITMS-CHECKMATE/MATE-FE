@@ -1,6 +1,7 @@
 import type { Answer, AnswerOf, ParticipateQuestion } from "../model/types";
 import { ScaleAnswerPage } from "@/features/question-scale/answer";
 import { AbAnswerPage } from "@/features/question-ab/answer";
+import { CardSortAnswerPage } from "@/features/question-cardsort/answer";
 import { EmptyAnswerView } from "./EmptyAnswerView";
 
 interface Props {
@@ -19,10 +20,6 @@ export function QuestionRenderer({ question, answer, onChange }: Props) {
           onChange={onChange as (answer: AnswerOf<"scale">) => void}
         />
       );
-    case "subjective":
-    case "multiple":
-    case "tree":
-    case "fivesec":
     case "ab":
       return (
         <AbAnswerPage
@@ -32,6 +29,17 @@ export function QuestionRenderer({ question, answer, onChange }: Props) {
         />
       );
     case "cardsort":
+      return (
+        <CardSortAnswerPage
+          question={question}
+          answer={answer as AnswerOf<"cardsort"> | undefined}
+          onChange={onChange as (answer: AnswerOf<"cardsort">) => void}
+        />
+      );
+    case "subjective":
+    case "multiple":
+    case "tree":
+    case "fivesec":
       return <EmptyAnswerView question={question} />;
   }
 }
