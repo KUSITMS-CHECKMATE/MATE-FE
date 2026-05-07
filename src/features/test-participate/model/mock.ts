@@ -129,13 +129,71 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q4",
+      type: "multiple",
+      data: {
+        title: "오늘의 기분이 어떤지 체크해주세요",
+        description: "솔직하게 답변해 주세요",
+        choices: [
+          { id: "c1", name: "행복함", imageUrl: "placeholder" },
+          { id: "c2", name: "슬픔", imageUrl: "" },
+          { id: "c3", name: "피곤함", imageUrl: "placeholder" },
+        ],
+        isMultiSelectEnabled: false,
+        isOtherInputEnabled: false,
+        minSelectCount: 1,
+        maxSelectCount: 1,
+      },
+    },
+    {
+      id: "q5",
+      type: "multiple",
+      data: {
+        title: "선호하는 색상을 모두 골라주세요",
+        description: "1개 이상 3개 이하로 선택",
+        choices: [
+          { id: "c1", name: "빨강", imageUrl: "" },
+          { id: "c2", name: "파랑", imageUrl: "" },
+          { id: "c3", name: "초록", imageUrl: "" },
+          { id: "c4", name: "노랑", imageUrl: "" },
+        ],
+        isMultiSelectEnabled: true,
+        isOtherInputEnabled: false,
+        minSelectCount: 1,
+        maxSelectCount: 3,
+      },
+    },
+    {
+      id: "q7",
+      type: "subjective",
+      data: {
+        title: "오늘의 기분이 어떤지 작성해주세요",
+        description: "좋은 하루 보내셨길 바랍니다",
+        imageUrl: "",
+        placeholder: "답변을 작성해주세요",
+        maxLength: null,
+      },
+    },
+    {
+      id: "q8",
+      type: "subjective",
+      data: {
+        title: "이 이미지를 보고 느낀 점을 작성해주세요",
+        description: "자유롭게 작성해주세요",
+        imageUrl: "placeholder",
+        placeholder: "답변을 작성해주세요",
+        maxLength: null,
+      },
+    },
+    {
+      id: "q6",
       type: "fivesec",
       data: {
         title: "5초 안에 떠오르는 것을 골라주세요",
-        description: "1개 이상 2개 이하",
-        imageUrl: "",
+        description: "1개 이상 2개 이하로 선택",
+        imageUrl: "placeholder",
         duration: 5,
         answerExample: "",
+        answerType: "multiple",
         isMultipleAnswer: true,
         isMultiSelectEnabled: true,
         choices: [
@@ -145,6 +203,46 @@ const MOCK_TEST_1: ParticipateTest = {
         ],
         minSelectCount: 1,
         maxSelectCount: 2,
+      },
+    },
+    {
+      id: "q9",
+      type: "fivesec",
+      data: {
+        title: "이 이미지를 보고 가장 먼저 떠오르는 단어를 선택해주세요",
+        description: "1개만 선택",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "multiple",
+        isMultipleAnswer: false,
+        isMultiSelectEnabled: false,
+        choices: [
+          { id: "g1", name: "따뜻함", imageUrl: "" },
+          { id: "g2", name: "차가움", imageUrl: "" },
+          { id: "g3", name: "편안함", imageUrl: "" },
+          { id: "g4", name: "활기참", imageUrl: "" },
+        ],
+        minSelectCount: 1,
+        maxSelectCount: 1,
+      },
+    },
+    {
+      id: "q10",
+      type: "fivesec",
+      data: {
+        title: "사진을 보고 느낀 점을 알려주세요",
+        description: "아무거나 다 괜찮아요.",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "subjective",
+        isMultipleAnswer: false,
+        isMultiSelectEnabled: false,
+        choices: [],
+        minSelectCount: 0,
+        maxSelectCount: 0,
+        placeholder: "답변을 작성해주세요",
       },
     },
   ],
@@ -261,10 +359,66 @@ const MOCK_TEST_3: ParticipateTest = {
   ],
 };
 
+const MOCK_TEST_4: ParticipateTest = {
+  id: 4,
+  title: "5초 테스트 - 객관식",
+  questions: [
+    {
+      id: "fivesec-multiple",
+      type: "fivesec",
+      data: {
+        title: "5초 안에 떠오르는 것을 골라주세요",
+        description: "1개 이상 2개 이하로 선택",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "multiple",
+        isMultipleAnswer: true,
+        isMultiSelectEnabled: true,
+        choices: [
+          { id: "f1", name: "사과", imageUrl: "" },
+          { id: "f2", name: "바나나", imageUrl: "" },
+          { id: "f3", name: "포도", imageUrl: "" },
+          { id: "f4", name: "수박", imageUrl: "" },
+        ],
+        minSelectCount: 1,
+        maxSelectCount: 2,
+      },
+    },
+  ],
+};
+
+const MOCK_TEST_5: ParticipateTest = {
+  id: 5,
+  title: "5초 테스트 - 주관식",
+  questions: [
+    {
+      id: "fivesec-subjective",
+      type: "fivesec",
+      data: {
+        title: "사진을 보고 느낀 점을 알려주세요",
+        description: "아무거나 다 괜찮아요.",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "subjective",
+        isMultipleAnswer: false,
+        isMultiSelectEnabled: false,
+        choices: [],
+        minSelectCount: 0,
+        maxSelectCount: 0,
+        placeholder: "답변을 작성해주세요",
+      },
+    },
+  ],
+};
+
 export const MOCK_PARTICIPATE_TESTS: Record<number, ParticipateTest> = {
   1: MOCK_TEST_1,
   2: MOCK_TEST_2,
   3: MOCK_TEST_3,
+  4: MOCK_TEST_4,
+  5: MOCK_TEST_5,
 };
 
 export const MOCK_PARTICIPATE_TEST = MOCK_TEST_1;
