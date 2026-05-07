@@ -3,9 +3,9 @@ import { ScaleAnswerPage } from "@/features/question-scale/answer";
 import { AbAnswerPage } from "@/features/question-ab/answer";
 import { CardSortAnswerPage } from "@/features/question-cardsort/answer";
 import { EmptyAnswerView } from "./EmptyAnswerView";
-import { MultipleAnswerView } from "@/features/question-multiple/answer/MultipleAnswerView";
-import { SubjectiveAnswerView } from "@/features/question-subjective/answer/SubjectiveAnswerView";
-import { FivesecAnswerView } from "@/features/question-fivesec/answer/FivesecAnswerView";
+import { MultipleAnswerView } from "@/features/question-multiple/answer/MultipleAnswerPage";
+import { SubjectiveAnswerView } from "@/features/question-subjective/answer/SubjectiveAnswerPage";
+import { FivesecAnswerView } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 
 interface Props {
   question: ParticipateQuestion;
@@ -17,7 +17,15 @@ interface Props {
   isLast?: boolean;
 }
 
-export function QuestionRenderer({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
+export function QuestionRenderer({
+  question,
+  answer,
+  onChange,
+  onPrev,
+  onGoNext,
+  isFirst,
+  isLast,
+}: Props) {
   switch (question.type) {
     case "scale":
       return (
