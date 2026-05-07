@@ -102,6 +102,9 @@ export function ParticipatePage({ testId }: Props) {
             setIsAbSheetOpen(false);
             funnel.goNextWithAnswer({ type: "ab", selected });
           }}
+          initialSelected={
+            funnel.currentAnswer?.type === "ab" ? funnel.currentAnswer.selected : null
+          }
         />
       )}
     </div>
