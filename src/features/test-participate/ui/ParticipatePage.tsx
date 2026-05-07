@@ -15,16 +15,25 @@ export function ParticipatePage() {
   const { currentIndex, totalCount, currentQuestion, currentAnswer, setAnswer, isFirst, isLast, canGoNext, goNext, goPrev } = funnel;
 
   const progress = (currentIndex + 1) / totalCount;
+  const isFivesec = currentQuestion.type === "fivesec";
 
   return (
     <div className="flex flex-col min-h-dvh">
       <ProgressBar progress={progress} size="normal" />
 
       <main className="flex flex-col flex-1">
-        <QuestionRenderer question={currentQuestion} answer={currentAnswer} onChange={setAnswer} />
+        <QuestionRenderer
+          question={currentQuestion}
+          answer={currentAnswer}
+          onChange={setAnswer}
+          onPrev={goPrev}
+          onGoNext={goNext}
+          isFirst={isFirst}
+          isLast={isLast}
+        />
       </main>
 
-      {isFirst ? (
+      {!isFivesec && (isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={goNext}>
           다음
         </FixedBottomCTA>
@@ -41,7 +50,7 @@ export function ParticipatePage() {
             </CTAButton>
           }
         />
-      )}
+      ))}
     </div>
   );
 }

@@ -35,6 +35,10 @@ export function useParticipateFunnel(
         if (currentAnswer?.type !== "subjective") return false;
         return currentAnswer.text.trim().length > 0;
       }
+      case "fivesec": {
+        if (currentAnswer?.type !== "fivesec") return false;
+        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
+      }
       default:
         return true;
     }
