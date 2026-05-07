@@ -193,6 +193,7 @@ const MOCK_TEST_1: ParticipateTest = {
         imageUrl: "placeholder",
         duration: 5,
         answerExample: "",
+        answerType: "multiple",
         isMultipleAnswer: true,
         isMultiSelectEnabled: true,
         choices: [
@@ -213,6 +214,7 @@ const MOCK_TEST_1: ParticipateTest = {
         imageUrl: "placeholder",
         duration: 5,
         answerExample: "",
+        answerType: "multiple",
         isMultipleAnswer: false,
         isMultiSelectEnabled: false,
         choices: [
@@ -223,6 +225,24 @@ const MOCK_TEST_1: ParticipateTest = {
         ],
         minSelectCount: 1,
         maxSelectCount: 1,
+      },
+    },
+    {
+      id: "q10",
+      type: "fivesec",
+      data: {
+        title: "사진을 보고 느낀 점을 알려주세요",
+        description: "아무거나 다 괜찮아요.",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "subjective",
+        isMultipleAnswer: false,
+        isMultiSelectEnabled: false,
+        choices: [],
+        minSelectCount: 0,
+        maxSelectCount: 0,
+        placeholder: "답변을 작성해주세요",
       },
     },
   ],
@@ -339,10 +359,66 @@ const MOCK_TEST_3: ParticipateTest = {
   ],
 };
 
+const MOCK_TEST_4: ParticipateTest = {
+  id: 4,
+  title: "5초 테스트 - 객관식",
+  questions: [
+    {
+      id: "fivesec-multiple",
+      type: "fivesec",
+      data: {
+        title: "5초 안에 떠오르는 것을 골라주세요",
+        description: "1개 이상 2개 이하로 선택",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "multiple",
+        isMultipleAnswer: true,
+        isMultiSelectEnabled: true,
+        choices: [
+          { id: "f1", name: "사과", imageUrl: "" },
+          { id: "f2", name: "바나나", imageUrl: "" },
+          { id: "f3", name: "포도", imageUrl: "" },
+          { id: "f4", name: "수박", imageUrl: "" },
+        ],
+        minSelectCount: 1,
+        maxSelectCount: 2,
+      },
+    },
+  ],
+};
+
+const MOCK_TEST_5: ParticipateTest = {
+  id: 5,
+  title: "5초 테스트 - 주관식",
+  questions: [
+    {
+      id: "fivesec-subjective",
+      type: "fivesec",
+      data: {
+        title: "사진을 보고 느낀 점을 알려주세요",
+        description: "아무거나 다 괜찮아요.",
+        imageUrl: "placeholder",
+        duration: 5,
+        answerExample: "",
+        answerType: "subjective",
+        isMultipleAnswer: false,
+        isMultiSelectEnabled: false,
+        choices: [],
+        minSelectCount: 0,
+        maxSelectCount: 0,
+        placeholder: "답변을 작성해주세요",
+      },
+    },
+  ],
+};
+
 export const MOCK_PARTICIPATE_TESTS: Record<number, ParticipateTest> = {
   1: MOCK_TEST_1,
   2: MOCK_TEST_2,
   3: MOCK_TEST_3,
+  4: MOCK_TEST_4,
+  5: MOCK_TEST_5,
 };
 
 export const MOCK_PARTICIPATE_TEST = MOCK_TEST_1;

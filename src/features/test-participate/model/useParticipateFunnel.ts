@@ -12,6 +12,7 @@ export interface UseParticipateFunnelResult {
   canGoNext: boolean;
   setAnswer: (answer: Answer) => void;
   goNext: () => void;
+  goNextWithAnswer: (answer: Answer) => void;
   goPrev: () => void;
 }
 
@@ -44,6 +45,20 @@ export function useParticipateFunnel(
     setCurrentIndex((i) => i + 1);
   }, [canGoNext, isLast, onComplete, answers]);
 
+  const goNextWithAnswer = useCallback(
+    (answer: Answer) => {
+      if (!isAnswerValid(currentQuestion, answer)) return;
+      const newAnswers = { ...answers, [currentQuestion.id]: answer };
+      setAnswers(newAnswers);
+      if (isLast) {
+        onComplete(newAnswers);
+        return;
+      }
+      setCurrentIndex((i) => i + 1);
+    },
+    [currentQuestion, answers, isLast, onComplete],
+  );
+
   const goPrev = useCallback(() => {
     setCurrentIndex((i) => Math.max(0, i - 1));
   }, []);
@@ -58,6 +73,7 @@ export function useParticipateFunnel(
     canGoNext,
     setAnswer,
     goNext,
+    goNextWithAnswer,
     goPrev,
   };
 }

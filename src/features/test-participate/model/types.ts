@@ -23,7 +23,7 @@ export type Answer =
   | { type: "subjective"; text: string }
   | { type: "multiple"; selectedIds: string[]; otherText?: string }
   | { type: "tree"; selectedNodeId: string | null }
-  | { type: "fivesec"; selectedIds: string[] }
+  | { type: "fivesec"; selectedIds: string[]; text?: string }
   | { type: "scale"; value: number | null }
   | { type: "ab"; selected: "A" | "B" | null }
   | { type: "cardsort"; placements: Record<string, string> };

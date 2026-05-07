@@ -11,9 +11,13 @@ interface Props {
   question: ParticipateQuestion;
   answer: Answer | undefined;
   onChange: (answer: Answer) => void;
+  onPrev?: () => void;
+  onGoNext?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
-export function QuestionRenderer({ question, answer, onChange }: Props) {
+export function QuestionRenderer({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
   switch (question.type) {
     case "scale":
       return (
@@ -58,9 +62,14 @@ export function QuestionRenderer({ question, answer, onChange }: Props) {
     case "fivesec":
       return (
         <FivesecAnswerView
+          key={question.id}
           question={question}
           answer={answer?.type === "fivesec" ? answer : undefined}
           onChange={onChange as (answer: AnswerOf<"fivesec">) => void}
+          onPrev={onPrev ?? (() => {})}
+          onGoNext={onGoNext ?? (() => {})}
+          isFirst={isFirst ?? false}
+          isLast={isLast ?? false}
         />
       );
     case "tree":
