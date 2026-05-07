@@ -5,7 +5,6 @@ import {
   Asset,
   CTAButton,
   Checkbox,
-  FixedBottomCTA,
   List,
   ListRow,
   Text,
@@ -17,28 +16,14 @@ import type { QuestionAnswerProps } from "@/features/test-participate/model/type
 
 type Phase = "ready" | "preview" | "countdown" | "answer";
 
-interface Props extends QuestionAnswerProps<"fivesec"> {
-  onPrev: () => void;
-  onGoNext: () => void;
-  isFirst: boolean;
-  isLast: boolean;
-}
+type Props = QuestionAnswerProps<"fivesec">;
 
-export function FivesecAnswerView({
-  question,
-  answer,
-  onChange,
-  onPrev,
-  onGoNext,
-  isFirst,
-  isLast,
-}: Props) {
+export function FivesecAnswerView({ question, answer, onChange }: Props) {
   const {
     title,
     description,
     duration,
     isMultiSelectEnabled,
-    minSelectCount,
     maxSelectCount,
     choices,
   } = question.data;
@@ -48,7 +33,6 @@ export function FivesecAnswerView({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const selectedIds = answer?.selectedIds ?? [];
-  const canGoNext = selectedIds.length >= minSelectCount;
 
   function startCountdown() {
     setPhase("countdown");
@@ -137,17 +121,10 @@ export function FivesecAnswerView({
               </div>
             </div>
           </div>
-          <div className="flex gap-2 px-5 pb-[calc(env(safe-area-inset-bottom,0px)+20px)]">
-            {!isFirst && (
-              <div className="flex-1">
-                <CTAButton color="dark" variant="weak" onClick={onPrev}>
-                  이전
-                </CTAButton>
-              </div>
-            )}
-            <div className={isFirst ? "w-full" : "flex-1"}>
-              <CTAButton onClick={() => setPhase("preview")}>다음</CTAButton>
-            </div>
+          <div className="px-5 pb-[calc(env(safe-area-inset-bottom,0px)+20px)]">
+            <CTAButton onClick={() => setPhase("preview")}>
+              다음
+            </CTAButton>
           </div>
         </div>
       </div>
@@ -245,24 +222,6 @@ export function FivesecAnswerView({
           );
         })}
       </List>
-      {isFirst ? (
-        <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
-          {isLast ? "완료하기" : "다음"}
-        </FixedBottomCTA>
-      ) : (
-        <FixedBottomCTA.Double
-          leftButton={
-            <CTAButton color="dark" variant="weak" onClick={onPrev}>
-              이전
-            </CTAButton>
-          }
-          rightButton={
-            <CTAButton disabled={!canGoNext} onClick={onGoNext}>
-              {isLast ? "완료하기" : "다음"}
-            </CTAButton>
-          }
-        />
-      )}
     </div>
   );
 }

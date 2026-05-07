@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Answer, ParticipateQuestion } from "./types";
+import { isAnswerValid } from "./validation";
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -25,24 +26,7 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  const canGoNext = (() => {
-    switch (currentQuestion.type) {
-      case "multiple": {
-        if (currentAnswer?.type !== "multiple") return false;
-        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
-      }
-      case "subjective": {
-        if (currentAnswer?.type !== "subjective") return false;
-        return currentAnswer.text.trim().length > 0;
-      }
-      case "fivesec": {
-        if (currentAnswer?.type !== "fivesec") return false;
-        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
-      }
-      default:
-        return true;
-    }
-  })();
+  const canGoNext = isAnswerValid(currentQuestion, currentAnswer);
 
   const setAnswer = useCallback(
     (answer: Answer) => {
