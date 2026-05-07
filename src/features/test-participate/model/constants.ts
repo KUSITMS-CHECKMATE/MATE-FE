@@ -13,9 +13,9 @@ import type { QuestionType } from "./types";
 export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
   subjective: "주관식",
   multiple: "객관식",
-  tree: "트리 선택",
+  tree: "트리 테스트",
   fivesec: "5초 테스트",
-  scale: "척도",
+  scale: "척도 질문",
   ab: "A/B 테스트",
-  cardsort: "카드 분류",
+  cardsort: "카드 소팅",
 };

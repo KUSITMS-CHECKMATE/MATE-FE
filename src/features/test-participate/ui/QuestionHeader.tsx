@@ -15,6 +15,8 @@ import { Top } from "@toss/tds-mobile";
  * />
  */
 
+import type { ReactNode } from "react";
+
 interface QuestionHeaderProps {
   /** 질문 유형을 나타내는 배지 텍스트 (예: "주관식", "객관식") */
   categoryLabel: string;
@@ -22,9 +24,11 @@ interface QuestionHeaderProps {
   title: string;
   /** 질문 부연 설명 (선택). 없으면 렌더링하지 않음 */
   description?: string;
+  /** Top.Lower 컴포넌트 등 하단에 렌더링할 요소 (선택) */
+  lower?: ReactNode;
 }
 
-export function QuestionHeader({ categoryLabel, title, description }: QuestionHeaderProps) {
+export function QuestionHeader({ categoryLabel, title, description, lower }: QuestionHeaderProps) {
   return (
     <Top
       title={
@@ -42,6 +46,7 @@ export function QuestionHeader({ categoryLabel, title, description }: QuestionHe
           <Top.SubtitleParagraph size={15}>{description}</Top.SubtitleParagraph>
         ) : undefined
       }
+      lower={lower}
     />
   );
 }
