@@ -16,6 +16,6 @@ export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
   tree: "트리 테스트",
   fivesec: "5초 테스트",
   scale: "척도",
-  ab: "A/B 선택",
+  ab: "A/B 테스트",
   cardsort: "카드 분류",
 };
