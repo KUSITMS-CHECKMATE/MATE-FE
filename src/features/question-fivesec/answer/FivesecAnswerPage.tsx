@@ -35,12 +35,13 @@ export function FivesecAnswerView({ question, answer, onChange, onPrev, onGoNext
   }, []);
 
   function startCountdown() {
+    if (intervalRef.current) clearInterval(intervalRef.current);
     setPhase("countdown");
     setRemaining(duration);
     intervalRef.current = setInterval(() => {
       setRemaining((prev) => {
         if (prev <= 1) {
-          clearInterval(intervalRef.current!);
+          if (intervalRef.current) clearInterval(intervalRef.current);
           setPhase("answer");
           return 0;
         }

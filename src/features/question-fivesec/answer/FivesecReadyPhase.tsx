@@ -1,5 +1,11 @@
 import { adaptive } from "@toss/tds-colors";
-import { Asset, CTAButton, FixedBottomCTA, Tooltip, Top } from "@toss/tds-mobile";
+import {
+  Asset,
+  CTAButton,
+  FixedBottomCTA,
+  Tooltip,
+  Top,
+} from "@toss/tds-mobile";
 
 interface Props {
   isFirst: boolean;
@@ -40,7 +46,7 @@ export function FivesecReadyPhase({ isFirst, onPrev, onStart }: Props) {
         />
       </div>
 
-      <div className="fixed bottom-[84px] inset-x-0 z-10 flex justify-end px-5 pb-2">
+      <div className="fixed bottom-21 inset-x-0 z-10 flex justify-end px-5 pb-2">
         <div className="flex w-[calc(50%-4px)] justify-center">
           <Tooltip
             open={true}
@@ -62,11 +68,11 @@ export function FivesecReadyPhase({ isFirst, onPrev, onStart }: Props) {
       ) : (
         <FixedBottomCTA.Double
           leftButton={
-            <CTAButton color="dark" variant="weak" onClick={onPrev}>이전</CTAButton>
+            <CTAButton color="dark" variant="weak" onClick={onPrev}>
+              이전
+            </CTAButton>
           }
-          rightButton={
-            <CTAButton onClick={onStart}>다음</CTAButton>
-          }
+          rightButton={<CTAButton onClick={onStart}>다음</CTAButton>}
         />
       )}
     </div>
