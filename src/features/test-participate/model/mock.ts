@@ -17,20 +17,13 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q2",
-      type: "multiple",
+      type: "subjective",
       data: {
-        title: "선호하는 색상을 모두 골라주세요",
-        description: "1개 이상 3개 이하로 선택",
-        choices: [
-          { id: "c1", name: "빨강", imageUrl: "" },
-          { id: "c2", name: "파랑", imageUrl: "" },
-          { id: "c3", name: "초록", imageUrl: "" },
-          { id: "c4", name: "노랑", imageUrl: "" },
-        ],
-        isMultiSelectEnabled: true,
-        isOtherInputEnabled: false,
-        minSelectCount: 1,
-        maxSelectCount: 3,
+        title: "저녁 뭐 드셨나요?",
+        description: "좋은 하루 보내셨길 바랍니다",
+        imageUrl: "",
+        placeholder: "답변 쓰는중임",
+        maxLength: null,
       },
     },
     {
@@ -107,10 +100,8 @@ const MOCK_TEST_1: ParticipateTest = {
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
-        imageUrlA:
-          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
-        imageUrlB:
-          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlA: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
       },
     },
     {
@@ -266,10 +257,8 @@ const MOCK_TEST_2: ParticipateTest = {
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
-        imageUrlA:
-          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
-        imageUrlB:
-          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlA: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
       },
     },
     {
