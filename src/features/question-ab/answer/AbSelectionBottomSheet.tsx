@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BottomSheet, CTAButton, List, ListRow, Checkbox } from "@toss/tds-mobile";
+import { BottomSheet, CTAButton, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { AbQuestionData } from "../model/types";
 
