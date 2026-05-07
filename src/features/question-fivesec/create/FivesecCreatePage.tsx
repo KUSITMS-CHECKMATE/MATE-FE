@@ -415,6 +415,7 @@ export function FivesecCreatePage({
                 imageUrl,
                 duration,
                 answerExample,
+                answerType: "multiple",
                 isMultipleAnswer,
                 isMultiSelectEnabled,
                 choices,
