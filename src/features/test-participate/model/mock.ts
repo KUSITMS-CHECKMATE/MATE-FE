@@ -94,6 +94,18 @@ const MOCK_TEST_1: ParticipateTest = {
       },
     },
     {
+      id: "q8",
+      type: "ab",
+      data: {
+        title: "누가 더 귀엽나요?",
+        description: "솔직하게 답변해 주세요",
+        imageUrlA:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+      },
+    },
+    {
       id: "q4",
       type: "fivesec",
       data: {
@@ -120,6 +132,18 @@ const MOCK_TEST_2: ParticipateTest = {
   id: 2,
   title: "척도 테스트",
   questions: [
+    {
+      id: "ab1",
+      type: "ab",
+      data: {
+        title: "누가 더 귀엽나요?",
+        description: "솔직하게 답변해 주세요",
+        imageUrlA:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+      },
+    },
     {
       id: "s1",
       type: "scale",
