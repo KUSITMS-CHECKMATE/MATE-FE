@@ -1,5 +1,6 @@
-import { Asset, List, ListRow, Top } from "@toss/tds-mobile";
+import { Asset, List, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 import { QUESTION_TYPE_LABEL } from "@/features/test-participate/model/constants";
 
@@ -13,22 +14,10 @@ export function ScaleAnswerPage({
 
   return (
     <div className="flex flex-col">
-      <Top
-        title={
-          <Top.TitleParagraph size={22} color={adaptive.grey900}>
-            {data.title}
-          </Top.TitleParagraph>
-        }
-        subtitleTop={
-          <Top.SubtitleBadges
-            badges={[{ text: QUESTION_TYPE_LABEL.scale, color: "elephant", variant: "weak" }]}
-          />
-        }
-        subtitleBottom={
-          data.description ? (
-            <Top.SubtitleParagraph size={15}>{data.description}</Top.SubtitleParagraph>
-          ) : undefined
-        }
+      <QuestionHeader
+        categoryLabel={QUESTION_TYPE_LABEL.scale}
+        title={data.title}
+        description={data.description}
       />
 
       {data.imageUrl && (
