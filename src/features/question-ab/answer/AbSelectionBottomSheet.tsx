@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BottomSheet, CTAButton, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { AbQuestionData } from "../model/types";
@@ -12,10 +12,12 @@ interface Props {
 
 export function AbSelectionBottomSheet({ data, open, onClose, onConfirm }: Props) {
   const [pending, setPending] = useState<"A" | "B" | null>(null);
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
+  if (prevOpen !== open) {
+    setPrevOpen(open);
     if (open) setPending(null);
-  }, [open]);
+  }
 
   return (
     <BottomSheet
