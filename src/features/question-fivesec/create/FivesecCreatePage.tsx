@@ -369,7 +369,7 @@ export function FivesecCreatePage({
             value={answerExample}
             placeholder="예시 입력창이에요"
             height={200}
-            onChange={(e) => setAnswerExample(e.target.value)}
+            readOnly
           />
 
           <Spacing size={12} />
