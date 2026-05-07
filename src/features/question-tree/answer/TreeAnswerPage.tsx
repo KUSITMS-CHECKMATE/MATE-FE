@@ -26,7 +26,7 @@ export function TreeAnswerPage({ question, answer, onChange }: QuestionAnswerPro
   return (
     <>
       <QuestionHeader categoryLabel={QUESTION_TYPE_LABEL.tree} title={title} description={description} />
-      <div>
+      <div className="mx-4">
         {nodes.map((node) => (
           <TreeNodeRow
             key={node.id}
@@ -87,8 +87,8 @@ function TreeNodeRow({ node, depth, expandedIds, selectedNodeId, onToggleExpand,
       </div>
       {hasChildren && isExpanded
         ? node.children.map((child) => (
-            <TreeNodeRow key={child.id} node={child} depth={depth + 1} expandedIds={expandedIds} selectedNodeId={selectedNodeId} onToggleExpand={onToggleExpand} onSelect={onSelect} />
-          ))
+          <TreeNodeRow key={child.id} node={child} depth={depth + 1} expandedIds={expandedIds} selectedNodeId={selectedNodeId} onToggleExpand={onToggleExpand} onSelect={onSelect} />
+        ))
         : null}
     </>
   );
