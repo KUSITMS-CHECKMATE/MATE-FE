@@ -24,6 +24,7 @@ export function ParticipatePage({ testId }: Props) {
 
   const progress = (currentIndex + 1) / totalCount;
   const isAbQuestion = currentQuestion.type === "ab";
+  const isFivesecQuestion = currentQuestion.type === "fivesec";
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -34,10 +35,14 @@ export function ParticipatePage({ testId }: Props) {
           question={currentQuestion}
           answer={funnel.currentAnswer}
           onChange={funnel.setAnswer}
+          onPrev={goPrev}
+          onGoNext={goNext}
+          isFirst={isFirst}
+          isLast={isLast}
         />
       </main>
 
-      {isAbQuestion ? (
+      {isFivesecQuestion ? null : isAbQuestion ? (
         isFirst ? (
           <FixedBottomCTA
             topAccessory="두 가지 안을 확인하고 선택하기를 눌러요"
@@ -85,9 +90,8 @@ export function ParticipatePage({ testId }: Props) {
           open={isAbSheetOpen}
           onClose={() => setIsAbSheetOpen(false)}
           onConfirm={(selected) => {
-            funnel.setAnswer({ type: "ab", selected });
             setIsAbSheetOpen(false);
-            goNext();
+            funnel.goNextWithAnswer({ type: "ab", selected });
           }}
         />
       )}

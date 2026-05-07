@@ -24,7 +24,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
   const [questionImageUrl, setQuestionImageUrl] = useState(
     existing?.typeId === "subjective" ? existing.imageUrl : "",
   );
-  const [placeholder, setPlaceholder] = useState(
+  const [placeholder] = useState(
     existing?.typeId === "subjective" ? existing.placeholder : "",
   );
   const [maxLength] = useState<number | null>(
@@ -59,7 +59,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
         value={placeholder}
         placeholder="예시 입력창이에요"
         height={200}
-        onChange={(e) => setPlaceholder(e.target.value)}
+        readOnly
       />
 
       <SubjectiveCreateBottomCTA
