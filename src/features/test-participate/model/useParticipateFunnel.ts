@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Answer, ParticipateQuestion } from "./types";
+import { isAnswerValid } from "./validation";
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -25,8 +26,17 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  // 답변 UI는 비어있는 상태이므로 항상 true. 유형별 UI 도입 시 isAnswerValid로 교체.
-  const canGoNext = true;
+  const canGoNext = (() => {
+    if (currentQuestion.type === "scale") return isAnswerValid(currentQuestion, currentAnswer);
+    if (currentQuestion.type === "cardsort" && currentQuestion.data.requireAllPlaced) {
+      const cardsortAnswer = currentAnswer?.type === "cardsort" ? currentAnswer : undefined;
+      return (
+        cardsortAnswer !== undefined &&
+        currentQuestion.data.cards.every((card) => cardsortAnswer.placements[card.id] !== undefined)
+      );
+    }
+    return true;
+  })();
 
   const setAnswer = useCallback(
     (answer: Answer) => {

@@ -4,26 +4,9 @@ import type { TreeQuestionData } from "@/features/question-tree/model/types";
 import type { FivesecQuestionData } from "@/features/question-fivesec/model/types";
 import type { ScaleQuestionData } from "@/features/question-scale/model/types";
 import type { AbQuestionData } from "@/features/question-ab/model/types";
+import type { CardSortQuestionData } from "@/features/question-cardsort/model/types";
 
-export type { ScaleQuestionData, AbQuestionData };
-
-export interface CardSortCard {
-  id: string;
-  label: string;
-}
-
-export interface CardSortCategory {
-  id: string;
-  label: string;
-}
-
-export interface CardSortQuestionData {
-  title: string;
-  description: string;
-  cards: CardSortCard[];
-  categories: CardSortCategory[];
-  requireAllPlaced: boolean;
-}
+export type { ScaleQuestionData, AbQuestionData, CardSortQuestionData };
 
 export type ParticipateQuestion =
   | { id: string; type: "subjective"; data: SubjectiveQuestionData }
