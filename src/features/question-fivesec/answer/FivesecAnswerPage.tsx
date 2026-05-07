@@ -15,7 +15,7 @@ interface Props extends QuestionAnswerProps<"fivesec"> {
   isLast: boolean;
 }
 
-export function FivesecAnswerView({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
+export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
   const { duration, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices } = question.data;
 
   const [phase, setPhase] = useState<Phase>("ready");

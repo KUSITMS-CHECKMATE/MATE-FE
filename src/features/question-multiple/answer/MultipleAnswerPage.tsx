@@ -4,7 +4,7 @@ import type { QuestionAnswerProps } from "@/features/test-participate/model/type
 
 type Props = QuestionAnswerProps<"multiple">;
 
-export function MultipleAnswerView({ question, answer, onChange }: Props) {
+export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   const { title, description, choices, isMultiSelectEnabled, maxSelectCount } =
     question.data;
 
