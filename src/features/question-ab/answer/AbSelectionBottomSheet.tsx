@@ -23,6 +23,7 @@ export function AbSelectionBottomSheet({ data, open, onClose, onConfirm }: Props
     <BottomSheet
       open={open}
       onClose={onClose}
+      maxHeight={700}
       header={<BottomSheet.Header>{data.title}</BottomSheet.Header>}
       headerDescription={
         data.description ? (
