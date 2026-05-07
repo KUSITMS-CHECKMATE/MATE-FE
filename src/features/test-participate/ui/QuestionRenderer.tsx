@@ -1,4 +1,7 @@
-import type { Answer, ParticipateQuestion } from "../model/types";
+import type { Answer, AnswerOf, ParticipateQuestion } from "../model/types";
+import { ScaleAnswerPage } from "@/features/question-scale/answer";
+import { AbAnswerPage } from "@/features/question-ab/answer";
+import { CardSortAnswerPage } from "@/features/question-cardsort/answer";
 import { EmptyAnswerView } from "./EmptyAnswerView";
 import { MultipleAnswerView } from "@/features/question-multiple/answer/MultipleAnswerView";
 import { SubjectiveAnswerView } from "@/features/question-subjective/answer/SubjectiveAnswerView";
@@ -16,6 +19,30 @@ interface Props {
 
 export function QuestionRenderer({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
   switch (question.type) {
+    case "scale":
+      return (
+        <ScaleAnswerPage
+          question={question}
+          answer={answer as AnswerOf<"scale"> | undefined}
+          onChange={onChange as (answer: AnswerOf<"scale">) => void}
+        />
+      );
+    case "ab":
+      return (
+        <AbAnswerPage
+          question={question}
+          answer={answer as AnswerOf<"ab"> | undefined}
+          onChange={onChange as (answer: AnswerOf<"ab">) => void}
+        />
+      );
+    case "cardsort":
+      return (
+        <CardSortAnswerPage
+          question={question}
+          answer={answer as AnswerOf<"cardsort"> | undefined}
+          onChange={onChange as (answer: AnswerOf<"cardsort">) => void}
+        />
+      );
     case "multiple":
       return (
         <MultipleAnswerView
@@ -35,9 +62,10 @@ export function QuestionRenderer({ question, answer, onChange, onPrev, onGoNext,
     case "fivesec":
       return (
         <FivesecAnswerView
+          key={question.id}
           question={question}
           answer={answer?.type === "fivesec" ? answer : undefined}
-          onChange={onChange}
+          onChange={onChange as (answer: AnswerOf<"fivesec">) => void}
           onPrev={onPrev ?? (() => {})}
           onGoNext={onGoNext ?? (() => {})}
           isFirst={isFirst ?? false}
@@ -45,9 +73,6 @@ export function QuestionRenderer({ question, answer, onChange, onPrev, onGoNext,
         />
       );
     case "tree":
-    case "scale":
-    case "ab":
-    case "cardsort":
       return <EmptyAnswerView question={question} />;
   }
 }

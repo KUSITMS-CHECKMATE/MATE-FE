@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Answer, ParticipateQuestion } from "./types";
+import { isAnswerValid } from "./validation";
 
 export interface UseParticipateFunnelResult {
   currentIndex: number;
@@ -11,6 +12,7 @@ export interface UseParticipateFunnelResult {
   canGoNext: boolean;
   setAnswer: (answer: Answer) => void;
   goNext: () => void;
+  goNextWithAnswer: (answer: Answer) => void;
   goPrev: () => void;
 }
 
@@ -25,24 +27,7 @@ export function useParticipateFunnel(
   const currentAnswer = answers[currentQuestion.id];
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === questions.length - 1;
-  const canGoNext = (() => {
-    switch (currentQuestion.type) {
-      case "multiple": {
-        if (currentAnswer?.type !== "multiple") return false;
-        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
-      }
-      case "subjective": {
-        if (currentAnswer?.type !== "subjective") return false;
-        return currentAnswer.text.trim().length > 0;
-      }
-      case "fivesec": {
-        if (currentAnswer?.type !== "fivesec") return false;
-        return currentAnswer.selectedIds.length >= currentQuestion.data.minSelectCount;
-      }
-      default:
-        return true;
-    }
-  })();
+  const canGoNext = isAnswerValid(currentQuestion, currentAnswer);
 
   const setAnswer = useCallback(
     (answer: Answer) => {
@@ -60,6 +45,20 @@ export function useParticipateFunnel(
     setCurrentIndex((i) => i + 1);
   }, [canGoNext, isLast, onComplete, answers]);
 
+  const goNextWithAnswer = useCallback(
+    (answer: Answer) => {
+      if (!isAnswerValid(currentQuestion, answer)) return;
+      const newAnswers = { ...answers, [currentQuestion.id]: answer };
+      setAnswers(newAnswers);
+      if (isLast) {
+        onComplete(newAnswers);
+        return;
+      }
+      setCurrentIndex((i) => i + 1);
+    },
+    [currentQuestion, answers, isLast, onComplete],
+  );
+
   const goPrev = useCallback(() => {
     setCurrentIndex((i) => Math.max(0, i - 1));
   }, []);
@@ -74,6 +73,7 @@ export function useParticipateFunnel(
     canGoNext,
     setAnswer,
     goNext,
+    goNextWithAnswer,
     goPrev,
   };
 }
