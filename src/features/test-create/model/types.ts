@@ -1,16 +1,18 @@
 import { adaptive } from "@toss/tds-colors";
 
-/** 질문 단위 스텝 */
+/** 퍼널 단위 스텝 */
 export const STEPS = [
-  "name",
-  "summary",
-  "category",
+  "basic",
   "service",
   "image",
   "register",
 ] as const;
 
 export type Step = (typeof STEPS)[number];
+
+/** 기본 정보 스텝 내부 서브스텝 */
+export const BASIC_SUB_STEPS = ["name", "summary", "category"] as const;
+export type BasicSubStep = (typeof BASIC_SUB_STEPS)[number];
 
 /** 프로그레스 바 단계 */
 export const PHASES = ["basic", "service", "image", "register"] as const;
@@ -24,11 +26,9 @@ export const PHASE_LABELS: Record<Phase, string> = {
   register: "테스트 등록",
 };
 
-/** 각 질문 step이 속하는 프로그레스 단계 */
+/** 각 스텝이 속하는 프로그레스 단계 */
 export const STEP_PHASE: Record<Step, Phase> = {
-  name: "basic",
-  summary: "basic",
-  category: "basic",
+  basic: "basic",
   service: "service",
   image: "image",
   register: "register",
