@@ -1,6 +1,11 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
+import {
+  openCamera,
+  fetchAlbumPhotos,
+  OpenCameraPermissionError,
+  FetchAlbumPhotosPermissionError,
+} from "@apps-in-toss/web-framework";
 import {
   Asset,
   BottomSheet,
@@ -34,7 +39,9 @@ export function MultipleChoiceEditorOverlay({
   const [choiceName, setChoiceName] = useState(initialChoiceName);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
-  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<
+    "camera" | "album" | null
+  >(null);
   const [isFocused, setIsFocused] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -70,7 +77,11 @@ export function MultipleChoiceEditorOverlay({
 
   const handleAlbum = async () => {
     try {
-      const response = await fetchAlbumPhotos({ base64: true, maxWidth: 1280, maxCount: 1 });
+      const response = await fetchAlbumPhotos({
+        base64: true,
+        maxWidth: 1280,
+        maxCount: 1,
+      });
       if (response[0]) {
         setImageUrl(`data:image/jpeg;base64,${response[0].dataUri}`);
       }
@@ -116,14 +127,25 @@ export function MultipleChoiceEditorOverlay({
 
         {imageUrl ? (
           <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
-            <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
+            <Text
+              display="block"
+              color={adaptive.grey700}
+              typography="t5"
+              fontWeight="medium"
+            >
               이미지
             </Text>
             <div
               className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
-              style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
+              style={{
+                boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+              }}
             >
-              <img src={imageUrl} alt="선택지 이미지 미리보기" className="h-full w-full object-cover" />
+              <img
+                src={imageUrl}
+                alt="선택지 이미지 미리보기"
+                className="h-full w-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => setImageUrl("")}
@@ -157,7 +179,12 @@ export function MultipleChoiceEditorOverlay({
               />
             }
             right={
-              <Button color="dark" variant="weak" onClick={() => setIsPhotoSheetOpen(true)}>
+              <Button
+                size="small"
+                color="dark"
+                variant="weak"
+                onClick={() => setIsPhotoSheetOpen(true)}
+              >
                 업로드
               </Button>
             }
@@ -168,13 +195,25 @@ export function MultipleChoiceEditorOverlay({
 
       <AnimatePresence mode="wait">
         {isFocused ? (
-          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+          <motion.div
+            key="confirm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+          >
             <FixedBottomCTA fixedAboveKeyboard onClick={dismissKeyboard}>
               확인하기
             </FixedBottomCTA>
           </motion.div>
         ) : (
-          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+          <motion.div
+            key="double"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+          >
             <FixedBottomCTA.Double
               leftButton={
                 <CTAButton color="dark" variant="weak" onClick={onClose}>
@@ -184,7 +223,9 @@ export function MultipleChoiceEditorOverlay({
               rightButton={
                 <CTAButton
                   disabled={isCreateDisabled}
-                  onClick={() => onCreate({ choiceName: choiceName.trim(), imageUrl })}
+                  onClick={() =>
+                    onCreate({ choiceName: choiceName.trim(), imageUrl })
+                  }
                 >
                   {submitLabel}
                 </CTAButton>
