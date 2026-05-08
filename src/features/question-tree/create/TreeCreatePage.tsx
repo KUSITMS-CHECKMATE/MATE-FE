@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { TreeNodeItem } from "../model/types";
 import { TreeCreateBottomCTA } from "./TreeCreateBottomCTA";
 import { TreeCreateOptionSection } from "./TreeCreateOptionSection";
-import { TreeCreateTopSection } from "./TreeCreateTopSection";
 import { TreeNodeAddSheet } from "./TreeNodeAddSheet";
 import { TreeQuestionEditorOverlay } from "./TreeQuestionEditorOverlay";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 
 
 interface TreeCreatePageProps {
@@ -37,7 +37,9 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
 
   const isCompleteDisabled =
-    questionTitle.trim().length === 0 || nodes.length === 0;
+    questionTitle.trim().length === 0 ||
+    nodes.length === 0 ||
+    nodes.some((node) => node.children.length === 0);
 
   const findNode = (
     list: TreeNodeItem[],
@@ -123,10 +125,11 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <TreeCreateTopSection
+      <QuestionCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="트리 테스트"
       />
       <TreeCreateOptionSection
         nodes={nodes}

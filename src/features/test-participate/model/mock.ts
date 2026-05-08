@@ -33,7 +33,14 @@ const MOCK_TEST_1: ParticipateTest = {
         title: "내 프로필 사진을 수정하려면 어디로 가야할까요?",
         description: "",
         nodes: [
-          { id: "n1", name: "홈", children: [] },
+          {
+            id: "n1",
+            name: "홈",
+            children: [
+              { id: "n1-1", name: "프로필", children: [] },
+              { id: "n1-2", name: "알림", children: [] },
+            ],
+          },
           {
             id: "n2",
             name: "송금",
@@ -47,16 +54,30 @@ const MOCK_TEST_1: ParticipateTest = {
                     id: "n2-2-1",
                     name: "자동 이체 설정",
                     children: [
-                      { id: "n2-2-1-1", name: "마지막 뎁스", children: [] },
-                      { id: "n2-2-1-2", name: "마지막 뎁스", children: [] },
+                      { id: "n2-2-1-1", name: "이체 주기 설정", children: [] },
+                      { id: "n2-2-1-2", name: "이체 금액 설정", children: [] },
                     ],
                   },
                 ],
               },
             ],
           },
-          { id: "n3", name: "투자", children: [] },
-          { id: "n4", name: "설정", children: [] },
+          {
+            id: "n3",
+            name: "투자",
+            children: [
+              { id: "n3-1", name: "국내 주식", children: [] },
+              { id: "n3-2", name: "해외 주식", children: [] },
+            ],
+          },
+          {
+            id: "n4",
+            name: "설정",
+            children: [
+              { id: "n4-1", name: "계정 설정", children: [] },
+              { id: "n4-2", name: "보안 설정", children: [] },
+            ],
+          },
         ],
       },
     },
