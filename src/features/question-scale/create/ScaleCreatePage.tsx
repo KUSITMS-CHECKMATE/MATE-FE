@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
-import { ScaleCreateTopSection } from "./ScaleCreateTopSection";
 import { ScaleQuestionEditorOverlay } from "./ScaleQuestionEditorOverlay";
 
 interface ScaleCreatePageProps {
@@ -58,10 +58,11 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       onFocus={handleContainerFocus}
       onBlur={handleContainerBlur}
     >
-      <ScaleCreateTopSection
+      <QuestionCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="척도"
       />
       <ScaleCreateOptionSection
         scaleCount={scaleCount}

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { STEPS, type Step } from "./types";
 
-export function useFunnel(initialStep: Step = "name") {
+export function useFunnel(initialStep: Step = "basic") {
   const [step, setStep] = useState<Step>(initialStep);
 
   const currentIndex = STEPS.indexOf(step);
