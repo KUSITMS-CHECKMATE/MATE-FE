@@ -20,8 +20,8 @@ import {
   Text,
   TextArea,
   TextField,
-  Top,
 } from "@toss/tds-mobile";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
@@ -233,36 +233,12 @@ export function FivesecCreatePage({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Top
-        title={
-          <Top.TitleParagraph size={22} color={adaptive.grey900}>
-            {hasTitle ? title : "제목이 없어요"}
-          </Top.TitleParagraph>
-        }
-        subtitleTop={
-          <Top.SubtitleParagraph size={15} color={adaptive.grey500}>
-            5초 테스트
-          </Top.SubtitleParagraph>
-        }
-        subtitleBottom={
-          <Top.SubtitleParagraph size={15}>
-            {description.trim().length > 0 ? description : "설명이 없어요"}
-          </Top.SubtitleParagraph>
-        }
-        lower={
-          <Top.LowerButton
-            color={hasTitle ? "dark" : "primary"}
-            size="small"
-            variant="weak"
-            display="inline"
-            onClick={() => setIsQuestionEditorOpen(true)}
-          >
-            {hasTitle ? "수정하기" : "입력하기"}
-          </Top.LowerButton>
-        }
+      <QuestionCreateTopSection
+        questionTitle={title}
+        questionDescription={description}
+        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="5초 테스트"
       />
-
-      <Border variant="height16" />
 
       {imageUrl ? (
         <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
