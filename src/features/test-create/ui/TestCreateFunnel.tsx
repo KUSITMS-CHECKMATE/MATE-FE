@@ -24,6 +24,7 @@ import { AbCreatePage } from "@/features/question-ab/create";
 import { TreeCreatePage } from "@/features/question-tree/create";
 import { SubjectiveCreatePage } from "@/features/question-subjective/create";
 import { FivesecCreatePage } from "@/features/question-fivesec/create";
+import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
@@ -328,7 +329,13 @@ export function TestCreateFunnel() {
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "card" && <></>}
+        {activeQuestion?.typeId === "card" && (
+          <CardSortCreatePage
+            key="question-card"
+            questionId={activeQuestion.id}
+            onClose={() => setActiveQuestion(null)}
+          />
+        )}
         {activeQuestion?.typeId === "tree" && (
           <TreeCreatePage
             key="question-tree"
