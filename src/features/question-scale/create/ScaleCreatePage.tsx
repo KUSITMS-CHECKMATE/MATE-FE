@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Asset, Border } from "@toss/tds-mobile";
+import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
@@ -63,6 +65,43 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
         subtitle="척도"
+        imageSectionContent={
+          questionImageUrl ? (
+            <>
+              <div className="rounded-2xl bg-white p-4">
+                <div
+                  className="w-full rounded-2xl p-1.5"
+                  style={{
+                    height: 194,
+                    backgroundImage: `url(${questionImageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+                  }}
+                >
+                  <div className="flex h-full w-full flex-col items-end justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setQuestionImageUrl("")}
+                      aria-label="이미지 삭제"
+                    >
+                      <Asset.Icon
+                        frameShape={Asset.frameShape.CircleXSmall}
+                        backgroundColor={adaptive.greyOpacity600}
+                        name="icon-sweetshop-x-white"
+                        scale={0.66}
+                        aria-hidden
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <Border className="w-full shrink-0" variant="height16" />
+            </>
+          ) : (
+            <Border className="w-full shrink-0" variant="height16" />
+          )
+        }
       />
       <ScaleCreateOptionSection
         scaleCount={scaleCount}
