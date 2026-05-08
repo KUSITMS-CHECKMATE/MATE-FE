@@ -3,10 +3,10 @@ import type { DiscoveryTest } from "./types";
 export const MOCK_DISCOVERY_TESTS: DiscoveryTest[] = [
   {
     id: 1,
-    title: "여행 일정 추천 화면, 어디서 가장 많이 막히는지 봐주세요",
-    description: "항공권부터 숙소까지 고르는 흐름을 보고 헷갈리는 순간을 알려주세요.",
+    title: "MATE 테스트 등록 화면, 처음 봤을 때 이해가 되나요?",
+    description: "질문 유형 선택부터 등록 완료까지 흐름이 자연스러운지 피드백 부탁드려요.",
     reward: 300,
-    thumbnailUrl: "https://static.toss.im/3d-emojis/u1F5FA.png",
+    thumbnailUrl: "https://static.toss.im/3d-emojis/u1F4F1.png",
   },
   {
     id: 2,
@@ -35,13 +35,6 @@ export const MOCK_DISCOVERY_TESTS: DiscoveryTest[] = [
     description: "대화 화면만 보고 거래를 이어갈지 빠르게 선택해 주세요.",
     reward: 1000,
     thumbnailUrl: "https://static.toss.im/3d-emojis/u1F4AC.png",
-  },
-  {
-    id: 6,
-    title: "아이 돌봄 예약 화면, 부모 입장에서 안심되는지 봐주세요",
-    description: "예약하기 전에 꼭 확인하고 싶은 정보가 충분한지 피드백 부탁드려요.",
-    reward: 800,
-    thumbnailUrl: "https://static.toss.im/3d-emojis/u1F9F8.png",
   },
   {
     id: 7,

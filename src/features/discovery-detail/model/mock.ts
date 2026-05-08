@@ -8,15 +8,13 @@ export interface DiscoveryTestDetail {
 
 export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
   "1": {
-    title: "여행 일정 추천 화면, 어디서 가장 많이 막히는지 봐주세요",
-    tags: ["여행", "추천"],
+    title: "MATE 테스트 등록 화면, 처음 봤을 때 이해가 되나요?",
+    tags: ["UX테스트", "온보딩"],
     reward: 300,
     description:
-      "항공권부터 숙소까지 고르는 흐름을 보고, 어디서 선택이 어려워지는지 알려주세요. 여행을 자주 가는 분이 아니어도 괜찮아요.",
+      "질문 유형 선택부터 등록 완료까지 흐름이 자연스러운지 피드백 부탁드려요. 처음 써보는 분도 막히지 않고 완료할 수 있는지 확인하고 싶어요.",
     images: [
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80",
+      "https://static.toss.im/3d-emojis/u1F4F1.png",
     ],
   },
   "2": {
@@ -65,18 +63,6 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80",
-    ],
-  },
-  "6": {
-    title: "아이 돌봄 예약 화면, 부모 입장에서 안심되는지 봐주세요",
-    tags: ["육아", "예약"],
-    reward: 800,
-    description:
-      "예약 전 꼭 확인하고 싶은 정보가 충분한지, 처음 보는 보호자도 불안하지 않게 느낄 수 있는지 확인하려고 해요.",
-    images: [
-      "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?auto=format&fit=crop&w=1200&q=80",
     ],
   },
   "7": {
