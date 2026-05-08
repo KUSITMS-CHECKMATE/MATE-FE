@@ -61,7 +61,9 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       <ScaleCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
+        questionImageUrl={questionImageUrl}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        onRemoveImage={() => setQuestionImageUrl("")}
       />
       <ScaleCreateOptionSection
         scaleCount={scaleCount}
