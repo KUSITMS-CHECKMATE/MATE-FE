@@ -23,16 +23,6 @@ export function TestDetailHeader({ title, tags }: Props) {
           }))}
         />
       }
-      lower={
-        <Top.LowerButton
-          color="primary"
-          size="small"
-          variant="weak"
-          display="inline"
-        >
-          어떤 서비스인가요?
-        </Top.LowerButton>
-      }
     />
   );
 }
