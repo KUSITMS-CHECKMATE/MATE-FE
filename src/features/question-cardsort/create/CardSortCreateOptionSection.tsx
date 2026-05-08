@@ -117,7 +117,7 @@ export function CardSortCreateOptionSection({
             />
           }
           verticalPadding="large"
-          onClick={onAddCategory}
+          onClick={categories.length < 3 ? onAddCategory : undefined}
         />
         {categories.map((category) => (
           <ListRow
@@ -157,7 +157,10 @@ export function CardSortCreateOptionSection({
         ))}
       </List>
 
-      <Border className="shrink-0" />
+      <div className="pt-2">
+        <Border className="shrink-0" />
+      </div>
+
 
       <ListHeader
         className="w-full"
@@ -206,7 +209,7 @@ export function CardSortCreateOptionSection({
             />
           }
           verticalPadding="large"
-          onClick={onAddCard}
+          onClick={cards.length < 12 ? onAddCard : undefined}
         />
       </List>
       {cards.length > 0 && (
