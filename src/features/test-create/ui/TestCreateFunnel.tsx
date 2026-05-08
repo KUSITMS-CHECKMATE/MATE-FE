@@ -70,7 +70,6 @@ export function TestCreateFunnel() {
 
   useEffect(() => {
     useTestCreateForm.getState().reset();
-    setBasicSubStep("name");
 
     return () => {
       if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
