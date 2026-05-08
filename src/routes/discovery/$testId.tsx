@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Asset, BottomCTA, Spacing } from "@toss/tds-mobile";
-import { adaptive } from "@toss/tds-colors";
+import { BottomCTA } from "@toss/tds-mobile";
 import { getMockTestDetail } from "@/features/discovery-detail/model";
 import {
   TestDetailHeader,
+  TestDetailImageCarousel,
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
@@ -16,57 +15,18 @@ export const Route = createFileRoute("/discovery/$testId")({
 function TestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const testDetail = getMockTestDetail(testId);
-  const images = testDetail.images;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white pb-17">
       <div className="flex-1 overflow-y-auto pb-22.5">
-        <TestDetailHeader
-          title={testDetail.title}
-          tags={testDetail.tags}
-        />
-
-        <div
-          className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-          style={{ gap: "12px", margin: "0 20px" }}
-          onScroll={(e) => {
-            const target = e.target as HTMLDivElement;
-            const index = Math.round(target.scrollLeft / target.clientWidth);
-            setActiveImageIndex(index);
-          }}
-        >
-          {images.map((src, i) => (
-            <div key={i} className="snap-start shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
-              <img
-                src={src}
-                aria-hidden
-                style={{ width: "100%", height: "100%", borderRadius: 16, objectFit: "cover" }}
-              />
-            </div>
-          ))}
-        </div>
-
-        <Spacing size={16} />
-
-        <div className="flex justify-center gap-1.5">
-          {images.map((_, i) => (
-            <Asset.Icon
-              key={i}
-              frameShape={{ width: 12, height: 12 }}
-              backgroundColor="transparent"
-              name="icon-circle-16-mono"
-              color={i === activeImageIndex ? adaptive.greyOpacity500 : adaptive.greyOpacity300}
-              aria-hidden
-              ratio="1/1"
-            />
-          ))}
-        </div>
-
+        <TestDetailHeader title={testDetail.title} tags={testDetail.tags} />
+        <TestDetailImageCarousel images={testDetail.images} />
         <TestDetailInfo
           reward={testDetail.reward}
           description={testDetail.description}
+          serviceName={testDetail.serviceName}
+          serviceDescription={testDetail.serviceDescription}
         />
       </div>
 

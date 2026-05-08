@@ -4,20 +4,23 @@ export interface DiscoveryTestDetail {
   reward: number;
   description: string;
   images: string[];
+  serviceName: string;
+  serviceDescription: string;
 }
 
 export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
   "1": {
-    title: "여행 일정 추천 화면, 어디서 가장 많이 막히는지 봐주세요",
-    tags: ["여행", "추천"],
+    title: "MATE 테스트 등록 화면, 처음 봤을 때 이해가 되나요?",
+    tags: ["UX테스트", "온보딩"],
     reward: 300,
     description:
-      "항공권부터 숙소까지 고르는 흐름을 보고, 어디서 선택이 어려워지는지 알려주세요. 여행을 자주 가는 분이 아니어도 괜찮아요.",
+      "질문 유형 선택부터 등록 완료까지 흐름이 자연스러운지 피드백 부탁드려요. 처음 써보는 분도 막히지 않고 완료할 수 있는지 확인하고 싶어요.",
     images: [
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80",
+      "https://static.toss.im/3d-emojis/u1F4F1.png",
     ],
+    serviceName: "메이트",
+    serviceDescription:
+      "메이트는 누구나 쉽게 UX 테스트를 만들고 참여할 수 있는 서비스예요. 테스터는 간단한 테스트에 참여하고 리워드를 받을 수 있어요.",
   },
   "2": {
     title: "운동 기록 탭 첫인상 테스트",
@@ -30,6 +33,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1571019613914-85f342c55f55?auto=format&fit=crop&w=1200&q=80",
     ],
+    serviceName: "핏로그",
+    serviceDescription:
+      "핏로그는 운동 기록을 손쉽게 남기고 목표를 관리할 수 있는 헬스케어 앱이에요. 운동 초보부터 전문가까지 누구나 쓸 수 있어요.",
   },
   "3": {
     title: "메이트 커뮤니티 글쓰기 플로우 5초 테스트",
@@ -42,6 +48,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
     ],
+    serviceName: "메이트 커뮤니티",
+    serviceDescription:
+      "메이트 커뮤니티는 UX 피드백을 주고받는 공간이에요. 메이커와 테스터가 함께 더 나은 서비스를 만들어가요.",
   },
   "4": {
     title: "식단 기록 서비스 이름, 어떤 인상이 드는지 알려주세요",
@@ -54,6 +63,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
     ],
+    serviceName: "그린밀",
+    serviceDescription:
+      "그린밀은 매일의 식단을 기록하고 영양 균형을 체크할 수 있는 앱이에요. 건강한 식습관을 만들어가고 싶은 분들을 위해 만들었어요.",
   },
   "5": {
     title: "중고거래 채팅방에서 판매자 신뢰도를 어떻게 판단하는지 테스트",
@@ -66,18 +78,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80",
     ],
-  },
-  "6": {
-    title: "아이 돌봄 예약 화면, 부모 입장에서 안심되는지 봐주세요",
-    tags: ["육아", "예약"],
-    reward: 800,
-    description:
-      "예약 전 꼭 확인하고 싶은 정보가 충분한지, 처음 보는 보호자도 불안하지 않게 느낄 수 있는지 확인하려고 해요.",
-    images: [
-      "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?auto=format&fit=crop&w=1200&q=80",
-    ],
+    serviceName: "당근마켓 클론",
+    serviceDescription:
+      "지역 기반 중고거래 앱으로, 채팅을 통해 판매자와 직접 소통하며 거래할 수 있어요. 신뢰도를 높이기 위한 UI 개선을 테스트 중이에요.",
   },
   "7": {
     title: "대학생 팀플 일정 조율 서비스, 처음 봤을 때 이해되나요?",
@@ -90,6 +93,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
     ],
+    serviceName: "팀잇",
+    serviceDescription:
+      "팀잇은 대학생 팀 프로젝트를 위한 일정 조율 서비스예요. 가능한 시간을 입력하면 팀원 모두가 가능한 시간을 자동으로 찾아줘요.",
   },
   "8": {
     title: "반려동물 병원 찾기 지도 UX 테스트",
@@ -102,6 +108,9 @@ export const MOCK_TEST_DETAILS: Record<string, DiscoveryTestDetail> = {
       "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=1200&q=80",
     ],
+    serviceName: "펫케어맵",
+    serviceDescription:
+      "펫케어맵은 반려동물을 위한 동물병원, 미용실, 약국을 지도에서 한눈에 찾을 수 있는 서비스예요. 응급 상황에서도 빠르게 찾을 수 있도록 설계했어요.",
   },
 };
 
