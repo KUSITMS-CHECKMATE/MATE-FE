@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { AbCreateBottomCTA } from "./AbCreateBottomCTA";
 import { AbCreateOptionSection } from "./AbCreateOptionSection";
-import { AbCreateTopSection } from "./AbCreateTopSection";
 import { AbQuestionEditorOverlay } from "./AbQuestionEditorOverlay";
 
 interface AbCreatePageProps {
@@ -74,10 +74,11 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <AbCreateTopSection
+      <QuestionCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="A/B 테스트"
       />
       <AbCreateOptionSection
         imageUrlA={imageUrlA}

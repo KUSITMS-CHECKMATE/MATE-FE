@@ -4,7 +4,7 @@ import { useTestCreateForm } from "@/features/test-create/model/useTestCreateFor
 import type { CardSortCard, CardSortCategory } from "../model";
 import { CardSortCreateBottomCTA } from "./CardSortCreateBottomCTA";
 import { CardSortCreateOptionSection } from "./CardSortCreateOptionSection";
-import { CardSortCreateTopSection } from "./CardSortCreateTopSection";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { CardSortItemBottomSheet } from "./CardSortItemBottomSheet";
 import { CardSortQuestionEditorOverlay } from "./CardSortQuestionEditorOverlay";
 
@@ -91,10 +91,11 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <CardSortCreateTopSection
+      <QuestionCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="카드 소팅"
       />
       <CardSortCreateOptionSection
         categories={categories}
