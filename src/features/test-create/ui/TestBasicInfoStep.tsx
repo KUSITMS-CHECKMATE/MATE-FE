@@ -1,18 +1,18 @@
 import { motion } from "framer-motion";
 import { TextField } from "@toss/tds-mobile";
 import { useTestCreateForm, type TestCreateFormStore } from "../model/useTestCreateForm";
-import { BASIC_SUB_STEPS, CATEGORIES, type BasicSubStep } from "../model/types";
+import { STEPS, CATEGORIES, type Step } from "../model/types";
 
-const STEP_CONFIG: Record<
-  Exclude<BasicSubStep, "category">,
-  { label: string; placeholder: string; maxLength?: number; help?: string }
-> = {
+type BasicStep = Extract<Step, "name" | "summary" | "category">;
+
+const STEP_CONFIG: Record<BasicStep, { label: string; placeholder: string; maxLength?: number; help?: string }> = {
   name: { label: "테스트 이름", placeholder: "테스트 이름" },
   summary: { label: "테스트 한줄 소개", placeholder: "테스트 한줄 소개", maxLength: 60, help: "최대 60자" },
+  category: { label: "카테고리", placeholder: "" },
 };
 
-function getSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore): string {
-  switch (subStep) {
+function getStepValue(step: BasicStep, form: TestCreateFormStore): string {
+  switch (step) {
     case "name":
       return form.name;
     case "summary":
@@ -22,8 +22,8 @@ function getSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore): stri
   }
 }
 
-function setSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore, value: string) {
-  switch (subStep) {
+function setStepValue(step: BasicStep, form: TestCreateFormStore, value: string) {
+  switch (step) {
     case "name":
       form.setName(value);
       break;
@@ -34,13 +34,14 @@ function setSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore, value
 }
 
 interface TestBasicInfoStepProps {
-  subStep: BasicSubStep;
+  step: BasicStep;
+  currentIndex: number;
   onOpenCategorySheet: () => void;
   onFocus: () => void;
   onBlur: () => void;
 }
 
-export function TestBasicInfoStep({ subStep, onOpenCategorySheet, onFocus, onBlur }: TestBasicInfoStepProps) {
+export function TestBasicInfoStep({ step, currentIndex, onOpenCategorySheet, onFocus, onBlur }: TestBasicInfoStepProps) {
   const form = useTestCreateForm();
 
   const categoryDisplayValue = form.categories
@@ -48,32 +49,33 @@ export function TestBasicInfoStep({ subStep, onOpenCategorySheet, onFocus, onBlu
     .filter(Boolean)
     .join(", ");
 
-  const currentSubIndex = BASIC_SUB_STEPS.indexOf(subStep);
-  const completedSubSteps = BASIC_SUB_STEPS.slice(0, currentSubIndex);
+  const completedBasicSteps = STEPS.slice(0, currentIndex).filter(
+    (s): s is BasicStep => s === "name" || s === "summary" || s === "category",
+  );
 
   return (
     <div className="pt-6">
       {/* 현재 활성 입력 */}
-      {subStep === "category" ? (
+      {step === "category" ? (
         <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Button variant="line" hasError={false} label="카테고리" value={categoryDisplayValue} placeholder="카테고리" onClick={onOpenCategorySheet} />
         </motion.div>
       ) : (
-        <motion.div key={subStep} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+        <motion.div key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Clearable
             variant="line"
             hasError={false}
-            label={STEP_CONFIG[subStep].label}
+            label={STEP_CONFIG[step].label}
             labelOption="appear"
-            value={getSubStepValue(subStep, form)}
+            value={getStepValue(step, form)}
             onChange={(e) => {
-              const config = STEP_CONFIG[subStep];
+              const config = STEP_CONFIG[step];
               if (config.maxLength && e.target.value.length > config.maxLength) return;
-              setSubStepValue(subStep, form, e.target.value);
+              setStepValue(step, form, e.target.value);
             }}
-            onClear={() => setSubStepValue(subStep, form, "")}
-            placeholder={STEP_CONFIG[subStep].placeholder}
-            help={STEP_CONFIG[subStep].help}
+            onClear={() => setStepValue(step, form, "")}
+            placeholder={STEP_CONFIG[step].placeholder}
+            help={STEP_CONFIG[step].help}
             onFocus={onFocus}
             onBlur={onBlur}
           />
@@ -81,7 +83,7 @@ export function TestBasicInfoStep({ subStep, onOpenCategorySheet, onFocus, onBlu
       )}
 
       {/* 완료된 항목들 (최신순으로 위에) */}
-      {[...completedSubSteps].reverse().map((s) => {
+      {[...completedBasicSteps].reverse().map((s) => {
         if (s === "category") {
           return <TextField.Button key={s} variant="line" label="카테고리" value={categoryDisplayValue} placeholder="카테고리" onClick={onOpenCategorySheet} />;
         }
@@ -91,8 +93,8 @@ export function TestBasicInfoStep({ subStep, onOpenCategorySheet, onFocus, onBlu
             variant="line"
             label={STEP_CONFIG[s].label}
             labelOption="sustain"
-            value={getSubStepValue(s, form)}
-            onChange={(e) => setSubStepValue(s, form, e.target.value)}
+            value={getStepValue(s, form)}
+            onChange={(e) => setStepValue(s, form, e.target.value)}
           />
         );
       })}

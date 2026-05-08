@@ -1,22 +1,17 @@
-import type { ReactNode } from "react";
 import { Border, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
-interface QuestionCreateTopSectionProps {
+interface TreeCreateTopSectionProps {
   questionTitle: string;
   questionDescription: string;
   onOpenQuestionEditor: () => void;
-  subtitle: string;
-  imageSectionContent?: ReactNode;
 }
 
-export function QuestionCreateTopSection({
+export function TreeCreateTopSection({
   questionTitle,
   questionDescription,
   onOpenQuestionEditor,
-  subtitle,
-  imageSectionContent,
-}: QuestionCreateTopSectionProps) {
+}: TreeCreateTopSectionProps) {
   const hasQuestionTitle = questionTitle.trim().length > 0;
   const displayTitle = hasQuestionTitle ? questionTitle : "제목이 없어요";
   const displayDescription =
@@ -32,7 +27,7 @@ export function QuestionCreateTopSection({
         }
         subtitleTop={
           <Top.SubtitleParagraph size={15} color={adaptive.grey500}>
-            {subtitle}
+            트리 테스트
           </Top.SubtitleParagraph>
         }
         subtitleBottom={
@@ -44,7 +39,7 @@ export function QuestionCreateTopSection({
           <Top.LowerButton
             color={hasQuestionTitle ? "dark" : "primary"}
             size="small"
-            variant={hasQuestionTitle ? "weak" : "fill"}
+            variant="weak"
             display="inline"
             onClick={onOpenQuestionEditor}
           >
@@ -52,7 +47,8 @@ export function QuestionCreateTopSection({
           </Top.LowerButton>
         }
       />
-      {imageSectionContent ?? <Border variant="height16" className="shrink-0" />}
+
+      <Border variant="height16" />
     </>
   );
 }
