@@ -5,8 +5,8 @@ import { MultipleCreateBottomCTA } from "./MultipleCreateBottomCTA";
 import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
 import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
 import { MultipleQuestionEditorOverlay } from "./MultipleQuestionEditorOverlay";
+import { MultipleCreateTopSection } from "./MultipleCreateTopSection";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
-import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 
 interface MultipleCreatePageProps {
   questionId: string;
@@ -91,11 +91,10 @@ export function MultipleCreatePage({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <QuestionCreateTopSection
+      <MultipleCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        subtitle="객관식"
       />
       <MultipleCreateOptionSection
         isOtherInputEnabled={isOtherInputEnabled}
