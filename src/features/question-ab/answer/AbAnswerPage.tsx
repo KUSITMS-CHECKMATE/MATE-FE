@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Badge, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 import { QUESTION_TYPE_LABEL } from "@/features/test-participate/model/constants";
 
@@ -15,10 +14,22 @@ export function AbAnswerPage({
 
   return (
     <div className="flex flex-col">
-      <QuestionHeader
-        categoryLabel={QUESTION_TYPE_LABEL.ab}
-        title={data.title}
-        description={data.description}
+      <Top
+        title={
+          <Top.TitleParagraph size={22} color={adaptive.grey900}>
+            {data.title}
+          </Top.TitleParagraph>
+        }
+        subtitleTop={
+          <Top.SubtitleBadges
+            badges={[{ text: QUESTION_TYPE_LABEL.ab, color: "elephant", variant: "weak" }]}
+          />
+        }
+        subtitleBottom={
+          data.description ? (
+            <Top.SubtitleParagraph size={15}>{data.description}</Top.SubtitleParagraph>
+          ) : undefined
+        }
         lower={
           <Top.LowerButton
             color="dark"

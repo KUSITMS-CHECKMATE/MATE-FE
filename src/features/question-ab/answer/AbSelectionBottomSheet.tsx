@@ -8,16 +8,15 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: (selected: "A" | "B") => void;
-  initialSelected?: "A" | "B" | null;
 }
 
-export function AbSelectionBottomSheet({ data, open, onClose, onConfirm, initialSelected = null }: Props) {
-  const [pending, setPending] = useState<"A" | "B" | null>(initialSelected);
+export function AbSelectionBottomSheet({ data, open, onClose, onConfirm }: Props) {
+  const [pending, setPending] = useState<"A" | "B" | null>(null);
   const [prevOpen, setPrevOpen] = useState(open);
 
   if (prevOpen !== open) {
     setPrevOpen(open);
-    if (open) setPending(initialSelected);
+    if (open) setPending(null);
   }
 
   return (

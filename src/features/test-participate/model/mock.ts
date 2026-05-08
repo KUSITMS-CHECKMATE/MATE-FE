@@ -17,46 +17,45 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q2",
-      type: "subjective",
+      type: "multiple",
       data: {
-        title: "저녁 뭐 드셨나요?",
-        description: "좋은 하루 보내셨길 바랍니다",
-        imageUrl: "",
-        placeholder: "답변 쓰는중임",
-        maxLength: null,
+        title: "선호하는 색상을 모두 골라주세요",
+        description: "1개 이상 3개 이하로 선택",
+        choices: [
+          { id: "c1", name: "빨강", imageUrl: "" },
+          { id: "c2", name: "파랑", imageUrl: "" },
+          { id: "c3", name: "초록", imageUrl: "" },
+          { id: "c4", name: "노랑", imageUrl: "" },
+        ],
+        isMultiSelectEnabled: true,
+        isOtherInputEnabled: false,
+        minSelectCount: 1,
+        maxSelectCount: 3,
       },
     },
     {
       id: "q3",
       type: "tree",
       data: {
-        title: "내 프로필 사진을 수정하려면 어디로 가야할까요?",
-        description: "",
+        title: "관심 분야를 선택해주세요",
+        description: "트리에서 한 노드 선택",
         nodes: [
-          { id: "n1", name: "홈", children: [] },
           {
-            id: "n2",
-            name: "송금",
+            id: "n1",
+            name: "디자인",
             children: [
-              { id: "n2-1", name: "은행 송금", children: [] },
-              {
-                id: "n2-2",
-                name: "연락처 송금",
-                children: [
-                  {
-                    id: "n2-2-1",
-                    name: "자동 이체 설정",
-                    children: [
-                      { id: "n2-2-1-1", name: "마지막 뎁스", children: [] },
-                      { id: "n2-2-1-2", name: "마지막 뎁스", children: [] },
-                    ],
-                  },
-                ],
-              },
+              { id: "n1-1", name: "UI", children: [] },
+              { id: "n1-2", name: "UX", children: [] },
             ],
           },
-          { id: "n3", name: "투자", children: [] },
-          { id: "n4", name: "설정", children: [] },
+          {
+            id: "n2",
+            name: "개발",
+            children: [
+              { id: "n2-1", name: "프론트", children: [] },
+              { id: "n2-2", name: "백엔드", children: [] },
+            ],
+          },
         ],
       },
     },
@@ -100,8 +99,10 @@ const MOCK_TEST_1: ParticipateTest = {
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
-        imageUrlA: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
-        imageUrlB: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlA:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
       },
     },
     {
@@ -257,8 +258,10 @@ const MOCK_TEST_2: ParticipateTest = {
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
-        imageUrlA: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
-        imageUrlB: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlA:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlB:
+          "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
       },
     },
     {

@@ -18,16 +18,7 @@ export function ParticipatePage({ testId }: Props) {
     navigate({ to: ROUTES.DISCOVERY });
   });
 
-  const {
-    currentIndex,
-    totalCount,
-    currentQuestion,
-    isFirst,
-    isLast,
-    canGoNext,
-    goNext,
-    goPrev,
-  } = funnel;
+  const { currentIndex, totalCount, currentQuestion, isFirst, isLast, canGoNext, goNext, goPrev } = funnel;
 
   const [isAbSheetOpen, setIsAbSheetOpen] = useState(false);
 
@@ -102,9 +93,6 @@ export function ParticipatePage({ testId }: Props) {
             setIsAbSheetOpen(false);
             funnel.goNextWithAnswer({ type: "ab", selected });
           }}
-          initialSelected={
-            funnel.currentAnswer?.type === "ab" ? funnel.currentAnswer.selected : null
-          }
         />
       )}
     </div>
