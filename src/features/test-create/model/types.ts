@@ -151,7 +151,6 @@ import type { AbQuestionData } from "@/features/question-ab/model/types";
 import type { TreeQuestionData } from "@/features/question-tree/model/types";
 import type { SubjectiveQuestionData } from "@/features/question-subjective/model/types";
 import type { FivesecQuestionData } from "@/features/question-fivesec/model/types";
-import type { CardSortQuestionData } from "@/features/question-cardsort/model/types";
 
 export type QuestionData =
   | ({ typeId: "multiple" } & MultipleQuestionData)
@@ -159,8 +158,7 @@ export type QuestionData =
   | ({ typeId: "ab" } & AbQuestionData)
   | ({ typeId: "tree" } & TreeQuestionData)
   | ({ typeId: "subjective" } & SubjectiveQuestionData)
-  | ({ typeId: "fivesec" } & FivesecQuestionData)
-  | ({ typeId: "card" } & CardSortQuestionData);
+  | ({ typeId: "fivesec" } & FivesecQuestionData);
 
 export interface PendingQuestion {
   id: string;

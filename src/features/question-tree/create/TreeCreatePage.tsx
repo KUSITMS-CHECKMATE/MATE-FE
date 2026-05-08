@@ -37,7 +37,9 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
 
   const isCompleteDisabled =
-    questionTitle.trim().length === 0 || nodes.length === 0;
+    questionTitle.trim().length === 0 ||
+    nodes.length === 0 ||
+    nodes.some((node) => node.children.length === 0);
 
   const findNode = (
     list: TreeNodeItem[],
