@@ -8,7 +8,7 @@ export default defineConfig({
     icon: "/vite.svg", // 화면에 노출될 앱의 아이콘 이미지 주소로 바꿔주세요.
   },
   web: {
-    host: "172.30.1.3",
+    host: "localhost",
     port: 5173,
     commands: {
       dev: "vite",
