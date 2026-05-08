@@ -98,7 +98,7 @@ function renderDepthIcon(depth: number, hasChildren: boolean, isExpanded: boolea
   if (!hasChildren) {
     return <ListRow.AssetIcon size="xsmall" shape="original" name="icon-arrow-solid-down-mono" color="transparent" />;
   }
-  return <ListRow.AssetIcon size="xsmall" shape="original" name={isExpanded ? "icon-arrow-increase-mono" : "icon-arrow-solid-down-mono"} color={adaptive.grey300} />;
+  return <ListRow.AssetIcon size="xsmall" shape="original" name={isExpanded ? "icon-arrow-solid-down-mono" : "icon-arrow-solid-right-mono"} color={adaptive.grey300} />;
 }
 
 function textRowTypeFor(depth: number): "1RowTypeA" | "1RowTypeB" | "1RowTypeC" {
