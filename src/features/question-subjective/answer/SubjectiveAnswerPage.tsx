@@ -4,7 +4,7 @@ import type { QuestionAnswerProps } from "@/features/test-participate/model/type
 
 type Props = QuestionAnswerProps<"subjective">;
 
-export function SubjectiveAnswerView({ question, answer, onChange }: Props) {
+export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
   const { title, description, imageUrl, placeholder, maxLength } =
     question.data;
 
