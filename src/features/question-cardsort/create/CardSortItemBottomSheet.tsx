@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BottomSheet, TextField } from "@toss/tds-mobile";
 
 interface CardSortItemBottomSheetProps {
@@ -19,14 +19,37 @@ export function CardSortItemBottomSheet({
   onConfirm,
 }: CardSortItemBottomSheetProps) {
   const [value, setValue] = useState(initialValue);
+  const [fieldVisible, setFieldVisible] = useState(false);
+  const initialValueRef = useRef(initialValue);
 
   useEffect(() => {
-    if (open) setValue(initialValue);
-  }, [open, initialValue]);
+    initialValueRef.current = initialValue;
+  }, [initialValue]);
 
+  useEffect(() => {
+    if (!open) return;
+    const resetTimer = setTimeout(() => setValue(initialValueRef.current), 0);
+    const visibleTimer = setTimeout(() => setFieldVisible(true), 4);
+    return () => {
+      clearTimeout(resetTimer);
+      clearTimeout(visibleTimer);
+      setFieldVisible(false);
+    };
+  }, [open]);
+
+  const MAX_LENGTH = 16;
   const isDisabled = value.trim().length === 0;
 
   return (
+    <>
+      {open && (
+        <style>{`
+          :has(> [aria-modal="true"]),
+          [aria-modal="true"] {
+            transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          }
+        `}</style>
+      )}
     <BottomSheet
       header={<BottomSheet.Header>{title}</BottomSheet.Header>}
       open={open}
@@ -37,6 +60,7 @@ export function CardSortItemBottomSheet({
           color="primary"
           variant="fill"
           disabled={isDisabled}
+          fixedAboveKeyboard={true}
           onClick={() => {
             if (!isDisabled) onConfirm(value.trim());
           }}
@@ -46,14 +70,19 @@ export function CardSortItemBottomSheet({
       }
       ctaContentGap={0}
     >
-      <TextField.Clearable
-        variant="line"
-        hasError={false}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => setValue(e.target.value)}
-        onClear={() => setValue("")}
-      />
+      <div style={{ opacity: fieldVisible ? 1 : 0, transition: fieldVisible ? "opacity 0.15s ease-in" : "none" }}>
+        <TextField.Clearable
+          variant="line"
+          hasError={false}
+          value={value}
+          placeholder={placeholder}
+          maxLength={MAX_LENGTH}
+          onChange={(e) => setValue(e.target.value)}
+          onClear={() => setValue("")}
+          autoFocus
+        />
+      </div>
     </BottomSheet>
+    </>
   );
 }
