@@ -23,7 +23,7 @@ export function TestCard({
 
   return (
     <div
-      className="w-full rounded-2xl bg-white overflow-visible flex flex-col gap-3 cursor-pointer"
+      className="w-full rounded-2xl bg-white overflow-visible flex flex-col gap-3 cursor-pointer pb-3"
       onClick={onClick}
     >
       {/* 썸네일 */}
