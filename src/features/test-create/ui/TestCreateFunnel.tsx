@@ -31,7 +31,7 @@ export function TestCreateFunnel() {
   const funnel = useFunnel();
   const form = useTestCreateForm();
   const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
-  const [registerTab, setRegisterTab] = useState<RegisterTab>("info");
+  const [registerTab, setRegisterTab] = useState<RegisterTab>("questions");
   const [isFocused, setIsFocused] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
@@ -113,7 +113,8 @@ export function TestCreateFunnel() {
     if (funnel.step === "service" && showServiceDescription) return "double";
     if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
-    if (funnel.step === "basic" && basicSubStep === "category" && isAllComplete) return "double";
+    if (funnel.step === "basic" && basicSubStep === "category" && isAllComplete)
+      return "double";
     return "hidden";
   })();
 
@@ -165,7 +166,10 @@ export function TestCreateFunnel() {
             dismissKeyboard();
             if (basicSubStep === "name" && form.name.trim().length > 0) {
               setBasicSubStep("summary");
-            } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
+            } else if (
+              basicSubStep === "summary" &&
+              form.summary.trim().length > 0
+            ) {
               setBasicSubStep("category");
             }
           } else {
