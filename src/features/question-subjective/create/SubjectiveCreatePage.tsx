@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TextArea } from "@toss/tds-mobile";
+import { Asset, Border, TextArea } from "@toss/tds-mobile";
+import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
-import { SubjectiveCreateTopSection } from "./SubjectiveCreateTopSection";
+import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { SubjectiveCreateBottomCTA } from "./SubjectiveCreateBottomCTA";
 import { SubjectiveQuestionEditorOverlay } from "./SubjectiveQuestionEditorOverlay";
 
@@ -42,12 +43,48 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <SubjectiveCreateTopSection
+      <QuestionCreateTopSection
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        questionImageUrl={questionImageUrl}
         onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        onRemoveImage={() => setQuestionImageUrl("")}
+        subtitle="주관식"
+        imageSectionContent={
+          questionImageUrl ? (
+            <>
+              <div className="rounded-2xl bg-white p-4">
+                <div
+                  className="w-full rounded-2xl p-1.5"
+                  style={{
+                    height: 194,
+                    backgroundImage: `url(${questionImageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+                  }}
+                >
+                  <div className="flex h-full w-full flex-col items-end justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setQuestionImageUrl("")}
+                      aria-label="이미지 삭제"
+                    >
+                      <Asset.Icon
+                        frameShape={Asset.frameShape.CircleXSmall}
+                        backgroundColor={adaptive.greyOpacity600}
+                        name="icon-sweetshop-x-white"
+                        scale={0.66}
+                        aria-hidden
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <Border className="w-full" variant="height16" />
+            </>
+          ) : (
+            <Border className="w-full" variant="height16" />
+          )
+        }
       />
 
       {/* TODO: SubjectiveCreateOptionSection */}

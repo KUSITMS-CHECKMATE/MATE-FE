@@ -16,7 +16,7 @@ import { ServiceDescriptionEditPage } from "./ServiceDescriptionEditPage";
 import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
-import type { EditPhase, QuestionTypeId } from "../model/types";
+import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
 import { ScaleCreatePage } from "@/features/question-scale/create";
@@ -29,6 +29,7 @@ export function TestCreateFunnel() {
   const navigate = useNavigate();
   const funnel = useFunnel();
   const form = useTestCreateForm();
+  const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
   const [registerTab, setRegisterTab] = useState<RegisterTab>("info");
   const [isFocused, setIsFocused] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -84,10 +85,10 @@ export function TestCreateFunnel() {
 
   const isConfirmDisabled = (() => {
     switch (funnel.step) {
-      case "name":
-        return form.name.trim().length === 0;
-      case "summary":
-        return form.summary.trim().length === 0;
+      case "basic":
+        if (basicSubStep === "name") return form.name.trim().length === 0;
+        if (basicSubStep === "summary") return form.summary.trim().length === 0;
+        return false;
       case "service":
         return !showServiceDescription && form.serviceName.trim().length === 0;
       default:
@@ -111,7 +112,7 @@ export function TestCreateFunnel() {
     if (funnel.step === "service" && showServiceDescription) return "double";
     if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
-    if (funnel.step === "category" && isAllComplete) return "double";
+    if (funnel.step === "basic" && basicSubStep === "category" && isAllComplete) return "double";
     return "hidden";
   })();
 
@@ -159,6 +160,13 @@ export function TestCreateFunnel() {
             if (!showServiceDescription && form.serviceName.trim().length > 0) {
               setShowServiceDescription(true);
             }
+          } else if (funnel.step === "basic") {
+            dismissKeyboard();
+            if (basicSubStep === "name" && form.name.trim().length > 0) {
+              setBasicSubStep("summary");
+            } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
+              setBasicSubStep("category");
+            }
           } else {
             funnel.next();
           }
@@ -176,6 +184,8 @@ export function TestCreateFunnel() {
         onCancel={() => {
           if (funnel.step === "register") {
             setIsEditSheetOpen(true);
+          } else if (funnel.step === "basic") {
+            setIsExitDialogOpen(true);
           } else {
             funnel.prev();
           }
@@ -241,8 +251,7 @@ export function TestCreateFunnel() {
           </motion.div>
         ) : (
           <TestBasicInfoStep
-            step={funnel.step}
-            currentIndex={funnel.currentIndex}
+            subStep={basicSubStep}
             onOpenCategorySheet={() => setIsCategorySheetOpen(true)}
             onFocus={handleFocus}
             onBlur={handleBlur}
