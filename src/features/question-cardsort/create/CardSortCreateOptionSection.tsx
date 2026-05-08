@@ -33,9 +33,9 @@ function CardGridItem({ label, isDeleteMode, onEdit, onDelete }: CardGridItemPro
       }}
     >
       <Text
-        typography="t5"
+        typography="t6"
         color={adaptive.grey800}
-        fontWeight="medium"
+        fontWeight="semibold"
         className="flex-1 mr-2"
       >
         {label}
@@ -186,7 +186,7 @@ export function CardSortCreateOptionSection({
               disabled={cards.length === 0}
               onClick={cards.length > 0 ? () => setIsCardDeleteMode((prev) => !prev) : undefined}
             >
-              {isCardDeleteMode ? "완료" : "삭제하기"}
+              {isCardDeleteMode ? "저장하기" : "삭제하기"}
             </TextButton>
           </div>
         }
