@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import {
   Asset,
@@ -35,8 +35,25 @@ export function MultipleChoiceEditorOverlay({
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isCreateDisabled = choiceName.trim().length === 0;
+
+  const handleFocus = () => {
+    if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    blurTimerRef.current = setTimeout(() => setIsFocused(false), 100);
+  };
+
+  const dismissKeyboard = () => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+    setIsFocused(false);
+  };
 
   const handleCamera = async () => {
     try {
@@ -93,6 +110,8 @@ export function MultipleChoiceEditorOverlay({
           autoFocus
           onChange={(e) => setChoiceName(e.target.value)}
           onClear={() => setChoiceName("")}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
 
         {imageUrl ? (
@@ -147,21 +166,33 @@ export function MultipleChoiceEditorOverlay({
         )}
       </main>
 
-      <FixedBottomCTA.Double
-        leftButton={
-          <CTAButton color="dark" variant="weak" onClick={onClose}>
-            취소
-          </CTAButton>
-        }
-        rightButton={
-          <CTAButton
-            disabled={isCreateDisabled}
-            onClick={() => onCreate({ choiceName: choiceName.trim(), imageUrl })}
-          >
-            {submitLabel}
-          </CTAButton>
-        }
-      />
+      <AnimatePresence mode="wait">
+        {isFocused ? (
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA fixedAboveKeyboard onClick={dismissKeyboard}>
+              확인하기
+            </FixedBottomCTA>
+          </motion.div>
+        ) : (
+          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA.Double
+              leftButton={
+                <CTAButton color="dark" variant="weak" onClick={onClose}>
+                  취소
+                </CTAButton>
+              }
+              rightButton={
+                <CTAButton
+                  disabled={isCreateDisabled}
+                  onClick={() => onCreate({ choiceName: choiceName.trim(), imageUrl })}
+                >
+                  {submitLabel}
+                </CTAButton>
+              }
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <BottomSheet
         open={isPhotoSheetOpen}
