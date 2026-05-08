@@ -11,7 +11,14 @@ type Props = {
   onClick?: () => void;
 };
 
-export function TestCard({ title, description, reward, thumbnailUrl, liked, onClick }: Props) {
+export function TestCard({
+  title,
+  description,
+  reward,
+  thumbnailUrl,
+  liked,
+  onClick,
+}: Props) {
   const [isLiked, setIsLiked] = useState(liked);
 
   return (
@@ -59,16 +66,18 @@ export function TestCard({ title, description, reward, thumbnailUrl, liked, onCl
       {/* 텍스트 */}
       <div className="w-full flex flex-col gap-0.5">
         {/* 제목 + 리워드 */}
-        <div className="w-full flex flex-row gap-3 justify-between items-start">
-          <Text
-            display="block"
-            color={adaptive.grey800}
-            typography="st8"
-            fontWeight="semibold"
-            className="flex-1 line-clamp-1"
-          >
-            {title}
-          </Text>
+        <div className="w-full flex flex-row justify-between items-start">
+          <div className="flex-1 overflow-hidden">
+            <Text
+              display="block"
+              color={adaptive.grey800}
+              typography="st8"
+              fontWeight="semibold"
+              className="truncate"
+            >
+              {title}
+            </Text>
+          </div>
           <div className="flex flex-row gap-1 items-center shrink-0">
             <Asset.Icon
               frameShape={Asset.frameShape.CleanW24}
@@ -84,15 +93,17 @@ export function TestCard({ title, description, reward, thumbnailUrl, liked, onCl
         </div>
 
         {/* 소개 */}
-        <Text
-          display="block"
-          color={adaptive.grey600}
-          typography="t6"
-          fontWeight="regular"
-          className="line-clamp-1"
-        >
-          {description}
-        </Text>
+        <div className="overflow-hidden">
+          <Text
+            display="block"
+            color={adaptive.grey600}
+            typography="t6"
+            fontWeight="regular"
+            className="truncate"
+          >
+            {description}
+          </Text>
+        </div>
       </div>
     </div>
   );
