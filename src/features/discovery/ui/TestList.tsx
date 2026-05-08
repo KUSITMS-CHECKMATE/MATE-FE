@@ -31,6 +31,7 @@ export function TestList({ tests }: Props) {
               description={test.description}
               reward={test.reward}
               thumbnailUrl={test.thumbnailUrl}
+              liked={test.liked}
               onClick={() =>
                 navigate({
                   to: "/discovery/$testId",

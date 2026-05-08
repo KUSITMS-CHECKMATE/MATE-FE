@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   openCamera,
   fetchAlbumPhotos,
@@ -44,9 +44,24 @@ export function SubjectiveQuestionEditorOverlay({
   const [description, setDescription] = useState(initialDescription);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
-  const [pendingPhotoAction, setPendingPhotoAction] = useState<
-    "camera" | "album" | null
-  >(null);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleFocus = () => {
+    if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    blurTimerRef.current = setTimeout(() => setIsFocused(false), 100);
+  };
+
+  const dismissKeyboard = () => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+    setIsFocused(false);
+  };
 
   const handleCamera = async () => {
     try {
@@ -107,6 +122,8 @@ export function SubjectiveQuestionEditorOverlay({
           autoFocus
           onChange={(e) => setTitle(e.target.value)}
           onClear={() => setTitle("")}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
         <TextField.Clearable
           variant="line"
@@ -118,6 +135,8 @@ export function SubjectiveQuestionEditorOverlay({
           maxLength={55}
           onChange={(e) => setDescription(e.target.value)}
           onClear={() => setDescription("")}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
 
         {imageUrl ? (
@@ -188,27 +207,33 @@ export function SubjectiveQuestionEditorOverlay({
         )}
       </main>
 
-      <FixedBottomCTA.Double
-        leftButton={
-          <CTAButton color="dark" variant="weak" onClick={onClose}>
-            취소
-          </CTAButton>
-        }
-        rightButton={
-          <CTAButton
-            disabled={title.trim().length === 0}
-            onClick={() =>
-              onSave({
-                title: title.trim(),
-                description: description.trim(),
-                imageUrl,
-              })
-            }
-          >
-            저장하기
-          </CTAButton>
-        }
-      />
+      <AnimatePresence mode="wait">
+        {isFocused ? (
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA fixedAboveKeyboard onClick={dismissKeyboard}>
+              확인하기
+            </FixedBottomCTA>
+          </motion.div>
+        ) : (
+          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA.Double
+              leftButton={
+                <CTAButton color="dark" variant="weak" onClick={onClose}>
+                  취소
+                </CTAButton>
+              }
+              rightButton={
+                <CTAButton
+                  disabled={title.trim().length === 0}
+                  onClick={() => onSave({ title: title.trim(), description: description.trim(), imageUrl })}
+                >
+                  저장하기
+                </CTAButton>
+              }
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <BottomSheet
         open={isPhotoSheetOpen}
