@@ -3,9 +3,12 @@ import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 
 interface Props {
   remaining: number;
+  imageUrl: string;
 }
 
-export function FivesecCountdownPhase({ remaining }: Props) {
+export function FivesecCountdownPhase({ remaining, imageUrl }: Props) {
+  const hasImage = imageUrl.trim().length > 0;
+
   return (
     <motion.div
       className="flex flex-col flex-1 bg-white"
@@ -18,7 +21,15 @@ export function FivesecCountdownPhase({ remaining }: Props) {
         title="5초간 아래 사진에 집중해주세요"
       />
       <div className="flex-1 px-5 pt-4">
-        <div className="relative w-full h-53 rounded-2xl bg-pink-200 shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)] flex items-center justify-center">
+        <div className="relative flex h-53 w-full items-center justify-center overflow-hidden rounded-2xl bg-pink-200 shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)]">
+          {hasImage && (
+            <img
+              src={imageUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-black/20" />
           <span className="text-5xl font-bold text-white">{remaining}</span>
         </div>
       </div>

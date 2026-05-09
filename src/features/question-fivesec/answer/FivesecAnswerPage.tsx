@@ -16,7 +16,7 @@ interface Props extends QuestionAnswerProps<"fivesec"> {
 }
 
 export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
-  const { duration, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices } = question.data;
+  const { duration, imageUrl, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices } = question.data;
 
   const [phase, setPhase] = useState<Phase>("ready");
   const [remaining, setRemaining] = useState(duration);
@@ -79,7 +79,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   if (phase === "countdown") {
-    return <FivesecCountdownPhase remaining={remaining} />;
+    return <FivesecCountdownPhase remaining={remaining} imageUrl={imageUrl} />;
   }
 
   if (isSubjective) {

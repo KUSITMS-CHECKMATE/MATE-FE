@@ -1,4 +1,5 @@
 import type { DiscoveryTest } from "./types";
+import firstThumbnail from "@/assets/KakaoTalk_Photo_2026-05-09-11-58-56 004.jpeg";
 
 export const MOCK_DISCOVERY_TESTS: DiscoveryTest[] = [
   {
@@ -6,7 +7,7 @@ export const MOCK_DISCOVERY_TESTS: DiscoveryTest[] = [
     title: "여행 일정 추천 화면, 어디서 가장 많이 막히는지 봐주세요",
     description: "항공권부터 숙소까지 고르는 흐름을 보고 헷갈리는 순간을 알려주세요.",
     reward: 300,
-    thumbnailUrl: "https://static.toss.im/3d-emojis/u1F5FA.png",
+    thumbnailUrl: firstThumbnail,
   },
   {
     id: 2,

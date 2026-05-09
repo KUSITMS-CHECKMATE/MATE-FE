@@ -1,4 +1,7 @@
 import type { ParticipateTest } from "./types";
+import abImageA from "@/assets/KakaoTalk_Photo_2026-05-09-11-58-55 001.jpeg";
+import abImageB from "@/assets/KakaoTalk_Photo_2026-05-09-11-58-56 002.jpeg";
+import subjectiveImage from "@/assets/KakaoTalk_Photo_2026-05-09-11-58-56 003.jpeg";
 
 const MOCK_TEST_1: ParticipateTest = {
   id: 1,
@@ -9,17 +12,6 @@ const MOCK_TEST_1: ParticipateTest = {
       type: "subjective",
       data: {
         title: "오늘의 기분이 어떤지 작성해주세요",
-        description: "좋은 하루 보내셨길 바랍니다",
-        imageUrl: "",
-        placeholder: "답변 쓰는중임",
-        maxLength: null,
-      },
-    },
-    {
-      id: "q2",
-      type: "subjective",
-      data: {
-        title: "저녁 뭐 드셨나요?",
         description: "좋은 하루 보내셨길 바랍니다",
         imageUrl: "",
         placeholder: "답변 쓰는중임",
@@ -82,17 +74,6 @@ const MOCK_TEST_1: ParticipateTest = {
       },
     },
     {
-      id: "q5",
-      type: "scale",
-      data: {
-        title: "이 서비스가 2030 여성으로서 도움이 되고 편리하다고 느껴지셨나요?",
-        description: "1~5점 중에서 생각한 점수를 알려주세요.",
-        scaleCount: 5,
-        minLabel: "전혀 그렇지 않다",
-        maxLabel: "매우 그렇다",
-      },
-    },
-    {
       id: "q6",
       type: "scale",
       data: {
@@ -121,8 +102,8 @@ const MOCK_TEST_1: ParticipateTest = {
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
-        imageUrlA: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
-        imageUrlB: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+        imageUrlA: abImageA,
+        imageUrlB: abImageB,
       },
     },
     {
@@ -145,23 +126,6 @@ const MOCK_TEST_1: ParticipateTest = {
           { id: "cat3", label: "신발" },
         ],
         requireAllPlaced: true,
-      },
-    },
-    {
-      id: "q4",
-      type: "multiple",
-      data: {
-        title: "오늘의 기분이 어떤지 체크해주세요",
-        description: "솔직하게 답변해 주세요",
-        choices: [
-          { id: "c1", name: "행복함", imageUrl: "placeholder" },
-          { id: "c2", name: "슬픔", imageUrl: "" },
-          { id: "c3", name: "피곤함", imageUrl: "placeholder" },
-        ],
-        isMultiSelectEnabled: false,
-        isOtherInputEnabled: false,
-        minSelectCount: 1,
-        maxSelectCount: 1,
       },
     },
     {
@@ -188,18 +152,7 @@ const MOCK_TEST_1: ParticipateTest = {
       data: {
         title: "오늘의 기분이 어떤지 작성해주세요",
         description: "좋은 하루 보내셨길 바랍니다",
-        imageUrl: "",
-        placeholder: "답변을 작성해주세요",
-        maxLength: null,
-      },
-    },
-    {
-      id: "q8",
-      type: "subjective",
-      data: {
-        title: "이 이미지를 보고 느낀 점을 작성해주세요",
-        description: "자유롭게 작성해주세요",
-        imageUrl: "placeholder",
+        imageUrl: subjectiveImage,
         placeholder: "답변을 작성해주세요",
         maxLength: null,
       },
@@ -210,7 +163,7 @@ const MOCK_TEST_1: ParticipateTest = {
       data: {
         title: "5초 안에 떠오르는 것을 골라주세요",
         description: "1개 이상 2개 이하로 선택",
-        imageUrl: "placeholder",
+        imageUrl: subjectiveImage,
         duration: 5,
         answerExample: "",
         answerType: "multiple",
@@ -223,46 +176,6 @@ const MOCK_TEST_1: ParticipateTest = {
         ],
         minSelectCount: 1,
         maxSelectCount: 2,
-      },
-    },
-    {
-      id: "q9",
-      type: "fivesec",
-      data: {
-        title: "이 이미지를 보고 가장 먼저 떠오르는 단어를 선택해주세요",
-        description: "1개만 선택",
-        imageUrl: "placeholder",
-        duration: 5,
-        answerExample: "",
-        answerType: "multiple",
-        isMultipleAnswer: false,
-        isMultiSelectEnabled: false,
-        choices: [
-          { id: "g1", name: "따뜻함", imageUrl: "" },
-          { id: "g2", name: "차가움", imageUrl: "" },
-          { id: "g3", name: "편안함", imageUrl: "" },
-          { id: "g4", name: "활기참", imageUrl: "" },
-        ],
-        minSelectCount: 1,
-        maxSelectCount: 1,
-      },
-    },
-    {
-      id: "q10",
-      type: "fivesec",
-      data: {
-        title: "사진을 보고 느낀 점을 알려주세요",
-        description: "아무거나 다 괜찮아요.",
-        imageUrl: "placeholder",
-        duration: 5,
-        answerExample: "",
-        answerType: "subjective",
-        isMultipleAnswer: false,
-        isMultiSelectEnabled: false,
-        choices: [],
-        minSelectCount: 0,
-        maxSelectCount: 0,
-        placeholder: "답변을 작성해주세요",
       },
     },
   ],

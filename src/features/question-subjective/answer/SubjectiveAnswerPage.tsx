@@ -9,6 +9,7 @@ export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
     question.data;
 
   const text = answer?.text ?? "";
+  const hasImage = imageUrl.trim().length > 0;
 
   return (
     <div className="flex flex-col">
@@ -17,9 +18,13 @@ export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
         title={title}
         description={description}
       />
-      {imageUrl && (
+      {hasImage && (
         <div className="px-5">
-          <div className="w-full h-53 rounded-2xl bg-gray-100 shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)]" />
+          <img
+            src={imageUrl}
+            alt=""
+            className="h-53 w-full rounded-2xl object-cover shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)]"
+          />
         </div>
       )}
       <TextArea
