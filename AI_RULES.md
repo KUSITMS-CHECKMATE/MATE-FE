@@ -69,6 +69,29 @@
 - **FSD 구조 유지**
 - `shared` / `features` / `entities` / `pages` 역할 분리
 
+#### features 폴더 구조
+
+```
+features/
+├── test-create/          ← 생성 퍼널 (오케스트레이터)
+├── test-participate/     ← 진행 퍼널 (오케스트레이터)
+├── question-multiple/    ← 객관식 도메인
+├── question-subjective/  ← 주관식 도메인
+├── question-tree/        ← 트리 테스트 도메인
+├── question-fivesec/     ← 5초 테스트 도메인
+├── question-scale/       ← 척도 질문 도메인
+├── question-ab/          ← A/B 테스트 도메인
+│   (각 question-* 내부)
+│   ├── model/            ← 공유 타입
+│   ├── create/           ← 생성 UI
+│   └── answer/           ← 진행 응답 UI
+└── ...
+```
+
+- 질문 유형 feature는 **`question-{type}` 네이밍** (`test-{type}` 사용 금지)
+- 내부는 `model/`(공유 타입) · `create/`(생성 UI) · `answer/`(응답 UI)로 역할 분리
+- 내부 의존: 퍼널 → `question-*/create`, `question-*/answer` → `question-*/model`
+
 ---
 
 ## 3. UI 규칙
