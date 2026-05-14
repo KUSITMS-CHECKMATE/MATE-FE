@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import type { CardSortCard, CardSortCategory } from "../model";
 import { CardSortCreateBottomCTA } from "./CardSortCreateBottomCTA";
 import { CardSortCreateOptionSection } from "./CardSortCreateOptionSection";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { CardSortItemBottomSheet } from "./CardSortItemBottomSheet";
+import { CardSortQuestionEditorOverlay } from "./CardSortQuestionEditorOverlay";
 
 interface CardSortCreatePageProps {
   questionId: string;
@@ -21,11 +22,9 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingCardSort = existing?.typeId === "card" ? existing : null;
 
+  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState(existingCardSort?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingCardSort?.description ?? "");
-  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
-    (existingCardSort?.title ?? "").trim().length > 0,
-  );
   const [categories, setCategories] = useState<CardSortCategory[]>(existingCardSort?.categories ?? []);
   const [cards, setCards] = useState<CardSortCard[]>(existingCardSort?.cards ?? []);
 
@@ -93,44 +92,36 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
-        questionType="카드 소팅"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onChangeTitle={setQuestionTitle}
-        onChangeDescription={setQuestionDescription}
-        isInputCompleted={isQuestionInputCompleted}
-        onConfirmInput={() => setIsQuestionInputCompleted(true)}
-        onClose={onClose}
+        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="카드 소팅"
       />
-      {isQuestionInputCompleted && (
-        <>
-          <CardSortCreateOptionSection
-            categories={categories}
-            cards={cards}
-            onAddCategory={handleOpenAddCategory}
-            onEditCategory={handleOpenEditCategory}
-            onDeleteCategory={(id) => setCategories((prev) => prev.filter((c) => c.id !== id))}
-            onAddCard={handleOpenAddCard}
-            onEditCard={handleOpenEditCard}
-            onDeleteCard={(id) => setCards((prev) => prev.filter((c) => c.id !== id))}
-          />
-          <CardSortCreateBottomCTA
-            isCompleteDisabled={isCompleteDisabled}
-            onCancel={onClose}
-            onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "card",
-                title: questionTitle,
-                description: questionDescription,
-                categories,
-                cards,
-                requireAllPlaced: false,
-              });
-              onClose();
-            }}
-          />
-        </>
-      )}
+      <CardSortCreateOptionSection
+        categories={categories}
+        cards={cards}
+        onAddCategory={handleOpenAddCategory}
+        onEditCategory={handleOpenEditCategory}
+        onDeleteCategory={(id) => setCategories((prev) => prev.filter((c) => c.id !== id))}
+        onAddCard={handleOpenAddCard}
+        onEditCard={handleOpenEditCard}
+        onDeleteCard={(id) => setCards((prev) => prev.filter((c) => c.id !== id))}
+      />
+      <CardSortCreateBottomCTA
+        isCompleteDisabled={isCompleteDisabled}
+        onCancel={onClose}
+        onComplete={() => {
+          updateQuestion(questionId, {
+            typeId: "card",
+            title: questionTitle,
+            description: questionDescription,
+            categories,
+            cards,
+            requireAllPlaced: false,
+          });
+          onClose();
+        }}
+      />
 
       <CardSortItemBottomSheet
         open={isCategorySheetOpen}
@@ -155,6 +146,21 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
         }}
         onConfirm={handleConfirmCard}
       />
+
+      <AnimatePresence>
+        {isQuestionEditorOpen && (
+          <CardSortQuestionEditorOverlay
+            initialTitle={questionTitle}
+            initialDescription={questionDescription}
+            onClose={() => setIsQuestionEditorOpen(false)}
+            onSave={({ title, description }) => {
+              setQuestionTitle(title);
+              setQuestionDescription(description);
+              setIsQuestionEditorOpen(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
