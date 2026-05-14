@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Asset, Button, Result, Tab, Text, Top } from "@toss/tds-mobile";
+import { ResultTabContent } from "./ResultTabContent";
 import { adaptive } from "@toss/tds-colors";
 
 interface Question {
@@ -15,14 +16,30 @@ const MOCK_QUESTIONS: Question[] = [
 
 interface Props {
   testId: string;
+  status: "active" | "ended";
 }
 
-export function TestResultPage({ testId }: Props) {
+export function TestResultPage({ testId, status }: Props) {
   console.log(testId);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   return (
     <div>
+      {status === "ended" && (
+        <div className="w-full sticky top-0 z-10 bg-white px-6 py-2">
+          <div className="w-full h-9.5 bg-[#f2f4f6] rounded-[20px] px-2.5 py-2 flex flex-row gap-2 justify-start items-center">
+            <Asset.Icon
+              frameShape={{ width: 18 }}
+              name="icon-info-circle-mono"
+              color={adaptive.grey400}
+              aria-hidden={true}
+            />
+            <Text display="block" color={adaptive.grey700} typography="t6" fontWeight="medium">
+              여기서는 통계 요약만 알려드려요
+            </Text>
+          </div>
+        </div>
+      )}
       <Top
         title={
           <Top.TitleParagraph size={22} color={adaptive.grey900}>
@@ -30,14 +47,20 @@ export function TestResultPage({ testId }: Props) {
           </Top.TitleParagraph>
         }
         subtitleTop={
-          <Top.SubtitleBadges badges={[{ text: `진행중`, color: `green`, variant: `weak` }]} />
+          <Top.SubtitleBadges
+            badges={[
+              status === "active"
+                ? { text: "진행중", color: "green", variant: "weak" }
+                : { text: "종료", color: "elephant", variant: "weak" },
+            ]}
+          />
         }
         subtitleBottom={
           <Top.SubtitleParagraph size={15}>총 8개 질문 · 100명 참여</Top.SubtitleParagraph>
         }
       />
       <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
-        <Button size="large" display="block" disabled={true}>
+        <Button size="large" display="block" disabled={status !== "ended"}>
           통계 다운받기
         </Button>
       </div>
@@ -55,7 +78,7 @@ export function TestResultPage({ testId }: Props) {
         </Tab.Item>
       </Tab>
       {selectedTabIndex === 0 && (
-        <div className="flex flex-col">
+        <div className="flex flex-col py-4">
           {MOCK_QUESTIONS.map((question, index) => (
             <div
               key={question.id}
@@ -102,7 +125,7 @@ export function TestResultPage({ testId }: Props) {
           ))}
         </div>
       )}
-      {selectedTabIndex === 1 && (
+      {selectedTabIndex === 1 && status === "active" && (
         <Result
           title="아직 진행하고 있는 테스트에요"
           description="테스트가 끝나고 결과를 알려드릴게요"
@@ -116,6 +139,7 @@ export function TestResultPage({ testId }: Props) {
           }
         />
       )}
+      {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
     </div>
   );
 }
