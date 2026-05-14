@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Asset, Button, Tab, Text, Top } from "@toss/tds-mobile";
+import { Asset, Button, Result, Tab, Text, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
 interface Question {
@@ -18,6 +18,7 @@ interface Props {
 }
 
 export function TestResultPage({ testId }: Props) {
+  console.log(testId);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   return (
@@ -100,6 +101,20 @@ export function TestResultPage({ testId }: Props) {
             </div>
           ))}
         </div>
+      )}
+      {selectedTabIndex === 1 && (
+        <Result
+          title="아직 진행하고 있는 테스트에요"
+          description="테스트가 끝나고 결과를 알려드릴게요"
+          className="my-10"
+          figure={
+            <Asset.Image
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/2d-emojis/png/4x/u1F50D.png"
+              aria-hidden={true}
+            />
+          }
+        />
       )}
     </div>
   );
