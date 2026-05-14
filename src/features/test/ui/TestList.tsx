@@ -5,9 +5,10 @@ import { TestCard } from "./TestCard";
 
 interface Props {
   tests: UserTest[];
+  onCardClick?: (testId: number) => void;
 }
 
-export function TestList({ tests }: Props) {
+export function TestList({ tests, onCardClick }: Props) {
   return (
     <div className="flex flex-col">
       <div className="w-full bg-white px-6 py-6 flex flex-row gap-1">
@@ -29,6 +30,7 @@ export function TestList({ tests }: Props) {
                 participantCount={test.participantCount}
                 maxParticipantCount={test.maxParticipantCount}
                 status={test.status}
+                onClick={() => onCardClick?.(test.id)}
               />
             ))}
           </div>
