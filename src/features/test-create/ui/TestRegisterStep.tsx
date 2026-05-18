@@ -19,7 +19,7 @@ interface TestRegisterStepProps {
 export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGuideView }: TestRegisterStepProps) {
   const form = useTestCreateForm();
   const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
-  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<QuestionTypeId[]>([]);
+  const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -35,18 +35,21 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
       .filter(Boolean);
   }, [form.categories]);
 
-  const toggleQuestionType = (id: QuestionTypeId) => {
-    setSelectedQuestionTypes((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
+  const handleChangeCount = (id: QuestionTypeId, count: number) => {
+    setSelectedCounts((prev) => ({ ...prev, [id]: count }));
   };
 
   const closeQuestionTypeSheet = () => {
-    setSelectedQuestionTypes([]);
+    setSelectedCounts({});
     setIsQuestionTypeSheetOpen(false);
   };
 
   const handleConfirmQuestionTypes = () => {
-    form.addQuestions(selectedQuestionTypes);
-    setSelectedQuestionTypes([]);
+    const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) =>
+      Array.from({ length: count ?? 0 }, () => id as QuestionTypeId)
+    );
+    form.addQuestions(typeIds);
+    setSelectedCounts({});
     setIsQuestionTypeSheetOpen(false);
   };
 
@@ -284,7 +287,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
 
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
-          <QuestionTypeSelectSheet selectedTypes={selectedQuestionTypes} onToggle={toggleQuestionType} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} />
+          <QuestionTypeSelectSheet selectedCounts={selectedCounts} onChangeCount={handleChangeCount} existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} />
         )}
         {isManageSheetOpen && (
           <QuestionManageSheet

@@ -1,18 +1,38 @@
 import { motion } from "framer-motion";
-import { FixedBottomCTA, CTAButton, ListRow, Checkbox, Top } from "@toss/tds-mobile";
+import { FixedBottomCTA, CTAButton, ListRow, Top, NumericSpinner, IconButton, useToast } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { QUESTION_TYPES, type QuestionTypeId } from "../model/types";
 
+const MAX_QUESTIONS = 20;
+
 interface QuestionTypeSelectSheetProps {
-  selectedTypes: QuestionTypeId[];
-  onToggle: (id: QuestionTypeId) => void;
+  selectedCounts: Partial<Record<QuestionTypeId, number>>;
+  onChangeCount: (id: QuestionTypeId, count: number) => void;
+  existingCount: number;
   onConfirm: () => void;
   onCancel: () => void;
   onShowGuide?: () => void;
 }
 
-export function QuestionTypeSelectSheet({ selectedTypes, onToggle, onConfirm, onCancel, onShowGuide }: QuestionTypeSelectSheetProps) {
-  const isConfirmDisabled = selectedTypes.length === 0;
+export function QuestionTypeSelectSheet({ selectedCounts, onChangeCount, existingCount, onConfirm, onCancel, onShowGuide }: QuestionTypeSelectSheetProps) {
+  const { openToast } = useToast();
+  const totalSelected = Object.values(selectedCounts).reduce((sum, c) => sum + (c ?? 0), 0);
+  const remaining = MAX_QUESTIONS - existingCount;
+
+  const handleChangeCount = (id: QuestionTypeId, newCount: number) => {
+    const currentForId = selectedCounts[id] ?? 0;
+    const otherTotal = totalSelected - currentForId;
+
+    if (otherTotal + newCount > remaining) {
+      openToast("질문은 최대 20개까지만 만들 수 있어요.", {
+        type: "bottom",
+        lottie: "https://static.toss.im/lotties-common/error-yellow-spot.json",
+        higherThanCTA: false,
+      });
+      return;
+    }
+    onChangeCount(id, newCount);
+  };
 
   return (
     <motion.div className="fixed inset-0 z-50 flex flex-col bg-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
@@ -34,26 +54,36 @@ export function QuestionTypeSelectSheet({ selectedTypes, onToggle, onConfirm, on
 
       <div className="flex-1 overflow-y-auto">
         {QUESTION_TYPES.map((type) => {
-          const isSelected = selectedTypes.includes(type.id);
+          const count = selectedCounts[type.id] ?? 0;
           return (
             <ListRow
               key={type.id}
-              as="button"
-              className="w-full text-left"
-              role="checkbox"
-              aria-checked={isSelected}
-              onClick={() => onToggle(type.id)}
               left={<ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />}
               contents={
-                <ListRow.Texts
-                  type="2RowTypeA"
-                  top={type.label}
-                  topProps={{ color: adaptive.grey700, fontWeight: "bold" }}
-                  bottom={type.description}
-                  bottomProps={{ color: adaptive.grey600 }}
-                />
+                <ListRow.Texts type="2RowTypeA" top={type.label} topProps={{ color: adaptive.grey700, fontWeight: "bold" }} bottom={type.description} bottomProps={{ color: adaptive.grey600 }} />
               }
-              right={<Checkbox.Line size={24} checked={isSelected} readOnly />}
+              right={
+                count > 0 ? (
+                  <NumericSpinner
+                    size="tiny"
+                    number={count}
+                    minNumber={0}
+                    maxNumber={remaining - (totalSelected - count)}
+                    disable={false}
+                    onNumberChange={(newCount) => handleChangeCount(type.id, newCount)}
+                  />
+                ) : (
+                  <IconButton
+                    src="https://static.toss.im/icons/png/4x/icon-plus-thin-mono.png"
+                    variant="fill"
+                    iconSize={16}
+                    bgColor={adaptive.grey100}
+                    color={adaptive.grey700}
+                    aria-label={`${type.label} 추가`}
+                    onClick={() => handleChangeCount(type.id, 1)}
+                  />
+                )
+              }
               verticalPadding="large"
             />
           );
@@ -67,8 +97,8 @@ export function QuestionTypeSelectSheet({ selectedTypes, onToggle, onConfirm, on
           </CTAButton>
         }
         rightButton={
-          <CTAButton className="w-full" disabled={isConfirmDisabled} onClick={onConfirm}>
-            추가하기
+          <CTAButton className="w-full" disabled={totalSelected === 0} onClick={onConfirm}>
+            {totalSelected > 0 ? `${totalSelected}개 추가하기` : "추가하기"}
           </CTAButton>
         }
       />
