@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Asset, Button, Result, Tab, Text, Top } from "@toss/tds-mobile";
+import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
 import { ResultTabContent } from "./ResultTabContent";
 import { adaptive } from "@toss/tds-colors";
 
@@ -22,6 +22,12 @@ interface Props {
 export function TestResultPage({ testId, status }: Props) {
   console.log(testId);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
+  const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+
+  function toggleFormat(format: "pdf" | "csv") {
+    setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
+  }
 
   return (
     <div>
@@ -60,7 +66,12 @@ export function TestResultPage({ testId, status }: Props) {
         }
       />
       <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
-        <Button size="large" display="block" disabled={status !== "ended"}>
+        <Button
+          size="large"
+          display="block"
+          disabled={status !== "ended"}
+          onClick={() => setIsDownloadSheetOpen(true)}
+        >
           통계 다운받기
         </Button>
       </div>
@@ -140,6 +151,67 @@ export function TestResultPage({ testId, status }: Props) {
         />
       )}
       {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
+      <BottomSheet
+        header={
+          <BottomSheet.Header>다운로드할 형식을 선택해주세요</BottomSheet.Header>
+        }
+        open={isDownloadSheetOpen}
+        onClose={() => setIsDownloadSheetOpen(false)}
+        cta={
+          <BottomSheet.DoubleCTA
+            leftButton={
+              <Button color="dark" variant="weak" onClick={() => setIsDownloadSheetOpen(false)}>
+                닫기
+              </Button>
+            }
+            rightButton={<Button disabled={!selectedFormats.pdf && !selectedFormats.csv}>다운받기</Button>}
+          />
+        }
+      >
+        <ListRow
+          role="checkbox"
+          aria-checked={selectedFormats.pdf}
+          onClick={() => toggleFormat("pdf")}
+          left={
+            <ListRow.AssetIcon
+              size="xsmall"
+              shape="original"
+              name="icon-document-pdf"
+            />
+          }
+          contents={
+            <ListRow.Texts
+              type="1RowTypeA"
+              top="통계 보고서"
+              topProps={{ color: adaptive.grey700 }}
+            />
+          }
+          right={<Checkbox.Line size={24} checked={selectedFormats.pdf} />}
+          verticalPadding="large"
+        />
+        <ListRow
+          role="checkbox"
+          aria-checked={selectedFormats.csv}
+          onClick={() => toggleFormat("csv")}
+          left={
+            <ListRow.AssetIcon
+              size="xsmall"
+              shape="original"
+              name="icon-googlespreadsheet-mono"
+              color={adaptive.green600}
+            />
+          }
+          contents={
+            <ListRow.Texts
+              type="1RowTypeA"
+              top="CSV"
+              topProps={{ color: adaptive.grey700 }}
+            />
+          }
+          right={<Checkbox.Line size={24} checked={selectedFormats.csv} />}
+          verticalPadding="large"
+        />
+      </BottomSheet>
     </div>
   );
 }
