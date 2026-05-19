@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Asset, Border, TextArea } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
-import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
-import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
-import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
 import { SubjectiveCreateBottomCTA } from "./SubjectiveCreateBottomCTA";
+import { SubjectiveQuestionEditorOverlay } from "./SubjectiveQuestionEditorOverlay";
 
 interface SubjectiveCreatePageProps {
   questionId: string;
@@ -17,28 +15,23 @@ interface SubjectiveCreatePageProps {
 export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingSubjective = existing?.typeId === "subjective" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
-    existingSubjective?.title ?? "",
+    existing?.typeId === "subjective" ? existing.title : "",
   );
   const [questionDescription, setQuestionDescription] = useState(
-    existingSubjective?.description ?? "",
+    existing?.typeId === "subjective" ? existing.description : "",
   );
   const [questionImageUrl, setQuestionImageUrl] = useState(
-    existingSubjective?.imageUrl ?? "",
+    existing?.typeId === "subjective" ? existing.imageUrl : "",
   );
   const [placeholder] = useState(
-    existingSubjective?.placeholder ?? "",
+    existing?.typeId === "subjective" ? existing.placeholder : "",
   );
   const [maxLength] = useState<number | null>(
-    existingSubjective?.maxLength ?? null,
+    existing?.typeId === "subjective" ? existing.maxLength : null,
   );
-  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
-    (existingSubjective?.title ?? "").trim().length > 0,
-  );
-  const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
-    useQuestionImageUpload(setQuestionImageUrl);
+  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
 
@@ -51,25 +44,14 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
-        questionType="주관식"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onChangeTitle={setQuestionTitle}
-        onChangeDescription={setQuestionDescription}
-        isInputCompleted={isQuestionInputCompleted}
-        onConfirmInput={() => setIsQuestionInputCompleted(true)}
-        onClose={onClose}
-        imageUploadSection={
-          <QuestionImageUploadSection
-            imageUrl={questionImageUrl}
-            onCameraClick={openPhotoSheet}
-            onRemove={() => setQuestionImageUrl("")}
-          />
-        }
+        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="주관식"
         imageSectionContent={
-          isQuestionInputCompleted && questionImageUrl ? (
+          questionImageUrl ? (
             <>
-              <div className="rounded-2xl bg-white px-4 pb-4">
+              <div className="rounded-2xl bg-white p-4">
                 <div
                   className="w-full rounded-2xl p-1.5"
                   style={{
@@ -105,43 +87,51 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
         }
       />
 
-      {isQuestionInputCompleted && (
-        <>
-          <TextArea
-            variant="box"
-            hasError={false}
-            label="답변 작성"
-            labelOption="sustain"
-            value={placeholder}
-            placeholder="예시 입력창이에요"
-            height={200}
-            readOnly
-          />
+      {/* TODO: SubjectiveCreateOptionSection */}
+      <TextArea
+        variant="box"
+        hasError={false}
+        label="답변 작성"
+        labelOption="sustain"
+        value={placeholder}
+        placeholder="예시 입력창이에요"
+        height={200}
+        readOnly
+      />
 
-          <SubjectiveCreateBottomCTA
-            isCompleteDisabled={isCompleteDisabled}
-            onCancel={onClose}
-            onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "subjective",
-                title: questionTitle,
-                description: questionDescription,
-                imageUrl: questionImageUrl,
-                placeholder,
-                maxLength,
-              });
-              onClose();
+      <SubjectiveCreateBottomCTA
+        isCompleteDisabled={isCompleteDisabled}
+        onCancel={onClose}
+        onComplete={() => {
+          updateQuestion(questionId, {
+            typeId: "subjective",
+            title: questionTitle,
+            description: questionDescription,
+            imageUrl: questionImageUrl,
+            placeholder,
+            maxLength,
+          });
+          onClose();
+        }}
+      />
+
+      <AnimatePresence>
+        {isQuestionEditorOpen && (
+          <SubjectiveQuestionEditorOverlay
+            key="question-editor"
+            initialTitle={questionTitle}
+            initialDescription={questionDescription}
+            initialImageUrl={questionImageUrl}
+            onClose={() => setIsQuestionEditorOpen(false)}
+            onSave={({ title, description, imageUrl }) => {
+              setQuestionTitle(title);
+              setQuestionDescription(description);
+              setQuestionImageUrl(imageUrl);
+              setIsQuestionEditorOpen(false);
             }}
           />
-        </>
-      )}
-
-      <PhotoSelectSheet
-        open={isPhotoSheetOpen}
-        onClose={closePhotoSheet}
-        onCamera={handleCamera}
-        onAlbum={handleAlbum}
-      />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

@@ -4,6 +4,7 @@ import type { MultipleChoiceItem } from "../model/types";
 import { MultipleCreateBottomCTA } from "./MultipleCreateBottomCTA";
 import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
 import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
+import { MultipleQuestionEditorOverlay } from "./MultipleQuestionEditorOverlay";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 
@@ -18,34 +19,31 @@ export function MultipleCreatePage({
 }: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingMultiple = existing?.typeId === "multiple" ? existing : null;
 
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
-    existingMultiple?.isOtherInputEnabled ?? false,
+    existing?.typeId === "multiple" ? existing.isOtherInputEnabled : false,
   );
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
-    existingMultiple?.isMultiSelectEnabled ?? false,
+    existing?.typeId === "multiple" ? existing.isMultiSelectEnabled : false,
   );
+  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
+  const [isChoiceEditorOpen, setIsChoiceEditorOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState(
-    existingMultiple?.title ?? "",
+    existing?.typeId === "multiple" ? existing.title : "",
   );
   const [questionDescription, setQuestionDescription] = useState(
-    existingMultiple?.description ?? "",
+    existing?.typeId === "multiple" ? existing.description : "",
   );
-  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
-    (existingMultiple?.title ?? "").trim().length > 0,
-  );
-  const [isChoiceEditorOpen, setIsChoiceEditorOpen] = useState(false);
   const [choices, setChoices] = useState<MultipleChoiceItem[]>(
-    existingMultiple?.choices ?? [],
+    existing?.typeId === "multiple" ? existing.choices : [],
   );
   const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
   const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
   const [minSelectCount, setMinSelectCount] = useState(
-    existingMultiple?.minSelectCount ?? 1,
+    existing?.typeId === "multiple" ? existing.minSelectCount : 1,
   );
   const [maxSelectCount, setMaxSelectCount] = useState(
-    existingMultiple?.maxSelectCount ?? 2,
+    existing?.typeId === "multiple" ? existing.maxSelectCount : 2,
   );
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
 
@@ -94,84 +92,88 @@ export function MultipleCreatePage({
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
-        questionType="객관식"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onChangeTitle={setQuestionTitle}
-        onChangeDescription={setQuestionDescription}
-        isInputCompleted={isQuestionInputCompleted}
-        onConfirmInput={() => setIsQuestionInputCompleted(true)}
-        onClose={onClose}
+        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
+        subtitle="객관식"
       />
-      {isQuestionInputCompleted && (
-        <>
-          <MultipleCreateOptionSection
-            isOtherInputEnabled={isOtherInputEnabled}
-            isMultiSelectEnabled={isMultiSelectEnabled}
-            choices={visibleChoices}
-            isChoiceManageMode={isChoiceManageMode}
-            minSelectCount={minSelectCount}
-            maxSelectCount={maxSelectCount}
-            onToggleOtherInput={setIsOtherInputEnabled}
-            onToggleMultiSelect={(checked) => {
-              setIsMultiSelectEnabled(checked);
-              if (!checked) {
-                setMinSelectCount(1);
-                setMaxSelectCount(
-                  Math.max(Math.min(2, Math.max(choices.length, 1)), 1),
-                );
-              }
-            }}
-            onChangeMinSelectCount={(value) => {
-              setMinSelectCount(value);
-              if (value > maxSelectCount) {
-                setMaxSelectCount(value);
-              }
-            }}
-            onChangeMaxSelectCount={(value) => {
-              setMaxSelectCount(value);
-              if (value < minSelectCount) {
-                setMinSelectCount(value);
-              }
-            }}
-            onOpenChoiceEditor={handleOpenCreateChoiceEditor}
-            onEditChoice={handleOpenEditChoiceEditor}
-            onToggleChoiceManageMode={handleToggleChoiceManageMode}
-            onDeleteChoice={(choiceId) => {
-              setActiveChoices(
-                visibleChoices.filter((choice) => choice.id !== choiceId),
-              );
-            }}
-            onReorderChoices={(nextChoices) => setActiveChoices(nextChoices)}
-            onRemoveChoiceImage={(choiceId) =>
-              setActiveChoices((prev) =>
-                prev.map((choice) =>
-                  choice.id === choiceId ? { ...choice, imageUrl: "" } : choice,
-                ),
-              )
-            }
-          />
-          <MultipleCreateBottomCTA
-            isCompleteDisabled={isCompleteDisabled}
-            onCancel={onClose}
-            onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "multiple",
-                title: questionTitle,
-                description: questionDescription,
-                choices,
-                isMultiSelectEnabled,
-                isOtherInputEnabled,
-                minSelectCount,
-                maxSelectCount,
-              });
-              onClose();
-            }}
-          />
-        </>
-      )}
+      <MultipleCreateOptionSection
+        isOtherInputEnabled={isOtherInputEnabled}
+        isMultiSelectEnabled={isMultiSelectEnabled}
+        choices={visibleChoices}
+        isChoiceManageMode={isChoiceManageMode}
+        minSelectCount={minSelectCount}
+        maxSelectCount={maxSelectCount}
+        onToggleOtherInput={setIsOtherInputEnabled}
+        onToggleMultiSelect={(checked) => {
+          setIsMultiSelectEnabled(checked);
+          if (!checked) {
+            setMinSelectCount(1);
+            setMaxSelectCount(
+              Math.max(Math.min(2, Math.max(choices.length, 1)), 1),
+            );
+          }
+        }}
+        onChangeMinSelectCount={(value) => {
+          setMinSelectCount(value);
+          if (value > maxSelectCount) {
+            setMaxSelectCount(value);
+          }
+        }}
+        onChangeMaxSelectCount={(value) => {
+          setMaxSelectCount(value);
+          if (value < minSelectCount) {
+            setMinSelectCount(value);
+          }
+        }}
+        onOpenChoiceEditor={handleOpenCreateChoiceEditor}
+        onEditChoice={handleOpenEditChoiceEditor}
+        onToggleChoiceManageMode={handleToggleChoiceManageMode}
+        onDeleteChoice={(choiceId) => {
+          setActiveChoices(
+            visibleChoices.filter((choice) => choice.id !== choiceId),
+          );
+        }}
+        onReorderChoices={(nextChoices) => setActiveChoices(nextChoices)}
+        onRemoveChoiceImage={(choiceId) =>
+          setActiveChoices((prev) =>
+            prev.map((choice) =>
+              choice.id === choiceId ? { ...choice, imageUrl: "" } : choice,
+            ),
+          )
+        }
+      />
+      <MultipleCreateBottomCTA
+        isCompleteDisabled={isCompleteDisabled}
+        onCancel={onClose}
+        onComplete={() => {
+          updateQuestion(questionId, {
+            typeId: "multiple",
+            title: questionTitle,
+            description: questionDescription,
+            choices,
+            isMultiSelectEnabled,
+            isOtherInputEnabled,
+            minSelectCount,
+            maxSelectCount,
+          });
+          onClose();
+        }}
+      />
 
       <AnimatePresence>
+        {isQuestionEditorOpen && (
+          <MultipleQuestionEditorOverlay
+            initialTitle={questionTitle}
+            initialDescription={questionDescription}
+            onClose={() => setIsQuestionEditorOpen(false)}
+            onSave={({ title, description }) => {
+              setQuestionTitle(title);
+              setQuestionDescription(description);
+              setIsQuestionEditorOpen(false);
+            }}
+          />
+        )}
         {isChoiceEditorOpen && (
           <MultipleChoiceEditorOverlay
             initialChoiceName={editingChoice?.name ?? ""}
