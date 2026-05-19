@@ -27,7 +27,7 @@ export function QuestionTypeSelectSheet({ selectedCounts, onChangeCount, existin
       openToast("질문은 최대 20개까지만 만들 수 있어요.", {
         type: "bottom",
         lottie: "https://static.toss.im/lotties-common/error-yellow-spot.json",
-        higherThanCTA: false,
+        higherThanCTA: true,
       });
       return;
     }
@@ -68,7 +68,7 @@ export function QuestionTypeSelectSheet({ selectedCounts, onChangeCount, existin
                     size="tiny"
                     number={count}
                     minNumber={0}
-                    maxNumber={remaining - (totalSelected - count)}
+                    maxNumber={99}
                     disable={false}
                     onNumberChange={(newCount) => handleChangeCount(type.id, newCount)}
                   />
