@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, TextField } from "@toss/tds-mobile";
+import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Spacing, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { QuestionEditSheet, type EditSheetConfig } from "./QuestionEditSheet";
 
@@ -48,17 +48,17 @@ function useEditSheet(questionType: string, titlePlaceholder: string) {
   const config: EditSheetConfig =
     editingField === "title"
       ? {
-          header: "어떻게 질문할까요?",
-          label: `${questionType} 질문`,
-          fieldPlaceholder: titlePlaceholder,
-          maxLength: 34,
-        }
+        header: "어떻게 질문할까요?",
+        label: `${questionType} 질문`,
+        fieldPlaceholder: titlePlaceholder,
+        maxLength: 34,
+      }
       : {
-          header: "(선택) 질문에 대한 추가 설명을 할까요?",
-          label: "추가 설명",
-          fieldPlaceholder: "추가 설명을 입력해주세요",
-          maxLength: 55,
-        };
+        header: "(선택) 질문에 대한 추가 설명을 할까요?",
+        label: "추가 설명",
+        fieldPlaceholder: "추가 설명을 입력해주세요",
+        maxLength: 55,
+      };
 
   return {
     editingField,
@@ -242,6 +242,7 @@ export function QuestionCreateTopSection({
   if (phase === "title") {
     return (
       <>
+        <Spacing size={12} />
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Clearable
             variant="line"
