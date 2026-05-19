@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Asset, Badge, IconButton, Spacing, Text } from "@toss/tds-mobile";
+import { Asset, IconButton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { CardWrapper } from "./_shared";
+import { ResultCardBase } from "./_shared";
 
 export interface CardSortItem {
   rank: string;
@@ -26,12 +26,7 @@ export function CardSortResultCard({ title, categories }: Props) {
   const [openCategory, setOpenCategory] = useState<string>(categories[0]?.name ?? "");
 
   return (
-    <CardWrapper>
-      <div className="w-full bg-white flex flex-col gap-1 justify-start items-start">
-        <Badge size="small" variant="weak" color="elephant">카드소팅</Badge>
-        <Text color={adaptive.grey800} typography="t5" fontWeight="bold">{title}</Text>
-      </div>
-      <Spacing size={16} />
+    <ResultCardBase badgeLabel="카드소팅" title={title}>
       <div className="w-full bg-white flex flex-col gap-3 justify-start items-center">
         {categories.map((category) => {
           const isOpen = openCategory === category.name;
@@ -97,6 +92,6 @@ export function CardSortResultCard({ title, categories }: Props) {
           );
         })}
       </div>
-    </CardWrapper>
+    </ResultCardBase>
   );
 }

@@ -2,6 +2,7 @@ export { TestResultPage } from "./TestResultPage";
 export { ResultTabContent } from "./ResultTabContent";
 export { MultipleResultCard } from "./MultipleResultCard";
 export type { MultipleResultOption } from "./MultipleResultCard";
+export type { DoughnutAnswerItem } from "./_shared";
 export { SubjectiveResultCard } from "./SubjectiveResultCard";
 export { ScaleResultCard } from "./ScaleResultCard";
 export type { ScoreBar } from "./ScaleResultCard";
