@@ -30,19 +30,7 @@ export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }
       <div className="flex flex-nowrap gap-2 px-5 pb-3">
         <button
           type="button"
-          style={{
-            width: 88,
-            height: 88,
-            backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
-            borderRadius: 16,
-            padding: 16,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 4,
-            flexShrink: 0,
-          }}
+          className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl p-4 bg-[var(--token-tds-color-grey-100,var(--adaptiveGrey100,#f2f4f6))]"
           onClick={onCameraClick}
         >
           <Asset.Icon
@@ -53,7 +41,7 @@ export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }
             aria-hidden
             ratio="1/1"
           />
-          <div style={{ display: "flex" }}>
+          <div className="flex">
             <Text color={adaptive.grey500} typography="t7" fontWeight="medium">
               {imageCount}
             </Text>
@@ -63,41 +51,13 @@ export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }
           </div>
         </button>
         {imageUrl && (
-          <div
-            style={{
-              position: "relative",
-              width: 88,
-              height: 88,
-              flexShrink: 0,
-              borderRadius: 16,
-              overflow: "hidden",
-            }}
-          >
-            <img src={imageUrl} alt="질문 이미지" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div
-              style={{
-                position: "absolute",
-                top: 6,
-                left: 6,
-                right: 6,
-                bottom: 6,
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "flex-start",
-                pointerEvents: "none",
-              }}
-            >
+          <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-2xl">
+            <img src={imageUrl} alt="질문 이미지" className="h-full w-full object-cover" />
+            <div className="absolute inset-[6px] flex items-start justify-end pointer-events-none">
               <button
                 type="button"
                 onClick={onRemove}
-                style={{
-                  display: "flex",
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  pointerEvents: "auto",
-                }}
+                className="flex p-0 cursor-pointer pointer-events-auto"
                 aria-label="이미지 삭제"
               >
                 <Asset.Icon

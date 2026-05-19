@@ -37,11 +37,10 @@ function useEditSheet(questionType: string, titlePlaceholder: string) {
 
   useEffect(() => {
     if (editingField === null) return;
-    const t1 = setTimeout(() => setDraft(draftRef.current), 0);
-    const t2 = setTimeout(() => setFieldVisible(true), 4);
+    setDraft(draftRef.current);
+    const t = setTimeout(() => setFieldVisible(true), 4);
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
+      clearTimeout(t);
       setFieldVisible(false);
     };
   }, [editingField]);

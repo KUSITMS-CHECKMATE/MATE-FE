@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useToast } from "@toss/tds-mobile";
 import {
   openCamera,
   fetchAlbumPhotos,
@@ -8,6 +9,7 @@ import {
 
 export function useQuestionImageUpload(onUpload: (url: string) => void) {
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
+  const { openToast } = useToast();
 
   const handleCamera = async () => {
     try {
@@ -17,7 +19,7 @@ export function useQuestionImageUpload(onUpload: (url: string) => void) {
       if (error instanceof OpenCameraPermissionError) {
         await openCamera.openPermissionDialog();
       } else {
-        console.error("[useQuestionImageUpload handleCamera]", error);
+        openToast("이미지를 불러오는 중 오류가 발생했어요.", { type: "bottom" });
       }
     }
   };
@@ -32,7 +34,7 @@ export function useQuestionImageUpload(onUpload: (url: string) => void) {
       if (error instanceof FetchAlbumPhotosPermissionError) {
         await fetchAlbumPhotos.openPermissionDialog();
       } else {
-        console.error("[useQuestionImageUpload handleAlbum]", error);
+        openToast("이미지를 불러오는 중 오류가 발생했어요.", { type: "bottom" });
       }
     }
   };

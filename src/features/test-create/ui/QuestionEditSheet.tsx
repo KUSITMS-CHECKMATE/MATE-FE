@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { BottomSheet, TextField } from "@toss/tds-mobile";
 
 export interface EditSheetConfig {
@@ -29,39 +30,26 @@ export function QuestionEditSheet({
   onDraftChange,
 }: QuestionEditSheetProps) {
   return (
-    <>
-      {open && (
-        <style>{`
-          :has(> [aria-modal="true"]),
-          [aria-modal="true"] {
-            transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-          }
-        `}</style>
-      )}
-      <BottomSheet
-        header={<BottomSheet.Header>{config.header}</BottomSheet.Header>}
-        open={open}
-        onClose={onClose}
-        hasTextField
-        cta={
-          <BottomSheet.CTA
-            color="primary"
-            variant="fill"
-            disabled={confirmDisabled}
-            fixedAboveKeyboard
-            onClick={onConfirm}
-          >
-            확인
-          </BottomSheet.CTA>
-        }
-        ctaContentGap={0}
-      >
-        <div
-          style={{
-            opacity: fieldVisible ? 1 : 0,
-            transition: fieldVisible ? "opacity 0.15s ease-in" : "none",
-          }}
+    <BottomSheet
+      header={<BottomSheet.Header>{config.header}</BottomSheet.Header>}
+      open={open}
+      onClose={onClose}
+      hasTextField
+      cta={
+        <BottomSheet.CTA
+          color="primary"
+          variant="fill"
+          disabled={confirmDisabled}
+          fixedAboveKeyboard
+          onClick={onConfirm}
         >
+          확인
+        </BottomSheet.CTA>
+      }
+      ctaContentGap={0}
+    >
+      {fieldVisible && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Clearable
             variant="line"
             hasError={false}
@@ -74,8 +62,8 @@ export function QuestionEditSheet({
             onChange={(e) => onDraftChange(e.target.value.slice(0, config.maxLength))}
             onClear={() => onDraftChange("")}
           />
-        </div>
-      </BottomSheet>
-    </>
+        </motion.div>
+      )}
+    </BottomSheet>
   );
 }
