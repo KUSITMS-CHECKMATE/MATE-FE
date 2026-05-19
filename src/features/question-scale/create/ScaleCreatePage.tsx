@@ -1,12 +1,14 @@
 import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Asset, Border } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
+import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
+import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
-import { ScaleQuestionEditorOverlay } from "./ScaleQuestionEditorOverlay";
 
 interface ScaleCreatePageProps {
   questionId: string;
@@ -18,17 +20,21 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingScale = existing?.typeId === "scale" ? existing : null;
 
-  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState(existingScale?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingScale?.description ?? "");
   const [questionImageUrl, setQuestionImageUrl] = useState(existingScale?.imageUrl ?? "");
+  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState((existingScale?.title ?? "").trim().length > 0);
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
   const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "");
   const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "");
   const [isFocused, setIsFocused] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
+    useQuestionImageUpload(setQuestionImageUrl);
+
   const isCompleteDisabled = questionTitle.trim().length === 0;
+
   const dismissKeyboard = () => {
     if (blurTimer.current) clearTimeout(blurTimer.current);
     setIsFocused(false);
@@ -36,7 +42,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   };
 
   const handleContainerFocus = (e: React.FocusEvent) => {
-    if (isQuestionEditorOpen) return;
+    if (!isQuestionInputCompleted) return;
     if (e.target instanceof HTMLInputElement) {
       if (blurTimer.current) clearTimeout(blurTimer.current);
       setIsFocused(true);
@@ -44,7 +50,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   };
 
   const handleContainerBlur = (e: React.FocusEvent) => {
-    if (isQuestionEditorOpen) return;
+    if (!isQuestionInputCompleted) return;
     if (e.target instanceof HTMLInputElement) {
       blurTimer.current = setTimeout(() => setIsFocused(false), 150);
     }
@@ -61,12 +67,23 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       onBlur={handleContainerBlur}
     >
       <QuestionCreateTopSection
+        questionType="척도 평가"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        subtitle="척도"
+        onChangeTitle={setQuestionTitle}
+        onChangeDescription={setQuestionDescription}
+        isInputCompleted={isQuestionInputCompleted}
+        onConfirmInput={() => setIsQuestionInputCompleted(true)}
+        onClose={onClose}
+        imageUploadSection={
+          <QuestionImageUploadSection
+            imageUrl={questionImageUrl}
+            onCameraClick={openPhotoSheet}
+            onRemove={() => setQuestionImageUrl("")}
+          />
+        }
         imageSectionContent={
-          questionImageUrl ? (
+          isQuestionInputCompleted && questionImageUrl ? (
             <>
               <div className="rounded-2xl bg-white p-4">
                 <div
@@ -80,18 +97,8 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
                   }}
                 >
                   <div className="flex h-full w-full flex-col items-end justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setQuestionImageUrl("")}
-                      aria-label="이미지 삭제"
-                    >
-                      <Asset.Icon
-                        frameShape={Asset.frameShape.CircleXSmall}
-                        backgroundColor={adaptive.greyOpacity600}
-                        name="icon-sweetshop-x-white"
-                        scale={0.66}
-                        aria-hidden
-                      />
+                    <button type="button" onClick={() => setQuestionImageUrl("")} aria-label="이미지 삭제">
+                      <Asset.Icon frameShape={Asset.frameShape.CircleXSmall} backgroundColor={adaptive.greyOpacity600} name="icon-sweetshop-x-white" scale={0.66} aria-hidden />
                     </button>
                   </div>
                 </div>
@@ -103,49 +110,43 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
           )
         }
       />
-      <ScaleCreateOptionSection
-        scaleCount={scaleCount}
-        minLabel={minLabel}
-        maxLabel={maxLabel}
-        onToggleSevenPoint={(checked) => setScaleCount(checked ? 7 : 5)}
-        onChangeMinLabel={setMinLabel}
-        onChangeMaxLabel={setMaxLabel}
-      />
-      <ScaleCreateBottomCTA
-        isCompleteDisabled={isCompleteDisabled}
-        isFocused={isFocused}
-        onDismissKeyboard={dismissKeyboard}
-        onCancel={onClose}
-        onComplete={() => {
-          updateQuestion(questionId, {
-            typeId: "scale",
-            title: questionTitle,
-            description: questionDescription,
-            scaleCount,
-            minLabel,
-            maxLabel,
-            ...(questionImageUrl.trim() ? { imageUrl: questionImageUrl.trim() } : {}),
-          });
-          onClose();
-        }}
-      />
-
-      <AnimatePresence>
-        {isQuestionEditorOpen && (
-          <ScaleQuestionEditorOverlay
-            initialTitle={questionTitle}
-            initialDescription={questionDescription}
-            initialImageUrl={questionImageUrl}
-            onClose={() => setIsQuestionEditorOpen(false)}
-            onSave={({ title, description, imageUrl }) => {
-              setQuestionTitle(title);
-              setQuestionDescription(description);
-              setQuestionImageUrl(imageUrl);
-              setIsQuestionEditorOpen(false);
+      {isQuestionInputCompleted && (
+        <>
+          <ScaleCreateOptionSection
+            scaleCount={scaleCount}
+            minLabel={minLabel}
+            maxLabel={maxLabel}
+            onToggleSevenPoint={(checked) => setScaleCount(checked ? 7 : 5)}
+            onChangeMinLabel={setMinLabel}
+            onChangeMaxLabel={setMaxLabel}
+          />
+          <ScaleCreateBottomCTA
+            isCompleteDisabled={isCompleteDisabled}
+            isFocused={isFocused}
+            onDismissKeyboard={dismissKeyboard}
+            onCancel={onClose}
+            onComplete={() => {
+              updateQuestion(questionId, {
+                typeId: "scale",
+                title: questionTitle,
+                description: questionDescription,
+                scaleCount,
+                minLabel,
+                maxLabel,
+                ...(questionImageUrl.trim() ? { imageUrl: questionImageUrl.trim() } : {}),
+              });
+              onClose();
             }}
           />
-        )}
-      </AnimatePresence>
+        </>
+      )}
+
+      <PhotoSelectSheet
+        open={isPhotoSheetOpen}
+        onClose={closePhotoSheet}
+        onCamera={handleCamera}
+        onAlbum={handleAlbum}
+      />
     </motion.div>
   );
 }
