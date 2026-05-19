@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Asset, Badge, IconButton, Spacing, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { CardWrapper } from "./_shared";
@@ -52,39 +53,46 @@ export function CardSortResultCard({ title, categories }: Props) {
                   onClick={() => setOpenCategory(isOpen ? "" : category.name)}
                 />
               </div>
-              <div
-                className="overflow-hidden transition-all duration-300 ease-in-out"
-                style={{ maxHeight: isOpen ? "500px" : "0px" }}
-              >
-                <div className="w-full flex flex-col gap-3 items-center pt-4">
-                  {category.items.map((item, i) => (
-                    <div key={i} className="w-full flex flex-row justify-between items-center">
-                      <div className="flex-1 flex flex-row gap-2 justify-start items-center">
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: item.isHighlight ? "#4365cc" : adaptive.grey500 }}
-                        >
-                          <Asset.Icon
-                            frameShape={Asset.frameShape.CleanW20}
-                            backgroundColor="transparent"
-                            name={item.rank}
-                            color="white"
-                            scale={0.6}
-                            aria-hidden={true}
-                            ratio="1/1"
-                          />
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="w-full flex flex-col gap-3 items-center pt-4">
+                      {category.items.map((item, i) => (
+                        <div key={i} className="w-full flex flex-row justify-between items-center">
+                          <div className="flex-1 flex flex-row gap-2 justify-start items-center">
+                            <div
+                              className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                              style={{ backgroundColor: item.isHighlight ? "#4365cc" : adaptive.grey500 }}
+                            >
+                              <Asset.Icon
+                                frameShape={Asset.frameShape.CleanW20}
+                                backgroundColor="transparent"
+                                name={item.rank}
+                                color="white"
+                                scale={0.6}
+                                aria-hidden={true}
+                                ratio="1/1"
+                              />
+                            </div>
+                            <Text display="block" color={item.isHighlight ? "#4365cc" : adaptive.grey700} typography="t7" fontWeight="semibold">
+                              {item.label}
+                            </Text>
+                          </div>
+                          <Text color={item.isHighlight ? "#4365cc" : adaptive.grey700} typography="t7" fontWeight="semibold">
+                            {item.count}개 ({item.percentage}%)
+                          </Text>
                         </div>
-                        <Text display="block" color={item.isHighlight ? "#4365cc" : adaptive.grey700} typography="t7" fontWeight="semibold">
-                          {item.label}
-                        </Text>
-                      </div>
-                      <Text color={item.isHighlight ? "#4365cc" : adaptive.grey700} typography="t7" fontWeight="semibold">
-                        {item.count}개 ({item.percentage}%)
-                      </Text>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           );
         })}
