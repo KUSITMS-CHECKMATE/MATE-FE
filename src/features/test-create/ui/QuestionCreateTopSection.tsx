@@ -1,83 +1,9 @@
-import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Spacing, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { QuestionEditSheet, type EditSheetConfig } from "./QuestionEditSheet";
-
-// ── Hooks ──────────────────────────────────────────────────
-
-function useFocusState() {
-  const [isFocused, setIsFocused] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  return {
-    isFocused,
-    onFocus: () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setIsFocused(true);
-    },
-    onBlur: () => {
-      timerRef.current = setTimeout(() => setIsFocused(false), 100);
-    },
-    blur: () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setIsFocused(false);
-      (document.activeElement as HTMLElement)?.blur();
-    },
-  };
-}
-
-type EditingField = "title" | "description";
-
-function useEditSheet(questionType: string, titlePlaceholder: string) {
-  const [editingField, setEditingField] = useState<EditingField | null>(null);
-  const [draft, setDraft] = useState("");
-  const [fieldVisible, setFieldVisible] = useState(false);
-  const draftRef = useRef("");
-
-  useEffect(() => {
-    if (editingField === null) return;
-    setDraft(draftRef.current);
-    const t = setTimeout(() => setFieldVisible(true), 4);
-    return () => {
-      clearTimeout(t);
-      setFieldVisible(false);
-    };
-  }, [editingField]);
-
-  const config: EditSheetConfig =
-    editingField === "title"
-      ? {
-        header: "어떻게 질문할까요?",
-        label: `${questionType} 질문`,
-        fieldPlaceholder: titlePlaceholder,
-        maxLength: 34,
-      }
-      : {
-        header: "(선택) 질문에 대한 추가 설명을 할까요?",
-        label: "추가 설명",
-        fieldPlaceholder: "추가 설명을 입력해주세요",
-        maxLength: 55,
-      };
-
-  return {
-    editingField,
-    draft,
-    fieldVisible,
-    config,
-    confirmDisabled: editingField === "title" && draft.trim().length === 0,
-    open: (field: EditingField, initialValue: string) => {
-      draftRef.current = initialValue;
-      setDraft(initialValue);
-      setEditingField(field);
-    },
-    close: () => {
-      setEditingField(null);
-      setDraft("");
-    },
-    setDraft,
-  };
-}
+import { QuestionEditSheet } from "./QuestionEditSheet";
+import { useFocusState, useEditSheet } from "./useQuestionCreateTopSectionHooks";
 
 // ── Sub-components ─────────────────────────────────────────
 
@@ -108,6 +34,51 @@ function ClickableTopRow({ label, text, placeholder, onClick }: ClickableTopRowP
       right={<Asset.Icon name="icon-pencil-18px-mono" color={adaptive.grey400} />}
       verticalPadding="large"
     />
+  );
+}
+
+interface PhaseBottomCTAProps {
+  isFocused: boolean;
+  focusConfirmKey: string;
+  onFocusConfirm: () => void;
+  onClose: () => void;
+  onInputComplete: () => void;
+  isInputCompleteDisabled: boolean;
+}
+
+function PhaseBottomCTA({
+  isFocused,
+  focusConfirmKey,
+  onFocusConfirm,
+  onClose,
+  onInputComplete,
+  isInputCompleteDisabled,
+}: PhaseBottomCTAProps) {
+  return (
+    <AnimatePresence mode="wait">
+      {isFocused ? (
+        <motion.div key={focusConfirmKey} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+          <FixedBottomCTA fixedAboveKeyboard onClick={onFocusConfirm}>
+            확인
+          </FixedBottomCTA>
+        </motion.div>
+      ) : (
+        <motion.div key="input-complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+          <FixedBottomCTA.Double
+            leftButton={
+              <CTAButton color="dark" variant="weak" onClick={onClose}>
+                닫기
+              </CTAButton>
+            }
+            rightButton={
+              <CTAButton disabled={isInputCompleteDisabled} onClick={onInputComplete}>
+                입력 완료
+              </CTAButton>
+            }
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -181,28 +152,27 @@ export function QuestionCreateTopSection({
     />
   );
 
-  // ── Completed + Editing mode ──
-  if (isInputCompleted && isEditing) {
-    return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-white pb-28">
-        <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
-        <ClickableTopRow label="(선택) 추가 설명" text={questionDescription} placeholder="추가 설명을 입력해주세요" onClick={() => sheet.open("description", questionDescription)} />
-        {imageUploadSection}
-        <FixedBottomCTA.Double
-          leftButton={
-            <CTAButton color="dark" variant="weak" onClick={() => setIsEditing(false)}>
-              닫기
-            </CTAButton>
-          }
-          rightButton={<CTAButton onClick={() => setIsEditing(false)}>입력 완료</CTAButton>}
-        />
-        {editSheet}
-      </div>
-    );
-  }
-
-  // ── Completed read-only mode ──
+  // ── Completed Mode ──
   if (isInputCompleted) {
+    if (isEditing) {
+      return (
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-white pb-28">
+          <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
+          <ClickableTopRow label="(선택) 추가 설명" text={questionDescription} placeholder="추가 설명을 입력해주세요" onClick={() => sheet.open("description", questionDescription)} />
+          {imageUploadSection}
+          <FixedBottomCTA.Double
+            leftButton={
+              <CTAButton color="dark" variant="weak" onClick={() => setIsEditing(false)}>
+                닫기
+              </CTAButton>
+            }
+            rightButton={<CTAButton onClick={() => setIsEditing(false)}>입력 완료</CTAButton>}
+          />
+          {editSheet}
+        </div>
+      );
+    }
+
     const hasDescription = questionDescription.trim().length > 0;
     return (
       <>
@@ -218,6 +188,7 @@ export function QuestionCreateTopSection({
             }
           />
           <ListRow
+            style={{ paddingBottom: 16 }}
             contents={
               hasDescription ? (
                 <ListRow.Texts type="2RowTypeC" top={questionTitle} topProps={{ color: adaptive.grey800, fontWeight: "bold" }} bottom={questionDescription} bottomProps={{ color: adaptive.grey500 }} />
@@ -230,106 +201,74 @@ export function QuestionCreateTopSection({
                 <Asset.Icon name="icon-pencil-18px-mono" color={adaptive.grey400} />
               </button>
             }
-            verticalPadding="small"
           />
+          {imageSectionContent ?? <Border variant="height16" />}
         </List>
-        {imageSectionContent ?? <Border variant="height16" />}
       </>
     );
   }
 
-  // ── Title input phase ──
-  if (phase === "title") {
-    return (
-      <>
-        <Spacing size={12} />
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-          <TextField.Clearable
-            variant="line"
-            label="어떻게 질문할까요?"
-            labelOption="sustain"
-            value={questionTitle}
-            placeholder={placeholder}
-            maxLength={34}
-            autoFocus
-            onChange={(e) => onChangeTitle(e.target.value.slice(0, 34))}
-            onClear={() => onChangeTitle("")}
-            onFocus={titleFocus.onFocus}
-            onBlur={titleFocus.onBlur}
-          />
-        </motion.div>
-        <AnimatePresence mode="wait">
-          {titleFocus.isFocused ? (
-            <motion.div key="confirm-title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
-              <FixedBottomCTA fixedAboveKeyboard onClick={handleConfirmTitle}>
-                확인
-              </FixedBottomCTA>
-            </motion.div>
-          ) : (
-            <motion.div key="input-complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
-              <FixedBottomCTA.Double
-                leftButton={
-                  <CTAButton color="dark" variant="weak" onClick={onClose}>
-                    닫기
-                  </CTAButton>
-                }
-                rightButton={
-                  <CTAButton disabled={questionTitle.trim().length === 0} onClick={onConfirmInput}>
-                    입력 완료
-                  </CTAButton>
-                }
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </>
-    );
-  }
+  // ── Input Phase ──
+  const isCompleteDisabled = questionTitle.trim().length === 0;
 
-  // ── Detail input phase ──
   return (
     <>
-      <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-        <TextField.Clearable
-          variant="line"
-          label="(선택) 추가 설명을 할까요?"
-          labelOption="sustain"
-          value={questionDescription}
-          placeholder="추가 설명을 입력해주세요"
-          maxLength={55}
-          onChange={(e) => onChangeDescription(e.target.value.slice(0, 55))}
-          onClear={() => onChangeDescription("")}
-          onFocus={descFocus.onFocus}
-          onBlur={descFocus.onBlur}
-        />
-      </motion.div>
-      {imageUploadSection}
-      <AnimatePresence mode="wait">
-        {descFocus.isFocused ? (
-          <motion.div key="confirm-description" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
-            <FixedBottomCTA fixedAboveKeyboard onClick={descFocus.blur}>
-              확인
-            </FixedBottomCTA>
-          </motion.div>
-        ) : (
-          <motion.div key="input-complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
-            <FixedBottomCTA.Double
-              leftButton={
-                <CTAButton color="dark" variant="weak" onClick={onClose}>
-                  닫기
-                </CTAButton>
-              }
-              rightButton={
-                <CTAButton disabled={questionTitle.trim().length === 0} onClick={onConfirmInput}>
-                  입력 완료
-                </CTAButton>
-              }
+      {phase === "title" ? (
+        <>
+          <Spacing size={12} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <TextField.Clearable
+              variant="line"
+              label="어떻게 질문할까요?"
+              labelOption="sustain"
+              value={questionTitle}
+              placeholder={placeholder}
+              maxLength={34}
+              autoFocus
+              onChange={(e) => onChangeTitle(e.target.value.slice(0, 34))}
+              onClear={() => onChangeTitle("")}
+              onFocus={titleFocus.onFocus}
+              onBlur={titleFocus.onBlur}
             />
           </motion.div>
-        )}
-      </AnimatePresence>
-      {editSheet}
+          <PhaseBottomCTA
+            isFocused={titleFocus.isFocused}
+            focusConfirmKey="confirm-title"
+            onFocusConfirm={handleConfirmTitle}
+            onClose={onClose}
+            onInputComplete={onConfirmInput}
+            isInputCompleteDisabled={isCompleteDisabled}
+          />
+        </>
+      ) : (
+        <>
+          <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <TextField.Clearable
+              variant="line"
+              label="(선택) 추가 설명을 할까요?"
+              labelOption="sustain"
+              value={questionDescription}
+              placeholder="추가 설명을 입력해주세요"
+              maxLength={55}
+              onChange={(e) => onChangeDescription(e.target.value.slice(0, 55))}
+              onClear={() => onChangeDescription("")}
+              onFocus={descFocus.onFocus}
+              onBlur={descFocus.onBlur}
+            />
+          </motion.div>
+          {imageUploadSection}
+          <PhaseBottomCTA
+            isFocused={descFocus.isFocused}
+            focusConfirmKey="confirm-description"
+            onFocusConfirm={descFocus.blur}
+            onClose={onClose}
+            onInputComplete={onConfirmInput}
+            isInputCompleteDisabled={isCompleteDisabled}
+          />
+          {editSheet}
+        </>
+      )}
     </>
   );
 }
