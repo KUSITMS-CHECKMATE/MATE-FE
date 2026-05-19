@@ -69,7 +69,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
         imageSectionContent={
           isQuestionInputCompleted && questionImageUrl ? (
             <>
-              <div className="rounded-2xl bg-white p-4">
+              <div className="rounded-2xl bg-white px-4 pb-4">
                 <div
                   className="w-full rounded-2xl p-1.5"
                   style={{
