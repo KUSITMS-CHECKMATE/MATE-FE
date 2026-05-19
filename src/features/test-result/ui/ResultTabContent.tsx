@@ -59,23 +59,65 @@ const MOCK_RESULTS: QuestionResult[] = [
       {
         name: "상의",
         items: [
-          { rank: "icon-step-1-mono", label: "티셔츠", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "반팔티", count: 15, percentage: 27, isHighlight: false },
-          { rank: "icon-step-3-mono", label: "크롭티", count: 8, percentage: 15, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "티셔츠",
+            count: 32,
+            percentage: 58,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "반팔티",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
+          {
+            rank: "icon-step-3-mono",
+            label: "크롭티",
+            count: 8,
+            percentage: 15,
+            isHighlight: false,
+          },
         ],
       },
       {
         name: "하의",
         items: [
-          { rank: "icon-step-1-mono", label: "청바지", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "반바지", count: 15, percentage: 27, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "청바지",
+            count: 32,
+            percentage: 58,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "반바지",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
         ],
       },
       {
         name: "신발",
         items: [
-          { rank: "icon-step-1-mono", label: "운동화", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "슬리퍼", count: 15, percentage: 27, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "운동화",
+            count: 32,
+            percentage: 58,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "슬리퍼",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
         ],
       },
     ],
@@ -103,40 +145,74 @@ const MOCK_RESULTS: QuestionResult[] = [
 
 export function ResultTabContent() {
   return (
-    <div className="w-full bg-[#f2f4f6] p-5 flex flex-col gap-4 items-center">
-      {MOCK_RESULTS.map((result, i) => {
-        switch (result.type) {
-          case "multiple":
-            return <MultipleResultCard key={i} title={result.title} imageUrl={result.imageUrl} options={result.options} />;
-          case "subjective":
-            return <SubjectiveResultCard key={i} title={result.title} answers={result.answers} />;
-          case "scale":
-            return <ScaleResultCard key={i} title={result.title} average={result.average} scores={result.scores} />;
-          case "ab":
-            return <AbResultCard key={i} title={result.title} options={result.options} />;
-          case "cardSort":
-            return <CardSortResultCard key={i} title={result.title} categories={result.categories} />;
-          case "tree":
-            return <TreeResultCard key={i} title={result.title} imageUrl={result.imageUrl} paths={result.paths} />;
-          case "fiveSec":
-            return <FiveSecResultCard key={i} title={result.title} imageUrl={result.imageUrl} answers={result.answers} />;
-        }
-      })}
+    <div className="w-full flex flex-col bg-[#f2f4f6] pb-21.5">
+      <div className="w-full  p-5 flex flex-col gap-4 items-center">
+        {MOCK_RESULTS.map((result, i) => {
+          switch (result.type) {
+            case "multiple":
+              return (
+                <MultipleResultCard
+                  key={i}
+                  title={result.title}
+                  imageUrl={result.imageUrl}
+                  options={result.options}
+                />
+              );
+            case "subjective":
+              return <SubjectiveResultCard key={i} title={result.title} answers={result.answers} />;
+            case "scale":
+              return (
+                <ScaleResultCard
+                  key={i}
+                  title={result.title}
+                  average={result.average}
+                  scores={result.scores}
+                />
+              );
+            case "ab":
+              return <AbResultCard key={i} title={result.title} options={result.options} />;
+            case "cardSort":
+              return (
+                <CardSortResultCard key={i} title={result.title} categories={result.categories} />
+              );
+            case "tree":
+              return (
+                <TreeResultCard
+                  key={i}
+                  title={result.title}
+                  imageUrl={result.imageUrl}
+                  paths={result.paths}
+                />
+              );
+            case "fiveSec":
+              return (
+                <FiveSecResultCard
+                  key={i}
+                  title={result.title}
+                  imageUrl={result.imageUrl}
+                  answers={result.answers}
+                />
+              );
+          }
+        })}
+      </div>
 
-      <ListRow
-        left={<ListRow.AssetIcon size="xsmall" shape="original" name="icon-graph-circle" />}
-        contents={
-          <ListRow.Texts
-            type="2RowTypeF"
-            top="모든 결과를 보고 싶다면"
-            topProps={{ color: adaptive.grey500 }}
-            bottom="파일로 발급 받아봐요"
-            bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
-          />
-        }
-        right={<Button>통계 발급받기</Button>}
-        verticalPadding="xlarge"
-      />
+      <div className="w-full ">
+        <ListRow
+          left={<ListRow.AssetIcon size="xsmall" shape="original" name="icon-graph-circle" />}
+          contents={
+            <ListRow.Texts
+              type="2RowTypeF"
+              top="모든 결과를 보고 싶다면"
+              topProps={{ color: adaptive.grey500 }}
+              bottom="파일로 발급 받아봐요"
+              bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+            />
+          }
+          right={<Button size="small">통계 발급받기</Button>}
+          verticalPadding="xlarge"
+        />
+      </div>
     </div>
   );
 }
