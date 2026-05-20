@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { FixedBottomCTA } from "@toss/tds-mobile";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
+import { CardSortAnswerPage } from "@/features/question-cardsort/answer";
 import type { CardSortCard, CardSortCategory } from "../model";
 import { CardSortCreateBottomCTA } from "./CardSortCreateBottomCTA";
 import { CardSortCreateOptionSection } from "./CardSortCreateOptionSection";
@@ -28,6 +31,9 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
   );
   const [categories, setCategories] = useState<CardSortCategory[]>(existingCardSort?.categories ?? []);
   const [cards, setCards] = useState<CardSortCard[]>(existingCardSort?.cards ?? []);
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "cardsort"; placements: Record<string, string> }>({ type: "cardsort", placements: {} });
 
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
@@ -104,6 +110,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
       />
       {isQuestionInputCompleted && (
         <>
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           <CardSortCreateOptionSection
             categories={categories}
             cards={cards}
@@ -155,6 +162,35 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
         }}
         onConfirm={handleConfirmCard}
       />
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-28"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <CardSortAnswerPage
+            question={{
+              id: "preview",
+              type: "cardsort",
+              data: {
+                title: questionTitle,
+                description: questionDescription,
+                categories,
+                cards,
+                requireAllPlaced: false,
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+          />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
