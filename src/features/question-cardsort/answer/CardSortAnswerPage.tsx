@@ -34,6 +34,12 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
 
   const handleCardTap = (cardId: string) => {
     if (!hasInteracted) setHasInteracted(true);
+    if (placements[cardId]) {
+      const next = { ...placements };
+      delete next[cardId];
+      onChange({ type: "cardsort", placements: next });
+      return;
+    }
     if (selectedCardId === cardId && !pickTooltipDone) setPickTooltipDone(true);
     setSelectedCardId((prev) => (prev === cardId ? null : cardId));
   };
