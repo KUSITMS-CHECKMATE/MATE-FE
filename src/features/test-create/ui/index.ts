@@ -8,3 +8,4 @@ export { QuestionManageSheet } from './QuestionManageSheet';
 export { BasicInfoEditPage } from './BasicInfoEditPage';
 export { ServiceDescriptionEditPage } from './ServiceDescriptionEditPage';
 export { TestImageEditPage } from './TestImageEditPage';
+export { TesterPreviewListRow } from './TesterPreviewListRow';
