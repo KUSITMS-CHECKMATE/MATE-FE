@@ -32,6 +32,9 @@ alwaysApply: true
 
 - **pnpm만** 사용 · Vite + React (Next.js 기준 금지)
 - API: **ky** (`fetch` 직접 최소화), 로직은 컴포넌트 밖으로 분리
+  - orval로 Swagger → TanStack Query hooks 자동 생성 (`pnpm orval`) — 생성 파일 직접 수정 금지
+  - GET → `useXxx()` hook / POST·PUT·DELETE → `useMutation` 래핑 (orval이 POST를 useQuery로 잘못 생성하는 경우 있음)
+  - 인증: `AuthGuard`가 앱 마운트 시 자동 로그인 → 토큰 메모리 저장 → ky 요청에 `Authorization` 헤더 자동 주입
 - 서버 상태: **TanStack Query** · `useEffect`로 데이터 직접 관리 지양 · mutation 후 invalidate
 - 전역: **Zustand 최소** · 서버 데이터는 Query
 - 스타일: Tailwind · **TDS 우선 → Tailwind 보완**
