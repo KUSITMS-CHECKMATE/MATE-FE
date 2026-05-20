@@ -179,6 +179,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
                 description: questionDescription,
                 imageUrlA,
                 imageUrlB,
+                ratio,
               },
             }}
             answer={previewAnswer}
