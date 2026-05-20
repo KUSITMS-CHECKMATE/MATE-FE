@@ -28,7 +28,7 @@ import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
 export function TestCreateFunnel() {
   const navigate = useNavigate();
-  const funnel = useFunnel('register');
+  const funnel = useFunnel();
   const form = useTestCreateForm();
   const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
   const [registerTab, setRegisterTab] = useState<RegisterTab>("questions");
