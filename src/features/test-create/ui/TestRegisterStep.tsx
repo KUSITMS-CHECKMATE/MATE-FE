@@ -4,6 +4,7 @@ import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List } fr
 import { adaptive } from "@toss/tds-colors";
 import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
 import { QuestionManageSheet } from "./QuestionManageSheet";
+import { TesterPreviewListRow } from "./TesterPreviewListRow";
 import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId, type PendingQuestion } from "../model/types";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
@@ -166,18 +167,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
         ) : (
           <div className="flex flex-col flex-1 pb-4">
             <Spacing size={16} />
-            <ListRow
-              style={{
-                backgroundColor: "var(--adaptiveCardBgGrey)",
-                backdropFilter: "blur(0px)",
-                borderRadius: "999px",
-                opacity: 1,
-                margin: "0 20px",
-              }}
-              left={<ListRow.AssetIcon name="icon-phone" backgroundColor={adaptive.greyOpacity100} />}
-              contents={<ListRow.Texts type="1RowTypeB" top="실제 테스터에게 보이는 화면이에요" topProps={{ color: adaptive.grey700 }} />}
-              horizontalPadding="small"
-            />
+            <TesterPreviewListRow />
             <Top
               title={
                 <Top.TitleParagraph size={22} color={adaptive.grey900}>
