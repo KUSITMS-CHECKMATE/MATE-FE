@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Top, SegmentedControl, FixedBottomCTA, CTAButton, ListRow, Button, IconButton, Text, ConfirmDialog } from "@toss/tds-mobile";
+import { Top, FixedBottomCTA, CTAButton, ListRow, IconButton, Asset, Text, ConfirmDialog } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { QUESTION_TYPES, type PendingQuestion } from "../model/types";
-
-type ManageTab = "delete" | "reorder";
 
 interface QuestionManageSheetProps {
   questions: PendingQuestion[];
@@ -17,22 +15,34 @@ interface QuestionManageSheetProps {
   onCancel: () => void;
 }
 
-function SortableQuestionItem({ question }: { question: PendingQuestion }) {
+interface SortableItemProps {
+  question: PendingQuestion;
+  onDeleteRequest: (id: string) => void;
+}
+
+function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) {
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id: question.id });
   const type = QUESTION_TYPES.find((t) => t.id === question.typeId);
   if (!type) return null;
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    touchAction: "manipulation" as const,
-  };
-
   return (
-    <div ref={setNodeRef} style={style}>
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+      }}
+      {...attributes}
+      {...listeners}
+    >
       <ListRow
-        left={<ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />}
+        left={
+          <div className="flex items-center gap-2">
+            <Asset.Icon frameShape={{ width: 20, height: 20 }} backgroundColor="transparent" name="icon-navigation-menu-mono" color={adaptive.grey400} aria-hidden ratio="1/1" />
+            <ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />
+          </div>
+        }
         contents={
           <ListRow.Texts
             type="2RowTypeA"
@@ -43,16 +53,16 @@ function SortableQuestionItem({ question }: { question: PendingQuestion }) {
           />
         }
         right={
-          <IconButton
-            src="https://static.toss.im/icons/png/4x/icon-navigation-menu-mono.png"
-            iconSize={20}
-            variant="clear"
-            color={adaptive.grey400}
-            aria-label="순서 변경 핸들"
-            style={{ touchAction: "none", cursor: "grab" }}
-            {...attributes}
-            {...listeners}
-          />
+          <div onPointerDown={(e) => e.stopPropagation()}>
+            <IconButton
+              src="https://static.toss.im/icons/png/4x/icon-bin-mono.png"
+              iconSize={20}
+              variant="clear"
+              color={adaptive.grey400}
+              aria-label="삭제"
+              onClick={() => onDeleteRequest(question.id)}
+            />
+          </div>
         }
         verticalPadding="large"
       />
@@ -61,10 +71,8 @@ function SortableQuestionItem({ question }: { question: PendingQuestion }) {
 }
 
 export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, onCancel }: QuestionManageSheetProps) {
-  const [activeTab, setActiveTab] = useState<ManageTab>("delete");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const isSaveDisabled = questions.length === 0;
 
   const closeDeleteDialog = () => setPendingDeleteId(null);
   const confirmDelete = () => {
@@ -78,7 +86,10 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
     onSave();
   };
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+  );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -101,55 +112,20 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
         }
       />
 
-      <div className="px-5 mt-4">
-        <SegmentedControl alignment="fixed" size="small" value={activeTab} onChange={(v) => setActiveTab(v as ManageTab)}>
-          <SegmentedControl.Item value="delete">질문 삭제</SegmentedControl.Item>
-          <SegmentedControl.Item value="reorder">순서 바꾸기</SegmentedControl.Item>
-        </SegmentedControl>
-      </div>
-
-      <div className="px-5 pt-6 pb-2">
+      <div className="px-6 pt-6 pb-2">
         <Text color={adaptive.grey700} typography="t7" fontWeight="regular">
-          질문
+          질문 목록
         </Text>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {activeTab === "delete" ? (
-          questions.map((q) => {
-            const type = QUESTION_TYPES.find((t) => t.id === q.typeId);
-            if (!type) return null;
-            return (
-              <ListRow
-                key={q.id}
-                left={<ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />}
-                contents={
-                  <ListRow.Texts
-                    type="2RowTypeA"
-                    top={q.data?.title ?? "미입력"}
-                    topProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
-                    bottom={type.label}
-                    bottomProps={{ color: adaptive.grey600 }}
-                  />
-                }
-                right={
-                  <Button size="small" color="danger" variant="weak" onClick={() => setPendingDeleteId(q.id)}>
-                    삭제
-                  </Button>
-                }
-                verticalPadding="large"
-              />
-            );
-          })
-        ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
-              {questions.map((q) => (
-                <SortableQuestionItem key={q.id} question={q} />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
+            {questions.map((q) => (
+              <SortableQuestionItem key={q.id} question={q} onDeleteRequest={setPendingDeleteId} />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
 
       <FixedBottomCTA.Double
@@ -159,7 +135,7 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
           </CTAButton>
         }
         rightButton={
-          <CTAButton className="w-full" disabled={isSaveDisabled} onClick={() => setIsSaveDialogOpen(true)}>
+          <CTAButton className="w-full" disabled={questions.length === 0} onClick={() => setIsSaveDialogOpen(true)}>
             저장하기
           </CTAButton>
         }
