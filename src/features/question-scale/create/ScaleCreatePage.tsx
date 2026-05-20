@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Asset, Border } from "@toss/tds-mobile";
+import { Asset, Border, FixedBottomCTA } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
@@ -163,29 +163,6 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="flex items-center h-14 px-5">
-            <button
-              type="button"
-              onClick={() => setIsPreviewOpen(false)}
-              aria-label="뒤로가기"
-              className="flex items-center"
-            >
-              <div style={{ transform: "rotate(180deg)" }}>
-                <Asset.Icon
-                  frameShape={Asset.frameShape.CleanW24}
-                  backgroundColor="transparent"
-                  name="icon-arrow-right-textbutton-thin-mono"
-                  color={adaptive.grey800}
-                  aria-hidden
-                  ratio="1/1"
-                />
-              </div>
-            </button>
-            <span className="flex-1 text-center text-[17px] font-semibold" style={{ color: adaptive.grey900 }}>
-              테스트 미리보기
-            </span>
-            <div style={{ width: 24 }} />
-          </div>
           <ScaleAnswerPage
             question={{
               id: "preview",
@@ -202,6 +179,9 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
         </motion.div>
       )}
     </motion.div>
