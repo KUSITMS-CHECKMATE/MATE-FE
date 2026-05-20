@@ -7,6 +7,8 @@ import { useQuestionImageUpload } from "@/features/test-create/model/useQuestion
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
+import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
+import { ScaleAnswerPage } from "@/features/question-scale/answer";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
 
@@ -25,10 +27,13 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const [questionImageUrl, setQuestionImageUrl] = useState(existingScale?.imageUrl ?? "");
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState((existingScale?.title ?? "").trim().length > 0);
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
-  const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "");
-  const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "");
+  const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "전혀 아니다");
+  const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "매우 그렇다");
   const [isFocused, setIsFocused] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "scale"; value: number | null }>({ type: "scale", value: null });
 
   const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
     useQuestionImageUpload(setQuestionImageUrl);
@@ -44,6 +49,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const handleContainerFocus = (e: React.FocusEvent) => {
     if (!isQuestionInputCompleted) return;
     if (e.target instanceof HTMLInputElement) {
+      if ((e.target as HTMLElement).closest('[aria-modal="true"]')) return;
       if (blurTimer.current) clearTimeout(blurTimer.current);
       setIsFocused(true);
     }
@@ -112,6 +118,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       />
       {isQuestionInputCompleted && (
         <>
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           <ScaleCreateOptionSection
             scaleCount={scaleCount}
             minLabel={minLabel}
@@ -147,6 +154,56 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
         onCamera={handleCamera}
         onAlbum={handleAlbum}
       />
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="flex items-center h-14 px-5">
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(false)}
+              aria-label="뒤로가기"
+              className="flex items-center"
+            >
+              <div style={{ transform: "rotate(180deg)" }}>
+                <Asset.Icon
+                  frameShape={Asset.frameShape.CleanW24}
+                  backgroundColor="transparent"
+                  name="icon-arrow-right-textbutton-thin-mono"
+                  color={adaptive.grey800}
+                  aria-hidden
+                  ratio="1/1"
+                />
+              </div>
+            </button>
+            <span className="flex-1 text-center text-[17px] font-semibold" style={{ color: adaptive.grey900 }}>
+              테스트 미리보기
+            </span>
+            <div style={{ width: 24 }} />
+          </div>
+          <ScaleAnswerPage
+            question={{
+              id: "preview",
+              type: "scale",
+              data: {
+                title: questionTitle,
+                description: questionDescription,
+                scaleCount,
+                minLabel,
+                maxLabel,
+                ...(questionImageUrl ? { imageUrl: questionImageUrl } : {}),
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+          />
+        </motion.div>
+      )}
     </motion.div>
   );
 }
