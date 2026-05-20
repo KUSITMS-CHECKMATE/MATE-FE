@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   openCamera,
   fetchAlbumPhotos,
@@ -26,7 +26,6 @@ import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
-import { FivesecQuestionEditorOverlay } from "./FivesecQuestionEditorOverlay";
 
 interface FivesecCreatePageProps {
   questionId: string;
@@ -39,38 +38,35 @@ export function FivesecCreatePage({
 }: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
+  const existingFivesec = existing?.typeId === "fivesec" ? existing : null;
 
-  const [title, setTitle] = useState(
-    existing?.typeId === "fivesec" ? existing.title : "",
+  const [title, setTitle] = useState(existingFivesec?.title ?? "");
+  const [description, setDescription] = useState(existingFivesec?.description ?? "");
+  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
+    (existingFivesec?.title ?? "").trim().length > 0,
   );
-  const [description, setDescription] = useState(
-    existing?.typeId === "fivesec" ? existing.description : "",
-  );
-  const [imageUrl, setImageUrl] = useState(
-    existing?.typeId === "fivesec" ? existing.imageUrl : "",
-  );
+  const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
   const duration = 5;
   const [answerExample, setAnswerExample] = useState(
-    existing?.typeId === "fivesec" ? existing.answerExample : "",
+    existingFivesec?.answerExample ?? "",
   );
   const [isMultipleAnswer, setIsMultipleAnswer] = useState(
-    existing?.typeId === "fivesec" ? existing.isMultipleAnswer : false,
+    existingFivesec?.isMultipleAnswer ?? false,
   );
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
-    existing?.typeId === "fivesec" ? existing.isMultiSelectEnabled : false,
+    existingFivesec?.isMultiSelectEnabled ?? false,
   );
   const [choices, setChoices] = useState<MultipleChoiceItem[]>(
-    existing?.typeId === "fivesec" ? existing.choices : [],
+    existingFivesec?.choices ?? [],
   );
   const [minSelectCount, setMinSelectCount] = useState(
-    existing?.typeId === "fivesec" ? existing.minSelectCount : 1,
+    existingFivesec?.minSelectCount ?? 1,
   );
   const [maxSelectCount, setMaxSelectCount] = useState(
-    existing?.typeId === "fivesec" ? existing.maxSelectCount : 1,
+    existingFivesec?.maxSelectCount ?? 1,
   );
   const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
   const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
-  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [isChoiceSheetOpen, setIsChoiceSheetOpen] = useState(false);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
@@ -234,193 +230,185 @@ export function FivesecCreatePage({
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
+        questionType="5초 테스트"
         questionTitle={title}
         questionDescription={description}
-        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        subtitle="5초 테스트"
+        onChangeTitle={setTitle}
+        onChangeDescription={setDescription}
+        isInputCompleted={isQuestionInputCompleted}
+        onConfirmInput={() => setIsQuestionInputCompleted(true)}
+        onClose={onClose}
       />
 
-      {imageUrl ? (
-        <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
-          <Text
-            display="block"
-            color={adaptive.grey700}
-            typography="t5"
-            fontWeight="medium"
-          >
-            이미지
-          </Text>
-          <div
-            className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
-            style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
-          >
-            <img
-              src={imageUrl}
-              alt="질문 이미지 미리보기"
-              className="h-full w-full object-cover"
-            />
-            <button
-              type="button"
-              onClick={() => setImageUrl("")}
-              className="absolute right-1.5 top-1.5"
-              aria-label="이미지 삭제"
-            >
-              <Asset.Icon
-                frameShape={Asset.frameShape.CircleXSmall}
-                backgroundColor={adaptive.greyOpacity600}
-                name="icon-sweetshop-x-white"
-                scale={0.66}
-                aria-hidden
-              />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <ListRow
-          className=""
-          contents={
-            <ListRow.Texts
-              type="1RowTypeA"
-              top="이미지"
-              topProps={{ color: adaptive.grey700 }}
-            />
-          }
-          right={
-            <Button
-              size="small"
-              color="dark"
-              variant="weak"
-              onClick={() => setIsPhotoSheetOpen(true)}
-            >
-              업로드
-            </Button>
-          }
-          verticalPadding="large"
-        />
-      )}
-
-      {isMultipleAnswer ? (
-        <FivesecMultipleChoiceSection
-          choices={visibleChoices}
-          isChoiceManageMode={isChoiceManageMode}
-          isMultiSelectEnabled={isMultiSelectEnabled}
-          minSelectCount={minSelectCount}
-          maxSelectCount={maxSelectCount}
-          onOpenChoiceCreate={openChoiceCreateSheet}
-          onOpenChoiceEdit={openChoiceEditSheet}
-          onToggleChoiceManageMode={handleToggleChoiceManageMode}
-          onDeleteChoice={(choiceId) =>
-            setActiveChoices(visibleChoices.filter((c) => c.id !== choiceId))
-          }
-          onReorderChoices={(next) => setActiveChoices(next)}
-          onToggleMultipleChoice={requestFormatChange}
-          onToggleMultiSelect={(checked) => {
-            setIsMultiSelectEnabled(checked);
-            if (!checked) {
-              setMinSelectCount(1);
-              setMaxSelectCount(1);
-            } else {
-              const maxChoiceCount = Math.max(choices.length, 1);
-              setMaxSelectCount((current) =>
-                Math.min(Math.max(current, 2), maxChoiceCount),
-              );
-            }
-          }}
-          onChangeMinSelectCount={(value) => {
-            setMinSelectCount(value);
-            if (value > maxSelectCount) setMaxSelectCount(value);
-          }}
-          onChangeMaxSelectCount={(value) => {
-            setMaxSelectCount(value);
-            if (value < minSelectCount) setMinSelectCount(value);
-          }}
-        />
-      ) : (
+      {isQuestionInputCompleted && (
         <>
-          <TextArea
-            variant="box"
-            hasError={false}
-            label="답변 작성"
-            labelOption="sustain"
-            value={answerExample}
-            placeholder="예시 입력창이에요"
-            height={200}
-            readOnly
-          />
+          {imageUrl ? (
+            <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
+              <Text
+                display="block"
+                color={adaptive.grey700}
+                typography="t5"
+                fontWeight="medium"
+              >
+                이미지
+              </Text>
+              <div
+                className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
+                style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
+              >
+                <img
+                  src={imageUrl}
+                  alt="질문 이미지 미리보기"
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => setImageUrl("")}
+                  className="absolute right-1.5 top-1.5"
+                  aria-label="이미지 삭제"
+                >
+                  <Asset.Icon
+                    frameShape={Asset.frameShape.CircleXSmall}
+                    backgroundColor={adaptive.greyOpacity600}
+                    name="icon-sweetshop-x-white"
+                    scale={0.66}
+                    aria-hidden
+                  />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <ListRow
+              className=""
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top="이미지"
+                  topProps={{ color: adaptive.grey700 }}
+                />
+              }
+              right={
+                <Button
+                  size="small"
+                  color="dark"
+                  variant="weak"
+                  onClick={() => setIsPhotoSheetOpen(true)}
+                >
+                  업로드
+                </Button>
+              }
+              verticalPadding="large"
+            />
+          )}
 
-          <Spacing size={12} />
-          <Border />
-          <Spacing size={12} />
+          {isMultipleAnswer ? (
+            <FivesecMultipleChoiceSection
+              choices={visibleChoices}
+              isChoiceManageMode={isChoiceManageMode}
+              isMultiSelectEnabled={isMultiSelectEnabled}
+              minSelectCount={minSelectCount}
+              maxSelectCount={maxSelectCount}
+              onOpenChoiceCreate={openChoiceCreateSheet}
+              onOpenChoiceEdit={openChoiceEditSheet}
+              onToggleChoiceManageMode={handleToggleChoiceManageMode}
+              onDeleteChoice={(choiceId) =>
+                setActiveChoices(visibleChoices.filter((c) => c.id !== choiceId))
+              }
+              onReorderChoices={(next) => setActiveChoices(next)}
+              onToggleMultipleChoice={requestFormatChange}
+              onToggleMultiSelect={(checked) => {
+                setIsMultiSelectEnabled(checked);
+                if (!checked) {
+                  setMinSelectCount(1);
+                  setMaxSelectCount(1);
+                } else {
+                  const maxChoiceCount = Math.max(choices.length, 1);
+                  setMaxSelectCount((current) =>
+                    Math.min(Math.max(current, 2), maxChoiceCount),
+                  );
+                }
+              }}
+              onChangeMinSelectCount={(value) => {
+                setMinSelectCount(value);
+                if (value > maxSelectCount) setMaxSelectCount(value);
+              }}
+              onChangeMaxSelectCount={(value) => {
+                setMaxSelectCount(value);
+                if (value < minSelectCount) setMinSelectCount(value);
+              }}
+            />
+          ) : (
+            <>
+              <TextArea
+                variant="box"
+                hasError={false}
+                label="답변 작성"
+                labelOption="sustain"
+                value={answerExample}
+                placeholder="예시 입력창이에요"
+                height={200}
+                readOnly
+              />
 
-          <ListRow
-            role="switch"
-            aria-checked={isMultipleAnswer}
-            horizontalPadding="small"
-            contents={
-              <ListRow.Texts
-                type="1RowTypeA"
-                top="객관식으로 답변 받기"
-                topProps={{ color: adaptive.grey700 }}
+              <Spacing size={12} />
+              <Border />
+              <Spacing size={12} />
+
+              <ListRow
+                role="switch"
+                aria-checked={isMultipleAnswer}
+                horizontalPadding="small"
+                contents={
+                  <ListRow.Texts
+                    type="1RowTypeA"
+                    top="객관식으로 답변 받기"
+                    topProps={{ color: adaptive.grey700 }}
+                  />
+                }
+                right={
+                  <Switch
+                    checked={isMultipleAnswer}
+                    onChange={(_, checked) => requestFormatChange(checked)}
+                  />
+                }
+                verticalPadding="large"
               />
+            </>
+          )}
+
+          <FixedBottomCTA.Double
+            leftButton={
+              <CTAButton color="dark" variant="weak" onClick={onClose}>
+                취소
+              </CTAButton>
             }
-            right={
-              <Switch
-                checked={isMultipleAnswer}
-                onChange={(_, checked) => requestFormatChange(checked)}
-              />
+            rightButton={
+              <CTAButton
+                disabled={isCompleteDisabled}
+                onClick={() => {
+                  updateQuestion(questionId, {
+                    typeId: "fivesec",
+                    title,
+                    description,
+                    imageUrl,
+                    duration,
+                    answerExample,
+                    answerType: "multiple",
+                    isMultipleAnswer,
+                    isMultiSelectEnabled,
+                    choices,
+                    minSelectCount,
+                    maxSelectCount,
+                  });
+                  onClose();
+                }}
+              >
+                완료하기
+              </CTAButton>
             }
-            verticalPadding="large"
           />
         </>
       )}
-
-      <FixedBottomCTA.Double
-        leftButton={
-          <CTAButton color="dark" variant="weak" onClick={onClose}>
-            취소
-          </CTAButton>
-        }
-        rightButton={
-          <CTAButton
-            disabled={isCompleteDisabled}
-            onClick={() => {
-              updateQuestion(questionId, {
-                typeId: "fivesec",
-                title,
-                description,
-                imageUrl,
-                duration,
-                answerExample,
-                answerType: "multiple",
-                isMultipleAnswer,
-                isMultiSelectEnabled,
-                choices,
-                minSelectCount,
-                maxSelectCount,
-              });
-              onClose();
-            }}
-          >
-            완료하기
-          </CTAButton>
-        }
-      />
-
-      <AnimatePresence>
-        {isQuestionEditorOpen && (
-          <FivesecQuestionEditorOverlay
-            key="question-editor"
-            initialTitle={title}
-            initialDescription={description}
-            onClose={() => setIsQuestionEditorOpen(false)}
-            onSave={({ title: t, description: d }) => {
-              setTitle(t);
-              setDescription(d);
-              setIsQuestionEditorOpen(false);
-            }}
-          />
-        )}
-      </AnimatePresence>
 
       <BottomSheet
         header={

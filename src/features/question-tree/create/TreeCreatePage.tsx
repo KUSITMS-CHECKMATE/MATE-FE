@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { TreeNodeItem } from "../model/types";
 import { TreeCreateBottomCTA } from "./TreeCreateBottomCTA";
 import { TreeCreateOptionSection } from "./TreeCreateOptionSection";
 import { TreeNodeAddSheet } from "./TreeNodeAddSheet";
-import { TreeQuestionEditorOverlay } from "./TreeQuestionEditorOverlay";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 
@@ -21,19 +20,22 @@ type NodeSheetMode =
 export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
+  const existingTree = existing?.typeId === "tree" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
-    existing?.typeId === "tree" ? existing.title : "",
+    existingTree?.title ?? "",
   );
   const [questionDescription, setQuestionDescription] = useState(
-    existing?.typeId === "tree" ? existing.description : "",
+    existingTree?.description ?? "",
+  );
+  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
+    (existingTree?.title ?? "").trim().length > 0,
   );
   const [nodes, setNodes] = useState<TreeNodeItem[]>(
-    existing?.typeId === "tree" ? existing.nodes : [],
+    existingTree?.nodes ?? [],
   );
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
-  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
 
   const isCompleteDisabled =
@@ -126,42 +128,50 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
+        questionType="트리 테스트"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        subtitle="트리 테스트"
+        onChangeTitle={setQuestionTitle}
+        onChangeDescription={setQuestionDescription}
+        isInputCompleted={isQuestionInputCompleted}
+        onConfirmInput={() => setIsQuestionInputCompleted(true)}
+        onClose={onClose}
       />
-      <TreeCreateOptionSection
-        nodes={nodes}
-        selectedNodeId={selectedNodeId}
-        isManageMode={isManageMode}
-        onOpenNodeEditor={() => setNodeSheetMode({ kind: "create-root" })}
-        onSelectNode={setSelectedNodeId}
-        onEditNode={(nodeId) => {
-          const target = findNode(nodes, nodeId);
-          if (!target) return;
-          setNodeSheetMode({ kind: "rename", nodeId, initialName: target.name });
-        }}
-        onAddChildNode={handleAddChildNode}
-        onToggleManageMode={() => setIsManageMode((prev) => !prev)}
-        onDeleteNode={(nodeId) => {
-          setNodes((prev) => deleteNode(prev, nodeId));
-          setSelectedNodeId((prev) => (prev === nodeId ? null : prev));
-        }}
-      />
-      <TreeCreateBottomCTA
-        isCompleteDisabled={isCompleteDisabled}
-        onCancel={onClose}
-        onComplete={() => {
-          updateQuestion(questionId, {
-            typeId: "tree",
-            title: questionTitle,
-            description: questionDescription,
-            nodes,
-          });
-          onClose();
-        }}
-      />
+      {isQuestionInputCompleted && (
+        <>
+          <TreeCreateOptionSection
+            nodes={nodes}
+            selectedNodeId={selectedNodeId}
+            isManageMode={isManageMode}
+            onOpenNodeEditor={() => setNodeSheetMode({ kind: "create-root" })}
+            onSelectNode={setSelectedNodeId}
+            onEditNode={(nodeId) => {
+              const target = findNode(nodes, nodeId);
+              if (!target) return;
+              setNodeSheetMode({ kind: "rename", nodeId, initialName: target.name });
+            }}
+            onAddChildNode={handleAddChildNode}
+            onToggleManageMode={() => setIsManageMode((prev) => !prev)}
+            onDeleteNode={(nodeId) => {
+              setNodes((prev) => deleteNode(prev, nodeId));
+              setSelectedNodeId((prev) => (prev === nodeId ? null : prev));
+            }}
+          />
+          <TreeCreateBottomCTA
+            isCompleteDisabled={isCompleteDisabled}
+            onCancel={onClose}
+            onComplete={() => {
+              updateQuestion(questionId, {
+                typeId: "tree",
+                title: questionTitle,
+                description: questionDescription,
+                nodes,
+              });
+              onClose();
+            }}
+          />
+        </>
+      )}
 
       <TreeNodeAddSheet
         key={nodeSheetMode ? `${nodeSheetMode.kind}-${'nodeId' in nodeSheetMode ? nodeSheetMode.nodeId : 'root'}` : 'closed'}
@@ -171,21 +181,6 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
         onClose={() => setNodeSheetMode(null)}
         onConfirm={handleNodeSheetConfirm}
       />
-
-      <AnimatePresence>
-        {isQuestionEditorOpen && (
-          <TreeQuestionEditorOverlay
-            initialTitle={questionTitle}
-            initialDescription={questionDescription}
-            onClose={() => setIsQuestionEditorOpen(false)}
-            onSave={({ title, description }) => {
-              setQuestionTitle(title);
-              setQuestionDescription(description);
-              setIsQuestionEditorOpen(false);
-            }}
-          />
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
