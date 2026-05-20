@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { AbCreateBottomCTA } from "./AbCreateBottomCTA";
 import { AbCreateOptionSection } from "./AbCreateOptionSection";
-import { AbQuestionEditorOverlay } from "./AbQuestionEditorOverlay";
 
 interface AbCreatePageProps {
   questionId: string;
@@ -18,9 +17,11 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingAb = existing?.typeId === "ab" ? existing : null;
 
-  const [isQuestionEditorOpen, setIsQuestionEditorOpen] = useState(false);
   const [questionTitle, setQuestionTitle] = useState(existingAb?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingAb?.description ?? "");
+  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
+    (existingAb?.title ?? "").trim().length > 0,
+  );
   const [imageUrlA, setImageUrlA] = useState(existingAb?.imageUrlA ?? "");
   const [imageUrlB, setImageUrlB] = useState(existingAb?.imageUrlB ?? "");
   const [activeSlot, setActiveSlot] = useState<"a" | "b" | null>(null);
@@ -75,33 +76,41 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
       transition={{ duration: 0.2 }}
     >
       <QuestionCreateTopSection
+        questionType="A/B 테스트"
         questionTitle={questionTitle}
         questionDescription={questionDescription}
-        onOpenQuestionEditor={() => setIsQuestionEditorOpen(true)}
-        subtitle="A/B 테스트"
+        onChangeTitle={setQuestionTitle}
+        onChangeDescription={setQuestionDescription}
+        isInputCompleted={isQuestionInputCompleted}
+        onConfirmInput={() => setIsQuestionInputCompleted(true)}
+        onClose={onClose}
       />
-      <AbCreateOptionSection
-        imageUrlA={imageUrlA}
-        imageUrlB={imageUrlB}
-        onUploadA={() => setActiveSlot("a")}
-        onUploadB={() => setActiveSlot("b")}
-        onRemoveA={() => setImageUrlA("")}
-        onRemoveB={() => setImageUrlB("")}
-      />
-      <AbCreateBottomCTA
-        isCompleteDisabled={isCompleteDisabled}
-        onCancel={onClose}
-        onComplete={() => {
-          updateQuestion(questionId, {
-            typeId: "ab",
-            title: questionTitle,
-            description: questionDescription,
-            imageUrlA,
-            imageUrlB,
-          });
-          onClose();
-        }}
-      />
+      {isQuestionInputCompleted && (
+        <>
+          <AbCreateOptionSection
+            imageUrlA={imageUrlA}
+            imageUrlB={imageUrlB}
+            onUploadA={() => setActiveSlot("a")}
+            onUploadB={() => setActiveSlot("b")}
+            onRemoveA={() => setImageUrlA("")}
+            onRemoveB={() => setImageUrlB("")}
+          />
+          <AbCreateBottomCTA
+            isCompleteDisabled={isCompleteDisabled}
+            onCancel={onClose}
+            onComplete={() => {
+              updateQuestion(questionId, {
+                typeId: "ab",
+                title: questionTitle,
+                description: questionDescription,
+                imageUrlA,
+                imageUrlB,
+              });
+              onClose();
+            }}
+          />
+        </>
+      )}
 
       <PhotoSelectSheet
         open={activeSlot !== null}
@@ -109,21 +118,6 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
         onCamera={handleCamera}
         onAlbum={handleAlbum}
       />
-
-      <AnimatePresence>
-        {isQuestionEditorOpen && (
-          <AbQuestionEditorOverlay
-            initialTitle={questionTitle}
-            initialDescription={questionDescription}
-            onClose={() => setIsQuestionEditorOpen(false)}
-            onSave={({ title, description }) => {
-              setQuestionTitle(title);
-              setQuestionDescription(description);
-              setIsQuestionEditorOpen(false);
-            }}
-          />
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
