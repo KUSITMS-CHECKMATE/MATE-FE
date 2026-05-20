@@ -215,7 +215,6 @@ const MOCK_TEST_1: ParticipateTest = {
         answerExample: "",
         answerType: "multiple",
         isMultipleAnswer: true,
-        isOtherInputEnabled: false,
         isMultiSelectEnabled: true,
         choices: [
           { id: "f1", name: "사과", imageUrl: "" },
@@ -237,7 +236,6 @@ const MOCK_TEST_1: ParticipateTest = {
         answerExample: "",
         answerType: "multiple",
         isMultipleAnswer: false,
-        isOtherInputEnabled: false,
         isMultiSelectEnabled: false,
         choices: [
           { id: "g1", name: "따뜻함", imageUrl: "" },
@@ -260,7 +258,6 @@ const MOCK_TEST_1: ParticipateTest = {
         answerExample: "",
         answerType: "subjective",
         isMultipleAnswer: false,
-        isOtherInputEnabled: false,
         isMultiSelectEnabled: false,
         choices: [],
         minSelectCount: 0,
@@ -395,7 +392,6 @@ const MOCK_TEST_4: ParticipateTest = {
         answerExample: "",
         answerType: "multiple",
         isMultipleAnswer: true,
-        isOtherInputEnabled: false,
         isMultiSelectEnabled: true,
         choices: [
           { id: "f1", name: "사과", imageUrl: "" },
@@ -425,7 +421,6 @@ const MOCK_TEST_5: ParticipateTest = {
         answerExample: "",
         answerType: "subjective",
         isMultipleAnswer: false,
-        isOtherInputEnabled: false,
         isMultiSelectEnabled: false,
         choices: [],
         minSelectCount: 0,

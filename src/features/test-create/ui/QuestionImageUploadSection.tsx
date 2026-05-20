@@ -23,7 +23,7 @@ export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }
         }
         right={
           <ListHeader.RightText typography="t7" fontWeight="medium" color={adaptive.grey700}>
-            선택사항
+            (선택)
           </ListHeader.RightText>
         }
       />

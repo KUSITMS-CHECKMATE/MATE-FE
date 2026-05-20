@@ -13,11 +13,10 @@ interface Props extends QuestionAnswerProps<"fivesec"> {
   onGoNext: () => void;
   isFirst: boolean;
   isLast: boolean;
-  prevLabel?: string;
 }
 
-export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast, prevLabel }: Props) {
-  const { duration, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices, imageUrl, ratio } = question.data;
+export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast }: Props) {
+  const { duration, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices } = question.data;
 
   const [phase, setPhase] = useState<Phase>("ready");
   const [remaining, setRemaining] = useState(duration);
@@ -69,7 +68,6 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
     return (
       <FivesecReadyPhase
         isFirst={isFirst}
-        prevLabel={prevLabel}
         onPrev={onPrev}
         onStart={() => setPhase("preview")}
       />
@@ -77,11 +75,11 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   if (phase === "preview") {
-    return <FivesecPreviewPhase ratio={ratio ?? "9:16"} onStart={startCountdown} />;
+    return <FivesecPreviewPhase onStart={startCountdown} />;
   }
 
   if (phase === "countdown") {
-    return <FivesecCountdownPhase remaining={remaining} imageUrl={imageUrl} ratio={ratio ?? "9:16"} />;
+    return <FivesecCountdownPhase remaining={remaining} />;
   }
 
   if (isSubjective) {
@@ -94,7 +92,6 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         canGoNext={canGoNext}
         isFirst={isFirst}
         isLast={isLast}
-        prevLabel={prevLabel}
         onChange={(text) => onChange({ type: "fivesec", selectedIds: [], text })}
         onPrev={onPrev}
         onGoNext={onGoNext}
@@ -112,7 +109,6 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       canGoNext={canGoNext}
       isFirst={isFirst}
       isLast={isLast}
-      prevLabel={prevLabel}
       onSelect={handleSelect}
       onPrev={onPrev}
       onGoNext={onGoNext}

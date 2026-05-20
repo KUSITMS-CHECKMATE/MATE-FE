@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { IconButton, ListHeader, ListRow, Switch, Text } from "@toss/tds-mobile";
+import { Border, IconButton, ListHeader, ListRow, Switch, Text, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { ScaleLabelEditSheet } from "./ScaleLabelEditSheet";
 
 const SCALE_POINT_CONNECTOR_ICON_SRC =
   "https://static.toss.im/icons/png/4x/icon-o-mono.png";
@@ -24,7 +22,7 @@ export function ScaleCreateOptionSection({
   onChangeMaxLabel,
 }: ScaleCreateOptionSectionProps) {
   const isSevenPoint = scaleCount === 7;
-  const [editTarget, setEditTarget] = useState<"min" | "max" | null>(null);
+  const hasLabels = minLabel.trim().length > 0 || maxLabel.trim().length > 0;
 
   return (
     <>
@@ -57,50 +55,72 @@ export function ScaleCreateOptionSection({
         ))}
       </div>
 
-      <ListRow
-        as="button"
-        className="text-left w-full"
-        contents={
-          <ListRow.Texts
-            type="1RowTypeA"
-            top="1점"
-            topProps={{ color: adaptive.grey700 }}
-          />
-        }
-        right={
-          <ListRow.Texts
-            type="Right1RowTypeA"
-            top={minLabel || "전혀 아니다"}
-            topProps={{ color: adaptive.grey700  }}
-          />
-        }
-        verticalPadding="small"
-        arrowType="right"
-        withTouchEffect
-        onClick={() => setEditTarget("min")}
+
+      {!hasLabels ? (
+        <ListRow
+          contents={
+            <ListRow.Texts
+              type="1RowTypeA"
+              top="척도 라벨링이 설정되지 않았어요"
+              topProps={{ color: adaptive.grey600 }}
+            />
+          }
+          verticalPadding="large"
+        />
+      ) : (
+        <>
+          {minLabel.trim().length > 0 && (
+            <ListRow
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top={`1점: ${minLabel.trim()}`}
+                  topProps={{ color: adaptive.grey600 }}
+                />
+              }
+              verticalPadding="small"
+            />
+          )}
+          {maxLabel.trim().length > 0 && (
+            <ListRow
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top={`${scaleCount}점: ${maxLabel.trim()}`}
+                  topProps={{ color: adaptive.grey600 }}
+                />
+              }
+              verticalPadding="small"
+            />
+          )}
+        </>
+      )}
+
+      <Border className="shrink-0" />
+
+
+      <TextField.Clearable
+        variant="box"
+        hasError={false}
+        label="1점 라벨"
+        labelOption="sustain"
+        value={minLabel}
+        placeholder="예: 전혀 아니다"
+        enterKeyHint="done"
+        onChange={(e) => onChangeMinLabel(e.target.value)}
+        onClear={() => onChangeMinLabel("")}
       />
 
-      <ListRow
-        as="button"
-        className="text-left w-full"
-        contents={
-          <ListRow.Texts
-            type="1RowTypeA"
-            top={`${scaleCount}점`}
-            topProps={{ color: adaptive.grey700 }}
-          />
-        }
-        right={
-          <ListRow.Texts
-            type="Right1RowTypeA"
-            top={maxLabel || "매우 그렇다"}
-            topProps={{ color: adaptive.grey700 }}
-          />
-        }
-        verticalPadding="small"
-        arrowType="right"
-        withTouchEffect
-        onClick={() => setEditTarget("max")}
+      <TextField.Clearable
+        variant="box"
+        hasError={false}
+        label={`${scaleCount}점 라벨`}
+        labelOption="sustain"
+        value={maxLabel}
+        placeholder="예: 매우 그렇다"
+        enterKeyHint="done"
+        onChange={(e) => onChangeMaxLabel(e.target.value)}
+        onClear={() => onChangeMaxLabel("")}
       />
 
       <ListRow
@@ -118,21 +138,6 @@ export function ScaleCreateOptionSection({
           />
         }
         verticalPadding="large"
-      />
-
-      <ScaleLabelEditSheet
-        open={editTarget === "min"}
-        label="1점 라벨링"
-        initialValue={minLabel}
-        onClose={() => setEditTarget(null)}
-        onConfirm={(value) => { onChangeMinLabel(value); setEditTarget(null); }}
-      />
-      <ScaleLabelEditSheet
-        open={editTarget === "max"}
-        label={`${scaleCount}점 라벨링`}
-        initialValue={maxLabel}
-        onClose={() => setEditTarget(null)}
-        onConfirm={(value) => { onChangeMaxLabel(value); setEditTarget(null); }}
       />
     </>
   );

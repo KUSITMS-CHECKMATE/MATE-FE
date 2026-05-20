@@ -11,7 +11,6 @@ export function AbAnswerPage({
 }: QuestionAnswerProps<"ab">) {
   const { data } = question;
   const selected = answer?.selected ?? null;
-  const aspectRatio = (data.ratio ?? "9:16").replace(":", "/");
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -42,7 +41,7 @@ export function AbAnswerPage({
               key={option}
               className={`relative overflow-hidden ${isExpanded ? "w-full" : "flex-1"}`}
               style={{
-                aspectRatio,
+                aspectRatio: "9/16",
                 borderRadius: 16,
                 boxShadow: isSelected
                   ? `inset 0 0 0 2px #4265cc`
