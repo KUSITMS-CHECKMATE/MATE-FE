@@ -71,7 +71,7 @@ export function ScaleCreateOptionSection({
           <ListRow.Texts
             type="Right1RowTypeA"
             top={minLabel || "전혀 아니다"}
-            topProps={{ color: minLabel ? adaptive.grey700 : adaptive.grey600 }}
+            topProps={{ color: adaptive.grey700  }}
           />
         }
         verticalPadding="small"
@@ -94,7 +94,7 @@ export function ScaleCreateOptionSection({
           <ListRow.Texts
             type="Right1RowTypeA"
             top={maxLabel || "매우 그렇다"}
-            topProps={{ color: maxLabel ? adaptive.grey700 : adaptive.grey600 }}
+            topProps={{ color: adaptive.grey700 }}
           />
         }
         verticalPadding="small"
