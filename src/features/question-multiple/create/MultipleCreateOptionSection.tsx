@@ -49,15 +49,15 @@ function ChoiceRow({ choice, onEditChoice, onDeleteChoice, onRemoveChoiceImage }
       <ListRow
         left={
           <div
-            className="cursor-grab"
+            className="flex items-center cursor-grab"
             style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
           >
             <Asset.Icon
-              frameShape={{ width: 20, height: 20 }}
+              frameShape={Asset.frameShape.CleanW20}
               backgroundColor="transparent"
-              name="icon-navigation-menu-mono"
+              name="icon-dots-six-vertical-mono"
               color={adaptive.grey400}
               aria-hidden
               ratio="1/1"
@@ -73,6 +73,7 @@ function ChoiceRow({ choice, onEditChoice, onDeleteChoice, onRemoveChoiceImage }
         }
         right={
           <div
+            className="flex items-center"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();

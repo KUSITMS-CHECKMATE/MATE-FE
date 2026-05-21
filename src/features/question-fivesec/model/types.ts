@@ -11,6 +11,7 @@ export interface FivesecQuestionData {
   answerExample: string;
   answerType: "multiple" | "subjective";
   isMultipleAnswer: boolean;
+  isOtherInputEnabled: boolean;
   isMultiSelectEnabled: boolean;
   choices: MultipleChoiceItem[];
   minSelectCount: number;

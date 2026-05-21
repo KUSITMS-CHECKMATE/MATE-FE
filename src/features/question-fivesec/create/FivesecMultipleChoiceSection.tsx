@@ -21,83 +21,65 @@ import {
   NumericSpinner,
   Switch,
   Text,
-  TextButton,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 
-const ListHeaderTitleParagraph = ListHeader.TitleParagraph;
-
 export interface FivesecMultipleChoiceSectionProps {
   choices: MultipleChoiceItem[];
-  isChoiceManageMode: boolean;
+  isOtherInputEnabled: boolean;
   isMultiSelectEnabled: boolean;
   minSelectCount: number;
   maxSelectCount: number;
   onOpenChoiceCreate: () => void;
   onOpenChoiceEdit: (choiceId: string) => void;
-  onToggleChoiceManageMode: () => void;
   onDeleteChoice: (choiceId: string) => void;
   onReorderChoices: (choices: MultipleChoiceItem[]) => void;
+  onToggleOtherInput: (checked: boolean) => void;
   onToggleMultiSelect: (checked: boolean) => void;
   onChangeMinSelectCount: (value: number) => void;
   onChangeMaxSelectCount: (value: number) => void;
 }
 
-interface SortableChoiceRowProps {
+interface ChoiceRowProps {
   choice: MultipleChoiceItem;
-  isMultiSelectEnabled: boolean;
-  isManageMode: boolean;
   onEditChoice: (choiceId: string) => void;
   onDeleteChoice: (choiceId: string) => void;
 }
 
-function SortableChoiceRow({
-  choice,
-  isMultiSelectEnabled,
-  isManageMode,
-  onEditChoice,
-  onDeleteChoice,
-}: SortableChoiceRowProps) {
+function ChoiceRow({ choice, onEditChoice, onDeleteChoice }: ChoiceRowProps) {
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: choice.id,
-    disabled: !isManageMode,
   });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    touchAction: "manipulation" as const,
-  };
-
   return (
-    <div ref={setNodeRef} style={style} className="w-full">
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+      }}
+      {...attributes}
+      onClick={() => onEditChoice(choice.id)}
+    >
       <ListRow
         left={
-          isManageMode ? (
-            <div
-              aria-label={`${choice.name} 순서 이동`}
-              className="cursor-grab touch-none"
-              style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}
-              {...attributes}
-              {...listeners}
-            >
-              <ListRow.AssetIcon
-                size="xsmall"
-                shape="original"
-                name="icon-line-three-mono"
-                color={adaptive.grey400}
-              />
-            </div>
-          ) : (
-            <ListRow.AssetIcon
-              size="xsmall"
-              shape="original"
-              name={isMultiSelectEnabled ? "icon-square-line-mono" : "icon-circle-empty-mono"}
+          <div
+            className="flex items-center cursor-grab"
+            style={{ touchAction: "none", WebkitUserSelect: "none", userSelect: "none" }}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Asset.Icon
+              frameShape={Asset.frameShape.CleanW20}
+              backgroundColor="transparent"
+              name="icon-dots-six-vertical-mono"
               color={adaptive.grey400}
+              aria-hidden
+              ratio="1/1"
             />
-          )
+          </div>
         }
         contents={
           <ListRow.Texts
@@ -107,35 +89,22 @@ function SortableChoiceRow({
           />
         }
         right={
-          isManageMode ? (
-            <button
-              type="button"
-              onClick={() => onDeleteChoice(choice.id)}
-              aria-label={`${choice.name} 삭제`}
-            >
-              <Asset.Icon
-                frameShape={Asset.frameShape.CleanW20}
-                backgroundColor="transparent"
-                name="icon-bin-mono"
-                color={adaptive.grey400}
-                aria-hidden
-              />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => onEditChoice(choice.id)}
-              aria-label={`${choice.name} 수정`}
-            >
-              <Asset.Icon
-                frameShape={Asset.frameShape.CleanW20}
-                backgroundColor="transparent"
-                name="icon-pencil-18px-mono"
-                color={adaptive.grey400}
-                aria-hidden
-              />
-            </button>
-          )
+          <div
+            className="flex items-center"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteChoice(choice.id);
+            }}
+          >
+            <Asset.Icon
+              frameShape={Asset.frameShape.CleanW20}
+              backgroundColor="transparent"
+              name="icon-bin-mono"
+              color={adaptive.grey400}
+              aria-hidden
+            />
+          </div>
         }
         verticalPadding="large"
       />
@@ -145,21 +114,20 @@ function SortableChoiceRow({
 
 export function FivesecMultipleChoiceSection({
   choices,
-  isChoiceManageMode,
+  isOtherInputEnabled,
   isMultiSelectEnabled,
   minSelectCount,
   maxSelectCount,
   onOpenChoiceCreate,
   onOpenChoiceEdit,
-  onToggleChoiceManageMode,
   onDeleteChoice,
   onReorderChoices,
+  onToggleOtherInput,
   onToggleMultiSelect,
   onChangeMinSelectCount,
   onChangeMaxSelectCount,
 }: FivesecMultipleChoiceSectionProps) {
   const maxSelectableCount = choices.length;
-  const hasChoices = choices.length > 0;
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -173,39 +141,8 @@ export function FivesecMultipleChoiceSection({
 
   return (
     <>
-      <div className="pr-5">
-        <ListHeader
-          descriptionPosition="bottom"
-          rightAlignment="center"
-          titleWidthRatio={0.6}
-          title={
-            <ListHeaderTitleParagraph
-              typography="t5"
-              fontWeight="medium"
-              color={adaptive.grey600}
-            >
-              선택지 목록
-            </ListHeaderTitleParagraph>
-          }
-          right={
-            <div className="pr-1">
-              <TextButton
-                color={adaptive.blue500}
-                typography="t5"
-                fontWeight="medium"
-                size="small"
-                disabled={!hasChoices}
-                onClick={hasChoices ? onToggleChoiceManageMode : undefined}
-              >
-                {isChoiceManageMode ? "저장하기" : "순서/삭제"}
-              </TextButton>
-            </div>
-          }
-          className="w-full"
-        />
-      </div>
 
-      {!isChoiceManageMode ? (
+      {choices.length < 10 ? (
         <ListRow
           left={
             <ListRow.AssetIcon
@@ -227,19 +164,12 @@ export function FivesecMultipleChoiceSection({
         />
       ) : null}
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        onDragCancel={() => {}}
-      >
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={choices.map((c) => c.id)} strategy={verticalListSortingStrategy}>
           {choices.map((choice) => (
-            <SortableChoiceRow
+            <ChoiceRow
               key={choice.id}
               choice={choice}
-              isMultiSelectEnabled={isMultiSelectEnabled}
-              isManageMode={isChoiceManageMode}
               onEditChoice={onOpenChoiceEdit}
               onDeleteChoice={onDeleteChoice}
             />
@@ -247,59 +177,77 @@ export function FivesecMultipleChoiceSection({
         </SortableContext>
       </DndContext>
 
-      {!isChoiceManageMode ? (
-        <>
-          <ListRow
-            role="switch"
-            aria-checked={isMultiSelectEnabled}
-            contents={
-              <ListRow.Texts
-                type="1RowTypeB"
-                top="중복 선택 가능"
-                topProps={{ color: adaptive.grey700 }}
-              />
-            }
-            right={
-              <Switch
-                checked={isMultiSelectEnabled}
-                onChange={(_, checked) => onToggleMultiSelect(checked)}
-              />
-            }
-            verticalPadding="large"
+      <ListRow
+        className="shrink-0"
+        role="switch"
+        aria-checked={isOtherInputEnabled}
+        contents={
+          <ListRow.Texts
+            type="1RowTypeB"
+            top="기타 (직접 입력)"
+            topProps={{ color: adaptive.grey800 }}
           />
+        }
+        right={
+          <Switch
+            checked={isOtherInputEnabled}
+            onChange={(_, checked) => onToggleOtherInput(checked)}
+          />
+        }
+        verticalPadding="large"
+      />
 
-          {isMultiSelectEnabled ? (
-            <>
-              <div className="flex h-15.5 items-center justify-between bg-white px-4">
-                <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
-                  최소 선택
-                </Text>
-                <NumericSpinner
-                  size="tiny"
-                  number={minSelectCount}
-                  minNumber={1}
-                  maxNumber={maxSelectCount}
-                  disable={false}
-                  onNumberChange={onChangeMinSelectCount}
-                />
-              </div>
-              <Border/>
-              <div className="flex h-15.5 items-center justify-between bg-white px-4">
-                <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
-                  최대 선택
-                </Text>
-                <NumericSpinner
-                  size="tiny"
-                  number={maxSelectCount}
-                  minNumber={minSelectCount}
-                  maxNumber={maxSelectableCount}
-                  disable={false}
-                  onNumberChange={onChangeMaxSelectCount}
-                />
-              </div>
-            </>
-          ) : null}
+      <Border />
 
+      <ListRow
+        className="shrink-0"
+        role="switch"
+        aria-checked={isMultiSelectEnabled}
+        contents={
+          <ListRow.Texts
+            type="1RowTypeB"
+            top="중복 선택 가능"
+            topProps={{ color: adaptive.grey700 }}
+          />
+        }
+        right={
+          <Switch
+            checked={isMultiSelectEnabled}
+            onChange={(_, checked) => onToggleMultiSelect(checked)}
+          />
+        }
+        verticalPadding="large"
+      />
+
+      {isMultiSelectEnabled ? (
+        <>
+          <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-7">
+            <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
+              최소 선택
+            </Text>
+            <NumericSpinner
+              size="tiny"
+              number={minSelectCount}
+              minNumber={1}
+              maxNumber={maxSelectCount}
+              disable={false}
+              onNumberChange={onChangeMinSelectCount}
+            />
+          </div>
+          <Border />
+          <div className="flex h-15.5 shrink-0 items-center justify-between bg-white px-7">
+            <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
+              최대 선택
+            </Text>
+            <NumericSpinner
+              size="tiny"
+              number={maxSelectCount}
+              minNumber={minSelectCount}
+              maxNumber={maxSelectableCount}
+              disable={false}
+              onNumberChange={onChangeMaxSelectCount}
+            />
+          </div>
         </>
       ) : null}
     </>
