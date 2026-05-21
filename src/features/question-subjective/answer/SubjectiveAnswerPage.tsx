@@ -18,8 +18,12 @@ export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
         description={description}
       />
       {imageUrl && (
-        <div className="px-5">
-          <div className="w-full h-53 rounded-2xl bg-gray-100 shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)]" />
+        <div className="px-5 pb-2">
+          <img
+            src={imageUrl}
+            alt="질문 이미지"
+            className="w-full h-53 rounded-2xl object-cover"
+          />
         </div>
       )}
       <TextArea
