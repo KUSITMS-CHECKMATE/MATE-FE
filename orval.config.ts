@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const apiBase = import.meta.env.VITE_API_BASE_URL;
+const apiBase = process.env.VITE_API_BASE_URL;
 const swaggerUrl = `${apiBase}/api-docs`;
 
 const makeInput = (tags: string[]) => ({

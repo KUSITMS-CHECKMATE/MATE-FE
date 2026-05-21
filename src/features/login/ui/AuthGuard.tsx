@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { appLogin } from '@apps-in-toss/web-framework'
-import { loginWithToss, type ApiResponseTossLoginResponse } from '@/shared/api/generated/auth'
+import { loginWithToss } from '@/shared/api/generated/auth'
 import { setToken } from '@/shared/api/client'
 
 type AuthStatus = 'pending' | 'authenticated' | 'unauthenticated'
@@ -16,8 +16,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     async function login() {
       try {
         const { authorizationCode, referrer } = await appLogin()
-        const res = await loginWithToss({ authorizationCode, referrer })
-        const body = res as unknown as ApiResponseTossLoginResponse
+        const { data: body } = await loginWithToss({ authorizationCode, referrer })
         const token = body.data?.accessToken
         if (!token) throw new Error('토큰을 받지 못했습니다.')
         setToken(token)
