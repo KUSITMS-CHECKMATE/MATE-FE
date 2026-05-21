@@ -39,7 +39,6 @@ export interface FivesecMultipleChoiceSectionProps {
   onToggleChoiceManageMode: () => void;
   onDeleteChoice: (choiceId: string) => void;
   onReorderChoices: (choices: MultipleChoiceItem[]) => void;
-  onToggleMultipleChoice: (checked: boolean) => void;
   onToggleMultiSelect: (checked: boolean) => void;
   onChangeMinSelectCount: (value: number) => void;
   onChangeMaxSelectCount: (value: number) => void;
@@ -155,7 +154,6 @@ export function FivesecMultipleChoiceSection({
   onToggleChoiceManageMode,
   onDeleteChoice,
   onReorderChoices,
-  onToggleMultipleChoice,
   onToggleMultiSelect,
   onChangeMinSelectCount,
   onChangeMaxSelectCount,
@@ -285,7 +283,7 @@ export function FivesecMultipleChoiceSection({
                   onNumberChange={onChangeMinSelectCount}
                 />
               </div>
-              <Border />
+              <Border/>
               <div className="flex h-15.5 items-center justify-between bg-white px-4">
                 <Text color={adaptive.grey700} typography="t5" fontWeight="semibold">
                   최대 선택
@@ -302,28 +300,6 @@ export function FivesecMultipleChoiceSection({
             </>
           ) : null}
 
-          <div className="h-6.75" />
-          <Border />
-          <div className="h-3" />
-
-          <ListRow
-            role="switch"
-            aria-checked={true}
-            horizontalPadding="small"
-            contents={
-              <ListRow.Texts
-                type="1RowTypeB"
-                top="객관식으로 답변 받기"
-                topProps={{ color: adaptive.grey700 }}
-              />
-            }
-            right={
-              <Switch
-                checked
-                onChange={(_, checked) => onToggleMultipleChoice(checked)}
-              />
-            }
-          />
         </>
       ) : null}
     </>
