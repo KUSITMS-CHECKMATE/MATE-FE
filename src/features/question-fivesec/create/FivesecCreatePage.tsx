@@ -11,14 +11,11 @@ import {
   Border,
   BottomSheet,
   Button,
-  ConfirmDialog,
   CTAButton,
   FixedBottomCTA,
   ListRow,
   Spacing,
-  Switch,
   Text,
-  TextArea,
   TextField,
 } from "@toss/tds-mobile";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
@@ -28,6 +25,14 @@ import type { MultipleChoiceItem } from "@/features/question-multiple/model/type
 import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
+import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
+import type { AbRatio } from "@/features/question-ab/model/types";
+
+const RATIO_TO_CSS: Record<AbRatio, string> = {
+  "9:16": "9/16",
+  "1:1": "1/1",
+  "4:3": "4/3",
+};
 
 interface FivesecCreatePageProps {
   questionId: string;
@@ -49,12 +54,8 @@ export function FivesecCreatePage({
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
   const duration = 5;
-  const [answerExample, setAnswerExample] = useState(
-    existingFivesec?.answerExample ?? "",
-  );
-  const [isMultipleAnswer, setIsMultipleAnswer] = useState(
-    existingFivesec?.isMultipleAnswer ?? false,
-  );
+  const [answerType, setAnswerType] = useState<"multiple" | "subjective">("subjective");
+  const [isAnswerTypeSheetOpen, setIsAnswerTypeSheetOpen] = useState(false);
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
     existingFivesec?.isMultiSelectEnabled ?? false,
   );
@@ -76,9 +77,8 @@ export function FivesecCreatePage({
   const [pendingPhotoAction, setPendingPhotoAction] = useState<
     "camera" | "album" | null
   >(null);
-  const [pendingFormatChange, setPendingFormatChange] = useState<
-    boolean | null
-  >(null);
+  const [ratio, setRatio] = useState<AbRatio>(existingFivesec?.ratio ?? "9:16");
+  const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewAnswer, setPreviewAnswer] = useState<{ type: "fivesec"; selectedIds: string[]; text?: string }>({ type: "fivesec", selectedIds: [] });
 
@@ -107,7 +107,7 @@ export function FivesecCreatePage({
   const editingChoice =
     choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled =
-    !hasTitle || !imageUrl || (isMultipleAnswer && choices.length < 2);
+    !hasTitle || !imageUrl || (answerType === "multiple" && choices.length < 2);
 
   const openChoiceCreateSheet = () => {
     setEditingChoiceId(null);
@@ -193,38 +193,6 @@ export function FivesecCreatePage({
     }
   };
 
-  const applyFormatChange = (nextIsMultipleAnswer: boolean) => {
-    setIsMultipleAnswer(nextIsMultipleAnswer);
-
-    if (nextIsMultipleAnswer) {
-      setAnswerExample("");
-      return;
-    }
-
-    closeChoiceSheet();
-    setIsChoiceManageMode(false);
-    setDraftChoices([]);
-    setChoices([]);
-    setIsMultiSelectEnabled(false);
-    setMinSelectCount(1);
-    setMaxSelectCount(1);
-  };
-
-  const requestFormatChange = (nextIsMultipleAnswer: boolean) => {
-    if (nextIsMultipleAnswer === isMultipleAnswer) return;
-    setPendingFormatChange(nextIsMultipleAnswer);
-  };
-
-  const closeFormatChangeDialog = () => {
-    setPendingFormatChange(null);
-  };
-
-  const confirmFormatChange = () => {
-    if (pendingFormatChange === null) return;
-    applyFormatChange(pendingFormatChange);
-    setPendingFormatChange(null);
-  };
-
   return (
     <motion.div
       className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
@@ -247,8 +215,30 @@ export function FivesecCreatePage({
       {isQuestionInputCompleted && (
         <>
           <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
+          <ListRow
+            as="button"
+            className="w-full text-left"
+            contents={
+              <ListRow.Texts
+                type="1RowTypeA"
+                top="5초 테스트 이미지"
+                topProps={{ color: adaptive.grey600 }}
+              />
+            }
+            right={
+              <ListRow.Texts
+                type="Right1RowTypeA"
+                top={`비율 ${ratio}`}
+                topProps={{ color: adaptive.grey600 }}
+              />
+            }
+            verticalPadding="xlarge"
+            arrowType="down"
+            withTouchEffect
+            onClick={() => setIsRatioSheetOpen(true)}
+          />
           {imageUrl ? (
-            <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
+            <div className="flex items-start justify-between gap-4 bg-white px-4 pb-4">
               <Text
                 display="block"
                 color={adaptive.grey700}
@@ -258,8 +248,12 @@ export function FivesecCreatePage({
                 이미지
               </Text>
               <div
-                className="relative h-24 w-42.5 overflow-hidden rounded-2xl"
-                style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
+                className="relative overflow-hidden rounded-2xl"
+                style={{
+                  width: "10.625rem",
+                  aspectRatio: RATIO_TO_CSS[ratio],
+                  boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+                }}
               >
                 <img
                   src={imageUrl}
@@ -299,14 +293,41 @@ export function FivesecCreatePage({
                   variant="weak"
                   onClick={() => setIsPhotoSheetOpen(true)}
                 >
-                  업로드
+                  이미지 업로드
                 </Button>
               }
               verticalPadding="large"
             />
           )}
 
-          {isMultipleAnswer ? (
+          <Border />
+
+          <div className="mt-3">
+            <ListRow
+              as="button"
+              className="w-full text-left"
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top="답변 방식"
+                  topProps={{ color: adaptive.grey700 }}
+                />
+              }
+              right={
+                <ListRow.Texts
+                  type="Right1RowTypeA"
+                  top={answerType === "multiple" ? "객관식" : "주관식"}
+                  topProps={{ color: adaptive.grey700 }}
+                />
+              }
+              verticalPadding="small"
+              arrowType="down"
+              withTouchEffect
+              onClick={() => setIsAnswerTypeSheetOpen(true)}
+            />
+          </div>
+
+          {answerType === "multiple" && (
             <FivesecMultipleChoiceSection
               choices={visibleChoices}
               isChoiceManageMode={isChoiceManageMode}
@@ -320,7 +341,6 @@ export function FivesecCreatePage({
                 setActiveChoices(visibleChoices.filter((c) => c.id !== choiceId))
               }
               onReorderChoices={(next) => setActiveChoices(next)}
-              onToggleMultipleChoice={requestFormatChange}
               onToggleMultiSelect={(checked) => {
                 setIsMultiSelectEnabled(checked);
                 if (!checked) {
@@ -342,43 +362,6 @@ export function FivesecCreatePage({
                 if (value < minSelectCount) setMinSelectCount(value);
               }}
             />
-          ) : (
-            <>
-              <TextArea
-                variant="box"
-                hasError={false}
-                label="답변 작성"
-                labelOption="sustain"
-                value={answerExample}
-                placeholder="예시 입력창이에요"
-                height={200}
-                readOnly
-              />
-
-              <Spacing size={12} />
-              <Border />
-              <Spacing size={12} />
-
-              <ListRow
-                role="switch"
-                aria-checked={isMultipleAnswer}
-                horizontalPadding="small"
-                contents={
-                  <ListRow.Texts
-                    type="1RowTypeA"
-                    top="객관식으로 답변 받기"
-                    topProps={{ color: adaptive.grey700 }}
-                  />
-                }
-                right={
-                  <Switch
-                    checked={isMultipleAnswer}
-                    onChange={(_, checked) => requestFormatChange(checked)}
-                  />
-                }
-                verticalPadding="large"
-              />
-            </>
           )}
 
           <FixedBottomCTA.Double
@@ -397,13 +380,14 @@ export function FivesecCreatePage({
                     description,
                     imageUrl,
                     duration,
-                    answerExample,
-                    answerType: "multiple",
-                    isMultipleAnswer,
+                    answerExample: "",
+                    answerType,
+                    isMultipleAnswer: answerType === "multiple",
                     isMultiSelectEnabled,
                     choices,
                     minSelectCount,
                     maxSelectCount,
+                    ratio,
                   });
                   onClose();
                 }}
@@ -432,13 +416,14 @@ export function FivesecCreatePage({
                 description,
                 imageUrl,
                 duration,
-                answerExample,
-                answerType: isMultipleAnswer ? "multiple" : "subjective",
-                isMultipleAnswer,
+                answerExample: "",
+                answerType,
+                isMultipleAnswer: answerType === "multiple",
                 isMultiSelectEnabled,
                 choices,
                 minSelectCount,
                 maxSelectCount,
+                ratio,
               },
             }}
             answer={previewAnswer}
@@ -537,31 +522,42 @@ export function FivesecCreatePage({
         <Spacing size={24} />
       </BottomSheet>
 
-      <ConfirmDialog
-        open={pendingFormatChange !== null}
-        title="테스트의 형식을 변경할까요?"
-        description={
-          pendingFormatChange
-            ? "작성한 답변이 삭제돼요."
-            : "작성한 선택지가 삭제돼요."
-        }
-        onClose={closeFormatChangeDialog}
-        cancelButton={
-          <ConfirmDialog.CancelButton
-            size="xlarge"
-            onClick={closeFormatChangeDialog}
-          >
-            취소
-          </ConfirmDialog.CancelButton>
-        }
-        confirmButton={
-          <ConfirmDialog.ConfirmButton
-            size="xlarge"
-            onClick={confirmFormatChange}
-          >
-            변경하기
-          </ConfirmDialog.ConfirmButton>
-        }
+      <BottomSheet
+        open={isAnswerTypeSheetOpen}
+        onClose={() => setIsAnswerTypeSheetOpen(false)}
+      >
+        <ListRow
+          as="button"
+          className="w-full"
+          contents={<ListRow.Texts type="1RowTypeA" top="객관식" topProps={{ color: adaptive.grey800 }} />}
+          right={
+            answerType === "multiple" ? (
+              <ListRow.AssetIcon size="xsmall" shape="original" name="icon-check-line-mono" color={adaptive.blue500} />
+            ) : undefined
+          }
+          verticalPadding="large"
+          onClick={() => { setAnswerType("multiple"); setIsAnswerTypeSheetOpen(false); }}
+        />
+        <ListRow
+          as="button"
+          className="w-full"
+          contents={<ListRow.Texts type="1RowTypeA" top="주관식" topProps={{ color: adaptive.grey800 }} />}
+          right={
+            answerType === "subjective" ? (
+              <ListRow.AssetIcon size="xsmall" shape="original" name="icon-check-line-mono" color={adaptive.blue500} />
+            ) : undefined
+          }
+          verticalPadding="large"
+          onClick={() => { setAnswerType("subjective"); setIsAnswerTypeSheetOpen(false); }}
+        />
+        <Spacing size={24} />
+      </BottomSheet>
+
+      <AbRatioSelectSheet
+        open={isRatioSheetOpen}
+        selected={ratio}
+        onClose={() => setIsRatioSheetOpen(false)}
+        onSelect={setRatio}
       />
     </motion.div>
   );

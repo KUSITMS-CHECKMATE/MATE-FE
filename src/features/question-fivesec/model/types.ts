@@ -1,4 +1,7 @@
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
+import type { AbRatio } from "@/features/question-ab/model/types";
+
+export type { AbRatio };
 
 export interface FivesecQuestionData {
   title: string;
@@ -13,4 +16,5 @@ export interface FivesecQuestionData {
   minSelectCount: number;
   maxSelectCount: number;
   placeholder?: string;
+  ratio?: AbRatio;
 }
