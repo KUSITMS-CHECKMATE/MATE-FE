@@ -1,7 +1,7 @@
-import type { DoughnutAnswerItem } from "./_shared";
+import type { MultipleResultOption } from "../model/types";
 import { ResultCardBase, DoughnutAnswerSection } from "./_shared";
 
-export type MultipleResultOption = DoughnutAnswerItem;
+export type { MultipleResultOption };
 
 interface Props {
   title: string;

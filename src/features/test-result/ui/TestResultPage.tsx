@@ -2,17 +2,7 @@ import { useState } from "react";
 import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
 import { ResultTabContent } from "./ResultTabContent";
 import { adaptive } from "@toss/tds-colors";
-
-interface Question {
-  id: number;
-  title: string;
-  type: string;
-}
-
-const MOCK_QUESTIONS: Question[] = [
-  { id: 1, title: "입력한 제목이 이렇게 떠요", type: "객관식" },
-  { id: 2, title: "입력한 제목이 이렇게 떠요", type: "주관식" },
-];
+import { MOCK_QUESTIONS } from "../model/mock";
 
 interface Props {
   testId: string;
