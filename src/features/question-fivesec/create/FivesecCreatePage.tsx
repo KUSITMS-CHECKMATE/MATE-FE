@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   openCamera,
@@ -55,7 +55,13 @@ export function FivesecCreatePage({
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
   const duration = 5;
-  const [answerType, setAnswerType] = useState<"multiple" | "subjective">("multiple");
+  const [answerType, setAnswerType] = useState<"multiple" | "subjective">(
+    existingFivesec?.answerType ?? "subjective",
+  );
+
+  useEffect(() => {
+    setAnswerType(existingFivesec?.answerType ?? "subjective");
+  }, [questionId]);
   const [isAnswerTypeSheetOpen, setIsAnswerTypeSheetOpen] = useState(false);
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
     existingFivesec?.isOtherInputEnabled ?? false,
@@ -401,6 +407,7 @@ export function FivesecCreatePage({
                 answerExample: "",
                 answerType,
                 isMultipleAnswer: answerType === "multiple",
+                isOtherInputEnabled,
                 isMultiSelectEnabled,
                 choices,
                 minSelectCount,
@@ -410,14 +417,12 @@ export function FivesecCreatePage({
             }}
             answer={previewAnswer}
             onChange={setPreviewAnswer}
-            onPrev={() => {}}
+            onPrev={() => setIsPreviewOpen(false)}
             onGoNext={() => setIsPreviewOpen(false)}
-            isFirst={true}
+            isFirst={false}
             isLast={true}
+            prevLabel="돌아가기"
           />
-          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
-            돌아가기
-          </FixedBottomCTA>
         </motion.div>
       )}
 
