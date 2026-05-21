@@ -26,6 +26,7 @@ import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAns
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
+import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
 import type { AbRatio } from "@/features/question-ab/model/types";
 
 const RATIO_TO_CSS: Record<AbRatio, string> = {
@@ -54,8 +55,11 @@ export function FivesecCreatePage({
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
   const duration = 5;
-  const [answerType, setAnswerType] = useState<"multiple" | "subjective">("subjective");
+  const [answerType, setAnswerType] = useState<"multiple" | "subjective">("multiple");
   const [isAnswerTypeSheetOpen, setIsAnswerTypeSheetOpen] = useState(false);
+  const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
+    existingFivesec?.isOtherInputEnabled ?? false,
+  );
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
     existingFivesec?.isMultiSelectEnabled ?? false,
   );
@@ -68,8 +72,6 @@ export function FivesecCreatePage({
   const [maxSelectCount, setMaxSelectCount] = useState(
     existingFivesec?.maxSelectCount ?? 1,
   );
-  const [isChoiceManageMode, setIsChoiceManageMode] = useState(false);
-  const [draftChoices, setDraftChoices] = useState<MultipleChoiceItem[]>([]);
   const [isChoiceSheetOpen, setIsChoiceSheetOpen] = useState(false);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
@@ -81,27 +83,6 @@ export function FivesecCreatePage({
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewAnswer, setPreviewAnswer] = useState<{ type: "fivesec"; selectedIds: string[]; text?: string }>({ type: "fivesec", selectedIds: [] });
-
-  const visibleChoices = isChoiceManageMode ? draftChoices : choices;
-
-  const setActiveChoices = (
-    updater:
-      | MultipleChoiceItem[]
-      | ((prev: MultipleChoiceItem[]) => MultipleChoiceItem[]),
-  ) => {
-    if (isChoiceManageMode) setDraftChoices(updater);
-    else setChoices(updater);
-  };
-
-  const handleToggleChoiceManageMode = () => {
-    if (isChoiceManageMode) {
-      setChoices(draftChoices);
-      setIsChoiceManageMode(false);
-      return;
-    }
-    setDraftChoices(choices);
-    setIsChoiceManageMode(true);
-  };
 
   const hasTitle = title.trim().length > 0;
   const editingChoice =
@@ -329,18 +310,18 @@ export function FivesecCreatePage({
 
           {answerType === "multiple" && (
             <FivesecMultipleChoiceSection
-              choices={visibleChoices}
-              isChoiceManageMode={isChoiceManageMode}
+              choices={choices}
+              isOtherInputEnabled={isOtherInputEnabled}
               isMultiSelectEnabled={isMultiSelectEnabled}
               minSelectCount={minSelectCount}
               maxSelectCount={maxSelectCount}
               onOpenChoiceCreate={openChoiceCreateSheet}
               onOpenChoiceEdit={openChoiceEditSheet}
-              onToggleChoiceManageMode={handleToggleChoiceManageMode}
               onDeleteChoice={(choiceId) =>
-                setActiveChoices(visibleChoices.filter((c) => c.id !== choiceId))
+                setChoices((prev) => prev.filter((c) => c.id !== choiceId))
               }
-              onReorderChoices={(next) => setActiveChoices(next)}
+              onReorderChoices={(next) => setChoices(next)}
+              onToggleOtherInput={(checked) => setIsOtherInputEnabled(checked)}
               onToggleMultiSelect={(checked) => {
                 setIsMultiSelectEnabled(checked);
                 if (!checked) {
@@ -383,6 +364,7 @@ export function FivesecCreatePage({
                     answerExample: "",
                     answerType,
                     isMultipleAnswer: answerType === "multiple",
+                    isOtherInputEnabled,
                     isMultiSelectEnabled,
                     choices,
                     minSelectCount,
@@ -522,36 +504,12 @@ export function FivesecCreatePage({
         <Spacing size={24} />
       </BottomSheet>
 
-      <BottomSheet
+      <FivesecAnswerTypeSheet
         open={isAnswerTypeSheetOpen}
+        answerType={answerType}
         onClose={() => setIsAnswerTypeSheetOpen(false)}
-      >
-        <ListRow
-          as="button"
-          className="w-full"
-          contents={<ListRow.Texts type="1RowTypeA" top="객관식" topProps={{ color: adaptive.grey800 }} />}
-          right={
-            answerType === "multiple" ? (
-              <ListRow.AssetIcon size="xsmall" shape="original" name="icon-check-line-mono" color={adaptive.blue500} />
-            ) : undefined
-          }
-          verticalPadding="large"
-          onClick={() => { setAnswerType("multiple"); setIsAnswerTypeSheetOpen(false); }}
-        />
-        <ListRow
-          as="button"
-          className="w-full"
-          contents={<ListRow.Texts type="1RowTypeA" top="주관식" topProps={{ color: adaptive.grey800 }} />}
-          right={
-            answerType === "subjective" ? (
-              <ListRow.AssetIcon size="xsmall" shape="original" name="icon-check-line-mono" color={adaptive.blue500} />
-            ) : undefined
-          }
-          verticalPadding="large"
-          onClick={() => { setAnswerType("subjective"); setIsAnswerTypeSheetOpen(false); }}
-        />
-        <Spacing size={24} />
-      </BottomSheet>
+        onSelect={setAnswerType}
+      />
 
       <AbRatioSelectSheet
         open={isRatioSheetOpen}
