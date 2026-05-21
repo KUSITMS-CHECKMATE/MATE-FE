@@ -154,6 +154,7 @@ export function TestResultPage({ testId, status }: Props) {
                 닫기
               </Button>
             }
+            // TODO: 선택한 형식(selectedFormats)으로 파일 다운로드 API 연결 후 onClick 구현
             rightButton={<Button disabled={!selectedFormats.pdf && !selectedFormats.csv}>다운받기</Button>}
           />
         }
