@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { FixedBottomCTA } from "@toss/tds-mobile";
 import type { TreeNodeItem } from "../model/types";
+import { TreeAnswerPage } from "@/features/question-tree/answer";
 import { TreeCreateBottomCTA } from "./TreeCreateBottomCTA";
 import { TreeCreateOptionSection } from "./TreeCreateOptionSection";
 import { TreeNodeAddSheet } from "./TreeNodeAddSheet";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
+import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 
 
 interface TreeCreatePageProps {
@@ -37,6 +40,8 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "tree"; selectedNodeId: string | null }>({ type: "tree", selectedNodeId: null });
 
   const isCompleteDisabled =
     questionTitle.trim().length === 0 ||
@@ -139,6 +144,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
       />
       {isQuestionInputCompleted && (
         <>
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           <TreeCreateOptionSection
             nodes={nodes}
             selectedNodeId={selectedNodeId}
@@ -171,6 +177,33 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
             }}
           />
         </>
+      )}
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <TreeAnswerPage
+            question={{
+              id: "preview",
+              type: "tree",
+              data: {
+                title: questionTitle,
+                description: questionDescription,
+                nodes,
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+          />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
+        </motion.div>
       )}
 
       <TreeNodeAddSheet
