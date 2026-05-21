@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Asset, Border, FixedBottomCTA, TextArea } from "@toss/tds-mobile";
+import { Asset, Border, FixedBottomCTA } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { SubjectiveAnswerPage } from "@/features/question-subjective/answer/SubjectiveAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
@@ -111,17 +111,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
 
       {isQuestionInputCompleted && (
         <>
-          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
-          <TextArea
-            variant="box"
-            hasError={false}
-            label="답변 작성"
-            labelOption="sustain"
-            value={placeholder}
-            placeholder="예시 입력창이에요"
-            height={200}
-            readOnly
-          />
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} hasBottomContent={false} />
 
           <SubjectiveCreateBottomCTA
             isCompleteDisabled={isCompleteDisabled}

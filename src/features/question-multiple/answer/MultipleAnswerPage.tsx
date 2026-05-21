@@ -51,8 +51,12 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
                 verticalPadding="large"
               />
               {choice.imageUrl && (
-                <div className="w-full h-47.5 px-5">
-                  <div className="w-full h-full rounded-2xl bg-gray-100 shadow-[inset_0_0_0_1px_rgba(2,32,71,0.05)]" />
+                <div className="w-full px-5 pb-2">
+                  <img
+                    src={choice.imageUrl}
+                    alt={choice.name}
+                    className="w-full h-47.5 rounded-2xl object-cover"
+                  />
                 </div>
               )}
             </div>
