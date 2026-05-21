@@ -22,8 +22,10 @@ import {
   TextField,
 } from "@toss/tds-mobile";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
+import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
+import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 
@@ -77,6 +79,8 @@ export function FivesecCreatePage({
   const [pendingFormatChange, setPendingFormatChange] = useState<
     boolean | null
   >(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "fivesec"; selectedIds: string[]; text?: string }>({ type: "fivesec", selectedIds: [] });
 
   const visibleChoices = isChoiceManageMode ? draftChoices : choices;
 
@@ -242,6 +246,7 @@ export function FivesecCreatePage({
 
       {isQuestionInputCompleted && (
         <>
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           {imageUrl ? (
             <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
               <Text
@@ -408,6 +413,45 @@ export function FivesecCreatePage({
             }
           />
         </>
+      )}
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FivesecAnswerPage
+            question={{
+              id: "preview",
+              type: "fivesec",
+              data: {
+                title,
+                description,
+                imageUrl,
+                duration,
+                answerExample,
+                answerType: isMultipleAnswer ? "multiple" : "subjective",
+                isMultipleAnswer,
+                isMultiSelectEnabled,
+                choices,
+                minSelectCount,
+                maxSelectCount,
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+            onPrev={() => {}}
+            onGoNext={() => setIsPreviewOpen(false)}
+            isFirst={true}
+            isLast={true}
+          />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
+        </motion.div>
       )}
 
       <BottomSheet

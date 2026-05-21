@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Asset, Border, TextArea } from "@toss/tds-mobile";
+import { Asset, Border, FixedBottomCTA, TextArea } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { SubjectiveAnswerPage } from "@/features/question-subjective/answer/SubjectiveAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
+import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { SubjectiveCreateBottomCTA } from "./SubjectiveCreateBottomCTA";
 
 interface SubjectiveCreatePageProps {
@@ -41,6 +43,8 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
     useQuestionImageUpload(setQuestionImageUrl);
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "subjective"; text: string }>({ type: "subjective", text: "" });
 
   return (
     <motion.div
@@ -107,6 +111,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
 
       {isQuestionInputCompleted && (
         <>
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           <TextArea
             variant="box"
             hasError={false}
@@ -142,6 +147,35 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
         onCamera={handleCamera}
         onAlbum={handleAlbum}
       />
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <SubjectiveAnswerPage
+            question={{
+              id: "preview",
+              type: "subjective",
+              data: {
+                title: questionTitle,
+                description: questionDescription,
+                imageUrl: questionImageUrl,
+                placeholder,
+                maxLength,
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+          />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
