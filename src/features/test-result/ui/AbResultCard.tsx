@@ -1,10 +1,7 @@
+import type { AbOption } from "../model/types";
 import { ResultCardBase, BarColumn } from "./_shared";
 
-export interface AbOption {
-  label: string;
-  height: number;
-  isHighlight: boolean;
-}
+export type { AbOption };
 
 interface Props {
   title: string;

@@ -1,10 +1,7 @@
+import type { ScoreBar } from "../model/types";
 import { ResultCardBase, BarColumn } from "./_shared";
 
-export interface ScoreBar {
-  label: string;
-  height: number;
-  isHighlight: boolean;
-}
+export type { ScoreBar };
 
 interface Props {
   title: string;

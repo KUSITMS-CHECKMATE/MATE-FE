@@ -1,6 +1,9 @@
 import { Asset, Badge, Spacing, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import type { DoughnutAnswerItem } from "../model/types";
 import { ResultDoughnutChart } from "./ResultDoughnutChart";
+
+export type { DoughnutAnswerItem };
 
 export function CardWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -127,13 +130,6 @@ export function TextAnswerScrollList({ texts }: { texts: string[] }) {
       </div>
     </div>
   );
-}
-
-export interface DoughnutAnswerItem {
-  label: string;
-  count: number;
-  percentage: number;
-  isHighlight: boolean;
 }
 
 export function DoughnutAnswerSection({ items }: { items: DoughnutAnswerItem[] }) {

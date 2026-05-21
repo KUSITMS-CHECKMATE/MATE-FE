@@ -1,16 +1,20 @@
 export { TestResultPage } from "./TestResultPage";
 export { ResultTabContent } from "./ResultTabContent";
 export { MultipleResultCard } from "./MultipleResultCard";
-export type { MultipleResultOption } from "./MultipleResultCard";
-export type { DoughnutAnswerItem } from "./_shared";
 export { SubjectiveResultCard } from "./SubjectiveResultCard";
 export { ScaleResultCard } from "./ScaleResultCard";
-export type { ScoreBar } from "./ScaleResultCard";
 export { AbResultCard } from "./AbResultCard";
-export type { AbOption } from "./AbResultCard";
 export { CardSortResultCard } from "./CardSortResultCard";
-export type { CardSortCategory, CardSortItem } from "./CardSortResultCard";
 export { TreeResultCard } from "./TreeResultCard";
-export type { TreeResultPath } from "./TreeResultCard";
 export { FiveSecResultCard } from "./FiveSecResultCard";
-export type { FiveSecAnswer } from "./FiveSecResultCard";
+export type {
+  QuestionResult,
+  DoughnutAnswerItem,
+  MultipleResultOption,
+  TreeResultPath,
+  FiveSecAnswer,
+  ScoreBar,
+  AbOption,
+  CardSortItem,
+  CardSortCategory,
+} from "../model/types";

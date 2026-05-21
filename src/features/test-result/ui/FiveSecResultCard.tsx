@@ -1,12 +1,8 @@
 import { adaptive } from "@toss/tds-colors";
+import type { FiveSecAnswer } from "../model/types";
 import { ResultCardBase, AnswerRow, TextAnswerScrollList } from "./_shared";
 
-export interface FiveSecAnswer {
-  label: string;
-  count: number;
-  percentage: number;
-  isHighlight: boolean;
-}
+export type { FiveSecAnswer };
 
 interface Props {
   title: string;

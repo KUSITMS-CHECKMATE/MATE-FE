@@ -1,7 +1,7 @@
-import type { DoughnutAnswerItem } from "./_shared";
+import type { TreeResultPath } from "../model/types";
 import { ResultCardBase, DoughnutAnswerSection } from "./_shared";
 
-export type TreeResultPath = DoughnutAnswerItem;
+export type { TreeResultPath };
 
 interface Props {
   title: string;

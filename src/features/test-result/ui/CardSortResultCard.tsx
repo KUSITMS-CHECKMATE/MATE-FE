@@ -2,20 +2,10 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Asset, IconButton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import type { CardSortCategory, CardSortItem } from "../model/types";
 import { ResultCardBase } from "./_shared";
 
-export interface CardSortItem {
-  rank: string;
-  label: string;
-  count: number;
-  percentage: number;
-  isHighlight: boolean;
-}
-
-export interface CardSortCategory {
-  name: string;
-  items: CardSortItem[];
-}
+export type { CardSortCategory, CardSortItem };
 
 interface Props {
   title: string;
