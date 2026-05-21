@@ -9,11 +9,12 @@ import {
 
 interface Props {
   isFirst: boolean;
+  prevLabel?: string;
   onPrev: () => void;
   onStart: () => void;
 }
 
-export function FivesecReadyPhase({ isFirst, onPrev, onStart }: Props) {
+export function FivesecReadyPhase({ isFirst, prevLabel = "이전", onPrev, onStart }: Props) {
   return (
     <div className="flex flex-col flex-1 bg-white">
       <div className="flex-1">
@@ -69,7 +70,7 @@ export function FivesecReadyPhase({ isFirst, onPrev, onStart }: Props) {
         <FixedBottomCTA.Double
           leftButton={
             <CTAButton color="dark" variant="weak" onClick={onPrev}>
-              이전
+              {prevLabel}
             </CTAButton>
           }
           rightButton={<CTAButton onClick={onStart}>다음</CTAButton>}
