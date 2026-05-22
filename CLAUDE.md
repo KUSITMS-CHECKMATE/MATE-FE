@@ -42,6 +42,49 @@
 - `fetch` 대신 **ky 사용**
 - API 로직은 분리 (컴포넌트에 직접 작성 최소화)
 
+#### API 코드 자동 생성 (orval)
+
+Swagger 스펙 → ky 뮤테이터 → TanStack Query hooks를 **orval**로 자동 생성한다.
+
+```bash
+pnpm orval        # 코드 재생성 (Swagger 스펙 변경 시)
+pnpm orval:watch  # 감시 모드
+```
+
+**생성 위치:** `src/shared/api/generated/{domain}.ts`
+
+| 파일 | 대응 도메인 |
+|------|------------|
+| `test.ts` | 테스트 CRUD |
+| `question.ts` | 질문 |
+| `answer.ts` | 응답 |
+| `auth.ts` | 인증/로그인 |
+| `file.ts` | 파일 업로드 |
+| `users.ts` | 사용자 |
+
+**사용 원칙:**
+- 생성된 파일은 **직접 수정 금지** — `pnpm orval`로 재생성
+- GET 요청 → 생성된 `useXxx()` hook 사용
+- POST/PUT/DELETE → 생성된 함수(`createXxx`, `updateXxx`)를 `useMutation`으로 래핑
+  - orval이 POST를 `useQuery`로 잘못 생성하는 경우가 있으므로 mutation 직접 작성
+- 인증이 필요한 API는 `AuthGuard` 통과 후 자동으로 `Authorization` 헤더가 주입됨
+
+**구조:**
+```
+src/shared/api/
+├── client.ts          ← ky 인스턴스 + setToken/clearToken
+├── mutator.ts         ← orval 뮤테이터 (ky fetch 어댑터)
+└── generated/         ← orval 자동 생성 (수정 금지)
+```
+
+#### 인증 (Auth)
+
+- 앱 마운트 시 `AuthGuard`(`src/features/login/ui/AuthGuard.tsx`)가 자동으로 토스 로그인 실행
+- `appLogin()` → `loginWithToss()` → `setToken(accessToken)` 순으로 처리
+- 이후 모든 ky 요청에 `Authorization: Bearer {token}` 헤더 자동 주입
+- 로그아웃: `logout()` API → `clearToken()` → `window.location.reload()`
+- **토큰은 메모리에만 저장** — 앱 재실행 시 AuthGuard가 자동 재로그인
+
 ### 서버 상태
 
 - **TanStack Query 사용**
