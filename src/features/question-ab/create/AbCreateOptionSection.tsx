@@ -1,14 +1,21 @@
-import { Asset, Button, ListHeader, ListRow, Text } from "@toss/tds-mobile";
+import { Asset, Button, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import type { AbRatio } from "@/features/question-ab/model/types";
 
 const IMAGE_SLOT_HORIZONTAL_PADDING = 22;
 const IMAGE_SLOT_LABEL_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
 const AB_IMAGE_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
-const AB_IMAGE_HEIGHT = 302;
+
+const RATIO_TO_CSS: Record<AbRatio, string> = {
+  "9:16": "9/16",
+  "1:1": "1/1",
+  "4:3": "4/3",
+};
 
 interface AbCreateOptionSectionProps {
   imageUrlA: string;
   imageUrlB: string;
+  ratio: AbRatio;
   onUploadA: () => void;
   onUploadB: () => void;
   onRemoveA: () => void;
@@ -18,11 +25,12 @@ interface AbCreateOptionSectionProps {
 interface AbImageSlotProps {
   label: string;
   imageUrl: string;
+  ratio: AbRatio;
   onUpload: () => void;
   onRemove: () => void;
 }
 
-function AbImageSlot({ label, imageUrl, onUpload, onRemove }: AbImageSlotProps) {
+function AbImageSlot({ label, imageUrl, ratio, onUpload, onRemove }: AbImageSlotProps) {
   const hasImage = imageUrl.trim().length > 0;
 
   if (hasImage) {
@@ -43,7 +51,7 @@ function AbImageSlot({ label, imageUrl, onUpload, onRemove }: AbImageSlotProps) 
           className="relative overflow-hidden"
           style={{
             width: AB_IMAGE_WIDTH,
-            height: AB_IMAGE_HEIGHT,
+            aspectRatio: RATIO_TO_CSS[ratio],
             borderRadius: 14,
             boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
           }}
@@ -84,7 +92,7 @@ function AbImageSlot({ label, imageUrl, onUpload, onRemove }: AbImageSlotProps) 
       }
       right={
         <Button color="dark" variant="weak" size="small" onClick={onUpload}>
-          이미지 추가
+          이미지 업로드
         </Button>
       }
       verticalPadding="large"
@@ -92,29 +100,20 @@ function AbImageSlot({ label, imageUrl, onUpload, onRemove }: AbImageSlotProps) 
   );
 }
 
-export function AbCreateOptionSection({ imageUrlA, imageUrlB, onUploadA, onUploadB, onRemoveA, onRemoveB }: AbCreateOptionSectionProps) {
+export function AbCreateOptionSection({ imageUrlA, imageUrlB, ratio, onUploadA, onUploadB, onRemoveA, onRemoveB }: AbCreateOptionSectionProps) {
   return (
     <>
-      <ListHeader
-        descriptionPosition="bottom"
-        rightAlignment="center"
-        titleWidthRatio={0.6}
-        title={
-          <ListHeader.TitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey600}>
-            A/B안 설정
-          </ListHeader.TitleParagraph>
-        }
-        className="w-full"
-      />
       <AbImageSlot
         label="A안"
         imageUrl={imageUrlA}
+        ratio={ratio}
         onUpload={onUploadA}
         onRemove={onRemoveA}
       />
       <AbImageSlot
         label="B안"
         imageUrl={imageUrlB}
+        ratio={ratio}
         onUpload={onUploadB}
         onRemove={onRemoveB}
       />

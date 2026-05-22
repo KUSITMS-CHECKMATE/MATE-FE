@@ -9,6 +9,7 @@ interface Props {
   canGoNext: boolean;
   isFirst: boolean;
   isLast: boolean;
+  prevLabel?: string;
   onChange: (text: string) => void;
   onPrev: () => void;
   onGoNext: () => void;
@@ -22,6 +23,7 @@ export function FivesecSubjectiveAnswerPhase({
   canGoNext,
   isFirst,
   isLast,
+  prevLabel = "이전",
   onChange,
   onPrev,
   onGoNext,
@@ -63,7 +65,7 @@ export function FivesecSubjectiveAnswerPhase({
         <FixedBottomCTA.Double
           leftButton={
             <CTAButton color="dark" variant="weak" onClick={onPrev}>
-              이전
+              {prevLabel}
             </CTAButton>
           }
           rightButton={
