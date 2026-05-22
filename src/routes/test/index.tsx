@@ -14,7 +14,12 @@ function MakerHomePage() {
   return (
     <div className="flex flex-col">
       <TestBanner />
-      <TestList tests={MOCK_USER_TESTS} />
+      <TestList
+        tests={MOCK_USER_TESTS}
+        onCardClick={(testId) =>
+          navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } })
+        }
+      />
       <TestCreateButton onClick={() => navigate({ to: ROUTES.TEST_CREATE })} />
 
       <BottomTabBar activeTab="test" />

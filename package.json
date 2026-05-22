@@ -34,9 +34,11 @@
     "@toss/tds-colors": "^0.1.0",
     "@toss/tds-mobile": "^2.3.0",
     "@toss/tds-mobile-ait": "^2.3.0",
+    "chart.js": "^4.5.1",
     "framer-motion": "^12.38.0",
     "ky": "^1.14.3",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.2.0",
     "tailwindcss": "^4.2.2",
     "zustand": "^5.0.12"

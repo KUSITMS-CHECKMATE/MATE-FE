@@ -1,4 +1,4 @@
-import { BottomSheet, Checkbox, ListRow, Spacing } from "@toss/tds-mobile";
+import { BottomSheet, Checkbox, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { AbRatio } from "@/features/question-ab/model/types";
 

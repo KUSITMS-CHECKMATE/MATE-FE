@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   openCamera,
@@ -59,9 +59,7 @@ export function FivesecCreatePage({
     existingFivesec?.answerType ?? "subjective",
   );
 
-  useEffect(() => {
-    setAnswerType(existingFivesec?.answerType ?? "subjective");
-  }, [questionId]);
+
   const [isAnswerTypeSheetOpen, setIsAnswerTypeSheetOpen] = useState(false);
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
     existingFivesec?.isOtherInputEnabled ?? false,
