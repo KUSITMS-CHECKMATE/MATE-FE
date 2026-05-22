@@ -8,7 +8,6 @@ import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCrea
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
-import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { ScaleAnswerPage } from "@/features/question-scale/answer";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
