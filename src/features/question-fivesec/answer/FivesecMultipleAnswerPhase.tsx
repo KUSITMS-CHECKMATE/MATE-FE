@@ -11,6 +11,7 @@ interface Props {
   canGoNext: boolean;
   isFirst: boolean;
   isLast: boolean;
+  prevLabel?: string;
   onSelect: (id: string) => void;
   onPrev: () => void;
   onGoNext: () => void;
@@ -25,6 +26,7 @@ export function FivesecMultipleAnswerPhase({
   canGoNext,
   isFirst,
   isLast,
+  prevLabel = "이전",
   onSelect,
   onPrev,
   onGoNext,
@@ -72,7 +74,7 @@ export function FivesecMultipleAnswerPhase({
         <FixedBottomCTA.Double
           leftButton={
             <CTAButton color="dark" variant="weak" onClick={onPrev}>
-              이전
+              {prevLabel}
             </CTAButton>
           }
           rightButton={
