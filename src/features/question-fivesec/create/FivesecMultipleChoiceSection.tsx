@@ -16,7 +16,6 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   Asset,
   Border,
-  ListHeader,
   ListRow,
   NumericSpinner,
   Switch,

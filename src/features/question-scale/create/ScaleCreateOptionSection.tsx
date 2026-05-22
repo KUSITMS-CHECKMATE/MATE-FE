@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Border, IconButton, ListHeader, ListRow, Switch, Text } from "@toss/tds-mobile";
+import { IconButton, ListHeader, ListRow, Switch, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { ScaleLabelEditSheet } from "./ScaleLabelEditSheet";
 

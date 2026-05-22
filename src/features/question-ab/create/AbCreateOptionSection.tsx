@@ -1,4 +1,4 @@
-import { Asset, Button, ListHeader, ListRow, Text } from "@toss/tds-mobile";
+import { Asset, Button, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { AbRatio } from "@/features/question-ab/model/types";
 
