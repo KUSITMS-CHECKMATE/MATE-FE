@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Asset, Border } from "@toss/tds-mobile";
+import { Asset, Border, FixedBottomCTA } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
@@ -8,6 +8,7 @@ import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCrea
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
+import { ScaleAnswerPage } from "@/features/question-scale/answer";
 import { ScaleCreateBottomCTA } from "./ScaleCreateBottomCTA";
 import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
 
@@ -26,10 +27,13 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const [questionImageUrl, setQuestionImageUrl] = useState(existingScale?.imageUrl ?? "");
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState((existingScale?.title ?? "").trim().length > 0);
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
-  const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "");
-  const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "");
+  const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "전혀 아니다");
+  const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "매우 그렇다");
   const [isFocused, setIsFocused] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "scale"; value: number | null }>({ type: "scale", value: null });
 
   const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
     useQuestionImageUpload(setQuestionImageUrl);
@@ -45,6 +49,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const handleContainerFocus = (e: React.FocusEvent) => {
     if (!isQuestionInputCompleted) return;
     if (e.target instanceof HTMLInputElement) {
+      if ((e.target as HTMLElement).closest('[aria-modal="true"]')) return;
       if (blurTimer.current) clearTimeout(blurTimer.current);
       setIsFocused(true);
     }
@@ -113,7 +118,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
       />
       {isQuestionInputCompleted && (
         <>
-          <TesterPreviewListRow />
+          <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
           <ScaleCreateOptionSection
             scaleCount={scaleCount}
             minLabel={minLabel}
@@ -149,6 +154,36 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
         onCamera={handleCamera}
         onAlbum={handleAlbum}
       />
+
+      {isPreviewOpen && (
+        <motion.div
+          className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ScaleAnswerPage
+            question={{
+              id: "preview",
+              type: "scale",
+              data: {
+                title: questionTitle,
+                description: questionDescription,
+                scaleCount,
+                minLabel,
+                maxLabel,
+                ...(questionImageUrl ? { imageUrl: questionImageUrl } : {}),
+              },
+            }}
+            answer={previewAnswer}
+            onChange={setPreviewAnswer}
+          />
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+            돌아가기
+          </FixedBottomCTA>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
