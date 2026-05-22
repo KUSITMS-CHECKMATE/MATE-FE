@@ -31,6 +31,7 @@ mate.ait
 
 .omc
 .claude
+.antigravitycli
 .tanstack/
 test-results/
 playwright-report/
