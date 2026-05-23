@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { BottomCTA } from "@toss/tds-mobile";
-import { getMockTestDetail } from "@/features/discovery-detail/model";
+import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 import {
   TestDetailHeader,
   TestDetailImageCarousel,
@@ -15,18 +16,31 @@ export const Route = createFileRoute("/discovery/$testId")({
 function TestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
-  const testDetail = getMockTestDetail(testId);
+
+  const { data, isLoading } = useQuery({
+    queryKey: [getGetTestUrl(Number(testId))],
+    queryFn: () => getTest(Number(testId)),
+  });
+
+  const detail = data?.data?.data;
+
+  if (isLoading || !detail) {
+    return <div className="flex flex-col min-h-screen bg-white" />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white pb-17">
       <div className="flex-1 overflow-y-auto pb-22.5">
-        <TestDetailHeader title={testDetail.title} tags={testDetail.tags} />
-        <TestDetailImageCarousel images={testDetail.images} />
+        <TestDetailHeader
+          title={detail.title ?? ""}
+          tags={detail.categories ?? []}
+        />
+        <TestDetailImageCarousel images={detail.imageKeys ?? []} />
         <TestDetailInfo
-          reward={testDetail.reward}
-          description={testDetail.description}
-          serviceName={testDetail.serviceName}
-          serviceDescription={testDetail.serviceDescription}
+          reward={detail.reward ?? 0}
+          description={detail.description ?? ""}
+          serviceName={detail.serviceName ?? ""}
+          serviceDescription={detail.serviceDescription ?? ""}
         />
       </div>
 
