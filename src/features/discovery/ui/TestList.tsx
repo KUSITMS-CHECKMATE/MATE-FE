@@ -1,4 +1,4 @@
-import { Asset, Result, Text } from "@toss/tds-mobile";
+import { Asset, Result, Skeleton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
 import type { DiscoveryTest } from "../model";
@@ -6,10 +6,30 @@ import { TestCard } from "./TestCard";
 
 interface Props {
   tests: DiscoveryTest[];
+  isLoading?: boolean;
+  onRetry?: () => void;
 }
 
-export function TestList({ tests }: Props) {
+function TestListSkeleton() {
+  return (
+    <div className="flex flex-col gap-3 px-4 pt-6">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Skeleton
+          key={i}
+          custom={["card", "title", "subtitle"]}
+          repeatLastItemCount={0}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function TestList({ tests, isLoading = false, onRetry }: Props) {
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return <TestListSkeleton />;
+  }
 
   return (
     <div className="flex flex-col">
@@ -27,6 +47,7 @@ export function TestList({ tests }: Props) {
           {tests.map((test) => (
             <TestCard
               key={test.id}
+              id={test.id}
               title={test.title}
               description={test.description}
               reward={test.reward}
@@ -53,7 +74,7 @@ export function TestList({ tests }: Props) {
             />
           }
           button={
-            <Result.Button color="dark" variant="weak">
+            <Result.Button color="dark" variant="weak" onClick={onRetry}>
               다시 시도하기
             </Result.Button>
           }

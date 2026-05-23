@@ -12,22 +12,15 @@ interface Props {
 
 export function ParticipatePage({ testId }: Props) {
   const navigate = useNavigate();
-  const test = (testId != null ? MOCK_PARTICIPATE_TESTS[testId] : undefined) ?? MOCK_PARTICIPATE_TEST;
+  const test =
+    (testId != null ? MOCK_PARTICIPATE_TESTS[testId] : undefined) ?? MOCK_PARTICIPATE_TEST;
 
   const funnel = useParticipateFunnel(test.questions, () => {
     navigate({ to: ROUTES.DISCOVERY });
   });
 
-  const {
-    currentIndex,
-    totalCount,
-    currentQuestion,
-    isFirst,
-    isLast,
-    canGoNext,
-    goNext,
-    goPrev,
-  } = funnel;
+  const { currentIndex, totalCount, currentQuestion, isFirst, isLast, canGoNext, goNext, goPrev } =
+    funnel;
 
   const [isAbSheetOpen, setIsAbSheetOpen] = useState(false);
 
