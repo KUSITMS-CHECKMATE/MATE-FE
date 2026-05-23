@@ -95,6 +95,8 @@ export interface ApiResponseAnswerBatchCreateResponse {
   data?: AnswerBatchCreateResponse;
 }
 
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
 export type createAnswersResponse200 = {
   data: ApiResponseAnswerBatchCreateResponse;
   status: 200;
@@ -144,13 +146,13 @@ export const getCreateAnswersQueryKey = (testId: number, answerCreateRequest?: A
 export const getCreateAnswersQueryOptions = <TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
   testId: number,
   answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
 ) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getCreateAnswersQueryKey(testId, answerCreateRequest);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof createAnswers>>> = ({ signal }) => createAnswers(testId, answerCreateRequest, { signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof createAnswers>>> = ({ signal }) => createAnswers(testId, answerCreateRequest, { signal, ...requestOptions });
 
   return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData> & {
     queryKey: DataTag<QueryKey, TData, TError>;
@@ -166,6 +168,7 @@ export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof createAnswers>>, TError, Awaited<ReturnType<typeof createAnswers>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -175,13 +178,14 @@ export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof createAnswers>>, TError, Awaited<ReturnType<typeof createAnswers>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
   testId: number,
   answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -191,7 +195,7 @@ export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
   testId: number,
   answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getCreateAnswersQueryOptions(testId, answerCreateRequest, options);

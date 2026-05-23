@@ -5,7 +5,10 @@
  * MATE 서버 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -18,11 +21,11 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult,
-} from "@tanstack/react-query";
+  UseQueryResult
+} from '@tanstack/react-query';
 
-import { kyMutator } from "../mutator";
-import type { ErrorType } from "../mutator";
+import { kyMutator } from '../mutator';
+import type { ErrorType } from '../mutator';
 export interface UploadUrlResponse {
   presignedUrl?: string;
   fileKey?: string;
@@ -47,42 +50,49 @@ export interface ApiResponseDownloadUrlResponse {
 }
 
 export type GenerateUploadUrlParams = {
-  /**
-   * 파일 확장자 (점 없이 입력, 예: jpg, pdf)
-   */
-  extension: string;
+/**
+ * 파일 확장자 (점 없이 입력, 예: jpg, pdf)
+ */
+extension: string;
 };
 
 export type GenerateDownloadUrlParams = {
-  /**
-   * 업로드 시 발급받은 fileKey
-   */
-  fileKey: string;
+/**
+ * 업로드 시 발급받은 fileKey
+ */
+fileKey: string;
 };
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
 
 export type generateUploadUrlResponse200 = {
-  data: ApiResponseUploadUrlResponse;
-  status: 200;
-};
+  data: ApiResponseUploadUrlResponse
+  status: 200
+}
 
-export type generateUploadUrlResponseSuccess = generateUploadUrlResponse200 & {
+export type generateUploadUrlResponseSuccess = (generateUploadUrlResponse200) & {
   headers: Headers;
 };
-export type generateUploadUrlResponse = generateUploadUrlResponseSuccess;
+;
 
-export const getGenerateUploadUrlUrl = (params: GenerateUploadUrlParams) => {
+export type generateUploadUrlResponse = (generateUploadUrlResponseSuccess)
+
+export const getGenerateUploadUrlUrl = (params: GenerateUploadUrlParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/files/presigned-url/upload?${stringifiedParams}` : `/api/v1/files/presigned-url/upload`;
-};
+  return stringifiedParams.length > 0 ? `/api/v1/files/presigned-url/upload?${stringifiedParams}` : `/api/v1/files/presigned-url/upload`
+}
 
 /**
  * 파일 업로드용 Presigned URL을 발급합니다. 클라이언트는 서버를 경유하지 않고 Azure Blob Storage에 직접 업로드합니다.
@@ -108,92 +118,121 @@ export const getGenerateUploadUrlUrl = (params: GenerateUploadUrlParams) => {
  * @summary 파일 업로드 URL 발급
  */
 export const generateUploadUrl = async (params: GenerateUploadUrlParams, options?: RequestInit): Promise<generateUploadUrlResponse> => {
-  return kyMutator<generateUploadUrlResponse>(getGenerateUploadUrlUrl(params), {
+
+  return kyMutator<generateUploadUrlResponse>(getGenerateUploadUrlUrl(params),
+  {
     ...options,
-    method: "POST",
-  });
-};
+    method: 'POST'
 
-export const getGenerateUploadUrlQueryKey = (params?: GenerateUploadUrlParams) => {
-  return ["POST", `/api/v1/files/presigned-url/upload`, ...(params ? [params] : [])] as const;
-};
 
-export const getGenerateUploadUrlQueryOptions = <TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
-  params: GenerateUploadUrlParams,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> },
+  }
+);}
+
+
+
+
+
+export const getGenerateUploadUrlQueryKey = (params?: GenerateUploadUrlParams,) => {
+    return [
+    'POST', `/api/v1/files/presigned-url/upload`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGenerateUploadUrlQueryOptions = <TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(params: GenerateUploadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGenerateUploadUrlQueryKey(params);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof generateUploadUrl>>> = ({ signal }) => generateUploadUrl(params, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getGenerateUploadUrlQueryKey(params);
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type GenerateUploadUrlQueryResult = NonNullable<Awaited<ReturnType<typeof generateUploadUrl>>>;
-export type GenerateUploadUrlQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof generateUploadUrl>>> = ({ signal }) => generateUploadUrl(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GenerateUploadUrlQueryResult = NonNullable<Awaited<ReturnType<typeof generateUploadUrl>>>
+export type GenerateUploadUrlQueryError = ErrorType<unknown>
+
 
 export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
-  params: GenerateUploadUrlParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, Awaited<ReturnType<typeof generateUploadUrl>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ params: GenerateUploadUrlParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof generateUploadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof generateUploadUrl>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
-  params: GenerateUploadUrlParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, Awaited<ReturnType<typeof generateUploadUrl>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ params: GenerateUploadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof generateUploadUrl>>,
+          TError,
+          Awaited<ReturnType<typeof generateUploadUrl>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
-  params: GenerateUploadUrlParams,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ params: GenerateUploadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 파일 업로드 URL 발급
  */
 
 export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
-  params: GenerateUploadUrlParams,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGenerateUploadUrlQueryOptions(params, options);
+ params: GenerateUploadUrlParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateUploadUrl>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getGenerateUploadUrlQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export type generateDownloadUrlResponse200 = {
-  data: ApiResponseDownloadUrlResponse;
-  status: 200;
-};
 
-export type generateDownloadUrlResponseSuccess = generateDownloadUrlResponse200 & {
+
+
+
+
+
+export type generateDownloadUrlResponse200 = {
+  data: ApiResponseDownloadUrlResponse
+  status: 200
+}
+
+export type generateDownloadUrlResponseSuccess = (generateDownloadUrlResponse200) & {
   headers: Headers;
 };
-export type generateDownloadUrlResponse = generateDownloadUrlResponseSuccess;
+;
 
-export const getGenerateDownloadUrlUrl = (params: GenerateDownloadUrlParams) => {
+export type generateDownloadUrlResponse = (generateDownloadUrlResponseSuccess)
+
+export const getGenerateDownloadUrlUrl = (params: GenerateDownloadUrlParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
+
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? "null" : value.toString());
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
     }
   });
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/files/presigned-url/download?${stringifiedParams}` : `/api/v1/files/presigned-url/download`;
-};
+  return stringifiedParams.length > 0 ? `/api/v1/files/presigned-url/download?${stringifiedParams}` : `/api/v1/files/presigned-url/download`
+}
 
 /**
  * 저장된 파일의 다운로드용 Presigned URL을 발급합니다.
@@ -208,41 +247,60 @@ export const getGenerateDownloadUrlUrl = (params: GenerateDownloadUrlParams) => 
  * @summary 파일 다운로드 URL 발급
  */
 export const generateDownloadUrl = async (params: GenerateDownloadUrlParams, options?: RequestInit): Promise<generateDownloadUrlResponse> => {
-  return kyMutator<generateDownloadUrlResponse>(getGenerateDownloadUrlUrl(params), {
+
+  return kyMutator<generateDownloadUrlResponse>(getGenerateDownloadUrlUrl(params),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGenerateDownloadUrlMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError, { params: GenerateDownloadUrlParams }, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError, { params: GenerateDownloadUrlParams }, TContext> => {
-  const mutationKey = ["generateDownloadUrl"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof generateDownloadUrl>>, { params: GenerateDownloadUrlParams }> = (props) => {
-    const { params } = props ?? {};
+  }
+);}
 
-    return generateDownloadUrl(params);
-  };
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GenerateDownloadUrlMutationResult = NonNullable<Awaited<ReturnType<typeof generateDownloadUrl>>>;
 
-export type GenerateDownloadUrlMutationError = ErrorType<unknown>;
+export const getGenerateDownloadUrlMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError,{params: GenerateDownloadUrlParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError,{params: GenerateDownloadUrlParams}, TContext> => {
 
-/**
+const mutationKey = ['generateDownloadUrl'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof generateDownloadUrl>>, {params: GenerateDownloadUrlParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  generateDownloadUrl(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GenerateDownloadUrlMutationResult = NonNullable<Awaited<ReturnType<typeof generateDownloadUrl>>>
+
+    export type GenerateDownloadUrlMutationError = ErrorType<unknown>
+
+    /**
  * @summary 파일 다운로드 URL 발급
  */
-export const useGenerateDownloadUrl = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError, { params: GenerateDownloadUrlParams }, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof generateDownloadUrl>>, TError, { params: GenerateDownloadUrlParams }, TContext> => {
-  return useMutation(getGenerateDownloadUrlMutationOptions(options), queryClient);
-};
+export const useGenerateDownloadUrl = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError,{params: GenerateDownloadUrlParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof generateDownloadUrl>>,
+        TError,
+        {params: GenerateDownloadUrlParams},
+        TContext
+      > => {
+      return useMutation(getGenerateDownloadUrlMutationOptions(options), queryClient);
+    }
