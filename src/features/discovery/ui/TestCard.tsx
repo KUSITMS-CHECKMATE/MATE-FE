@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { likeTest, unlikeTest, getListTestsUrl } from "@/shared/api/generated/test";
 
 type Props = {
+  id: number;
   title: string;
   description: string;
   reward: number;
@@ -12,6 +15,7 @@ type Props = {
 };
 
 export function TestCard({
+  id,
   title,
   description,
   reward,
@@ -20,6 +24,38 @@ export function TestCard({
   onClick,
 }: Props) {
   const [isLiked, setIsLiked] = useState(liked);
+  const queryClient = useQueryClient();
+
+  const { mutate: like } = useMutation({
+    mutationFn: () => likeTest(id),
+    onMutate: () => {
+      const prev = isLiked;
+      setIsLiked(true);
+      return { prev };
+    },
+    onError: (_, __, context) => setIsLiked(context?.prev ?? false),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] }),
+  });
+
+  const { mutate: unlike } = useMutation({
+    mutationFn: () => unlikeTest(id),
+    onMutate: () => {
+      const prev = isLiked;
+      setIsLiked(false);
+      return { prev };
+    },
+    onError: (_, __, context) => setIsLiked(context?.prev ?? true),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] }),
+  });
+
+  function handleLikeToggle(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (isLiked) {
+      unlike();
+    } else {
+      like();
+    }
+  }
 
   return (
     <div
@@ -44,10 +80,7 @@ export function TestCard({
         >
           <button
             aria-label={isLiked ? "좋아요 취소" : "좋아요"}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsLiked((prev) => !prev);
-            }}
+            onClick={handleLikeToggle}
           >
             <Asset.Image
               frameShape={{ width: 24, height: 24 }}
