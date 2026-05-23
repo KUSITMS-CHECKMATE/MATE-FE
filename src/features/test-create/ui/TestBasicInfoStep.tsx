@@ -7,7 +7,7 @@ const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
   { label: string; placeholder: string; maxLength?: number; help?: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름" },
+  name: { label: "테스트 제목", placeholder: "테스트 제목" },
   summary: { label: "테스트 한줄 소개", placeholder: "테스트 한줄 소개", maxLength: 60, help: "최대 60자" },
 };
 
