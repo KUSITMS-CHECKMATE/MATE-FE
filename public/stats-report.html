@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MATE 통계 리포트</title>
+  <style>
+    @page { size: A4; margin: 0; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Helvetica Neue', sans-serif;
+      background: #f2f4f6;
+      color: #191f29;
+      width: 794px;
+      margin: 0 auto;
+    }
+
+    .page {
+      width: 794px;
+      min-height: 1122px;
+      background: white;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── 커버 ── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 56px 48px;
+    }
+
+    .cover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: #4365cc;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #191f29;
+      letter-spacing: -0.5px;
+    }
+
+    .cover-date-chip {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7684;
+      background: #f2f4f6;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .cover-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 0 60px;
+    }
+
+    .cover-eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4365cc;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .cover-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: #191f29;
+      line-height: 1.3;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+
+    .cover-subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: #6b7684;
+      line-height: 1.6;
+    }
+
+    .cover-divider {
+      width: 48px;
+      height: 4px;
+      background: #4365cc;
+      border-radius: 2px;
+      margin: 28px 0;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      background: #f8f9fa;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .meta-cell {
+      padding: 28px 24px;
+      border-right: 1px solid #e5e8eb;
+    }
+
+    .meta-cell:last-child { border-right: none; }
+
+    .meta-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b95a1;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #191f29;
+      letter-spacing: -0.5px;
+    }
+
+    .meta-unit {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7684;
+      margin-left: 2px;
+    }
+
+    .cover-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      border-top: 1px solid #e5e8eb;
+    }
+
+    .cover-footer-left {
+      font-size: 12px;
+      color: #adb5bd;
+      font-weight: 500;
+    }
+
+    .cover-accent-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #4365cc, #6b8ff0);
+    }
+
+    /* ── 결과 페이지 ── */
+    .result-page {
+      padding: 48px 56px;
+      background: #f2f4f6;
+      min-height: 1122px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .page-header-logo { font-size: 13px; font-weight: 700; color: #4365cc; }
+    .page-num { font-size: 12px; font-weight: 600; color: #adb5bd; }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #191f29;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: #8b95a1;
+      margin-bottom: 24px;
+    }
+
+    /* ── 요약 카드 ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .summary-card-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b95a1;
+      margin-bottom: 6px;
+    }
+
+    .summary-card-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #191f29;
+      letter-spacing: -0.5px;
+    }
+
+    .summary-card-unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7684;
+      margin-left: 2px;
+    }
+
+    /* ── 질문 카드 ── */
+    .q-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+
+    .q-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .q-number {
+      width: 32px;
+      height: 32px;
+      background: #eef1fb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #4365cc;
+      flex-shrink: 0;
+    }
+
+    .q-meta { flex: 1; }
+
+    .q-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #4365cc;
+      background: #eef1fb;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #191f29;
+      line-height: 1.4;
+    }
+
+    /* ── 도넛 차트 ── */
+    .doughnut-row {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .doughnut-wrap { flex-shrink: 0; }
+
+    .doughnut-legend {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-label { font-size: 13px; font-weight: 600; color: #191f29; }
+    .legend-count { font-size: 13px; font-weight: 600; color: #6b7684; }
+    .legend-item.highlight .legend-label,
+    .legend-item.highlight .legend-count { color: #4365cc; }
+
+    /* ── 바 차트 ── */
+    .bar-chart-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 140px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      gap: 6px;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      background: rgba(0,27,55,0.1);
+    }
+
+    .bar-fill.highlight { background: #4365cc; }
+    .bar-label { font-size: 11px; font-weight: 600; color: #8b95a1; white-space: nowrap; }
+    .bar-label.highlight { color: #4365cc; }
+
+    /* ── 주관식 ── */
+    .text-answer-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .text-answer-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .text-answer-more {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b95a1;
+      padding: 8px 0 0 4px;
+    }
+
+    /* ── 카드 소트 ── */
+    .cardsort-category { margin-bottom: 16px; }
+
+    .cardsort-category-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4365cc;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #eef1fb;
+    }
+
+    .cardsort-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #f2f4f6;
+    }
+
+    .cardsort-rank {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #4365cc;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .cardsort-rank.rank2 { background: #8b95a1; }
+    .cardsort-rank.rank3 { background: #c4c9d0; }
+    .cardsort-label { flex: 1; font-size: 13px; font-weight: 600; color: #191f29; }
+    .cardsort-stat { font-size: 12px; font-weight: 600; color: #6b7684; }
+
+    /* ── AB ── */
+    .ab-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 160px;
+    }
+
+    .ab-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      gap: 8px;
+    }
+
+    .ab-fill {
+      width: 64px;
+      border-radius: 8px 8px 0 0;
+      background: rgba(0,27,55,0.1);
+    }
+
+    .ab-fill.highlight { background: #4365cc; }
+    .ab-label { font-size: 12px; font-weight: 600; color: #8b95a1; text-align: center; }
+    .ab-label.highlight { color: #4365cc; }
+
+    @media print {
+      body { background: white; }
+      .page { page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ COVER ══ -->
+<div class="page cover">
+  <div class="cover-accent-bar"></div>
+
+  <div class="cover-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="5" fill="white" opacity="0.9"/>
+          <circle cx="9" cy="9" r="2.5" fill="#4365cc"/>
+        </svg>
+      </div>
+      <span class="logo-text">MATE</span>
+    </div>
+    <span class="cover-date-chip" id="coverDate">2026년 5월 23일</span>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-eyebrow">UX Research Report</div>
+    <div class="cover-title" id="coverTitle">모바일 UX 리서치<br/>통계 리포트</div>
+    <div class="cover-divider"></div>
+    <div class="cover-subtitle">사용자 행동 패턴과 선호도를 분석한<br/>종합 통계 보고서입니다.</div>
+
+    <div style="margin-top: 48px;">
+      <div class="cover-meta-grid">
+        <div class="meta-cell">
+          <div class="meta-label">총 참여자</div>
+          <div class="meta-value" id="participantCount">100<span class="meta-unit">명</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">총 질문 수</div>
+          <div class="meta-value">7<span class="meta-unit">개</span></div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">완료율</div>
+          <div class="meta-value">94<span class="meta-unit">%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span class="cover-footer-left">MATE · UX Testing Platform</span>
+    <span class="cover-footer-left" id="footerDate">Generated 2026.05.23</span>
+  </div>
+</div>
+
+
+<!-- ══ PAGE 2 — 요약 + Q1 객관식 + Q2 주관식 ══ -->
+<div class="page">
+  <div class="result-page">
+    <div class="page-header">
+      <span class="page-header-logo">MATE Report</span>
+      <span class="page-num">2 / 4</span>
+    </div>
+
+    <div class="section-title">결과 요약</div>
+    <div class="section-subtitle">질문 유형별 응답 분포 및 주요 지표</div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-card-label">객관식</div>
+        <div class="summary-card-value">2<span class="summary-card-unit">개</span></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">주관식</div>
+        <div class="summary-card-value">1<span class="summary-card-unit">개</span></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">A/B 테스트</div>
+        <div class="summary-card-value">1<span class="summary-card-unit">개</span></div>
+      </div>
+    </div>
+    <div class="summary-grid" style="margin-bottom: 28px;">
+      <div class="summary-card">
+        <div class="summary-card-label">척도</div>
+        <div class="summary-card-value">1<span class="summary-card-unit">개</span></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">카드 소트</div>
+        <div class="summary-card-value">1<span class="summary-card-unit">개</span></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">5초 테스트</div>
+        <div class="summary-card-value">1<span class="summary-card-unit">개</span></div>
+      </div>
+    </div>
+
+    <!-- Q1 객관식 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">01</div>
+        <div class="q-meta">
+          <div class="q-badge">객관식</div>
+          <div class="q-title">전반적인 사용 경험에 만족하시나요?</div>
+        </div>
+      </div>
+      <div class="doughnut-row">
+        <div class="doughnut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#f2f4f6" stroke-width="18"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#4365cc" stroke-width="18"
+              stroke-dasharray="208.8 280.4" stroke-dashoffset="70" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#c4cadf" stroke-width="18"
+              stroke-dasharray="97.2 280.4" stroke-dashoffset="-138.8" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#e5e8f0" stroke-width="18"
+              stroke-dasharray="54 280.4" stroke-dashoffset="-236" stroke-linecap="round"/>
+            <text x="60" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#191f29">58%</text>
+            <text x="60" y="72" text-anchor="middle" font-size="10" font-weight="600" fill="#8b95a1">프로필</text>
+          </svg>
+        </div>
+        <div class="doughnut-legend">
+          <div class="legend-item highlight">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#4365cc"></div>
+              <span class="legend-label">프로필</span>
+            </div>
+            <span class="legend-count">32개 (58%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#c4cadf"></div>
+              <span class="legend-label">설정</span>
+            </div>
+            <span class="legend-count">15개 (27%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left">
+              <div class="legend-dot" style="background:#e5e8f0"></div>
+              <span class="legend-label">홈</span>
+            </div>
+            <span class="legend-count">8개 (15%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 주관식 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">02</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#fef3e2;color:#d97706;">주관식</div>
+          <div class="q-title">전반적인 사용 경험에 만족하시나요?</div>
+        </div>
+      </div>
+      <div class="text-answer-list">
+        <div class="text-answer-item">만족해요</div>
+        <div class="text-answer-item">만족해요</div>
+        <div class="text-answer-item">만족해요</div>
+        <div class="text-answer-item">만족해요</div>
+        <div class="text-answer-item">만족해요</div>
+      </div>
+      <div class="text-answer-more">+10개 더보기 — 전체 응답은 CSV 파일에서 확인하세요</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ PAGE 3 — Q3 척도 + Q4 AB + Q5 카드소트 ══ -->
+<div class="page">
+  <div class="result-page">
+    <div class="page-header">
+      <span class="page-header-logo">MATE Report</span>
+      <span class="page-num">3 / 4</span>
+    </div>
+
+    <!-- Q3 척도 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">03</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#f0fdf4;color:#16a34a;">척도</div>
+          <div class="q-title">전반적인 사용 경험에 만족하시나요?</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+        <span style="font-size:13px;font-weight:600;color:#8b95a1;">평균</span>
+        <span style="font-size:22px;font-weight:800;color:#4365cc;">3.5</span>
+        <span style="font-size:13px;font-weight:600;color:#8b95a1;">점</span>
+      </div>
+      <div class="bar-chart-row">
+        <div class="bar-col"><div class="bar-fill" style="height:20px;"></div><div class="bar-label">1점</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:45px;"></div><div class="bar-label">2점</div></div>
+        <div class="bar-col"><div class="bar-fill highlight" style="height:115px;"></div><div class="bar-label highlight">3점</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:35px;"></div><div class="bar-label">4점</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:15px;"></div><div class="bar-label">5점</div></div>
+      </div>
+    </div>
+
+    <!-- Q4 AB -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">04</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#fdf2f8;color:#9333ea;">A/B 테스트</div>
+          <div class="q-title">전반적인 사용 경험에 만족하시나요?</div>
+        </div>
+      </div>
+      <div class="ab-row">
+        <div class="ab-col">
+          <div class="ab-fill" style="height:45px;"></div>
+          <div class="ab-label">A안 (27.2%)</div>
+        </div>
+        <div class="ab-col">
+          <div class="ab-fill highlight" style="height:115px;"></div>
+          <div class="ab-label highlight">B안 (62.8%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 카드소트 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">05</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#fff7ed;color:#ea580c;">카드 소트</div>
+          <div class="q-title">전반적인 사용 경험에 만족하시나요?</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div class="cardsort-category">
+          <div class="cardsort-category-name">상의</div>
+          <div class="cardsort-item"><div class="cardsort-rank">1</div><span class="cardsort-label">티셔츠</span><span class="cardsort-stat">32명 (58%)</span></div>
+          <div class="cardsort-item"><div class="cardsort-rank rank2">2</div><span class="cardsort-label">반팔티</span><span class="cardsort-stat">15명 (27%)</span></div>
+          <div class="cardsort-item"><div class="cardsort-rank rank3">3</div><span class="cardsort-label">크롭티</span><span class="cardsort-stat">8명 (15%)</span></div>
+        </div>
+        <div class="cardsort-category">
+          <div class="cardsort-category-name">하의</div>
+          <div class="cardsort-item"><div class="cardsort-rank">1</div><span class="cardsort-label">청바지</span><span class="cardsort-stat">32명 (58%)</span></div>
+          <div class="cardsort-item"><div class="cardsort-rank rank2">2</div><span class="cardsort-label">반바지</span><span class="cardsort-stat">15명 (27%)</span></div>
+        </div>
+        <div class="cardsort-category">
+          <div class="cardsort-category-name">신발</div>
+          <div class="cardsort-item"><div class="cardsort-rank">1</div><span class="cardsort-label">운동화</span><span class="cardsort-stat">32명 (58%)</span></div>
+          <div class="cardsort-item"><div class="cardsort-rank rank2">2</div><span class="cardsort-label">슬리퍼</span><span class="cardsort-stat">15명 (27%)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ PAGE 4 — Q6 트리 + Q7 5초테스트 ══ -->
+<div class="page">
+  <div class="result-page">
+    <div class="page-header">
+      <span class="page-header-logo">MATE Report</span>
+      <span class="page-num">4 / 4</span>
+    </div>
+
+    <!-- Q6 트리 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">06</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#f0fdf4;color:#0891b2;">트리 테스트</div>
+          <div class="q-title">내 프로필을 수정하려면 어디로 가야 할까요?</div>
+        </div>
+      </div>
+      <div class="doughnut-row">
+        <div class="doughnut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#f2f4f6" stroke-width="18"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#4365cc" stroke-width="18"
+              stroke-dasharray="208.8 280.4" stroke-dashoffset="70" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#c4cadf" stroke-width="18"
+              stroke-dasharray="97.2 280.4" stroke-dashoffset="-138.8" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#e5e8f0" stroke-width="18"
+              stroke-dasharray="54 280.4" stroke-dashoffset="-236" stroke-linecap="round"/>
+            <text x="60" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#191f29">58%</text>
+            <text x="60" y="72" text-anchor="middle" font-size="10" font-weight="600" fill="#8b95a1">프로필</text>
+          </svg>
+        </div>
+        <div class="doughnut-legend">
+          <div class="legend-item highlight">
+            <div class="legend-left"><div class="legend-dot" style="background:#4365cc"></div><span class="legend-label">프로필</span></div>
+            <span class="legend-count">32개 (58%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left"><div class="legend-dot" style="background:#c4cadf"></div><span class="legend-label">설정</span></div>
+            <span class="legend-count">15개 (27%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left"><div class="legend-dot" style="background:#e5e8f0"></div><span class="legend-label">홈</span></div>
+            <span class="legend-count">8개 (15%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 5초 테스트 -->
+    <div class="q-card">
+      <div class="q-card-header">
+        <div class="q-number">07</div>
+        <div class="q-meta">
+          <div class="q-badge" style="background:#fef2f2;color:#dc2626;">5초 테스트</div>
+          <div class="q-title">5초동안 보고 기억에 남는 것은?</div>
+        </div>
+      </div>
+      <div class="doughnut-row">
+        <div class="doughnut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#f2f4f6" stroke-width="18"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#4365cc" stroke-width="18"
+              stroke-dasharray="208.8 280.4" stroke-dashoffset="70" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#c4cadf" stroke-width="18"
+              stroke-dasharray="97.2 280.4" stroke-dashoffset="-138.8" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="46" fill="none" stroke="#e5e8f0" stroke-width="18"
+              stroke-dasharray="54 280.4" stroke-dashoffset="-236" stroke-linecap="round"/>
+            <text x="60" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#191f29">58%</text>
+            <text x="60" y="72" text-anchor="middle" font-size="10" font-weight="600" fill="#8b95a1">프로필</text>
+          </svg>
+        </div>
+        <div class="doughnut-legend">
+          <div class="legend-item highlight">
+            <div class="legend-left"><div class="legend-dot" style="background:#4365cc"></div><span class="legend-label">프로필</span></div>
+            <span class="legend-count">32개 (58%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left"><div class="legend-dot" style="background:#c4cadf"></div><span class="legend-label">설정</span></div>
+            <span class="legend-count">15개 (27%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-left"><div class="legend-dot" style="background:#e5e8f0"></div><span class="legend-label">홈</span></div>
+            <span class="legend-count">8개 (15%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 마감 카드 -->
+    <div style="background:#eef1fb;border-radius:20px;padding:28px 32px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#4365cc;margin-bottom:4px;">더 자세한 데이터가 필요하신가요?</div>
+        <div style="font-size:13px;font-weight:500;color:#6b7684;">CSV 파일로 전체 응답 데이터를 내려받을 수 있습니다.</div>
+      </div>
+      <div style="width:40px;height:40px;background:#4365cc;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 3v9M10 12l-3-3M10 12l3-3M4 15h12" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el && val) el.innerHTML = val; };
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+  const dateShort = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+
+  setEl('coverDate', p.get('date') || dateStr);
+  if (p.get('title')) setEl('coverTitle', `${p.get('title')}<br/>통계 리포트`);
+  if (p.get('participants')) setEl('participantCount', `${p.get('participants')}<span class="meta-unit">명</span>`);
+  setEl('footerDate', `Generated ${p.get('date') || dateShort}`);
+</script>
+</body>
+</html>
