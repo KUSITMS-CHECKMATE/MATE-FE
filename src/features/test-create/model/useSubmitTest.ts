@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
-import { HTTPError } from "ky";
+import ky, { HTTPError } from "ky";
 import { createTest } from "@/shared/api/generated/test";
 import { createQuestions } from "@/shared/api/generated/question";
 import { generateUploadUrl } from "@/shared/api/generated/file";
@@ -73,16 +73,9 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
   const { presignedUrl, fileKey } = uploadResponse.data.data ?? {};
   if (!presignedUrl || !fileKey) throw new Error("업로드 URL 발급 실패");
 
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", presignedUrl);
-    xhr.setRequestHeader("x-ms-blob-type", "BlockBlob");
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) resolve();
-      else reject(new Error(`이미지 업로드 실패 (${xhr.status})`));
-    };
-    xhr.onerror = () => reject(new Error(`이미지 업로드 네트워크 오류 (XHR)`));
-    xhr.send(blob);
+  await ky.put(presignedUrl, {
+    body: blob,
+    headers: { "x-ms-blob-type": "BlockBlob" },
   });
 
   return fileKey;
@@ -165,13 +158,13 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
         type: "TREE_TEST",
         title: data.title,
         description: data.description,
-        features: data.nodes.map((node) => ({
+        features: data.nodes?.map((node) => ({
           label: node.name,
-          children: node.children.map((child) => ({
+          children: node.children?.map((child) => ({
             label: child.name,
-            children: child.children.length > 0 ? child.children : undefined,
+            children: child.children?.length > 0 ? child.children : undefined,
           })),
-        })),
+        })) ?? [],
       } satisfies TreeTestCreateRequest;
     }
 
