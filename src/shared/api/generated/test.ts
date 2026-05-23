@@ -5,7 +5,10 @@
  * MATE 서버 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -18,11 +21,11 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult,
-} from "@tanstack/react-query";
+  UseQueryResult
+} from '@tanstack/react-query';
 
-import { kyMutator } from "../mutator";
-import type { ErrorType } from "../mutator";
+import { kyMutator } from '../mutator';
+import type { ErrorType } from '../mutator';
 /**
  * 테스트 목록·카드 노출용 요약
  */
@@ -45,75 +48,78 @@ export interface ApiResponseListTestSummaryResponse {
   data?: TestSummaryResponse[];
 }
 
-export type TestCreateRequestCategoriesItem = (typeof TestCreateRequestCategoriesItem)[keyof typeof TestCreateRequestCategoriesItem];
+export type TestCreateRequestCategoriesItem = typeof TestCreateRequestCategoriesItem[keyof typeof TestCreateRequestCategoriesItem];
+
 
 export const TestCreateRequestCategoriesItem = {
-  DAILY: "DAILY",
-  FINANCE: "FINANCE",
-  HEALTH: "HEALTH",
-  SHOPPING: "SHOPPING",
-  FOOD: "FOOD",
-  GAME: "GAME",
-  CONTENT: "CONTENT",
-  COMMUNITY: "COMMUNITY",
-  AI: "AI",
-  EDUCATION: "EDUCATION",
-  TRAVEL: "TRAVEL",
-  SOCIAL: "SOCIAL",
-  CONVENIENCE: "CONVENIENCE",
-  INFORMATION: "INFORMATION",
-  BUSINESS: "BUSINESS",
-  TRANSPORT: "TRANSPORT",
-  PUBLIC_ADMIN: "PUBLIC_ADMIN",
+  DAILY: 'DAILY',
+  FINANCE: 'FINANCE',
+  HEALTH: 'HEALTH',
+  SHOPPING: 'SHOPPING',
+  FOOD: 'FOOD',
+  GAME: 'GAME',
+  CONTENT: 'CONTENT',
+  COMMUNITY: 'COMMUNITY',
+  AI: 'AI',
+  EDUCATION: 'EDUCATION',
+  TRAVEL: 'TRAVEL',
+  SOCIAL: 'SOCIAL',
+  CONVENIENCE: 'CONVENIENCE',
+  INFORMATION: 'INFORMATION',
+  BUSINESS: 'BUSINESS',
+  TRANSPORT: 'TRANSPORT',
+  PUBLIC_ADMIN: 'PUBLIC_ADMIN',
 } as const;
 
 export interface TestCreateRequest {
   /**
-   * @minLength 0
-   * @maxLength 17
-   */
+     * @minLength 0
+     * @maxLength 17
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 60
-   */
+     * @minLength 0
+     * @maxLength 60
+     */
   description?: string;
   /**
-   * @minItems 1
-   * @maxItems 3
-   */
+     * @minItems 1
+     * @maxItems 3
+     */
   categories: TestCreateRequestCategoriesItem[];
   /**
-   * @minLength 0
-   * @maxLength 17
-   */
+     * @minLength 0
+     * @maxLength 17
+     */
   serviceName?: string;
   /**
-   * @minLength 0
-   * @maxLength 70
-   */
+     * @minLength 0
+     * @maxLength 70
+     */
   serviceDescription?: string;
   /**
-   * @minItems 0
-   * @maxItems 10
-   * @items.minLength 1
-   */
+     * @minItems 0
+     * @maxItems 10
+     * @items.minLength 1
+     */
   imageKeys?: string[];
 }
 
-export type TestCreateResponseTestStatus = (typeof TestCreateResponseTestStatus)[keyof typeof TestCreateResponseTestStatus];
+export type TestCreateResponseTestStatus = typeof TestCreateResponseTestStatus[keyof typeof TestCreateResponseTestStatus];
+
 
 export const TestCreateResponseTestStatus = {
-  IN_PROGRESS: "IN_PROGRESS",
-  COMPLETED: "COMPLETED",
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
 } as const;
 
-export type TestCreateResponseApprovalStatus = (typeof TestCreateResponseApprovalStatus)[keyof typeof TestCreateResponseApprovalStatus];
+export type TestCreateResponseApprovalStatus = typeof TestCreateResponseApprovalStatus[keyof typeof TestCreateResponseApprovalStatus];
+
 
 export const TestCreateResponseApprovalStatus = {
-  WAITING: "WAITING",
-  ACCEPTED: "ACCEPTED",
-  REJECTED: "REJECTED",
+  WAITING: 'WAITING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
 } as const;
 
 export interface TestCreateResponse {
@@ -179,74 +185,77 @@ export interface ApiResponseVoid {
   data?: ApiResponseVoidData;
 }
 
-export type TestUpdateRequestCategoriesItem = (typeof TestUpdateRequestCategoriesItem)[keyof typeof TestUpdateRequestCategoriesItem];
+export type TestUpdateRequestCategoriesItem = typeof TestUpdateRequestCategoriesItem[keyof typeof TestUpdateRequestCategoriesItem];
+
 
 export const TestUpdateRequestCategoriesItem = {
-  DAILY: "DAILY",
-  FINANCE: "FINANCE",
-  HEALTH: "HEALTH",
-  SHOPPING: "SHOPPING",
-  FOOD: "FOOD",
-  GAME: "GAME",
-  CONTENT: "CONTENT",
-  COMMUNITY: "COMMUNITY",
-  AI: "AI",
-  EDUCATION: "EDUCATION",
-  TRAVEL: "TRAVEL",
-  SOCIAL: "SOCIAL",
-  CONVENIENCE: "CONVENIENCE",
-  INFORMATION: "INFORMATION",
-  BUSINESS: "BUSINESS",
-  TRANSPORT: "TRANSPORT",
-  PUBLIC_ADMIN: "PUBLIC_ADMIN",
+  DAILY: 'DAILY',
+  FINANCE: 'FINANCE',
+  HEALTH: 'HEALTH',
+  SHOPPING: 'SHOPPING',
+  FOOD: 'FOOD',
+  GAME: 'GAME',
+  CONTENT: 'CONTENT',
+  COMMUNITY: 'COMMUNITY',
+  AI: 'AI',
+  EDUCATION: 'EDUCATION',
+  TRAVEL: 'TRAVEL',
+  SOCIAL: 'SOCIAL',
+  CONVENIENCE: 'CONVENIENCE',
+  INFORMATION: 'INFORMATION',
+  BUSINESS: 'BUSINESS',
+  TRANSPORT: 'TRANSPORT',
+  PUBLIC_ADMIN: 'PUBLIC_ADMIN',
 } as const;
 
 export interface TestUpdateRequest {
   /**
-   * @minLength 0
-   * @maxLength 17
-   */
+     * @minLength 0
+     * @maxLength 17
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 60
-   */
+     * @minLength 0
+     * @maxLength 60
+     */
   description?: string;
   /**
-   * @minItems 1
-   * @maxItems 3
-   */
+     * @minItems 1
+     * @maxItems 3
+     */
   categories?: TestUpdateRequestCategoriesItem[];
   /**
-   * @minLength 0
-   * @maxLength 17
-   */
+     * @minLength 0
+     * @maxLength 17
+     */
   serviceName?: string;
   /**
-   * @minLength 0
-   * @maxLength 70
-   */
+     * @minLength 0
+     * @maxLength 70
+     */
   serviceDescription?: string;
   /**
-   * @minItems 0
-   * @maxItems 10
-   */
+     * @minItems 0
+     * @maxItems 10
+     */
   imageKeys?: string[];
 }
 
-export type TestUpdateResponseTestStatus = (typeof TestUpdateResponseTestStatus)[keyof typeof TestUpdateResponseTestStatus];
+export type TestUpdateResponseTestStatus = typeof TestUpdateResponseTestStatus[keyof typeof TestUpdateResponseTestStatus];
+
 
 export const TestUpdateResponseTestStatus = {
-  IN_PROGRESS: "IN_PROGRESS",
-  COMPLETED: "COMPLETED",
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
 } as const;
 
-export type TestUpdateResponseApprovalStatus = (typeof TestUpdateResponseApprovalStatus)[keyof typeof TestUpdateResponseApprovalStatus];
+export type TestUpdateResponseApprovalStatus = typeof TestUpdateResponseApprovalStatus[keyof typeof TestUpdateResponseApprovalStatus];
+
 
 export const TestUpdateResponseApprovalStatus = {
-  WAITING: "WAITING",
-  ACCEPTED: "ACCEPTED",
-  REJECTED: "REJECTED",
+  WAITING: 'WAITING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
 } as const;
 
 export interface TestUpdateResponse {
@@ -272,19 +281,29 @@ export interface ApiResponseTestUpdateResponse {
   data?: TestUpdateResponse;
 }
 
-export type listTestsResponse200 = {
-  data: ApiResponseListTestSummaryResponse;
-  status: 200;
-};
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-export type listTestsResponseSuccess = listTestsResponse200 & {
+
+
+export type listTestsResponse200 = {
+  data: ApiResponseListTestSummaryResponse
+  status: 200
+}
+
+export type listTestsResponseSuccess = (listTestsResponse200) & {
   headers: Headers;
 };
-export type listTestsResponse = listTestsResponseSuccess;
+;
+
+export type listTestsResponse = (listTestsResponseSuccess)
 
 export const getListTestsUrl = () => {
-  return `/api/v1/tests`;
-};
+
+
+
+
+  return `/api/v1/tests`
+}
 
 /**
  * 전체 테스트 요약 목록을 최신순으로 조회합니다. 발견 탭 HM_01 57 화면에 해당하는 api 입니다.
@@ -296,57 +315,84 @@ export const getListTestsUrl = () => {
 
  * @summary 테스트 목록 조회
  */
-export const listTests = async (options?: RequestInit): Promise<listTestsResponse> => {
-  return kyMutator<listTestsResponse>(getListTestsUrl(), {
+export const listTests = async ( options?: RequestInit): Promise<listTestsResponse> => {
+
+  return kyMutator<listTestsResponse>(getListTestsUrl(),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getListTestsMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError, void, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError, void, TContext> => {
-  const mutationKey = ["listTests"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof listTests>>, void> = () => {
-    return listTests();
-  };
+  }
+);}
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type ListTestsMutationResult = NonNullable<Awaited<ReturnType<typeof listTests>>>;
 
-export type ListTestsMutationError = ErrorType<unknown>;
 
-/**
+export const getListTestsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext> => {
+
+const mutationKey = ['listTests'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listTests>>, void> = () => {
+
+
+          return  listTests(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListTestsMutationResult = NonNullable<Awaited<ReturnType<typeof listTests>>>
+
+    export type ListTestsMutationError = ErrorType<unknown>
+
+    /**
  * @summary 테스트 목록 조회
  */
-export const useListTests = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError, void, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof listTests>>, TError, void, TContext> => {
-  return useMutation(getListTestsMutationOptions(options), queryClient);
-};
+export const useListTests = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listTests>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListTestsMutationOptions(options), queryClient);
+    }
 
 export type createTestResponse200 = {
-  data: ApiResponseTestCreateResponse;
-  status: 200;
-};
+  data: ApiResponseTestCreateResponse
+  status: 200
+}
 
-export type createTestResponseSuccess = createTestResponse200 & {
+export type createTestResponseSuccess = (createTestResponse200) & {
   headers: Headers;
 };
-export type createTestResponse = createTestResponseSuccess;
+;
+
+export type createTestResponse = (createTestResponseSuccess)
 
 export const getCreateTestUrl = () => {
-  return `/api/v1/tests`;
-};
+
+
+
+
+  return `/api/v1/tests`
+}
 
 /**
  * 새로운 테스트를 등록합니다. MKTT_02-1 ~ MKTT_02-3 (테스트 기본 정보) 화면에 해당하는 api 입니다.
@@ -364,252 +410,342 @@ AI, EDUCATION, TRAVEL, SOCIAL, CONVENIENCE, INFORMATION, BUSINESS, TRANSPORT, PU
  * @summary 테스트 등록
  */
 export const createTest = async (testCreateRequest: TestCreateRequest, options?: RequestInit): Promise<createTestResponse> => {
-  return kyMutator<createTestResponse>(getCreateTestUrl(), {
+
+  return kyMutator<createTestResponse>(getCreateTestUrl(),
+  {
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(testCreateRequest),
-  });
-};
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(testCreateRequest)
+  }
+);}
 
-export const getCreateTestQueryKey = (testCreateRequest?: TestCreateRequest) => {
-  return ["POST", `/api/v1/tests`, testCreateRequest] as const;
-};
 
-export const getCreateTestQueryOptions = <TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(
-  testCreateRequest: TestCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> },
+
+
+
+export const getCreateTestQueryKey = (testCreateRequest?: TestCreateRequest,) => {
+    return [
+    'POST', `/api/v1/tests`, testCreateRequest
+    ] as const;
+    }
+
+
+export const getCreateTestQueryOptions = <TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(testCreateRequest: TestCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getCreateTestQueryKey(testCreateRequest);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof createTest>>> = ({ signal }) => createTest(testCreateRequest, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getCreateTestQueryKey(testCreateRequest);
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type CreateTestQueryResult = NonNullable<Awaited<ReturnType<typeof createTest>>>;
-export type CreateTestQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createTest>>> = ({ signal }) => createTest(testCreateRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CreateTestQueryResult = NonNullable<Awaited<ReturnType<typeof createTest>>>
+export type CreateTestQueryError = ErrorType<unknown>
+
 
 export function useCreateTest<TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(
-  testCreateRequest: TestCreateRequest,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof createTest>>, TError, Awaited<ReturnType<typeof createTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testCreateRequest: TestCreateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createTest>>,
+          TError,
+          Awaited<ReturnType<typeof createTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateTest<TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(
-  testCreateRequest: TestCreateRequest,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof createTest>>, TError, Awaited<ReturnType<typeof createTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testCreateRequest: TestCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createTest>>,
+          TError,
+          Awaited<ReturnType<typeof createTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateTest<TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(
-  testCreateRequest: TestCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testCreateRequest: TestCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 테스트 등록
  */
 
 export function useCreateTest<TData = Awaited<ReturnType<typeof createTest>>, TError = ErrorType<unknown>>(
-  testCreateRequest: TestCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getCreateTestQueryOptions(testCreateRequest, options);
+ testCreateRequest: TestCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getCreateTestQueryOptions(testCreateRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export type likeTestResponse200 = {
-  data: ApiResponseTestLikeResponse;
-  status: 200;
-};
 
-export type likeTestResponseSuccess = likeTestResponse200 & {
+
+
+
+
+
+export type likeTestResponse200 = {
+  data: ApiResponseTestLikeResponse
+  status: 200
+}
+
+export type likeTestResponseSuccess = (likeTestResponse200) & {
   headers: Headers;
 };
-export type likeTestResponse = likeTestResponseSuccess;
+;
 
-export const getLikeTestUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/likes`;
-};
+export type likeTestResponse = (likeTestResponseSuccess)
+
+export const getLikeTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/likes`
+}
 
 /**
  * 테스트를 찜하고 해당 테스트의 찜 개수를 1 증가시킵니다. HM_01 화면에 해당하는 api 입니다. 이미 찜한 테스트면 현재 상태를 반환합니다.
  * @summary 테스트 찜하기
  */
 export const likeTest = async (testId: number, options?: RequestInit): Promise<likeTestResponse> => {
-  return kyMutator<likeTestResponse>(getLikeTestUrl(testId), {
+
+  return kyMutator<likeTestResponse>(getLikeTestUrl(testId),
+  {
     ...options,
-    method: "POST",
-  });
-};
+    method: 'POST'
 
-export const getLikeTestQueryKey = (testId: number) => {
-  return ["POST", `/api/v1/tests/${testId}/likes`] as const;
-};
 
-export const getLikeTestQueryOptions = <TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> },
+  }
+);}
+
+
+
+
+
+export const getLikeTestQueryKey = (testId: number,) => {
+    return [
+    'POST', `/api/v1/tests/${testId}/likes`
+    ] as const;
+    }
+
+
+export const getLikeTestQueryOptions = <TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getLikeTestQueryKey(testId);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof likeTest>>> = ({ signal }) => likeTest(testId, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getLikeTestQueryKey(testId);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type LikeTestQueryResult = NonNullable<Awaited<ReturnType<typeof likeTest>>>;
-export type LikeTestQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof likeTest>>> = ({ signal }) => likeTest(testId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type LikeTestQueryResult = NonNullable<Awaited<ReturnType<typeof likeTest>>>
+export type LikeTestQueryError = ErrorType<unknown>
+
 
 export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof likeTest>>, TError, Awaited<ReturnType<typeof likeTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof likeTest>>,
+          TError,
+          Awaited<ReturnType<typeof likeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof likeTest>>, TError, Awaited<ReturnType<typeof likeTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof likeTest>>,
+          TError,
+          Awaited<ReturnType<typeof likeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 테스트 찜하기
  */
 
 export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getLikeTestQueryOptions(testId, options);
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof likeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getLikeTestQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export type unlikeTestResponse200 = {
-  data: ApiResponseTestLikeResponse;
-  status: 200;
-};
 
-export type unlikeTestResponseSuccess = unlikeTestResponse200 & {
+
+
+
+
+
+export type unlikeTestResponse200 = {
+  data: ApiResponseTestLikeResponse
+  status: 200
+}
+
+export type unlikeTestResponseSuccess = (unlikeTestResponse200) & {
   headers: Headers;
 };
-export type unlikeTestResponse = unlikeTestResponseSuccess;
+;
 
-export const getUnlikeTestUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/likes`;
-};
+export type unlikeTestResponse = (unlikeTestResponseSuccess)
+
+export const getUnlikeTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/likes`
+}
 
 /**
  * 테스트 찜을 취소하고 해당 테스트의 찜 개수를 1 감소시킵니다. HM_01에 해당하는 api 입니다. 찜하지 않은 테스트면 현재 상태를 반환합니다.
  * @summary 테스트 찜 취소
  */
 export const unlikeTest = async (testId: number, options?: RequestInit): Promise<unlikeTestResponse> => {
-  return kyMutator<unlikeTestResponse>(getUnlikeTestUrl(testId), {
+
+  return kyMutator<unlikeTestResponse>(getUnlikeTestUrl(testId),
+  {
     ...options,
-    method: "DELETE",
-  });
-};
+    method: 'DELETE'
 
-export const getUnlikeTestQueryKey = (testId: number) => {
-  return ["DELETE", `/api/v1/tests/${testId}/likes`] as const;
-};
 
-export const getUnlikeTestQueryOptions = <TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> },
+  }
+);}
+
+
+
+
+
+export const getUnlikeTestQueryKey = (testId: number,) => {
+    return [
+    'DELETE', `/api/v1/tests/${testId}/likes`
+    ] as const;
+    }
+
+
+export const getUnlikeTestQueryOptions = <TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getUnlikeTestQueryKey(testId);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlikeTest>>> = ({ signal }) => unlikeTest(testId, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getUnlikeTestQueryKey(testId);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type UnlikeTestQueryResult = NonNullable<Awaited<ReturnType<typeof unlikeTest>>>;
-export type UnlikeTestQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof unlikeTest>>> = ({ signal }) => unlikeTest(testId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UnlikeTestQueryResult = NonNullable<Awaited<ReturnType<typeof unlikeTest>>>
+export type UnlikeTestQueryError = ErrorType<unknown>
+
 
 export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, Awaited<ReturnType<typeof unlikeTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof unlikeTest>>,
+          TError,
+          Awaited<ReturnType<typeof unlikeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, Awaited<ReturnType<typeof unlikeTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof unlikeTest>>,
+          TError,
+          Awaited<ReturnType<typeof unlikeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 테스트 찜 취소
  */
 
 export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getUnlikeTestQueryOptions(testId, options);
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unlikeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getUnlikeTestQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export type getTestResponse200 = {
-  data: ApiResponseTestDetailResponse;
-  status: 200;
-};
 
-export type getTestResponseSuccess = getTestResponse200 & {
+
+
+
+
+
+export type getTestResponse200 = {
+  data: ApiResponseTestDetailResponse
+  status: 200
+}
+
+export type getTestResponseSuccess = (getTestResponse200) & {
   headers: Headers;
 };
-export type getTestResponse = getTestResponseSuccess;
+;
 
-export const getGetTestUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}`;
-};
+export type getTestResponse = (getTestResponseSuccess)
+
+export const getGetTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}`
+}
 
 /**
  * 특정 테스트의 상세 정보를 조회합니다. TT_01 화면에 해당하는 api 입니다.
@@ -618,142 +754,197 @@ export const getGetTestUrl = (testId: number) => {
  * @summary 테스트 상세 조회
  */
 export const getTest = async (testId: number, options?: RequestInit): Promise<getTestResponse> => {
-  return kyMutator<getTestResponse>(getGetTestUrl(testId), {
+
+  return kyMutator<getTestResponse>(getGetTestUrl(testId),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGetTestMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError, { testId: number }, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError, { testId: number }, TContext> => {
-  const mutationKey = ["getTest"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof getTest>>, { testId: number }> = (props) => {
-    const { testId } = props ?? {};
+  }
+);}
 
-    return getTest(testId);
-  };
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GetTestMutationResult = NonNullable<Awaited<ReturnType<typeof getTest>>>;
 
-export type GetTestMutationError = ErrorType<unknown>;
+export const getGetTestMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError,{testId: number}, TContext> => {
 
-/**
+const mutationKey = ['getTest'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getTest>>, {testId: number}> = (props) => {
+          const {testId} = props ?? {};
+
+          return  getTest(testId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetTestMutationResult = NonNullable<Awaited<ReturnType<typeof getTest>>>
+
+    export type GetTestMutationError = ErrorType<unknown>
+
+    /**
  * @summary 테스트 상세 조회
  */
-export const useGetTest = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError, { testId: number }, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getTest>>, TError, { testId: number }, TContext> => {
-  return useMutation(getGetTestMutationOptions(options), queryClient);
-};
+export const useGetTest = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getTest>>,
+        TError,
+        {testId: number},
+        TContext
+      > => {
+      return useMutation(getGetTestMutationOptions(options), queryClient);
+    }
 
 export type deleteTestResponse200 = {
-  data: ApiResponseVoid;
-  status: 200;
-};
+  data: ApiResponseVoid
+  status: 200
+}
 
-export type deleteTestResponseSuccess = deleteTestResponse200 & {
+export type deleteTestResponseSuccess = (deleteTestResponse200) & {
   headers: Headers;
 };
-export type deleteTestResponse = deleteTestResponseSuccess;
+;
 
-export const getDeleteTestUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}`;
-};
+export type deleteTestResponse = (deleteTestResponseSuccess)
+
+export const getDeleteTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}`
+}
 
 /**
  * 특정 테스트를 삭제(soft delete) 합니다.
  * @summary 테스트 삭제
  */
 export const deleteTest = async (testId: number, options?: RequestInit): Promise<deleteTestResponse> => {
-  return kyMutator<deleteTestResponse>(getDeleteTestUrl(testId), {
+
+  return kyMutator<deleteTestResponse>(getDeleteTestUrl(testId),
+  {
     ...options,
-    method: "DELETE",
-  });
-};
+    method: 'DELETE'
 
-export const getDeleteTestQueryKey = (testId: number) => {
-  return ["DELETE", `/api/v1/tests/${testId}`] as const;
-};
 
-export const getDeleteTestQueryOptions = <TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> },
+  }
+);}
+
+
+
+
+
+export const getDeleteTestQueryKey = (testId: number,) => {
+    return [
+    'DELETE', `/api/v1/tests/${testId}`
+    ] as const;
+    }
+
+
+export const getDeleteTestQueryOptions = <TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getDeleteTestQueryKey(testId);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteTest>>> = ({ signal }) => deleteTest(testId, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getDeleteTestQueryKey(testId);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type DeleteTestQueryResult = NonNullable<Awaited<ReturnType<typeof deleteTest>>>;
-export type DeleteTestQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteTest>>> = ({ signal }) => deleteTest(testId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteTestQueryResult = NonNullable<Awaited<ReturnType<typeof deleteTest>>>
+export type DeleteTestQueryError = ErrorType<unknown>
+
 
 export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof deleteTest>>, TError, Awaited<ReturnType<typeof deleteTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteTest>>,
+          TError,
+          Awaited<ReturnType<typeof deleteTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof deleteTest>>, TError, Awaited<ReturnType<typeof deleteTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteTest>>,
+          TError,
+          Awaited<ReturnType<typeof deleteTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 테스트 삭제
  */
 
 export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getDeleteTestQueryOptions(testId, options);
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getDeleteTestQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
-export type updateTestResponse200 = {
-  data: ApiResponseTestUpdateResponse;
-  status: 200;
-};
 
-export type updateTestResponseSuccess = updateTestResponse200 & {
+
+
+
+
+
+export type updateTestResponse200 = {
+  data: ApiResponseTestUpdateResponse
+  status: 200
+}
+
+export type updateTestResponseSuccess = (updateTestResponse200) & {
   headers: Headers;
 };
-export type updateTestResponse = updateTestResponseSuccess;
+;
 
-export const getUpdateTestUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}`;
-};
+export type updateTestResponse = (updateTestResponseSuccess)
+
+export const getUpdateTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}`
+}
 
 /**
  * 테스트 기본 정보를 수정합니다. MKTT_03-02 화면에 해당하는 api 입니다.
@@ -765,75 +956,93 @@ export const getUpdateTestUrl = (testId: number) => {
 
  * @summary 테스트 수정
  */
-export const updateTest = async (testId: number, testUpdateRequest: TestUpdateRequest, options?: RequestInit): Promise<updateTestResponse> => {
-  return kyMutator<updateTestResponse>(getUpdateTestUrl(testId), {
+export const updateTest = async (testId: number,
+    testUpdateRequest: TestUpdateRequest, options?: RequestInit): Promise<updateTestResponse> => {
+
+  return kyMutator<updateTestResponse>(getUpdateTestUrl(testId),
+  {
     ...options,
-    method: "PATCH",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(testUpdateRequest),
-  });
-};
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(testUpdateRequest)
+  }
+);}
 
-export const getUpdateTestQueryKey = (testId: number, testUpdateRequest?: TestUpdateRequest) => {
-  return ["PATCH", `/api/v1/tests/${testId}`, testUpdateRequest] as const;
-};
 
-export const getUpdateTestQueryOptions = <TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  testUpdateRequest: TestUpdateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> },
+
+
+
+export const getUpdateTestQueryKey = (testId: number,
+    testUpdateRequest?: TestUpdateRequest,) => {
+    return [
+    'PATCH', `/api/v1/tests/${testId}`, testUpdateRequest
+    ] as const;
+    }
+
+
+export const getUpdateTestQueryOptions = <TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(testId: number,
+    testUpdateRequest: TestUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getUpdateTestQueryKey(testId, testUpdateRequest);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof updateTest>>> = ({ signal }) => updateTest(testId, testUpdateRequest, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getUpdateTestQueryKey(testId,testUpdateRequest);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type UpdateTestQueryResult = NonNullable<Awaited<ReturnType<typeof updateTest>>>;
-export type UpdateTestQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateTest>>> = ({ signal }) => updateTest(testId,testUpdateRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UpdateTestQueryResult = NonNullable<Awaited<ReturnType<typeof updateTest>>>
+export type UpdateTestQueryError = ErrorType<unknown>
+
 
 export function useUpdateTest<TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  testUpdateRequest: TestUpdateRequest,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof updateTest>>, TError, Awaited<ReturnType<typeof updateTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    testUpdateRequest: TestUpdateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateTest>>,
+          TError,
+          Awaited<ReturnType<typeof updateTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUpdateTest<TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  testUpdateRequest: TestUpdateRequest,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof updateTest>>, TError, Awaited<ReturnType<typeof updateTest>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    testUpdateRequest: TestUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateTest>>,
+          TError,
+          Awaited<ReturnType<typeof updateTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUpdateTest<TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  testUpdateRequest: TestUpdateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    testUpdateRequest: TestUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 테스트 수정
  */
 
 export function useUpdateTest<TData = Awaited<ReturnType<typeof updateTest>>, TError = ErrorType<unknown>>(
-  testId: number,
-  testUpdateRequest: TestUpdateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getUpdateTestQueryOptions(testId, testUpdateRequest, options);
+ testId: number,
+    testUpdateRequest: TestUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getUpdateTestQueryOptions(testId,testUpdateRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }

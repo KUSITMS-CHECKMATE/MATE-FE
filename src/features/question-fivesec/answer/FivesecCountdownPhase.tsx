@@ -12,10 +12,9 @@ interface Props {
   remaining: number;
   imageUrl: string;
   ratio: AbRatio;
-  hideCountdown?: boolean;
 }
 
-export function FivesecCountdownPhase({ remaining, imageUrl, ratio, hideCountdown }: Props) {
+export function FivesecCountdownPhase({ remaining, imageUrl, ratio }: Props) {
   return (
     <motion.div
       className="flex flex-col flex-1 bg-white"
@@ -36,14 +35,12 @@ export function FivesecCountdownPhase({ remaining, imageUrl, ratio, hideCountdow
           }}
         >
           <img src={imageUrl} alt="5초 테스트 이미지" className="h-full w-full object-cover" />
-          {!hideCountdown && (
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ backgroundColor: "rgba(0,0,0,0.35)" }}
-            >
-              <span className="text-5xl font-bold text-white">{remaining}</span>
-            </div>
-          )}
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ backgroundColor: "rgba(0,0,0,0.35)" }}
+          >
+            <span className="text-5xl font-bold text-white">{remaining}</span>
+          </div>
         </div>
       </div>
       <div className="h-18 shrink-0" aria-hidden={true} />

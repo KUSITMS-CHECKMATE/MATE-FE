@@ -420,7 +420,6 @@ export function FivesecCreatePage({
             isFirst={false}
             isLast={true}
             prevLabel="돌아가기"
-            isPreview={true}
           />
         </motion.div>
       )}
