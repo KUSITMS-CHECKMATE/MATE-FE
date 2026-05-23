@@ -62,12 +62,12 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
       <main className="flex flex-col flex-1">
         <TextField.Clearable
           variant="line"
-          label="테스트 이름"
+          label="테스트 제목"
           labelOption="sustain"
           value={form.name}
           onChange={(e) => form.setName(e.target.value)}
           onClear={() => form.setName("")}
-          placeholder="테스트 이름"
+          placeholder="테스트 제목"
         />
         <TextField.Clearable
           variant="line"
