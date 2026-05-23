@@ -1,6 +1,5 @@
 import { Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { CATEGORY_LABEL } from "@/shared/constants/categories";
 
 interface Props {
   title: string;
@@ -18,7 +17,7 @@ export function TestDetailHeader({ title, tags }: Props) {
       subtitleBottom={
         <Top.SubtitleBadges
           badges={tags.map((tag) => ({
-            text: CATEGORY_LABEL[tag] ?? tag,
+            text: tag,
             color: "elephant" as const,
             variant: "weak" as const,
           }))}

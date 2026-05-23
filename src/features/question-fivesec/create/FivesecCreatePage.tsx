@@ -27,7 +27,13 @@ import { useTestCreateForm } from "@/features/test-create/model/useTestCreateFor
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
 import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
-import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
+import type { AbRatio } from "@/features/question-ab/model/types";
+
+const RATIO_TO_CSS: Record<AbRatio, string> = {
+  "9:16": "9/16",
+  "1:1": "1/1",
+  "4:3": "4/3",
+};
 
 interface FivesecCreatePageProps {
   questionId: string;
@@ -40,7 +46,7 @@ export function FivesecCreatePage({
 }: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingFivesec = existing?.typeId === "FIVE_SECOND" ? existing : null;
+  const existingFivesec = existing?.typeId === "fivesec" ? existing : null;
 
   const [title, setTitle] = useState(existingFivesec?.title ?? "");
   const [description, setDescription] = useState(existingFivesec?.description ?? "");
@@ -48,6 +54,7 @@ export function FivesecCreatePage({
     (existingFivesec?.title ?? "").trim().length > 0,
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
+  const duration = 5;
   const [answerType, setAnswerType] = useState<"multiple" | "subjective">(
     existingFivesec?.answerType ?? "subjective",
   );
@@ -79,7 +86,7 @@ export function FivesecCreatePage({
   const [ratio, setRatio] = useState<AbRatio>(existingFivesec?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "FIVE_SECOND"; selectedIds: string[]; text?: string }>({ type: "FIVE_SECOND", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "fivesec"; selectedIds: string[]; text?: string }>({ type: "fivesec", selectedIds: [] });
 
   const hasTitle = title.trim().length > 0;
   const editingChoice =
@@ -353,10 +360,11 @@ export function FivesecCreatePage({
                 disabled={isCompleteDisabled}
                 onClick={() => {
                   updateQuestion(questionId, {
-                    typeId: "FIVE_SECOND",
+                    typeId: "fivesec",
                     title,
                     description,
                     imageUrl,
+                    duration,
                     answerExample: "",
                     answerType,
                     isMultipleAnswer: answerType === "multiple",
@@ -388,11 +396,12 @@ export function FivesecCreatePage({
           <FivesecAnswerPage
             question={{
               id: "preview",
-              type: "FIVE_SECOND",
+              type: "fivesec",
               data: {
                 title,
                 description,
                 imageUrl,
+                duration,
                 answerExample: "",
                 answerType,
                 isMultipleAnswer: answerType === "multiple",

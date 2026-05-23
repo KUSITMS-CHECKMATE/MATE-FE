@@ -1,4 +1,4 @@
-export type TestStatus = "active" | "ended" | "waiting" | "rejected";
+export type TestStatus = "active" | "ended";
 
 export interface UserTest {
   id: number;

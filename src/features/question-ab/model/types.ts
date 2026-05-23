@@ -1,7 +1,4 @@
-import type { AbRatio } from "@/shared/constants/imageRatio";
-
-export type { AbRatio };
-export { RATIO_TO_CSS } from "@/shared/constants/imageRatio";
+export type AbRatio = "9:16" | "1:1" | "4:3";
 
 export interface AbQuestionData {
   title: string;

@@ -2,78 +2,51 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import ky, { HTTPError } from "ky";
-import { updateDraft } from "@/shared/api/generated/testDraft";
+import { createTest } from "@/shared/api/generated/test";
+import { createQuestions } from "@/shared/api/generated/question";
 import { generateUploadUrl } from "@/shared/api/generated/file";
+import type { TestCreateRequestCategoriesItem } from "@/shared/api/generated/test";
+import type {
+  AbTestCreateRequest,
+  CardSortingCreateRequest,
+  FiveSecondCreateRequest,
+  ObjectiveCreateRequest,
+  ScaleCreateRequest,
+  SubjectiveCreateRequest,
+  TreeTestCreateRequest,
+} from "@/shared/api/generated/question";
 import { useTestCreateForm } from "./useTestCreateForm";
-import type { PendingQuestion } from "./types";
-import type { TreeNodeItem } from "@/features/question-tree/model/types";
+import type { CategoryId, PendingQuestion } from "./types";
 import { ROUTES } from "@/shared/constants/routes";
 
-interface ObjectiveCreateRequest {
-  type: "OBJECTIVE";
-  title?: string;
-  description?: string;
-  isDuplicate?: boolean;
-  maxSelect?: number;
-  minSelect?: number;
-  isOther?: boolean;
-  options?: { content?: string; imageKey?: string }[];
-}
-interface SubjectiveCreateRequest {
-  type: "SUBJECTIVE";
-  title?: string;
-  description?: string;
-  imageKey?: string;
-}
-interface ScaleCreateRequest {
-  type: "SCALE";
-  title?: string;
-  description?: string;
-  imageKey?: string;
-  minLabel?: string;
-  maxLabel?: string;
-  range?: number;
-}
-interface AbTestCreateRequest {
-  type: "AB_TEST";
-  title?: string;
-  description?: string;
-  aImageKey?: string;
-  bImageKey?: string;
-  imageRatio?: string;
-}
-interface CardSortingCreateRequest {
-  type: "CARD_SORTING";
-  title?: string;
-  description?: string;
-  cards?: string[];
-  categories?: string[];
-}
-interface TreeFeatureNode {
-  label: string;
-  children: TreeFeatureNode[];
-}
-interface TreeTestCreateRequest {
-  type: "TREE_TEST";
-  title?: string;
-  description?: string;
-  features?: TreeFeatureNode[];
-}
-interface FiveSecondCreateRequest {
-  type: "FIVE_SECOND";
-  title?: string;
-  description?: string;
-  imageKey?: string;
-  imageRatio?: string;
-  isObjective?: boolean;
-  isDuplicate?: boolean;
-  minSelect?: number;
-  maxSelect?: number;
-  isOther?: boolean;
-  options?: { content?: string }[];
-}
+type QuestionRequestItem =
+  | AbTestCreateRequest
+  | CardSortingCreateRequest
+  | FiveSecondCreateRequest
+  | ObjectiveCreateRequest
+  | ScaleCreateRequest
+  | SubjectiveCreateRequest
+  | TreeTestCreateRequest;
 
-type QuestionRequestItem = ObjectiveCreateRequest | SubjectiveCreateRequest | ScaleCreateRequest | AbTestCreateRequest | CardSortingCreateRequest | TreeTestCreateRequest | FiveSecondCreateRequest;
+const CATEGORY_MAP: Record<CategoryId, TestCreateRequestCategoriesItem> = {
+  daily: "DAILY",
+  finance: "FINANCE",
+  health: "HEALTH",
+  shopping: "SHOPPING",
+  food: "FOOD",
+  game: "GAME",
+  content: "CONTENT",
+  community: "COMMUNITY",
+  ai: "AI",
+  education: "EDUCATION",
+  travel: "TRAVEL",
+  social: "SOCIAL",
+  convenience: "CONVENIENCE",
+  information: "INFORMATION",
+  business: "BUSINESS",
+  transportation: "TRANSPORT",
+  public: "PUBLIC_ADMIN",
+};
 
 function dataUriToBlob(dataUri: string): Blob {
   const [header, base64] = dataUri.split(",");
@@ -96,7 +69,7 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
     throw new Error(`이미지 크기가 10MB를 초과해요 (${(blob.size / 1024 / 1024).toFixed(1)}MB)`);
   }
 
-  const uploadResponse = await generateUploadUrl({ extension: "jpg", fileSizeBytes: blob.size });
+  const uploadResponse = await generateUploadUrl({ extension: "jpg" });
   const { presignedUrl, fileKey } = uploadResponse.data.data ?? {};
   if (!presignedUrl || !fileKey) throw new Error("업로드 URL 발급 실패");
 
@@ -113,12 +86,12 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
   const data = question.data;
 
   switch (data.typeId) {
-    case "OBJECTIVE": {
+    case "multiple": {
       const options = await Promise.all(
         data.choices.map(async (c) => ({
           content: c.name,
           imageKey: await uploadBase64(c.imageUrl || undefined),
-        })),
+        }))
       );
       return {
         type: "OBJECTIVE",
@@ -132,7 +105,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies ObjectiveCreateRequest;
     }
 
-    case "SUBJECTIVE": {
+    case "subjective": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       return {
         type: "SUBJECTIVE",
@@ -142,7 +115,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies SubjectiveCreateRequest;
     }
 
-    case "SCALE": {
+    case "scale": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       return {
         type: "SCALE",
@@ -155,8 +128,11 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies ScaleCreateRequest;
     }
 
-    case "AB_TEST": {
-      const [aImageKey, bImageKey] = await Promise.all([uploadBase64(data.imageUrlA || undefined), uploadBase64(data.imageUrlB || undefined)]);
+    case "ab": {
+      const [aImageKey, bImageKey] = await Promise.all([
+        uploadBase64(data.imageUrlA || undefined),
+        uploadBase64(data.imageUrlB || undefined),
+      ]);
       return {
         type: "AB_TEST",
         title: data.title,
@@ -167,7 +143,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies AbTestCreateRequest;
     }
 
-    case "CARD_SORTING": {
+    case "card": {
       return {
         type: "CARD_SORTING",
         title: data.title,
@@ -177,20 +153,22 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies CardSortingCreateRequest;
     }
 
-    case "TREE_TEST": {
-      const toFeatureNode = (node: TreeNodeItem): TreeFeatureNode => ({
-        label: node.name,
-        children: node.children?.map(toFeatureNode) ?? [],
-      });
+    case "tree": {
       return {
         type: "TREE_TEST",
         title: data.title,
         description: data.description,
-        features: data.nodes?.map(toFeatureNode) ?? [],
+        features: data.nodes?.map((node) => ({
+          label: node.name,
+          children: node.children?.map((child) => ({
+            label: child.name,
+            children: child.children?.length > 0 ? child.children : undefined,
+          })),
+        })) ?? [],
       } satisfies TreeTestCreateRequest;
     }
 
-    case "FIVE_SECOND": {
+    case "fivesec": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       const isObjective = data.answerType === "multiple";
       return {
@@ -213,47 +191,61 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
   }
 }
 
-export function useSubmitTest(draftId: number | undefined) {
+export function useSubmitTest() {
   const navigate = useNavigate();
   const form = useTestCreateForm();
   const { openToast } = useToast();
 
   return useMutation({
     mutationFn: async () => {
-      if (!draftId) throw new Error("드래프트 ID가 없습니다. 처음부터 다시 시도해주세요.");
-
       let imageKeys: string[] = [];
       try {
-        imageKeys = (await Promise.all(form.images.map((img) => uploadBase64(img)))).filter((k): k is string => !!k);
+        imageKeys = (
+          await Promise.all(form.images.map((img) => uploadBase64(img)))
+        ).filter((k): k is string => !!k);
       } catch (e) {
         throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
+      let testId: number;
+      try {
+        const testResponse = await createTest({
+          title: form.name,
+          description: form.summary,
+          categories: form.categories.map((c) => CATEGORY_MAP[c]),
+          serviceName: form.serviceName || undefined,
+          serviceDescription: form.description || undefined,
+          imageKeys,
+        });
+        const id = testResponse.data.data?.id;
+        if (!id) throw new Error("테스트 ID를 받지 못했습니다.");
+        testId = id;
+      } catch (e) {
+        throw new Error(`[테스트 생성 실패] ${e instanceof Error ? e.message : String(e)}`);
+      }
+
       let mappedQuestions: QuestionRequestItem[] = [];
       try {
-        mappedQuestions = (await Promise.all(form.questions.map(mapQuestion))).filter((q): q is QuestionRequestItem => q !== null);
+        mappedQuestions = (
+          await Promise.all(form.questions.map(mapQuestion))
+        ).filter((q): q is QuestionRequestItem => q !== null);
       } catch (e) {
         throw new Error(`[질문 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
-      try {
-        await updateDraft(draftId, {
-          title: form.name,
-          description: form.summary,
-          categories: form.categories,
-          serviceName: form.serviceName || undefined,
-          serviceDescription: form.description || undefined,
-          imageKeys,
-          questionsPayload: { questions: mappedQuestions },
-        });
-      } catch (e) {
-        throw new Error(`[테스트 초안 업데이트 실패] ${e instanceof Error ? e.message : String(e)}`);
+      if (mappedQuestions.length > 0) {
+        try {
+          await createQuestions(testId, { questions: mappedQuestions });
+        } catch (e) {
+          throw new Error(`[질문 등록 실패] ${e instanceof Error ? e.message : String(e)}`);
+        }
       }
 
-      return draftId;
+      return testId;
     },
-    onSuccess: (draftId) => {
-      navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId }, replace: true });
+    onSuccess: (testId) => {
+      form.reset();
+      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } });
     },
     onError: async (error) => {
       let message = `실패: ${String(error)}`;
