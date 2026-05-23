@@ -5,7 +5,10 @@
  * MATE 서버 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -18,33 +21,34 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult,
-} from "@tanstack/react-query";
+  UseQueryResult
+} from '@tanstack/react-query';
 
-import { kyMutator } from "../mutator";
-import type { ErrorType } from "../mutator";
+import { kyMutator } from '../mutator';
+import type { ErrorType } from '../mutator';
 export interface QuestionCreateItem {
   type: string;
 }
 
-export type AbTestCreateRequestImageRatio = (typeof AbTestCreateRequestImageRatio)[keyof typeof AbTestCreateRequestImageRatio];
+export type AbTestCreateRequestImageRatio = typeof AbTestCreateRequestImageRatio[keyof typeof AbTestCreateRequestImageRatio];
+
 
 export const AbTestCreateRequestImageRatio = {
-  "9:16": "9:16",
-  "1:1": "1:1",
-  "4:3": "4:3",
+  '9:16': '9:16',
+  '1:1': '1:1',
+  '4:3': '4:3',
 } as const;
 
 export type AbTestCreateRequest = QuestionCreateItem & {
   /**
-   * @minLength 0
-   * @maxLength 34
-   */
+     * @minLength 0
+     * @maxLength 34
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 50
-   */
+     * @minLength 0
+     * @maxLength 50
+     */
   description?: string;
   /** @minLength 1 */
   aImageKey?: string;
@@ -58,47 +62,48 @@ export type CardSortingCreateRequest = QuestionCreateItem & {
   title?: string;
   description?: string;
   /**
-   * @minItems 4
-   * @maxItems 12
-   * @items.minLength 0
-   * @items.maxLength 16
-   */
+     * @minItems 4
+     * @maxItems 12
+     * @items.minLength 0
+     * @items.maxLength 16
+     */
   cards: string[];
   /**
-   * @minItems 1
-   * @maxItems 3
-   * @items.minLength 0
-   * @items.maxLength 12
-   */
+     * @minItems 1
+     * @maxItems 3
+     * @items.minLength 0
+     * @items.maxLength 12
+     */
   categories: string[];
 };
 
-export type FiveSecondCreateRequestImageRatio = (typeof FiveSecondCreateRequestImageRatio)[keyof typeof FiveSecondCreateRequestImageRatio];
+export type FiveSecondCreateRequestImageRatio = typeof FiveSecondCreateRequestImageRatio[keyof typeof FiveSecondCreateRequestImageRatio];
+
 
 export const FiveSecondCreateRequestImageRatio = {
-  "9:16": "9:16",
-  "1:1": "1:1",
-  "4:3": "4:3",
+  '9:16': '9:16',
+  '1:1': '1:1',
+  '4:3': '4:3',
 } as const;
 
 export interface FiveSecondOptionRequest {
   /**
-   * @minLength 0
-   * @maxLength 50
-   */
+     * @minLength 0
+     * @maxLength 50
+     */
   content?: string;
 }
 
 export type FiveSecondCreateRequest = QuestionCreateItem & {
   /**
-   * @minLength 0
-   * @maxLength 34
-   */
+     * @minLength 0
+     * @maxLength 34
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 50
-   */
+     * @minLength 0
+     * @maxLength 50
+     */
   description?: string;
   /** @minLength 1 */
   imageKey?: string;
@@ -113,46 +118,47 @@ export type FiveSecondCreateRequest = QuestionCreateItem & {
   /** 객관식일 때만 필수입니다. 주관식일 때는 null이어야 합니다. */
   isOther?: boolean;
   /**
-   * 5초 테스트 객관식 선택지
-   * @minItems 0
-   * @maxItems 10
-   */
+     * 5초 테스트 객관식 선택지
+     * @minItems 0
+     * @maxItems 10
+     */
   options?: FiveSecondOptionRequest[];
 };
 
 export interface ObjectiveOptionRequest {
   /**
-   * @minLength 0
-   * @maxLength 17
-   */
+     * @minLength 0
+     * @maxLength 17
+     */
   content?: string;
   imageKey?: string;
 }
 
 export type ObjectiveCreateRequest = QuestionCreateItem & {
   /**
-   * @minLength 0
-   * @maxLength 34
-   */
+     * @minLength 0
+     * @maxLength 34
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 55
-   */
+     * @minLength 0
+     * @maxLength 55
+     */
   description?: string;
   isDuplicate: boolean;
   maxSelect?: number;
   minSelect?: number;
   isOther: boolean;
   /**
-   * 객관식 선택지 목록
-   * @minItems 2
-   * @maxItems 2147483647
-   */
+     * 객관식 선택지 목록
+     * @minItems 2
+     * @maxItems 2147483647
+     */
   options: ObjectiveOptionRequest[];
 };
 
-export type ScaleCreateRequestRange = (typeof ScaleCreateRequestRange)[keyof typeof ScaleCreateRequestRange];
+export type ScaleCreateRequestRange = typeof ScaleCreateRequestRange[keyof typeof ScaleCreateRequestRange];
+
 
 export const ScaleCreateRequestRange = {
   NUMBER_5: 5,
@@ -161,39 +167,39 @@ export const ScaleCreateRequestRange = {
 
 export type ScaleCreateRequest = QuestionCreateItem & {
   /**
-   * @minLength 0
-   * @maxLength 34
-   */
+     * @minLength 0
+     * @maxLength 34
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 50
-   */
+     * @minLength 0
+     * @maxLength 50
+     */
   description?: string;
   imageKey?: string;
   /**
-   * @minLength 0
-   * @maxLength 100
-   */
+     * @minLength 0
+     * @maxLength 100
+     */
   minLabel?: string;
   /**
-   * @minLength 0
-   * @maxLength 100
-   */
+     * @minLength 0
+     * @maxLength 100
+     */
   maxLabel?: string;
   range: ScaleCreateRequestRange;
 };
 
 export type SubjectiveCreateRequest = QuestionCreateItem & {
   /**
-   * @minLength 0
-   * @maxLength 34
-   */
+     * @minLength 0
+     * @maxLength 34
+     */
   title?: string;
   /**
-   * @minLength 0
-   * @maxLength 55
-   */
+     * @minLength 0
+     * @maxLength 55
+     */
   description?: string;
   imageKey?: string;
 };
@@ -209,10 +215,10 @@ export interface Feature {
   /** @minLength 1 */
   label?: string;
   /**
-   * 하위 노드 목록
-   * @minItems 0
-   * @maxItems 4
-   */
+     * 하위 노드 목록
+     * @minItems 0
+     * @maxItems 4
+     */
   children?: TreeNode[];
 }
 
@@ -221,31 +227,32 @@ export type TreeTestCreateRequest = QuestionCreateItem & {
   title?: string;
   description?: string;
   /**
-   * 트리테스트 루트 기능 목록
-   * @minItems 1
-   * @maxItems 4
-   */
+     * 트리테스트 루트 기능 목록
+     * @minItems 1
+     * @maxItems 4
+     */
   features: Feature[];
 };
 
 export interface QuestionCreateRequest {
   /**
-   * 등록할 질문 문항 목록
-   * @minItems 1
-   */
+     * 등록할 질문 문항 목록
+     * @minItems 1
+     */
   questions?: (AbTestCreateRequest | CardSortingCreateRequest | FiveSecondCreateRequest | ObjectiveCreateRequest | ScaleCreateRequest | SubjectiveCreateRequest | TreeTestCreateRequest)[];
 }
 
-export type QuestionCreateResultType = (typeof QuestionCreateResultType)[keyof typeof QuestionCreateResultType];
+export type QuestionCreateResultType = typeof QuestionCreateResultType[keyof typeof QuestionCreateResultType];
+
 
 export const QuestionCreateResultType = {
-  OBJECTIVE: "OBJECTIVE",
-  SUBJECTIVE: "SUBJECTIVE",
-  FIVE_SECOND: "FIVE_SECOND",
-  SCALE: "SCALE",
-  AB_TEST: "AB_TEST",
-  CARD_SORTING: "CARD_SORTING",
-  TREE_TEST: "TREE_TEST",
+  OBJECTIVE: 'OBJECTIVE',
+  SUBJECTIVE: 'SUBJECTIVE',
+  FIVE_SECOND: 'FIVE_SECOND',
+  SCALE: 'SCALE',
+  AB_TEST: 'AB_TEST',
+  CARD_SORTING: 'CARD_SORTING',
+  TREE_TEST: 'TREE_TEST',
 } as const;
 
 export interface QuestionCreateResult {
@@ -269,16 +276,17 @@ export interface ApiResponseQuestionCreateResponse {
 /**
  * 질문 유형
  */
-export type QuestionSummaryItemType = (typeof QuestionSummaryItemType)[keyof typeof QuestionSummaryItemType];
+export type QuestionSummaryItemType = typeof QuestionSummaryItemType[keyof typeof QuestionSummaryItemType];
+
 
 export const QuestionSummaryItemType = {
-  OBJECTIVE: "OBJECTIVE",
-  SUBJECTIVE: "SUBJECTIVE",
-  FIVE_SECOND: "FIVE_SECOND",
-  SCALE: "SCALE",
-  AB_TEST: "AB_TEST",
-  CARD_SORTING: "CARD_SORTING",
-  TREE_TEST: "TREE_TEST",
+  OBJECTIVE: 'OBJECTIVE',
+  SUBJECTIVE: 'SUBJECTIVE',
+  FIVE_SECOND: 'FIVE_SECOND',
+  SCALE: 'SCALE',
+  AB_TEST: 'AB_TEST',
+  CARD_SORTING: 'CARD_SORTING',
+  TREE_TEST: 'TREE_TEST',
 } as const;
 
 /**
@@ -314,19 +322,29 @@ export interface ApiResponseQuestionSummaryResponse {
   data?: QuestionSummaryResponse;
 }
 
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
+
 export type getQuestionsDetailsResponseDefault = {
-  data: unknown;
-  status: number;
-};
-export type getQuestionsDetailsResponseError = getQuestionsDetailsResponseDefault & {
+  data: unknown
+  status: number
+}
+
+;
+export type getQuestionsDetailsResponseError = (getQuestionsDetailsResponseDefault) & {
   headers: Headers;
 };
 
-export type getQuestionsDetailsResponse = getQuestionsDetailsResponseError;
+export type getQuestionsDetailsResponse = (getQuestionsDetailsResponseError)
 
-export const getGetQuestionsDetailsUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/questions`;
-};
+export const getGetQuestionsDetailsUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/questions`
+}
 
 /**
  * testId에 해당한 테스트의 모든 질문 문항을 상세조회합니다. TT01-01 화면에 해당하는 api 입니다.
@@ -338,58 +356,83 @@ export const getGetQuestionsDetailsUrl = (testId: number) => {
  * @summary 질문 전체 조회
  */
 export const getQuestionsDetails = async (testId: number, options?: RequestInit): Promise<getQuestionsDetailsResponse> => {
-  return kyMutator<getQuestionsDetailsResponse>(getGetQuestionsDetailsUrl(testId), {
+
+  return kyMutator<getQuestionsDetailsResponse>(getGetQuestionsDetailsUrl(testId),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGetQuestionsDetailsMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError, { testId: number }, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError, { testId: number }, TContext> => {
-  const mutationKey = ["getQuestionsDetails"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionsDetails>>, { testId: number }> = (props) => {
-    const { testId } = props ?? {};
+  }
+);}
 
-    return getQuestionsDetails(testId);
-  };
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GetQuestionsDetailsMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionsDetails>>>;
 
-export type GetQuestionsDetailsMutationError = ErrorType<unknown>;
+export const getGetQuestionsDetailsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError,{testId: number}, TContext> => {
 
-/**
+const mutationKey = ['getQuestionsDetails'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionsDetails>>, {testId: number}> = (props) => {
+          const {testId} = props ?? {};
+
+          return  getQuestionsDetails(testId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetQuestionsDetailsMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionsDetails>>>
+
+    export type GetQuestionsDetailsMutationError = ErrorType<unknown>
+
+    /**
  * @summary 질문 전체 조회
  */
-export const useGetQuestionsDetails = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError, { testId: number }, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getQuestionsDetails>>, TError, { testId: number }, TContext> => {
-  return useMutation(getGetQuestionsDetailsMutationOptions(options), queryClient);
-};
+export const useGetQuestionsDetails = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getQuestionsDetails>>,
+        TError,
+        {testId: number},
+        TContext
+      > => {
+      return useMutation(getGetQuestionsDetailsMutationOptions(options), queryClient);
+    }
 
 export type createQuestionsResponse200 = {
-  data: ApiResponseQuestionCreateResponse;
-  status: 200;
-};
+  data: ApiResponseQuestionCreateResponse
+  status: 200
+}
 
-export type createQuestionsResponseSuccess = createQuestionsResponse200 & {
+export type createQuestionsResponseSuccess = (createQuestionsResponse200) & {
   headers: Headers;
 };
-export type createQuestionsResponse = createQuestionsResponseSuccess;
+;
 
-export const getCreateQuestionsUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/questions`;
-};
+export type createQuestionsResponse = (createQuestionsResponseSuccess)
+
+export const getCreateQuestionsUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/questions`
+}
 
 /**
  * 여러 유형의 질문 문항을 한 번에 등록합니다. MKTT_03 (질문 목록) 화면에 해당하는 api 입니다.
@@ -403,92 +446,123 @@ export const getCreateQuestionsUrl = (testId: number) => {
 
  * @summary 질문 전체 등록
  */
-export const createQuestions = async (testId: number, questionCreateRequest: QuestionCreateRequest, options?: RequestInit): Promise<createQuestionsResponse> => {
-  return kyMutator<createQuestionsResponse>(getCreateQuestionsUrl(testId), {
+export const createQuestions = async (testId: number,
+    questionCreateRequest: QuestionCreateRequest, options?: RequestInit): Promise<createQuestionsResponse> => {
+
+  return kyMutator<createQuestionsResponse>(getCreateQuestionsUrl(testId),
+  {
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(questionCreateRequest),
-  });
-};
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(questionCreateRequest)
+  }
+);}
 
-export const getCreateQuestionsQueryKey = (testId: number, questionCreateRequest?: QuestionCreateRequest) => {
-  return ["POST", `/api/v1/tests/${testId}/questions`, questionCreateRequest] as const;
-};
 
-export const getCreateQuestionsQueryOptions = <TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
-  testId: number,
-  questionCreateRequest: QuestionCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> },
+
+
+
+export const getCreateQuestionsQueryKey = (testId: number,
+    questionCreateRequest?: QuestionCreateRequest,) => {
+    return [
+    'POST', `/api/v1/tests/${testId}/questions`, questionCreateRequest
+    ] as const;
+    }
+
+
+export const getCreateQuestionsQueryOptions = <TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(testId: number,
+    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getCreateQuestionsQueryKey(testId, questionCreateRequest);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof createQuestions>>> = ({ signal }) => createQuestions(testId, questionCreateRequest, { signal });
+  const queryKey =  queryOptions?.queryKey ?? getCreateQuestionsQueryKey(testId,questionCreateRequest);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type CreateQuestionsQueryResult = NonNullable<Awaited<ReturnType<typeof createQuestions>>>;
-export type CreateQuestionsQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createQuestions>>> = ({ signal }) => createQuestions(testId,questionCreateRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CreateQuestionsQueryResult = NonNullable<Awaited<ReturnType<typeof createQuestions>>>
+export type CreateQuestionsQueryError = ErrorType<unknown>
+
 
 export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
-  testId: number,
-  questionCreateRequest: QuestionCreateRequest,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof createQuestions>>, TError, Awaited<ReturnType<typeof createQuestions>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    questionCreateRequest: QuestionCreateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createQuestions>>,
+          TError,
+          Awaited<ReturnType<typeof createQuestions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
-  testId: number,
-  questionCreateRequest: QuestionCreateRequest,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof createQuestions>>, TError, Awaited<ReturnType<typeof createQuestions>>>, "initialData">;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createQuestions>>,
+          TError,
+          Awaited<ReturnType<typeof createQuestions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
-  testId: number,
-  questionCreateRequest: QuestionCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 질문 전체 등록
  */
 
 export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
-  testId: number,
-  questionCreateRequest: QuestionCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getCreateQuestionsQueryOptions(testId, questionCreateRequest, options);
+ testId: number,
+    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getCreateQuestionsQueryOptions(testId,questionCreateRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
+
+
+
+
+
+
 export type getQuestionDetailResponseDefault = {
-  data: unknown;
-  status: number;
-};
-export type getQuestionDetailResponseError = getQuestionDetailResponseDefault & {
+  data: unknown
+  status: number
+}
+
+;
+export type getQuestionDetailResponseError = (getQuestionDetailResponseDefault) & {
   headers: Headers;
 };
 
-export type getQuestionDetailResponse = getQuestionDetailResponseError;
+export type getQuestionDetailResponse = (getQuestionDetailResponseError)
 
-export const getGetQuestionDetailUrl = (testId: number, questionId: number) => {
-  return `/api/v1/tests/${testId}/questions/${questionId}`;
-};
+export const getGetQuestionDetailUrl = (testId: number,
+    questionId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/questions/${questionId}`
+}
 
 /**
  * testId에 해당하는 테스트의 특정 질문 문항 하나를 상세조회합니다. 통계의 질문 탭 MKST_01 화면에 해당하는 api입니다.
@@ -499,59 +573,85 @@ export const getGetQuestionDetailUrl = (testId: number, questionId: number) => {
 
  * @summary 질문 상세 조회
  */
-export const getQuestionDetail = async (testId: number, questionId: number, options?: RequestInit): Promise<getQuestionDetailResponse> => {
-  return kyMutator<getQuestionDetailResponse>(getGetQuestionDetailUrl(testId, questionId), {
+export const getQuestionDetail = async (testId: number,
+    questionId: number, options?: RequestInit): Promise<getQuestionDetailResponse> => {
+
+  return kyMutator<getQuestionDetailResponse>(getGetQuestionDetailUrl(testId,questionId),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGetQuestionDetailMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError, { testId: number; questionId: number }, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError, { testId: number; questionId: number }, TContext> => {
-  const mutationKey = ["getQuestionDetail"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionDetail>>, { testId: number; questionId: number }> = (props) => {
-    const { testId, questionId } = props ?? {};
+  }
+);}
 
-    return getQuestionDetail(testId, questionId);
-  };
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GetQuestionDetailMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionDetail>>>;
 
-export type GetQuestionDetailMutationError = ErrorType<unknown>;
+export const getGetQuestionDetailMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError,{testId: number;questionId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError,{testId: number;questionId: number}, TContext> => {
 
-/**
+const mutationKey = ['getQuestionDetail'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionDetail>>, {testId: number;questionId: number}> = (props) => {
+          const {testId,questionId} = props ?? {};
+
+          return  getQuestionDetail(testId,questionId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetQuestionDetailMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionDetail>>>
+
+    export type GetQuestionDetailMutationError = ErrorType<unknown>
+
+    /**
  * @summary 질문 상세 조회
  */
-export const useGetQuestionDetail = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError, { testId: number; questionId: number }, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getQuestionDetail>>, TError, { testId: number; questionId: number }, TContext> => {
-  return useMutation(getGetQuestionDetailMutationOptions(options), queryClient);
-};
+export const useGetQuestionDetail = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError,{testId: number;questionId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getQuestionDetail>>,
+        TError,
+        {testId: number;questionId: number},
+        TContext
+      > => {
+      return useMutation(getGetQuestionDetailMutationOptions(options), queryClient);
+    }
 
 export type getQuestionSummaryResponse200 = {
-  data: ApiResponseQuestionSummaryResponse;
-  status: 200;
-};
+  data: ApiResponseQuestionSummaryResponse
+  status: 200
+}
 
-export type getQuestionSummaryResponseSuccess = getQuestionSummaryResponse200 & {
+export type getQuestionSummaryResponseSuccess = (getQuestionSummaryResponse200) & {
   headers: Headers;
 };
-export type getQuestionSummaryResponse = getQuestionSummaryResponseSuccess;
+;
 
-export const getGetQuestionSummaryUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/questions/summary`;
-};
+export type getQuestionSummaryResponse = (getQuestionSummaryResponseSuccess)
+
+export const getGetQuestionSummaryUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/questions/summary`
+}
 
 /**
  * testId에 해당하는 테스트의 질문 목록 정보를 조회합니다. 통계의 질문 탭 MKST_01 화면에 해당하는 api입니다.
@@ -562,41 +662,60 @@ export const getGetQuestionSummaryUrl = (testId: number) => {
  * @summary 질문 목록 조회
  */
 export const getQuestionSummary = async (testId: number, options?: RequestInit): Promise<getQuestionSummaryResponse> => {
-  return kyMutator<getQuestionSummaryResponse>(getGetQuestionSummaryUrl(testId), {
+
+  return kyMutator<getQuestionSummaryResponse>(getGetQuestionSummaryUrl(testId),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGetQuestionSummaryMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError, { testId: number }, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError, { testId: number }, TContext> => {
-  const mutationKey = ["getQuestionSummary"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionSummary>>, { testId: number }> = (props) => {
-    const { testId } = props ?? {};
+  }
+);}
 
-    return getQuestionSummary(testId);
-  };
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GetQuestionSummaryMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionSummary>>>;
 
-export type GetQuestionSummaryMutationError = ErrorType<unknown>;
+export const getGetQuestionSummaryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError,{testId: number}, TContext> => {
 
-/**
+const mutationKey = ['getQuestionSummary'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getQuestionSummary>>, {testId: number}> = (props) => {
+          const {testId} = props ?? {};
+
+          return  getQuestionSummary(testId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetQuestionSummaryMutationResult = NonNullable<Awaited<ReturnType<typeof getQuestionSummary>>>
+
+    export type GetQuestionSummaryMutationError = ErrorType<unknown>
+
+    /**
  * @summary 질문 목록 조회
  */
-export const useGetQuestionSummary = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError, { testId: number }, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getQuestionSummary>>, TError, { testId: number }, TContext> => {
-  return useMutation(getGetQuestionSummaryMutationOptions(options), queryClient);
-};
+export const useGetQuestionSummary = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getQuestionSummary>>,
+        TError,
+        {testId: number},
+        TContext
+      > => {
+      return useMutation(getGetQuestionSummaryMutationOptions(options), queryClient);
+    }
