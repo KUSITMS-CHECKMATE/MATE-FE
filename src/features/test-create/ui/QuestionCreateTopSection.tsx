@@ -243,20 +243,24 @@ export function QuestionCreateTopSection({
       ) : (
         <>
           <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-            <TextField.Clearable
-              variant="line"
-              label="(선택) 추가 설명을 할까요?"
-              labelOption="sustain"
-              value={questionDescription}
-              placeholder="추가 설명을 입력해주세요"
-              maxLength={55}
-              onChange={(e) => onChangeDescription(e.target.value.slice(0, 55))}
-              onClear={() => onChangeDescription("")}
-              onFocus={descFocus.onFocus}
-              onBlur={descFocus.onBlur}
-            />
-          </motion.div>
+          {questionDescription.trim().length > 0 && !descFocus.isFocused ? (
+            <ClickableTopRow label="(선택) 추가 설명" text={questionDescription} placeholder="추가 설명을 입력해주세요" onClick={() => sheet.open("description", questionDescription)} />
+          ) : (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+              <TextField.Clearable
+                variant="line"
+                label="(선택) 추가 설명을 할까요?"
+                labelOption="sustain"
+                value={questionDescription}
+                placeholder="추가 설명을 입력해주세요"
+                maxLength={55}
+                onChange={(e) => onChangeDescription(e.target.value.slice(0, 55))}
+                onClear={() => onChangeDescription("")}
+                onFocus={descFocus.onFocus}
+                onBlur={descFocus.onBlur}
+              />
+            </motion.div>
+          )}
           {imageUploadSection}
           <PhaseBottomCTA
             isFocused={descFocus.isFocused}
