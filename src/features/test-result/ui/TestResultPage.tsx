@@ -3,6 +3,7 @@ import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top }
 import { ResultTabContent } from "./ResultTabContent";
 import { adaptive } from "@toss/tds-colors";
 import { MOCK_QUESTIONS } from "../model/mock";
+import { usePdfDownload } from "../model/usePdfDownload";
 
 interface Props {
   testId: string;
@@ -10,13 +11,20 @@ interface Props {
 }
 
 export function TestResultPage({ testId, status }: Props) {
-  console.log(testId);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+  const { generate: generatePdf, isGenerating } = usePdfDownload(testId);
 
   function toggleFormat(format: "pdf" | "csv") {
     setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
+  }
+
+  async function handleDownload() {
+    if (selectedFormats.pdf) {
+      await generatePdf();
+    }
+    setIsDownloadSheetOpen(false);
   }
 
   return (
@@ -154,8 +162,14 @@ export function TestResultPage({ testId, status }: Props) {
                 닫기
               </Button>
             }
-            // TODO: 선택한 형식(selectedFormats)으로 파일 다운로드 API 연결 후 onClick 구현
-            rightButton={<Button disabled={!selectedFormats.pdf && !selectedFormats.csv}>다운받기</Button>}
+            rightButton={
+              <Button
+                disabled={(!selectedFormats.pdf && !selectedFormats.csv) || isGenerating}
+                onClick={handleDownload}
+              >
+                {isGenerating ? "생성 중..." : "다운받기"}
+              </Button>
+            }
           />
         }
       >
