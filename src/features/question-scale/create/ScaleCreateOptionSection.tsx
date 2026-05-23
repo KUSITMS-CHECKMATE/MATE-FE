@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { IconButton, ListHeader, ListRow, Switch, Text } from "@toss/tds-mobile";
+import { Asset, ListHeader, ListRow, Switch } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { ScaleLabelEditSheet } from "./ScaleLabelEditSheet";
 
-const SCALE_POINT_CONNECTOR_ICON_SRC =
-  "https://static.toss.im/icons/png/4x/icon-o-mono.png";
 
 interface ScaleCreateOptionSectionProps {
   scaleCount: 5 | 7;
@@ -40,19 +38,17 @@ export function ScaleCreateOptionSection({
         className="w-full"
       />
 
-      <div className="flex w-full items-end justify-center px-3 py-3">
+      <div className={`flex flex-row px-4 mt-3 mb-1 ${scaleCount === 7 ? "justify-between" : "justify-center gap-3"}`}>
         {Array.from({ length: scaleCount }, (_, i) => i + 1).map((point) => (
-          <div key={point} className="flex flex-col items-center gap-1">
-            <Text color={adaptive.grey500} typography="t7" fontWeight="bold">
-              {point}
-            </Text>
-            <IconButton
-              src={SCALE_POINT_CONNECTOR_ICON_SRC}
-              iconSize={24}
-              variant="clear"
-              color={adaptive.grey600}
-              aria-label={`${point}점 척도 표시`}
-            />
+          <div key={point} className="flex items-center justify-center">
+            <Asset.Text
+              frameShape={Asset.frameShape.CircleLarge}
+              backgroundColor={adaptive.greyOpacity100}
+              style={{ color: adaptive.grey600, fontSize: "15px", fontWeight: "bold" }}
+              aria-label={`${point}점`}
+            >
+              {String(point)}
+            </Asset.Text>
           </div>
         ))}
       </div>

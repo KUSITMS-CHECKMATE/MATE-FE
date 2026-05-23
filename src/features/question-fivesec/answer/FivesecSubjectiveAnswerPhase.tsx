@@ -10,6 +10,7 @@ interface Props {
   isFirst: boolean;
   isLast: boolean;
   prevLabel?: string;
+  onlyPrev?: boolean;
   onChange: (text: string) => void;
   onPrev: () => void;
   onGoNext: () => void;
@@ -24,6 +25,7 @@ export function FivesecSubjectiveAnswerPhase({
   isFirst,
   isLast,
   prevLabel = "이전",
+  onlyPrev,
   onChange,
   onPrev,
   onGoNext,
@@ -57,7 +59,9 @@ export function FivesecSubjectiveAnswerPhase({
           onChange={(e) => onChange(e.target.value)}
         />
       </div>
-      {isFirst ? (
+      {onlyPrev ? (
+        <FixedBottomCTA onClick={onPrev}>{prevLabel}</FixedBottomCTA>
+      ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
           {isLast ? "완료하기" : "다음"}
         </FixedBottomCTA>
