@@ -245,3 +245,36 @@ pnpm test:e2e:debug    # 스텝별 디버그
 - TDS / MCP 먼저 확인하는 가이드
 - Query / Zustand 역할 분리 유지
 - PR/커밋까지 같이 정리하는 개발 파트너
+
+---
+
+## 10. Agentation 피드백 워크플로
+
+앱에서 UI 피드백을 남기면 Supabase `agentation_feedback` 테이블에 자동 저장된다.
+"agentation 피드백 고쳐줘" 또는 유사한 요청 시 **반드시 아래 순서를 따른다.**
+
+### 처리 순서
+
+1. **Supabase에서 피드백 조회** — `mcp__supabase__execute_sql`로 미처리 항목 읽기
+   ```sql
+   SELECT * FROM agentation_feedback ORDER BY created_at ASC;
+   ```
+
+2. **피드백 내용 분석** — `comment`, `element`, `element_path`, `url` 필드를 기반으로 수정 대상 파악
+
+3. **코드 수정** — 피드백에 맞게 코드 변경
+
+4. **완료 후 Supabase에서 삭제** — 처리한 항목을 `annotation_id` 기준으로 삭제
+   ```sql
+   DELETE FROM agentation_feedback WHERE annotation_id = '...';
+   ```
+   여러 건이면 한 번에 삭제:
+   ```sql
+   DELETE FROM agentation_feedback WHERE annotation_id = ANY(ARRAY['id1', 'id2']);
+   ```
+
+### 규칙
+
+- **삭제는 코드 수정 완료 후에만** — 수정 전 삭제 금지
+- 피드백이 0건이면 "처리할 피드백이 없습니다"로 안내
+- 피드백 내용이 모호하면 수정 전에 확인 요청
