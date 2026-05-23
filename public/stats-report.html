@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATE 통계 결과</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #D1D5DB;
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+@media print {
+  body { background: white; padding: 0; gap: 0; }
+  .page { page-break-after: always; box-shadow: none !important; margin: 0 !important; }
+}
+@page { size: 595px 842px; margin: 0; }
+
+/* ─── Page ─── */
+.page {
+  width: 595px;
+  height: 842px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ─── Header ─── */
+.hd {
+  height: 57px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+.hd span { font-size: 11px; color: #9CA3AF; }
+
+/* ─── Top (badge + title + count) ─── */
+.top {
+  height: 117px;
+  padding: 18px 40px 0;
+  flex-shrink: 0;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #4B5563;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.q-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.q-cnt { font-size: 13px; color: #6B7280; }
+
+/* ─── Body ─── */
+.body { flex: 1; padding: 22px 40px 12px; overflow: hidden; }
+
+/* ─── Footer ─── */
+.ft {
+  height: 53px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #9CA3AF;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════
+   Horizontal Bar Chart
+   ════════════════════════════════ */
+.hbar { display: flex; flex-direction: column; }
+.hbar-row {
+  display: grid;
+  grid-template-columns: 118px 1fr 100px;
+  align-items: center;
+  height: 36px;
+  gap: 0;
+}
+.hbl {
+  font-size: 11px;
+  color: #374151;
+  text-align: right;
+  padding-right: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hbt {
+  position: relative;
+  height: 16px;
+  border-left: 1.5px solid #D1D5DB;
+}
+.hbf {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+}
+.hbf.p { background: #3D5AFE; }
+.hbf.g { background: #E5E7EB; }
+.hbv {
+  font-size: 11px;
+  color: #374151;
+  padding-left: 10px;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════
+   Vertical Bar Chart (Scale)
+   ════════════════════════════════ */
+.vbar-wrap { display: flex; flex-direction: column; }
+.vbar-inner {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  padding-top: 36px;
+  gap: 0;
+}
+.vbar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.vbar-above {
+  font-size: 10px;
+  color: #374151;
+  text-align: center;
+  line-height: 1.35;
+  margin-bottom: 5px;
+  white-space: pre;
+}
+.vbar-bar { width: 62px; border-radius: 3px 3px 0 0; }
+.vbar-bar.p { background: #3D5AFE; }
+.vbar-bar.g { background: #E5E7EB; }
+.vbar-xaxis {
+  display: flex;
+  border-top: 1px solid #E5E7EB;
+  margin-top: 0;
+}
+.vbar-xcol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 7px;
+}
+.vbar-xcol .xn { font-size: 14px; font-weight: 600; color: #374151; }
+.vbar-xcol .xs { font-size: 9px; color: #9CA3AF; margin-top: 3px; text-align: center; line-height: 1.3; }
+
+/* ════════════════════════════════
+   Pie Chart
+   ════════════════════════════════ */
+.pie-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0 0;
+}
+.pie-legend { display: flex; gap: 20px; }
+.pie-li { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #374151; }
+.pdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ════════════════════════════════
+   Table
+   ════════════════════════════════ */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 18px; }
+.tbl th {
+  background: #F9FAFB;
+  padding: 9px 14px;
+  color: #374151;
+  font-weight: 600;
+  text-align: left;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+}
+.tbl td {
+  padding: 9px 14px;
+  color: #374151;
+  border-bottom: 1px solid #F3F4F6;
+}
+.tbl tr.tr-total td {
+  font-weight: 600;
+  color: #111827;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: none;
+}
+
+/* ════════════════════════════════
+   AI Summary + Subjective List
+   ════════════════════════════════ */
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 5px;
+}
+.ai-icon { color: #3D5AFE; font-size: 16px; }
+.ai-sub { font-size: 12px; color: #6B7280; margin-bottom: 9px; }
+.ai-box {
+  background: #F9FAFB;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 11.5px;
+  color: #374151;
+  line-height: 1.7;
+}
+.sj-head {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+.sj-sub { font-size: 12px; color: #6B7280; margin-bottom: 10px; }
+.sj-list { display: flex; flex-direction: column; gap: 6px; }
+.sj-item {
+  background: #F9FAFB;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #374151;
+}
+
+/* ════════════════════════════════
+   Stacked Bar Chart (Card Sorting)
+   ════════════════════════════════ */
+.sbar-legend {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+  justify-content: center;
+}
+.sbl-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #374151; }
+.sbl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.sbar-rows { display: flex; flex-direction: column; gap: 10px; }
+.sbar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 62px;
+  align-items: center;
+  gap: 10px;
+}
+.sbl { font-size: 11px; color: #374151; text-align: right; }
+.sbt { height: 16px; display: flex; border-radius: 2px; overflow: hidden; }
+.sbs { height: 100%; }
+.sbv { font-size: 10px; color: #6B7280; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     Page 1 · 객관식
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">객관식 (단일 선택)</div>
+    <div class="q-title">다음 중 가장 자주 사용하는 기능은 무엇인가요?</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="hbar">
+      <div class="hbar-row">
+        <div class="hbl">파일 공유 기능</div>
+        <div class="hbt"><div class="hbf p" style="width:70%"></div></div>
+        <div class="hbv">— 응답 35 (35%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">메시지 기능</div>
+        <div class="hbt"><div class="hbf g" style="width:52%"></div></div>
+        <div class="hbv">— 응답 26 (26%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">알림 설정</div>
+        <div class="hbt"><div class="hbf g" style="width:24%"></div></div>
+        <div class="hbv">— 응답 12 (12%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">검색 기능</div>
+        <div class="hbt"><div class="hbf g" style="width:18%"></div></div>
+        <div class="hbv">— 응답 9 (9%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">캘린더 연동</div>
+        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
+        <div class="hbv">— 응답 7 (7%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">마이페이지</div>
+        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
+        <div class="hbv">— 응답 5 (5%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">보고서 내보내기</div>
+        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
+        <div class="hbv">— 응답 4 (4%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">권한 관리</div>
+        <div class="hbt"><div class="hbf g" style="width:4%"></div></div>
+        <div class="hbv">— 응답 2 (2%)</div>
+      </div>
+    </div>
+  </div>
+  <div class="ft">1/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 2 · 주관식
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">주관식</div>
+    <div class="q-title">이 서비스를 사용하면서 불편했던 점은 무엇인가요?</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="ai-head">
+      <span class="ai-icon">✦</span>
+      AI 요약
+    </div>
+    <div class="ai-sub">모든 응답을 보고 싶다면 엑셀 파일로 확인해주세요.</div>
+    <div class="ai-box">
+      응답자들은 주로 <b>로딩 속도 저하</b>와 <b>직관적이지 않은 네비게이션</b>을 불편 사항으로 꼽았습니다. 특히 파일 첨부 시 처리 시간이 길고, 메뉴 구조가 복잡해 원하는 기능을 찾기 어렵다는 의견이 많았습니다. 일부 응답자는 모바일 환경에서의 UI 최적화 부족도 지적했습니다.
+    </div>
+
+    <div class="sj-head">주요 응답 유형</div>
+    <div class="sj-sub">많이 나온 의견들로 정리했어요.</div>
+    <div class="sj-list">
+      <div class="sj-item">로딩 속도가 너무 느려서 업무 효율이 떨어졌습니다.</div>
+      <div class="sj-item">메뉴 구조가 복잡해서 원하는 기능을 찾기 어려웠어요.</div>
+      <div class="sj-item">파일 첨부 시 오류가 자주 발생했습니다.</div>
+      <div class="sj-item">모바일에서 버튼이 너무 작아 터치하기 불편했어요.</div>
+      <div class="sj-item">알림이 너무 많이 와서 중요한 알림을 놓쳤습니다.</div>
+      <div class="sj-item">검색 결과가 정확하지 않은 경우가 많았습니다.</div>
+      <div class="sj-item">다크모드 지원이 없어서 장시간 사용 시 눈이 피로했어요.</div>
+    </div>
+  </div>
+  <div class="ft">2/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 3 · A/B 테스트
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">A/B 테스트</div>
+    <div class="q-title">두 가지 홈 화면 디자인 중 어떤 것이 더 직관적인가요?</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="pie-area">
+      <!-- A안 77% (277.2°), B안 23% (82.8°)
+           End of A slice (after 277.2° clockwise from top):
+           θ = 90° - 277.2° = -187.2°
+           x = 90 + 85*cos(-187.2°) ≈ 5.7
+           y = 90 - 85*sin(-187.2°) ≈ 79.3 -->
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <path d="M90,90 L90,5 A85,85 0 1,1 5.7,79.3 Z" fill="#EF4444"/>
+        <path d="M90,90 L5.7,79.3 A85,85 0 0,1 90,5 Z" fill="#3D5AFE"/>
+      </svg>
+      <div class="pie-legend">
+        <div class="pie-li"><div class="pdot" style="background:#EF4444"></div> A안</div>
+        <div class="pie-li"><div class="pdot" style="background:#3D5AFE"></div> B안</div>
+      </div>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>분류</th>
+          <th>응답률</th>
+          <th>응답 수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>A안</td>
+          <td>77%</td>
+          <td>77</td>
+        </tr>
+        <tr>
+          <td>B안</td>
+          <td>23%</td>
+          <td>23</td>
+        </tr>
+        <tr class="tr-total">
+          <td>합계</td>
+          <td>100%</td>
+          <td>100</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ft">3/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 4 · 척도 평가
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">척도 평가 (5점 척도)</div>
+    <div class="q-title">이 서비스의 전반적인 사용성을 평가해 주세요.</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="vbar-wrap">
+      <div class="vbar-inner">
+        <!-- col 1 -->
+        <div class="vbar-col">
+          <div class="vbar-above">응답 8&#10;(8%)</div>
+          <div class="vbar-bar g" style="height:40px"></div>
+        </div>
+        <!-- col 2 -->
+        <div class="vbar-col">
+          <div class="vbar-above">응답 12&#10;(12%)</div>
+          <div class="vbar-bar g" style="height:60px"></div>
+        </div>
+        <!-- col 3 (highlighted) -->
+        <div class="vbar-col">
+          <div class="vbar-above" style="color:#3D5AFE;font-weight:600">응답 45&#10;(45%)</div>
+          <div class="vbar-bar p" style="height:164px"></div>
+        </div>
+        <!-- col 4 -->
+        <div class="vbar-col">
+          <div class="vbar-above">응답 22&#10;(22%)</div>
+          <div class="vbar-bar g" style="height:80px"></div>
+        </div>
+        <!-- col 5 -->
+        <div class="vbar-col">
+          <div class="vbar-above">응답 13&#10;(13%)</div>
+          <div class="vbar-bar g" style="height:47px"></div>
+        </div>
+      </div>
+      <div class="vbar-xaxis">
+        <div class="vbar-xcol">
+          <span class="xn">1</span>
+          <span class="xs">전혀 아니다</span>
+        </div>
+        <div class="vbar-xcol">
+          <span class="xn">2</span>
+          <span class="xs"></span>
+        </div>
+        <div class="vbar-xcol">
+          <span class="xn">3</span>
+          <span class="xs"></span>
+        </div>
+        <div class="vbar-xcol">
+          <span class="xn">4</span>
+          <span class="xs"></span>
+        </div>
+        <div class="vbar-xcol">
+          <span class="xn">5</span>
+          <span class="xs">매우 그렇다</span>
+        </div>
+      </div>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>평균 점수</th>
+          <th>최다 득표</th>
+          <th>응답률</th>
+          <th>응답 수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>3.59</td>
+          <td>3점</td>
+          <td>45%</td>
+          <td>45</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ft">4/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 5 · 카드 소팅
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">카드 소팅</div>
+    <div class="q-title">다음 항목들을 알맞은 카테고리에 분류해 주세요.</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="sbar-legend">
+      <div class="sbl-item"><div class="sbl-dot" style="background:#3D5AFE"></div>상의</div>
+      <div class="sbl-item"><div class="sbl-dot" style="background:#10B981"></div>하의</div>
+      <div class="sbl-item"><div class="sbl-dot" style="background:#F59E0B"></div>신발</div>
+    </div>
+    <div class="sbar-rows">
+      <div class="sbar-row">
+        <div class="sbl">니트 스웨터</div>
+        <div class="sbt">
+          <div class="sbs" style="width:58%;background:#3D5AFE;opacity:0.85"></div>
+          <div class="sbs" style="width:27%;background:#10B981;opacity:0.7"></div>
+          <div class="sbs" style="width:15%;background:#F59E0B;opacity:0.7"></div>
+        </div>
+        <div class="sbv">58  27  15</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">청바지</div>
+        <div class="sbt">
+          <div class="sbs" style="width:12%;background:#3D5AFE;opacity:0.5"></div>
+          <div class="sbs" style="width:72%;background:#10B981;opacity:0.85"></div>
+          <div class="sbs" style="width:16%;background:#F59E0B;opacity:0.7"></div>
+        </div>
+        <div class="sbv">12  72  16</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">스니커즈</div>
+        <div class="sbt">
+          <div class="sbs" style="width:8%;background:#3D5AFE;opacity:0.5"></div>
+          <div class="sbs" style="width:14%;background:#10B981;opacity:0.5"></div>
+          <div class="sbs" style="width:78%;background:#F59E0B;opacity:0.85"></div>
+        </div>
+        <div class="sbv">8  14  78</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">후드 집업</div>
+        <div class="sbt">
+          <div class="sbs" style="width:65%;background:#3D5AFE;opacity:0.85"></div>
+          <div class="sbs" style="width:22%;background:#10B981;opacity:0.7"></div>
+          <div class="sbs" style="width:13%;background:#F59E0B;opacity:0.5"></div>
+        </div>
+        <div class="sbv">65  22  13</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">슬랙스</div>
+        <div class="sbt">
+          <div class="sbs" style="width:10%;background:#3D5AFE;opacity:0.5"></div>
+          <div class="sbs" style="width:80%;background:#10B981;opacity:0.85"></div>
+          <div class="sbs" style="width:10%;background:#F59E0B;opacity:0.5"></div>
+        </div>
+        <div class="sbv">10  80  10</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">로퍼</div>
+        <div class="sbt">
+          <div class="sbs" style="width:5%;background:#3D5AFE;opacity:0.5"></div>
+          <div class="sbs" style="width:18%;background:#10B981;opacity:0.5"></div>
+          <div class="sbs" style="width:77%;background:#F59E0B;opacity:0.85"></div>
+        </div>
+        <div class="sbv">5  18  77</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">폴로 셔츠</div>
+        <div class="sbt">
+          <div class="sbs" style="width:70%;background:#3D5AFE;opacity:0.85"></div>
+          <div class="sbs" style="width:20%;background:#10B981;opacity:0.7"></div>
+          <div class="sbs" style="width:10%;background:#F59E0B;opacity:0.5"></div>
+        </div>
+        <div class="sbv">70  20  10</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbl">숏 패딩</div>
+        <div class="sbt">
+          <div class="sbs" style="width:48%;background:#3D5AFE;opacity:0.85"></div>
+          <div class="sbs" style="width:32%;background:#10B981;opacity:0.7"></div>
+          <div class="sbs" style="width:20%;background:#F59E0B;opacity:0.6"></div>
+        </div>
+        <div class="sbv">48  32  20</div>
+      </div>
+    </div>
+  </div>
+  <div class="ft">5/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 6 · 트리 테스트
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">트리 테스트</div>
+    <div class="q-title">고객센터 문의하기는 어디서 찾을 수 있을 것 같나요?</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="hbar">
+      <div class="hbar-row">
+        <div class="hbl">마이페이지 &gt; 고객센터</div>
+        <div class="hbt"><div class="hbf p" style="width:62%"></div></div>
+        <div class="hbv">— 응답 31 (31%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">홈 &gt; 도움말</div>
+        <div class="hbt"><div class="hbf g" style="width:40%"></div></div>
+        <div class="hbv">— 응답 20 (20%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">설정 &gt; 지원</div>
+        <div class="hbt"><div class="hbf g" style="width:28%"></div></div>
+        <div class="hbv">— 응답 14 (14%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">홈 &gt; 공지사항</div>
+        <div class="hbt"><div class="hbf g" style="width:22%"></div></div>
+        <div class="hbv">— 응답 11 (11%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">마이페이지 &gt; 설정</div>
+        <div class="hbt"><div class="hbf g" style="width:16%"></div></div>
+        <div class="hbv">— 응답 8 (8%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">홈 &gt; 이벤트</div>
+        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
+        <div class="hbv">— 응답 7 (7%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">하단 탭 &gt; 더보기</div>
+        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
+        <div class="hbv">— 응답 5 (5%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">설정 &gt; 계정관리</div>
+        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
+        <div class="hbv">— 응답 4 (4%)</div>
+      </div>
+    </div>
+  </div>
+  <div class="ft">6/7</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     Page 7 · 5초 테스트
+     ═══════════════════════════════════════════ -->
+<div class="page">
+  <div class="hd">
+    <span>MATE 통계결과</span>
+    <span>테스트 이름</span>
+  </div>
+  <div class="top">
+    <div class="badge">5초 테스트 (객관식 - 단일 선택)</div>
+    <div class="q-title">방금 본 화면에서 가장 눈에 띈 요소는 무엇인가요?</div>
+    <div class="q-cnt">응답 100개</div>
+  </div>
+  <div class="body">
+    <div class="hbar">
+      <div class="hbar-row">
+        <div class="hbl">상단 배너 이미지</div>
+        <div class="hbt"><div class="hbf p" style="width:66%"></div></div>
+        <div class="hbv">— 응답 33 (33%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">메인 CTA 버튼</div>
+        <div class="hbt"><div class="hbf g" style="width:46%"></div></div>
+        <div class="hbv">— 응답 23 (23%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">내비게이션 메뉴</div>
+        <div class="hbt"><div class="hbf g" style="width:30%"></div></div>
+        <div class="hbv">— 응답 15 (15%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">제품 이미지</div>
+        <div class="hbt"><div class="hbf g" style="width:22%"></div></div>
+        <div class="hbv">— 응답 11 (11%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">가격 정보</div>
+        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
+        <div class="hbv">— 응답 7 (7%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">로고</div>
+        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
+        <div class="hbv">— 응답 5 (5%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">할인 뱃지</div>
+        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
+        <div class="hbv">— 응답 4 (4%)</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbl">리뷰 별점</div>
+        <div class="hbt"><div class="hbf g" style="width:4%"></div></div>
+        <div class="hbv">— 응답 2 (2%)</div>
+      </div>
+    </div>
+  </div>
+  <div class="ft">7/7</div>
+</div>
+
+</body>
+</html>
