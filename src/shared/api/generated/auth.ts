@@ -112,6 +112,8 @@ export type HandleTossUnlinkCallbackGetParams = {
   referrer: string;
 };
 
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
 export type unlinkTossResponse200 = {
   data: ApiResponseVoid;
   status: 200;
@@ -143,12 +145,13 @@ export const getUnlinkTossQueryKey = () => {
 
 export const getUnlinkTossQueryOptions = <TData = Awaited<ReturnType<typeof unlinkToss>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>>;
+  request?: SecondParameter<typeof kyMutator>;
 }) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getUnlinkTossQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlinkToss>>> = ({ signal }) => unlinkToss({ signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlinkToss>>> = ({ signal }) => unlinkToss({ signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -160,6 +163,7 @@ export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TE
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, Awaited<ReturnType<typeof unlinkToss>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -167,11 +171,12 @@ export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TE
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, Awaited<ReturnType<typeof unlinkToss>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TError = ErrorType<unknown>>(
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -179,7 +184,7 @@ export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TE
  */
 
 export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TError = ErrorType<unknown>>(
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkToss>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getUnlinkTossQueryOptions(options);
@@ -222,13 +227,13 @@ export const getUnlinkTossByUserKeyQueryKey = (tossUnlinkByUserKeyRequest?: Toss
 
 export const getUnlinkTossByUserKeyQueryOptions = <TData = Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError = ErrorType<unknown>>(
   tossUnlinkByUserKeyRequest: TossUnlinkByUserKeyRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
 ) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getUnlinkTossByUserKeyQueryKey(tossUnlinkByUserKeyRequest);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlinkTossByUserKey>>> = ({ signal }) => unlinkTossByUserKey(tossUnlinkByUserKeyRequest, { signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlinkTossByUserKey>>> = ({ signal }) => unlinkTossByUserKey(tossUnlinkByUserKeyRequest, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -241,6 +246,7 @@ export function useUnlinkTossByUserKey<TData = Awaited<ReturnType<typeof unlinkT
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, Awaited<ReturnType<typeof unlinkTossByUserKey>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -249,12 +255,13 @@ export function useUnlinkTossByUserKey<TData = Awaited<ReturnType<typeof unlinkT
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, Awaited<ReturnType<typeof unlinkTossByUserKey>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUnlinkTossByUserKey<TData = Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError = ErrorType<unknown>>(
   tossUnlinkByUserKeyRequest: TossUnlinkByUserKeyRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -263,7 +270,7 @@ export function useUnlinkTossByUserKey<TData = Awaited<ReturnType<typeof unlinkT
 
 export function useUnlinkTossByUserKey<TData = Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError = ErrorType<unknown>>(
   tossUnlinkByUserKeyRequest: TossUnlinkByUserKeyRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof unlinkTossByUserKey>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getUnlinkTossByUserKeyQueryOptions(tossUnlinkByUserKeyRequest, options);
@@ -306,13 +313,13 @@ export const getLoginWithTossQueryKey = (tossLoginRequest?: TossLoginRequest) =>
 
 export const getLoginWithTossQueryOptions = <TData = Awaited<ReturnType<typeof loginWithToss>>, TError = ErrorType<unknown>>(
   tossLoginRequest: TossLoginRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
 ) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getLoginWithTossQueryKey(tossLoginRequest);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof loginWithToss>>> = ({ signal }) => loginWithToss(tossLoginRequest, { signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof loginWithToss>>> = ({ signal }) => loginWithToss(tossLoginRequest, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -325,6 +332,7 @@ export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, Awaited<ReturnType<typeof loginWithToss>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -333,12 +341,13 @@ export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, Awaited<ReturnType<typeof loginWithToss>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss>>, TError = ErrorType<unknown>>(
   tossLoginRequest: TossLoginRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -347,7 +356,7 @@ export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss
 
 export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss>>, TError = ErrorType<unknown>>(
   tossLoginRequest: TossLoginRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof loginWithToss>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getLoginWithTossQueryOptions(tossLoginRequest, options);
@@ -394,18 +403,19 @@ export const handleTossUnlinkCallbackGet = async (params: HandleTossUnlinkCallba
 
 export const getHandleTossUnlinkCallbackGetMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, TError, { params: HandleTossUnlinkCallbackGetParams }, TContext>;
+  request?: SecondParameter<typeof kyMutator>;
 }): UseMutationOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, TError, { params: HandleTossUnlinkCallbackGetParams }, TContext> => {
   const mutationKey = ["handleTossUnlinkCallbackGet"];
-  const { mutation: mutationOptions } = options
+  const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
+    : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, { params: HandleTossUnlinkCallbackGetParams }> = (props) => {
     const { params } = props ?? {};
 
-    return handleTossUnlinkCallbackGet(params);
+    return handleTossUnlinkCallbackGet(params, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -419,7 +429,10 @@ export type HandleTossUnlinkCallbackGetMutationError = ErrorType<unknown>;
  * @summary 🙅🏻‍♀️ 토스 연결 해제 콜백
  */
 export const useHandleTossUnlinkCallbackGet = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, TError, { params: HandleTossUnlinkCallbackGetParams }, TContext> },
+  options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, TError, { params: HandleTossUnlinkCallbackGetParams }, TContext>;
+    request?: SecondParameter<typeof kyMutator>;
+  },
   queryClient?: QueryClient,
 ): UseMutationResult<Awaited<ReturnType<typeof handleTossUnlinkCallbackGet>>, TError, { params: HandleTossUnlinkCallbackGetParams }, TContext> => {
   return useMutation(getHandleTossUnlinkCallbackGetMutationOptions(options), queryClient);
@@ -458,13 +471,13 @@ export const getHandleTossUnlinkCallbackPostQueryKey = (tossUnlinkCallbackReques
 
 export const getHandleTossUnlinkCallbackPostQueryOptions = <TData = Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError = ErrorType<unknown>>(
   tossUnlinkCallbackRequest: TossUnlinkCallbackRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
 ) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getHandleTossUnlinkCallbackPostQueryKey(tossUnlinkCallbackRequest);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>> = ({ signal }) => handleTossUnlinkCallbackPost(tossUnlinkCallbackRequest, { signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>> = ({ signal }) => handleTossUnlinkCallbackPost(tossUnlinkCallbackRequest, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -477,6 +490,7 @@ export function useHandleTossUnlinkCallbackPost<TData = Awaited<ReturnType<typeo
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -485,12 +499,13 @@ export function useHandleTossUnlinkCallbackPost<TData = Awaited<ReturnType<typeo
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useHandleTossUnlinkCallbackPost<TData = Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError = ErrorType<unknown>>(
   tossUnlinkCallbackRequest: TossUnlinkCallbackRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -499,7 +514,7 @@ export function useHandleTossUnlinkCallbackPost<TData = Awaited<ReturnType<typeo
 
 export function useHandleTossUnlinkCallbackPost<TData = Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError = ErrorType<unknown>>(
   tossUnlinkCallbackRequest: TossUnlinkCallbackRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof handleTossUnlinkCallbackPost>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getHandleTossUnlinkCallbackPostQueryOptions(tossUnlinkCallbackRequest, options);
@@ -542,13 +557,13 @@ export const getReissueQueryKey = (authReissueRequest?: AuthReissueRequest) => {
 
 export const getReissueQueryOptions = <TData = Awaited<ReturnType<typeof reissue>>, TError = ErrorType<unknown>>(
   authReissueRequest: AuthReissueRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
 ) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getReissueQueryKey(authReissueRequest);
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof reissue>>> = ({ signal }) => reissue(authReissueRequest, { signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof reissue>>> = ({ signal }) => reissue(authReissueRequest, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -561,6 +576,7 @@ export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError =
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof reissue>>, TError, Awaited<ReturnType<typeof reissue>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -569,12 +585,13 @@ export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError =
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof reissue>>, TError, Awaited<ReturnType<typeof reissue>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError = ErrorType<unknown>>(
   authReissueRequest: AuthReissueRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -583,7 +600,7 @@ export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError =
 
 export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError = ErrorType<unknown>>(
   authReissueRequest: AuthReissueRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof reissue>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getReissueQueryOptions(authReissueRequest, options);
@@ -624,12 +641,13 @@ export const getLogoutQueryKey = () => {
 
 export const getLogoutQueryOptions = <TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>;
+  request?: SecondParameter<typeof kyMutator>;
 }) => {
-  const { query: queryOptions } = options ?? {};
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getLogoutQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof logout>>> = ({ signal }) => logout({ signal });
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof logout>>> = ({ signal }) => logout({ signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
@@ -641,6 +659,7 @@ export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = E
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>> &
       Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof logout>>, TError, Awaited<ReturnType<typeof logout>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -648,11 +667,12 @@ export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = E
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>> &
       Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof logout>>, TError, Awaited<ReturnType<typeof logout>>>, "initialData">;
+    request?: SecondParameter<typeof kyMutator>;
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<unknown>>(
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
@@ -660,7 +680,7 @@ export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = E
  */
 
 export function useLogout<TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<unknown>>(
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>> },
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getLogoutQueryOptions(options);
@@ -703,16 +723,17 @@ export const getTossIntegrationStatus = async (options?: RequestInit): Promise<g
 
 export const getGetTossIntegrationStatusMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof getTossIntegrationStatus>>, TError, void, TContext>;
+  request?: SecondParameter<typeof kyMutator>;
 }): UseMutationOptions<Awaited<ReturnType<typeof getTossIntegrationStatus>>, TError, void, TContext> => {
   const mutationKey = ["getTossIntegrationStatus"];
-  const { mutation: mutationOptions } = options
+  const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
+    : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof getTossIntegrationStatus>>, void> = () => {
-    return getTossIntegrationStatus();
+    return getTossIntegrationStatus(requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -726,7 +747,7 @@ export type GetTossIntegrationStatusMutationError = ErrorType<unknown>;
  * @summary 토스 연동 상태 조회
  */
 export const useGetTossIntegrationStatus = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getTossIntegrationStatus>>, TError, void, TContext> },
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getTossIntegrationStatus>>, TError, void, TContext>; request?: SecondParameter<typeof kyMutator> },
   queryClient?: QueryClient,
 ): UseMutationResult<Awaited<ReturnType<typeof getTossIntegrationStatus>>, TError, void, TContext> => {
   return useMutation(getGetTossIntegrationStatusMutationOptions(options), queryClient);

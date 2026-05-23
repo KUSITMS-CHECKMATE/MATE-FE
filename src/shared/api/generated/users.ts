@@ -5,16 +5,24 @@
  * MATE 서버 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import { useMutation } from "@tanstack/react-query";
-import type { MutationFunction, QueryClient, UseMutationOptions, UseMutationResult } from "@tanstack/react-query";
+import {
+  useMutation
+} from '@tanstack/react-query';
+import type {
+  MutationFunction,
+  QueryClient,
+  UseMutationOptions,
+  UseMutationResult
+} from '@tanstack/react-query';
 
-import { kyMutator } from "../mutator";
-import type { ErrorType } from "../mutator";
-export type MeResponseRole = (typeof MeResponseRole)[keyof typeof MeResponseRole];
+import { kyMutator } from '../mutator';
+import type { ErrorType } from '../mutator';
+export type MeResponseRole = typeof MeResponseRole[keyof typeof MeResponseRole];
+
 
 export const MeResponseRole = {
-  USER: "USER",
-  ADMIN: "ADMIN",
+  USER: 'USER',
+  ADMIN: 'ADMIN',
 } as const;
 
 export interface MeResponse {
@@ -30,58 +38,89 @@ export interface ApiResponseMeResponse {
   data?: MeResponse;
 }
 
-export type getMeResponse200 = {
-  data: ApiResponseMeResponse;
-  status: 200;
-};
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-export type getMeResponseSuccess = getMeResponse200 & {
+
+
+export type getMeResponse200 = {
+  data: ApiResponseMeResponse
+  status: 200
+}
+
+export type getMeResponseSuccess = (getMeResponse200) & {
   headers: Headers;
 };
-export type getMeResponse = getMeResponseSuccess;
+;
+
+export type getMeResponse = (getMeResponseSuccess)
 
 export const getGetMeUrl = () => {
-  return `/api/v1/users/me`;
-};
+
+
+
+
+  return `/api/v1/users/me`
+}
 
 /**
  * 현재 인증된 사용자의 정보를 조회합니다.
  * @summary 내 정보 조회
  */
-export const getMe = async (options?: RequestInit): Promise<getMeResponse> => {
-  return kyMutator<getMeResponse>(getGetMeUrl(), {
+export const getMe = async ( options?: RequestInit): Promise<getMeResponse> => {
+
+  return kyMutator<getMeResponse>(getGetMeUrl(),
+  {
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
 
-export const getGetMeMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError, void, TContext>;
-}): UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError, void, TContext> => {
-  const mutationKey = ["getMe"];
-  const { mutation: mutationOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey } };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof getMe>>, void> = () => {
-    return getMe();
-  };
+  }
+);}
 
-  return { mutationFn, ...mutationOptions };
-};
 
-export type GetMeMutationResult = NonNullable<Awaited<ReturnType<typeof getMe>>>;
 
-export type GetMeMutationError = ErrorType<unknown>;
 
-/**
+export const getGetMeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError,void, TContext> => {
+
+const mutationKey = ['getMe'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getMe>>, void> = () => {
+
+
+          return  getMe(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetMeMutationResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
+
+    export type GetMeMutationError = ErrorType<unknown>
+
+    /**
  * @summary 내 정보 조회
  */
-export const useGetMe = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError, void, TContext> },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getMe>>, TError, void, TContext> => {
-  return useMutation(getGetMeMutationOptions(options), queryClient);
-};
+export const useGetMe = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMe>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getMe>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getGetMeMutationOptions(options), queryClient);
+    }
