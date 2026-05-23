@@ -27,6 +27,7 @@ export function TestList({ tests }: Props) {
           {tests.map((test) => (
             <TestCard
               key={test.id}
+              id={test.id}
               title={test.title}
               description={test.description}
               reward={test.reward}
