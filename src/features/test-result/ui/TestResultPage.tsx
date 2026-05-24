@@ -1,12 +1,67 @@
 import { useState } from "react";
-import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
-import { ResultTabContent } from "./ResultTabContent";
+import { motion } from "framer-motion";
+import { Asset, BottomCTA, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { MOCK_QUESTIONS } from "../model/mock";
+import { ResultTabContent } from "./ResultTabContent";
+import { MOCK_QUESTIONS, MOCK_PREVIEW_QUESTIONS } from "../model/mock";
+import { QuestionRenderer } from "@/features/test-participate/ui/QuestionRenderer";
+import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
+
+import type { ParticipateQuestion } from "@/features/test-participate/model/types";
 
 interface Props {
   testId: string;
   status: "active" | "ended";
+}
+
+const MOTION_PROPS = {
+  className: "fixed inset-0 z-60 flex flex-col bg-white",
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+} as const;
+
+function QuestionPreviewOverlay({ question, onClose }: { question: ParticipateQuestion; onClose: () => void }) {
+  const noop = () => {};
+
+  // fivesec은 FivesecAnswerPage가 CTA를 직접 관리 (FivesecCreatePage 미리보기와 동일)
+  if (question.type === "fivesec") {
+    return (
+      <motion.div {...MOTION_PROPS} className="fixed inset-0 z-60 flex flex-col overflow-y-auto bg-white pb-10">
+        <FivesecAnswerPage
+          question={question}
+          answer={{ type: "fivesec", selectedIds: [] }}
+          onChange={noop}
+          onPrev={onClose}
+          onGoNext={onClose}
+          isFirst={false}
+          isLast={true}
+          prevLabel="돌아가기"
+          isPreview={true}
+        />
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div {...MOTION_PROPS} className="fixed inset-0 z-60 flex flex-col bg-white">
+      <div className="flex-1 overflow-y-auto">
+        <QuestionRenderer
+          question={question}
+          answer={undefined}
+          onChange={noop}
+          onPrev={onClose}
+          onGoNext={onClose}
+          isFirst={true}
+          isLast={true}
+        />
+      </div>
+      <BottomCTA.Single color="dark" variant="weak" onClick={onClose}>
+        뒤로가기
+      </BottomCTA.Single>
+    </motion.div>
+  );
 }
 
 export function TestResultPage({ testId, status }: Props) {
@@ -14,6 +69,9 @@ export function TestResultPage({ testId, status }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+
+  const previewQuestion = previewIndex !== null ? MOCK_PREVIEW_QUESTIONS[previewIndex] : null;
 
   function toggleFormat(format: "pdf" | "csv") {
     setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
@@ -83,7 +141,11 @@ export function TestResultPage({ testId, status }: Props) {
           {MOCK_QUESTIONS.map((question, index) => (
             <div
               key={question.id}
-              className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center"
+              role="button"
+              tabIndex={0}
+              className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center active:bg-gray-50 cursor-pointer"
+              onClick={() => setPreviewIndex(index)}
+              onKeyDown={(e) => e.key === "Enter" && setPreviewIndex(index)}
             >
               <div className="w-full flex flex-row gap-3 items-center">
                 <Asset.Text
@@ -141,6 +203,16 @@ export function TestResultPage({ testId, status }: Props) {
         />
       )}
       {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
+
+      {/* 질문 미리보기 전체화면 오버레이 */}
+      {previewQuestion !== null && (
+        <QuestionPreviewOverlay
+          question={previewQuestion}
+          onClose={() => setPreviewIndex(null)}
+        />
+      )}
+
+      {/* 다운로드 BottomSheet */}
       <BottomSheet
         header={
           <BottomSheet.Header>다운로드할 형식을 선택해주세요</BottomSheet.Header>
