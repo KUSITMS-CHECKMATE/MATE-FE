@@ -16,7 +16,6 @@ import { ServiceDescriptionEditPage } from "./ServiceDescriptionEditPage";
 import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
-import { useSubmitTest } from "../model/useSubmitTest";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
@@ -27,11 +26,15 @@ import { SubjectiveCreatePage } from "@/features/question-subjective/create";
 import { FivesecCreatePage } from "@/features/question-fivesec/create";
 import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
-export function TestCreateFunnel() {
+interface Props {
+  fromPayment?: boolean;
+}
+
+export function TestCreateFunnel({ fromPayment = false }: Props) {
   const navigate = useNavigate();
-  const funnel = useFunnel();
+  const funnel = useFunnel(fromPayment ? "register" : "basic");
   const form = useTestCreateForm();
-  const submitTest = useSubmitTest();
+
   const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
   const [registerTab, setRegisterTab] = useState<RegisterTab>("questions");
   const [isFocused, setIsFocused] = useState(false);
@@ -72,11 +75,14 @@ export function TestCreateFunnel() {
   }, []);
 
   useEffect(() => {
-    useTestCreateForm.getState().reset();
+    if (!fromPayment) {
+      useTestCreateForm.getState().reset();
+    }
 
     return () => {
       if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExitConfirm = () => {
@@ -197,7 +203,7 @@ export function TestCreateFunnel() {
             funnel.prev();
           }
         }}
-        onSubmit={() => submitTest.mutate()}
+        onSubmit={() => navigate({ to: ROUTES.TEST_PAYMENT })}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         isConfirmDisabled={isConfirmDisabled}
@@ -215,8 +221,8 @@ export function TestCreateFunnel() {
               ? "이전"
               : "취소"
         }
-        isSubmitDisabled={submitTest.isPending || !isAllComplete || !form.questions.some((q) => !!q.data)}
-        submitLabel={submitTest.isPending ? "등록 중..." : "테스트 만들기"}
+        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data)}
+        submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
           <TestRegisterStep
