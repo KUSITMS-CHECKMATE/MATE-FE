@@ -35,7 +35,7 @@ function TestDetailPage() {
           title={detail.title ?? ""}
           tags={detail.categories ?? []}
         />
-        <TestDetailImageCarousel images={detail.imageUrls ?? []} />
+        <TestDetailImageCarousel images={detail.imageKeys ?? []} />
         <TestDetailInfo
           reward={detail.reward ?? 0}
           description={detail.description ?? ""}

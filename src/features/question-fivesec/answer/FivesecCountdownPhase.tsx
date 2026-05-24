@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
+import type { AbRatio } from "@/features/question-ab/model/types";
+
+const RATIO_TO_CSS: Record<AbRatio, string> = {
+  "9:16": "9/16",
+  "1:1": "1/1",
+  "4:3": "4/3",
+};
 
 interface Props {
   remaining: number;
@@ -21,11 +27,10 @@ export function FivesecCountdownPhase({ remaining, imageUrl, ratio, hideCountdow
         categoryLabel="5초 테스트"
         title="5초간 아래 사진에 집중해주세요"
       />
-      <div className="flex-1 px-5 pt-4 flex justify-center">
+      <div className="flex-1 px-5 pt-4">
         <div
-          className="relative overflow-hidden rounded-2xl"
+          className="relative w-full overflow-hidden rounded-2xl"
           style={{
-            width: `min(100%, calc((100dvh - 200px) * ${RATIO_TO_CSS[ratio]}))`,
             aspectRatio: RATIO_TO_CSS[ratio],
             boxShadow: "inset 0 0 0 1px rgba(2,32,71,0.05)",
           }}

@@ -25,8 +25,8 @@ export function ParticipatePage({ testId }: Props) {
   const [isAbSheetOpen, setIsAbSheetOpen] = useState(false);
 
   const progress = (currentIndex + 1) / totalCount;
-  const isAbQuestion = currentQuestion.type === "AB_TEST";
-  const isFivesecQuestion = currentQuestion.type === "FIVE_SECOND";
+  const isAbQuestion = currentQuestion.type === "ab";
+  const isFivesecQuestion = currentQuestion.type === "fivesec";
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -86,17 +86,17 @@ export function ParticipatePage({ testId }: Props) {
         />
       )}
 
-      {isAbQuestion && (
+      {isAbQuestion && currentQuestion.type === "ab" && (
         <AbSelectionBottomSheet
           data={currentQuestion.data}
           open={isAbSheetOpen}
           onClose={() => setIsAbSheetOpen(false)}
           onConfirm={(selected) => {
             setIsAbSheetOpen(false);
-            funnel.goNextWithAnswer({ type: "AB_TEST", selected });
+            funnel.goNextWithAnswer({ type: "ab", selected });
           }}
           initialSelected={
-            funnel.currentAnswer?.type === "AB_TEST" ? funnel.currentAnswer.selected : null
+            funnel.currentAnswer?.type === "ab" ? funnel.currentAnswer.selected : null
           }
         />
       )}

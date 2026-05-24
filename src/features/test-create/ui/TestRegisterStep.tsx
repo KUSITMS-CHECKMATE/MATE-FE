@@ -4,6 +4,7 @@ import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List } fr
 import { adaptive } from "@toss/tds-colors";
 import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
 import { QuestionManageSheet } from "./QuestionManageSheet";
+import { TesterPreviewListRow } from "./TesterPreviewListRow";
 import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId, type PendingQuestion } from "../model/types";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
@@ -90,24 +91,19 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
               withTouchEffect
               onClick={onGuideView}
             />
-            <div
+            <ListRow
+              as="button"
+              className="text-left"
               style={{
                 backgroundColor: "var(--adaptiveCardBgGrey)",
-                borderRadius: 16,
                 margin: "0 20px",
-                overflow: "hidden",
               }}
-            >
-              <ListRow
-                as="button"
-                className="text-left w-full"
-                left={<ListRow.AssetIcon shape="original" name="icon-plus-grey-fill" variant="fill" />}
-                contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
-                verticalPadding="large"
-                horizontalPadding="small"
-                onClick={() => setIsQuestionTypeSheetOpen(true)}
-              />
-            </div>
+              left={<ListRow.AssetIcon shape="original" name="icon-plus-grey-fill" variant="fill" />}
+              contents={<ListRow.Texts type="1RowTypeA" top={hasQuestions ? "추가하기" : "만들기"} topProps={{ color: adaptive.grey700 }} />}
+              verticalPadding="large"
+              horizontalPadding="small"
+              onClick={() => setIsQuestionTypeSheetOpen(true)}
+            />
 
             {hasQuestions ? (
               <>
@@ -171,6 +167,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
         ) : (
           <div className="flex flex-col flex-1 pb-4">
             <Spacing size={16} />
+            <TesterPreviewListRow />
             <Top
               title={
                 <Top.TitleParagraph size={22} color={adaptive.grey900}>
@@ -280,7 +277,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
 
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
-          <QuestionTypeSelectSheet selectedCounts={selectedCounts} onChangeCount={handleChangeCount} existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} onShowGuide={onGuideView} />
+          <QuestionTypeSelectSheet selectedCounts={selectedCounts} onChangeCount={handleChangeCount} existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} />
         )}
         {isManageSheetOpen && (
           <QuestionManageSheet
