@@ -197,7 +197,7 @@ export function TestCreateFunnel() {
             funnel.prev();
           }
         }}
-        onSubmit={() => submitTest.mutate()}
+        onSubmit={() => navigate({ to: ROUTES.TEST_PAYMENT })}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         isConfirmDisabled={isConfirmDisabled}
