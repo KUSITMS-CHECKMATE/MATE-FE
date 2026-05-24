@@ -9,13 +9,15 @@ export const clearToken = () => { _accessToken = null; };
 export const setRefreshToken = (token: string) => { _refreshToken = token; };
 export const clearRefreshToken = () => { _refreshToken = null; };
 
+const REISSUE_PATH = "api/v1/auth/reissue";
+
 async function refreshAccessToken(): Promise<string> {
   if (_refreshPromise) return _refreshPromise;
 
   _refreshPromise = (async () => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
     const res = await ky
-      .post(`${baseUrl}/api/v1/auth/reissue`, {
+      .post(`${baseUrl}/${REISSUE_PATH}`, {
         json: { refreshToken: _refreshToken },
       })
       .json<{ data?: { accessToken?: string; refreshToken?: string } }>();
@@ -47,12 +49,13 @@ export const client = ky.create({
     ],
     afterResponse: [
       async (request, _options, response) => {
-        if (response.status !== 401 || !_refreshToken) return response;
+        if (response.status !== 401 || !_refreshToken || request.headers.has("X-Retry")) return response;
 
         try {
           const newToken = await refreshAccessToken();
           request.headers.set("Authorization", `Bearer ${newToken}`);
-          return ky(request);
+          request.headers.set("X-Retry", "true");
+          return client(request);
         } catch {
           clearToken();
           clearRefreshToken();
