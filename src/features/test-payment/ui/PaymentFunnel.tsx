@@ -6,9 +6,15 @@ import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/
 import { calcPayment, toKRW } from "../model/calcPayment";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
+import { ROUTES } from "@/shared/constants/routes";
 
 export function PaymentFunnel() {
   const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate({ to: ROUTES.TEST_CREATE, search: { payment: true } });
+  };
+
   const [step, setStep] = useState<PaymentStep>("main");
   const [testerCount, setTesterCount] = useState<TesterCount | null>(null);
   const [draftTesterCount, setDraftTesterCount] = useState<TesterCount | null>(null);
@@ -179,18 +185,18 @@ export function PaymentFunnel() {
           />
         </>
       )}
-      {payment != null && (
+      {payment == null ? (
+        <FixedBottomCTA color="dark" variant="weak" onClick={handleGoBack}>
+          이전
+        </FixedBottomCTA>
+      ) : (
         <FixedBottomCTA.Double
           leftButton={
-            <CTAButton color="dark" variant="weak" onClick={() => navigate({ to: ".." })}>
+            <CTAButton color="dark" variant="weak" onClick={handleGoBack}>
               이전
             </CTAButton>
           }
-          rightButton={
-            <CTAButton onClick={() => {}}>
-              {toKRW(payment.total)} 결제하기
-            </CTAButton>
-          }
+          rightButton={<CTAButton onClick={() => {}}>{toKRW(payment.total)} 결제하기</CTAButton>}
         />
       )}
     </div>
