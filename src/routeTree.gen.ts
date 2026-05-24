@@ -19,6 +19,7 @@ import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as TestTestIdRouteImport } from './routes/test/$testId'
 import { Route as MyNoticeRouteImport } from './routes/my/notice'
 import { Route as MyHistoryRouteImport } from './routes/my/history'
+import { Route as InterestTestIdRouteImport } from './routes/interest/$testId'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
 import { Route as MyHistoryIndexRouteImport } from './routes/my/history/index'
 import { Route as TestParticipateTestIdRouteImport } from './routes/test/participate.$testId'
@@ -74,6 +75,11 @@ const MyHistoryRoute = MyHistoryRouteImport.update({
   path: '/my/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InterestTestIdRoute = InterestTestIdRouteImport.update({
+  id: '/interest/$testId',
+  path: '/interest/$testId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiscoveryTestIdRoute = DiscoveryTestIdRouteImport.update({
   id: '/discovery/$testId',
   path: '/discovery/$testId',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRoute
+  '/interest/$testId': typeof InterestTestIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/my/notice': typeof MyNoticeRoute
+  '/interest/$testId': typeof InterestTestIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRoute
+  '/interest/$testId': typeof InterestTestIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/my/history'
     | '/my/notice'
+    | '/interest/$testId'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/discovery/$testId'
     | '/my/notice'
+    | '/interest/$testId'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/my/history'
     | '/my/notice'
+    | '/interest/$testId'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   DiscoveryTestIdRoute: typeof DiscoveryTestIdRoute
   MyHistoryRoute: typeof MyHistoryRouteWithChildren
   MyNoticeRoute: typeof MyNoticeRoute
+  InterestTestIdRoute: typeof InterestTestIdRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
   TestPaymentRoute: typeof TestPaymentRoute
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/interest/$testId': {
+      id: '/interest/$testId'
+      path: '/interest/$testId'
+      fullPath: '/interest/$testId'
+      preLoaderRoute: typeof InterestTestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/discovery/$testId': {
       id: '/discovery/$testId'
       path: '/discovery/$testId'
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoveryTestIdRoute: DiscoveryTestIdRoute,
   MyHistoryRoute: MyHistoryRouteWithChildren,
   MyNoticeRoute: MyNoticeRoute,
+  InterestTestIdRoute: InterestTestIdRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestCreateRoute: TestCreateRoute,
   TestPaymentRoute: TestPaymentRoute,
