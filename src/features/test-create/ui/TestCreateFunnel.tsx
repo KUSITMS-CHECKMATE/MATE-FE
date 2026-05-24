@@ -26,9 +26,13 @@ import { SubjectiveCreatePage } from "@/features/question-subjective/create";
 import { FivesecCreatePage } from "@/features/question-fivesec/create";
 import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
-export function TestCreateFunnel() {
+interface Props {
+  fromPayment?: boolean;
+}
+
+export function TestCreateFunnel({ fromPayment = false }: Props) {
   const navigate = useNavigate();
-  const funnel = useFunnel();
+  const funnel = useFunnel(fromPayment ? "register" : "basic");
   const form = useTestCreateForm();
 
   const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
@@ -71,11 +75,14 @@ export function TestCreateFunnel() {
   }, []);
 
   useEffect(() => {
-    useTestCreateForm.getState().reset();
+    if (!fromPayment) {
+      useTestCreateForm.getState().reset();
+    }
 
     return () => {
       if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExitConfirm = () => {
