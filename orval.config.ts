@@ -49,4 +49,8 @@ export default defineConfig({
     input: makeInput(["[USERS] 사용자 API"]),
     output: makeOutput("users"),
   },
+  report: {
+    input: makeInput(["[REPORT] 통계 API"]),
+    output: makeOutput("report"),
+  },
 });
