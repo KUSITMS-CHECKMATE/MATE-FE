@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
 import { ResultTabContent } from "./ResultTabContent";
 import { adaptive } from "@toss/tds-colors";
-import { MOCK_QUESTIONS } from "../model/mock";
+import { useGetReportQuery } from "@/shared/api/report";
+import { mapReportItemToQuestionResult, QUESTION_TYPE_LABEL } from "../model/mappers";
 
 interface Props {
   testId: string;
@@ -10,10 +11,15 @@ interface Props {
 }
 
 export function TestResultPage({ testId, status }: Props) {
-  console.log(testId);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+
+  const { data } = useGetReportQuery(Number(testId));
+  const reportData = data?.data;
+
+  const questions = reportData?.questions ?? [];
+  const results = (reportData?.reports ?? []).map(mapReportItemToQuestionResult);
 
   function toggleFormat(format: "pdf" | "csv") {
     setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
@@ -52,7 +58,9 @@ export function TestResultPage({ testId, status }: Props) {
           />
         }
         subtitleBottom={
-          <Top.SubtitleParagraph size={15}>총 8개 질문 · 100명 참여</Top.SubtitleParagraph>
+          <Top.SubtitleParagraph size={15}>
+            총 {reportData?.questionCount ?? 0}개 질문 · {reportData?.participantCount ?? 0}명 참여
+          </Top.SubtitleParagraph>
         }
       />
       <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
@@ -80,9 +88,9 @@ export function TestResultPage({ testId, status }: Props) {
       </Tab>
       {selectedTabIndex === 0 && (
         <div className="flex flex-col py-4">
-          {MOCK_QUESTIONS.map((question, index) => (
+          {questions.map((question, index) => (
             <div
-              key={question.id}
+              key={question.questionId}
               className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center"
             >
               <div className="w-full flex flex-row gap-3 items-center">
@@ -110,7 +118,7 @@ export function TestResultPage({ testId, status }: Props) {
                       typography="t6"
                       fontWeight="medium"
                     >
-                      {question.type}
+                      {QUESTION_TYPE_LABEL[question.type]}
                     </Text>
                   </div>
                   <Asset.Icon
@@ -140,7 +148,7 @@ export function TestResultPage({ testId, status }: Props) {
           }
         />
       )}
-      {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
+      {selectedTabIndex === 1 && status === "ended" && <ResultTabContent results={results} />}
       <BottomSheet
         header={
           <BottomSheet.Header>다운로드할 형식을 선택해주세요</BottomSheet.Header>
