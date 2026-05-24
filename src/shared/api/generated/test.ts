@@ -32,7 +32,8 @@ import type { ErrorType } from '../mutator';
 export interface TestSummaryResponse {
   /** 테스트 ID */
   id?: number;
-  thumbnailKey?: string;
+  /** 썸네일 Public URL (만료 없음, 이미지 없으면 null) */
+  thumbnailUrl?: string;
   title?: string;
   description?: string;
   reward?: number;
@@ -105,6 +106,16 @@ export interface TestCreateRequest {
   imageKeys?: string[];
 }
 
+/**
+ * 이미지 키와 렌더링용 URL 쌍
+ */
+export interface ImageInfo {
+  /** 파일 키 (이미지 수정/삭제 요청 시 사용) */
+  imageKey?: string;
+  /** 이미지 렌더링용 URL (media/ 키는 Public URL, 그 외는 SAS URL로 30분 만료) */
+  imageUrl?: string;
+}
+
 export type TestCreateResponseTestStatus = typeof TestCreateResponseTestStatus[keyof typeof TestCreateResponseTestStatus];
 
 
@@ -130,7 +141,8 @@ export interface TestCreateResponse {
   categories?: string[];
   serviceName?: string;
   serviceDescription?: string;
-  imageKeys?: string[];
+  /** 이미지 키·URL 쌍 목록 (key: 수정 요청용, url: 렌더링용, 30분 만료) */
+  images?: ImageInfo[];
   testStatus?: TestCreateResponseTestStatus;
   approvalStatus?: TestCreateResponseApprovalStatus;
   goalPpl?: number;
@@ -162,7 +174,8 @@ export interface TestDetailResponse {
   id?: number;
   title?: string;
   categories?: string[];
-  imageKeys?: string[];
+  /** 이미지 키·URL 쌍 목록 (key: 수정 요청용, url: 렌더링용, 30분 만료) */
+  images?: ImageInfo[];
   reward?: number;
   description?: string;
   serviceName?: string;
@@ -266,7 +279,8 @@ export interface TestUpdateResponse {
   categories?: string[];
   serviceName?: string;
   serviceDescription?: string;
-  imageKeys?: string[];
+  /** 이미지 키·URL 쌍 목록 (key: 수정 요청용, url: 렌더링용, 30분 만료) */
+  images?: ImageInfo[];
   testStatus?: TestUpdateResponseTestStatus;
   approvalStatus?: TestUpdateResponseApprovalStatus;
   goalPpl?: number;
@@ -279,6 +293,69 @@ export interface ApiResponseTestUpdateResponse {
   code?: string;
   message?: string;
   data?: TestUpdateResponse;
+}
+
+/**
+ * 진행 상태
+ */
+export type MyTestSummaryItemTestStatus = typeof MyTestSummaryItemTestStatus[keyof typeof MyTestSummaryItemTestStatus];
+
+
+export const MyTestSummaryItemTestStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+} as const;
+
+/**
+ * 내가 생성한 테스트 목록 노출용 요약 항목
+ */
+export interface MyTestSummaryItem {
+  /** 테스트 ID */
+  id?: number;
+  /** 진행 상태 */
+  testStatus?: MyTestSummaryItemTestStatus;
+  /** 테스트 제목 */
+  title?: string;
+  /** 현재 참여 인원 */
+  pplCount?: number;
+}
+
+/**
+ * 내가 생성한 테스트 목록 조회 응답
+ */
+export interface MyTestSummaryResponse {
+  /** 테스트 개수 */
+  testCount?: number;
+  /** 테스트 목록 */
+  tests?: MyTestSummaryItem[];
+}
+
+export interface ApiResponseMyTestSummaryResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: MyTestSummaryResponse;
+}
+
+/**
+ * 내가 찜한 테스트 목록 노출용 요약
+ */
+export interface LikedTestSummaryResponse {
+  /** 썸네일 Public URL (만료 없음, 이미지 없으면 null) */
+  thumbnailUrl?: string;
+  /** 테스트명 */
+  title?: string;
+  /** 테스트 한 줄 소개 */
+  description?: string;
+  /** 보상 금액(머니) */
+  reward?: number;
+}
+
+export interface ApiResponseListLikedTestSummaryResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: LikedTestSummaryResponse[];
 }
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -309,7 +386,7 @@ export const getListTestsUrl = () => {
  * 전체 테스트 요약 목록을 최신순으로 조회합니다. 발견 탭 HM_01 57 화면에 해당하는 api 입니다.
 테스트 등록 후 관리자 승인(`approvalStatus`)이 완료(`ACCEPTED`)되어야 조회됩니다.
 
-- **thumbnailKey**: 업로드된 이미지 키 목록 중 첫 번째, 없으면 null을 반환
+- **thumbnailUrl**: 업로드된 이미지 중 첫 번째의 Public URL, 없으면 null을 반환
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
 
@@ -951,7 +1028,7 @@ export const getUpdateTestUrl = (testId: number,) => {
 
 이미지 처리
 - `imageKeys`를 전달하면 기존 이미지 목록이 전체 교체됩니다.
-- 기존 목록에서 제거된 이미지는 트랜잭션 커밋 후 S3에서 영구 삭제됩니다.
+- 기존 목록에서 제거된 이미지는 트랜잭션 커밋 후 Azure Blob Storage에서 영구 삭제됩니다.
 - `imageKeys`를 `null`로 보내면 이미지는 변경되지 않습니다.
 
  * @summary 테스트 수정
@@ -1046,3 +1123,189 @@ export function useUpdateTest<TData = Awaited<ReturnType<typeof updateTest>>, TE
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+
+
+export type listMyTestsResponse200 = {
+  data: ApiResponseMyTestSummaryResponse
+  status: 200
+}
+
+export type listMyTestsResponseSuccess = (listMyTestsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listMyTestsResponse = (listMyTestsResponseSuccess)
+
+export const getListMyTestsUrl = () => {
+
+
+
+
+  return `/api/v1/tests/me`
+}
+
+/**
+ * 현재 로그인한 사용자가 생성한 테스트 목록을 최신순으로 조회합니다. 테스트 탭 MKTT_01 화면에 해당하는 api 입니다.<br>
+승인 상태와 관계없이 삭제되지 않은 테스트를 모두 반환합니다.
+
+- **testCount**: 테스트 개수
+- **testStatus**: `IN_PROGRESS`(진행 중), `COMPLETED`(완료)
+- **title**: 테스트 제목
+- **pplCount**: 현재 참여 인원
+
+ * @summary 내 테스트 목록 조회
+ */
+export const listMyTests = async ( options?: RequestInit): Promise<listMyTestsResponse> => {
+
+  return kyMutator<listMyTestsResponse>(getListMyTestsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getListMyTestsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listMyTests>>, TError,void, TContext> => {
+
+const mutationKey = ['listMyTests'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listMyTests>>, void> = () => {
+
+
+          return  listMyTests(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListMyTestsMutationResult = NonNullable<Awaited<ReturnType<typeof listMyTests>>>
+
+    export type ListMyTestsMutationError = ErrorType<unknown>
+
+    /**
+ * @summary 내 테스트 목록 조회
+ */
+export const useListMyTests = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listMyTests>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListMyTestsMutationOptions(options), queryClient);
+    }
+
+export type listLikedTestsResponse200 = {
+  data: ApiResponseListLikedTestSummaryResponse
+  status: 200
+}
+
+export type listLikedTestsResponseSuccess = (listLikedTestsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listLikedTestsResponse = (listLikedTestsResponseSuccess)
+
+export const getListLikedTestsUrl = () => {
+
+
+
+
+  return `/api/v1/tests/likes`
+}
+
+/**
+ * 현재 로그인한 사용자가 찜한 테스트 목록을 찜한 시각 최신순으로 조회합니다.
+삭제되지 않았고 관리자 승인(`ACCEPTED`)이 완료된 테스트만 반환합니다.
+
+- **thumbnailUrl**: 썸네일 Public URL (만료 없음, 이미지 없으면 null)
+- **title**: 테스트명
+- **description**: 테스트 한 줄 소개
+- **reward**: 보상 금액(머니)
+
+ * @summary 내가 찜한 테스트 목록 조회
+ */
+export const listLikedTests = async ( options?: RequestInit): Promise<listLikedTestsResponse> => {
+
+  return kyMutator<listLikedTestsResponse>(getListLikedTestsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getListLikedTestsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLikedTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listLikedTests>>, TError,void, TContext> => {
+
+const mutationKey = ['listLikedTests'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listLikedTests>>, void> = () => {
+
+
+          return  listLikedTests(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListLikedTestsMutationResult = NonNullable<Awaited<ReturnType<typeof listLikedTests>>>
+
+    export type ListLikedTestsMutationError = ErrorType<unknown>
+
+    /**
+ * @summary 내가 찜한 테스트 목록 조회
+ */
+export const useListLikedTests = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLikedTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listLikedTests>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListLikedTestsMutationOptions(options), queryClient);
+    }

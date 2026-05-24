@@ -54,6 +54,10 @@ export type GenerateUploadUrlParams = {
  * 파일 확장자 (점 없이 입력, 예: jpg, pdf)
  */
 extension: string;
+/**
+ * 파일 크기 (bytes)
+ */
+fileSizeBytes: number;
 };
 
 export type GenerateDownloadUrlParams = {
@@ -109,11 +113,14 @@ export const getGenerateUploadUrlUrl = (params: GenerateUploadUrlParams,) => {
 
 **[URL 유효시간]** 10분
 
+**[파일 크기 제한]** 최대 50MB
+
 **[에러 코드]**
 | 코드 | HTTP | 설명 |
 |------|------|------|
-| COMMON_004 | 400 | extension 파라미터 누락 |
+| COMMON_004 | 400 | extension 또는 fileSizeBytes 파라미터 누락 |
 | FILE_002 | 400 | 지원하지 않는 파일 형식 |
+| FILE_003 | 400 | 파일 크기 50MB 초과 |
 
  * @summary 파일 업로드 URL 발급
  */
