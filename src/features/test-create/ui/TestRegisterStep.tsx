@@ -91,19 +91,24 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
               withTouchEffect
               onClick={onGuideView}
             />
-            <ListRow
-              as="button"
-              className="text-left"
+            <div
               style={{
                 backgroundColor: "var(--adaptiveCardBgGrey)",
+                borderRadius: 16,
                 margin: "0 20px",
+                overflow: "hidden",
               }}
-              left={<ListRow.AssetIcon shape="original" name="icon-plus-grey-fill" variant="fill" />}
-              contents={<ListRow.Texts type="1RowTypeA" top={hasQuestions ? "추가하기" : "만들기"} topProps={{ color: adaptive.grey700 }} />}
-              verticalPadding="large"
-              horizontalPadding="small"
-              onClick={() => setIsQuestionTypeSheetOpen(true)}
-            />
+            >
+              <ListRow
+                as="button"
+                className="text-left"
+                left={<ListRow.AssetIcon shape="original" name="icon-plus-grey-fill" variant="fill" />}
+                contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
+                verticalPadding="large"
+                horizontalPadding="small"
+                onClick={() => setIsQuestionTypeSheetOpen(true)}
+              />
+            </div>
 
             {hasQuestions ? (
               <>
