@@ -9,6 +9,7 @@ import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
 import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
+import { TestGuidePage } from "./TestGuidePage";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { EditPhaseSheet } from "./EditPhaseSheet";
 import { BasicInfoEditPage } from "./BasicInfoEditPage";
@@ -50,6 +51,7 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
     typeId: QuestionTypeId;
   } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
 
@@ -229,6 +231,7 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
             activeTab={registerTab}
             onTabChange={setRegisterTab}
             onEnterQuestion={setActiveQuestion}
+            onGuideView={() => setShowGuide(true)}
           />
         ) : funnel.step === "image" ? (
           <motion.div
@@ -319,6 +322,9 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
             key="edit-image"
             onClose={() => setEditPhase(null)}
           />
+        )}
+        {showGuide && (
+          <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />
         )}
         {activeQuestion?.typeId === "multiple" && (
           <MultipleCreatePage
