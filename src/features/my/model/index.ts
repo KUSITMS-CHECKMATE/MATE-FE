@@ -1,2 +1,2 @@
-export type { MyUser, ParticipateRecord, TestDetail } from './types';
-export { mockMyUser, mockParticipateRecords, mockTestDetails } from './mock';
+export type { MyUser, Notice, ParticipateRecord, TestDetail } from './types';
+export { mockMyUser, mockNotices, mockParticipateRecords, mockTestDetails } from './mock';

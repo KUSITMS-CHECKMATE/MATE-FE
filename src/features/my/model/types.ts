@@ -10,6 +10,12 @@ export interface ParticipateRecord {
   earnedAmount: string;
 }
 
+export interface Notice {
+  id: number;
+  title: string;
+  publishedAt: string;
+}
+
 export interface TestDetail {
   id: number;
   name: string;
