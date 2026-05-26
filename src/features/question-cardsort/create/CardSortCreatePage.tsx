@@ -22,7 +22,7 @@ function generateId() {
 export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingCardSort = existing?.typeId === "card" ? existing : null;
+  const existingCardSort = existing?.typeId === "CARD_SORTING" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(existingCardSort?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingCardSort?.description ?? "");
@@ -126,7 +126,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "card",
+                typeId: "CARD_SORTING",
                 title: questionTitle,
                 description: questionDescription,
                 categories,

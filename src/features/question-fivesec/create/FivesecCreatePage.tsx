@@ -40,7 +40,7 @@ export function FivesecCreatePage({
 }: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingFivesec = existing?.typeId === "fivesec" ? existing : null;
+  const existingFivesec = existing?.typeId === "FIVE_SECOND" ? existing : null;
 
   const [title, setTitle] = useState(existingFivesec?.title ?? "");
   const [description, setDescription] = useState(existingFivesec?.description ?? "");
@@ -354,7 +354,7 @@ export function FivesecCreatePage({
                 disabled={isCompleteDisabled}
                 onClick={() => {
                   updateQuestion(questionId, {
-                    typeId: "fivesec",
+                    typeId: "FIVE_SECOND",
                     title,
                     description,
                     imageUrl,
