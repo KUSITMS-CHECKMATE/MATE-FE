@@ -1,12 +1,6 @@
 import { motion } from "framer-motion";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import type { AbRatio } from "@/features/question-ab/model/types";
-
-const RATIO_TO_CSS: Record<AbRatio, string> = {
-  "9:16": "9/16",
-  "1:1": "1/1",
-  "4:3": "4/3",
-};
+import { RATIO_TO_CSS } from "@/features/question-ab/model/types";
 
 interface Props {
   remaining: number;
