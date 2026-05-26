@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { likeTest, unlikeTest, getListTestsUrl } from "@/shared/api/generated/test";
+import { likeTest, unlikeTest, getListTestsUrl, getListLikedTestsUrl } from "@/shared/api/generated/test";
 
 type Props = {
   id: number;
@@ -24,6 +24,10 @@ export function TestCard({
   onClick,
 }: Props) {
   const [isLiked, setIsLiked] = useState(liked);
+
+  useEffect(() => {
+    setIsLiked(liked);
+  }, [liked]);
   const queryClient = useQueryClient();
 
   const { mutate: like } = useMutation({
@@ -34,7 +38,10 @@ export function TestCard({
       return { prev };
     },
     onError: (_, __, context) => setIsLiked(context?.prev ?? false),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
+      queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
+    },
   });
 
   const { mutate: unlike } = useMutation({
@@ -45,7 +52,10 @@ export function TestCard({
       return { prev };
     },
     onError: (_, __, context) => setIsLiked(context?.prev ?? true),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
+      queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
+    },
   });
 
   function handleLikeToggle(e: React.MouseEvent) {
