@@ -62,7 +62,7 @@ function InterestTestDetailPage() {
           title={detail.title ?? ""}
           tags={detail.categories ?? []}
         />
-        <TestDetailImageCarousel images={detail.imageKeys ?? []} />
+        <TestDetailImageCarousel images={detail.imageUrls ?? []} />
         <TestDetailInfo
           reward={detail.reward ?? 0}
           description={detail.description ?? ""}
