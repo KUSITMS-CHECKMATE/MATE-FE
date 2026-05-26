@@ -47,7 +47,7 @@ export function InterestList({ onRetry }: Props) {
         <Text color={adaptive.grey800} typography="t4" fontWeight="bold">
           관심
         </Text>
-        <Text color={adaptive.blue600} typography="t4" fontWeight="bold">
+        <Text color="#4365cc" typography="t4" fontWeight="bold">
           {tests.length}
         </Text>
       </div>
