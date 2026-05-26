@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import ky, { HTTPError } from "ky";
 import { createDraft, updateDraft } from "@/shared/api/generated/testDraft";
-import type { TestDraftUpdateRequestCategoriesItem } from "@/shared/api/generated/testDraft";
 import { generateUploadUrl } from "@/shared/api/generated/file";
 import { useTestCreateForm } from "./useTestCreateForm";
 import type { CategoryId, PendingQuestion } from "./types";
@@ -78,25 +77,6 @@ type QuestionRequestItem =
   | TreeTestCreateRequest
   | FiveSecondCreateRequest;
 
-const CATEGORY_MAP: Record<CategoryId, TestDraftUpdateRequestCategoriesItem> = {
-  daily: "DAILY",
-  finance: "FINANCE",
-  health: "HEALTH",
-  shopping: "SHOPPING",
-  food: "FOOD",
-  game: "GAME",
-  content: "CONTENT",
-  community: "COMMUNITY",
-  ai: "AI",
-  education: "EDUCATION",
-  travel: "TRAVEL",
-  social: "SOCIAL",
-  convenience: "CONVENIENCE",
-  information: "INFORMATION",
-  business: "BUSINESS",
-  transportation: "TRANSPORT",
-  public: "PUBLIC_ADMIN",
-};
 
 function dataUriToBlob(dataUri: string): Blob {
   const [header, base64] = dataUri.split(",");
@@ -280,7 +260,7 @@ export function useSubmitTest() {
         await updateDraft(draftId, {
           title: form.name,
           description: form.summary,
-          categories: form.categories.map((c) => CATEGORY_MAP[c]),
+          categories: form.categories,
           serviceName: form.serviceName || undefined,
           serviceDescription: form.description || undefined,
           imageKeys,
