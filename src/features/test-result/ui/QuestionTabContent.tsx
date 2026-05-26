@@ -8,7 +8,7 @@ interface Props {
 
 export function QuestionTabContent({ onSelectQuestion }: Props) {
   return (
-    <div className="flex flex-col py-4">
+    <div className="flex flex-col">
       {MOCK_QUESTIONS.map((question, index) => (
         <div
           key={question.id}
@@ -29,7 +29,12 @@ export function QuestionTabContent({ onSelectQuestion }: Props) {
             </Asset.Text>
             <div className="w-full flex flex-row gap-3 justify-between items-center">
               <div className="w-full flex flex-col">
-                <Text display="block" color={adaptive.grey800} typography="t5" fontWeight="semibold">
+                <Text
+                  display="block"
+                  color={adaptive.grey800}
+                  typography="t5"
+                  fontWeight="semibold"
+                >
                   {question.title}
                 </Text>
                 <Text display="block" color={adaptive.grey600} typography="t6" fontWeight="medium">

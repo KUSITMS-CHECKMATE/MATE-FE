@@ -13,7 +13,7 @@ function TestListSkeleton() {
   return (
     <div className="flex flex-col">
       <div className="w-full bg-white px-6 py-6">
-        <Skeleton custom={["title"]} repeatLastItemCount={0} />
+        <Skeleton custom={["title"]} repeatLastItemCount={0} background="greyOpacity100" />
       </div>
       <div className="flex flex-col gap-3 px-4 pb-24">
         {Array.from({ length: 3 }).map((_, i) => (
@@ -21,6 +21,7 @@ function TestListSkeleton() {
             key={i}
             custom={["title", "subtitle"]}
             repeatLastItemCount={0}
+            background="greyOpacity100"
           />
         ))}
       </div>
