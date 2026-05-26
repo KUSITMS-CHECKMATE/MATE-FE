@@ -104,9 +104,9 @@ const MyHistoryTestIdRoute = MyHistoryTestIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
+  '/interest/$testId': typeof InterestTestIdRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRoute
-  '/interest/$testId': typeof InterestTestIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -121,8 +121,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
-  '/my/notice': typeof MyNoticeRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/notice': typeof MyNoticeRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -138,9 +138,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
+  '/interest/$testId': typeof InterestTestIdRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRoute
-  '/interest/$testId': typeof InterestTestIdRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -157,9 +157,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/discovery/$testId'
+    | '/interest/$testId'
     | '/my/history'
     | '/my/notice'
-    | '/interest/$testId'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -174,8 +174,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/discovery/$testId'
-    | '/my/notice'
     | '/interest/$testId'
+    | '/my/notice'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -190,9 +190,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/discovery/$testId'
+    | '/interest/$testId'
     | '/my/history'
     | '/my/notice'
-    | '/interest/$testId'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -208,9 +208,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiscoveryTestIdRoute: typeof DiscoveryTestIdRoute
+  InterestTestIdRoute: typeof InterestTestIdRoute
   MyHistoryRoute: typeof MyHistoryRouteWithChildren
   MyNoticeRoute: typeof MyNoticeRoute
-  InterestTestIdRoute: typeof InterestTestIdRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
   TestPaymentRoute: typeof TestPaymentRoute
@@ -348,9 +348,9 @@ const MyHistoryRouteWithChildren = MyHistoryRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscoveryTestIdRoute: DiscoveryTestIdRoute,
+  InterestTestIdRoute: InterestTestIdRoute,
   MyHistoryRoute: MyHistoryRouteWithChildren,
   MyNoticeRoute: MyNoticeRoute,
-  InterestTestIdRoute: InterestTestIdRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestCreateRoute: TestCreateRoute,
   TestPaymentRoute: TestPaymentRoute,
