@@ -4,9 +4,6 @@ export function isAnswerValid(
   question: ParticipateQuestion,
   answer: Answer | undefined,
 ): boolean {
-  // 트리 구현 후 제거
-  if (question.type === "TREE_TEST") return true;
-
   if (!answer || answer.type !== question.type) return false;
 
   switch (question.type) {
@@ -28,10 +25,10 @@ export function isAnswerValid(
       const n = a.selectedIds.length;
       return n >= minSelectCount && n <= maxSelectCount;
     }
-    // case "TREE_TEST": {
-    //   const a = answer as Extract<Answer, { type: "TREE_TEST" }>;
-    //   return a.selectedNodeId !== null;
-    // }
+    case "TREE_TEST": {
+      const a = answer as Extract<Answer, { type: "TREE_TEST" }>;
+      return a.selectedNodeId !== null;
+    }
     case "FIVE_SECOND": {
       const a = answer as Extract<Answer, { type: "FIVE_SECOND" }>;
       if (question.data.answerType === "subjective") {
