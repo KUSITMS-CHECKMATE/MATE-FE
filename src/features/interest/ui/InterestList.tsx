@@ -14,7 +14,9 @@ export function InterestList() {
     queryFn: () => listLikedTests(),
   });
 
-  const tests = data?.data?.data?.tests ?? [];
+  const tests = (data?.data?.data?.tests ?? []).filter(
+    (test): test is typeof test & { id: number } => test.id !== undefined
+  );
 
   if (isLoading) {
     return (
@@ -65,7 +67,7 @@ export function InterestList() {
           {tests.map((test) => (
             <TestCard
               key={test.id}
-              id={test.id ?? 0}
+              id={test.id}
               title={test.title ?? ""}
               description={test.description ?? ""}
               reward={test.reward ?? 0}
