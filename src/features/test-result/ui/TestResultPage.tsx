@@ -54,11 +54,11 @@ function FivesecPreviewOverlay({
   question,
   onClose,
 }: {
-  question: Extract<ParticipateQuestion, { type: "FIVE_SECOND" }>;
+  question: Extract<ParticipateQuestion, { type: "fivesec" }>;
   onClose: () => void;
 }) {
-  const [answer, setAnswer] = useState<{ type: "FIVE_SECOND"; selectedIds: string[] }>({
-    type: "FIVE_SECOND",
+  const [answer, setAnswer] = useState<{ type: "fivesec"; selectedIds: string[] }>({
+    type: "fivesec",
     selectedIds: [],
   });
 

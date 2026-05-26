@@ -16,5 +16,5 @@ export type {
   ScoreBar,
   AbOption,
   CardSortItem,
-  CardSortResultCategory,
+  CardSortCategory,
 } from "../model/types";

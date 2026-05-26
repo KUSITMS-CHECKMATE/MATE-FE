@@ -2,7 +2,13 @@ import { motion } from "framer-motion";
 import { adaptive } from "@toss/tds-colors";
 import { Text } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import { RATIO_TO_CSS } from "@/shared/constants/imageRatio";
+import type { AbRatio } from "@/features/question-ab/model/types";
+
+const RATIO_TO_CSS: Record<AbRatio, string> = {
+  "9:16": "9/16",
+  "1:1": "1/1",
+  "4:3": "4/3",
+};
 
 interface Props {
   ratio: AbRatio;

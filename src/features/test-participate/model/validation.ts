@@ -4,11 +4,14 @@ export function isAnswerValid(
   question: ParticipateQuestion,
   answer: Answer | undefined,
 ): boolean {
+  // 트리 구현 후 제거
+  if (question.type === "tree") return true;
+
   if (!answer || answer.type !== question.type) return false;
 
   switch (question.type) {
-    case "SUBJECTIVE": {
-      const a = answer as Extract<Answer, { type: "SUBJECTIVE" }>;
+    case "subjective": {
+      const a = answer as Extract<Answer, { type: "subjective" }>;
       const text = a.text.trim();
       if (text.length === 0) return false;
       if (
@@ -19,18 +22,18 @@ export function isAnswerValid(
       }
       return true;
     }
-    case "OBJECTIVE": {
-      const a = answer as Extract<Answer, { type: "OBJECTIVE" }>;
+    case "multiple": {
+      const a = answer as Extract<Answer, { type: "multiple" }>;
       const { minSelectCount, maxSelectCount } = question.data;
       const n = a.selectedIds.length;
       return n >= minSelectCount && n <= maxSelectCount;
     }
-    case "TREE_TEST": {
-      const a = answer as Extract<Answer, { type: "TREE_TEST" }>;
-      return a.selectedNodeId !== null;
-    }
-    case "FIVE_SECOND": {
-      const a = answer as Extract<Answer, { type: "FIVE_SECOND" }>;
+    // case "tree": {
+    //   const a = answer as Extract<Answer, { type: "tree" }>;
+    //   return a.selectedNodeId !== null;
+    // }
+    case "fivesec": {
+      const a = answer as Extract<Answer, { type: "fivesec" }>;
       if (question.data.answerType === "subjective") {
         return (a.text ?? "").trim().length > 0;
       }
@@ -38,17 +41,17 @@ export function isAnswerValid(
       const n = a.selectedIds.length;
       return n >= minSelectCount && n <= maxSelectCount;
     }
-    case "SCALE": {
-      const a = answer as Extract<Answer, { type: "SCALE" }>;
+    case "scale": {
+      const a = answer as Extract<Answer, { type: "scale" }>;
       if (a.value === null) return false;
       return a.value >= 1 && a.value <= question.data.scaleCount;
     }
-    case "AB_TEST": {
-      const a = answer as Extract<Answer, { type: "AB_TEST" }>;
+    case "ab": {
+      const a = answer as Extract<Answer, { type: "ab" }>;
       return a.selected !== null;
     }
-    case "CARD_SORTING": {
-      const a = answer as Extract<Answer, { type: "CARD_SORTING" }>;
+    case "cardsort": {
+      const a = answer as Extract<Answer, { type: "cardsort" }>;
       const placedCount = Object.keys(a.placements).length;
       if (question.data.requireAllPlaced) {
         return placedCount === question.data.cards.length;
@@ -60,19 +63,19 @@ export function isAnswerValid(
 
 export function makeEmptyAnswer(question: ParticipateQuestion): Answer {
   switch (question.type) {
-    case "SUBJECTIVE":
-      return { type: "SUBJECTIVE", text: "" };
-    case "OBJECTIVE":
-      return { type: "OBJECTIVE", selectedIds: [] };
-    case "TREE_TEST":
-      return { type: "TREE_TEST", selectedNodeId: null };
-    case "FIVE_SECOND":
-      return { type: "FIVE_SECOND", selectedIds: [] };
-    case "SCALE":
-      return { type: "SCALE", value: null };
-    case "AB_TEST":
-      return { type: "AB_TEST", selected: null };
-    case "CARD_SORTING":
-      return { type: "CARD_SORTING", placements: {} };
+    case "subjective":
+      return { type: "subjective", text: "" };
+    case "multiple":
+      return { type: "multiple", selectedIds: [] };
+    case "tree":
+      return { type: "tree", selectedNodeId: null };
+    case "fivesec":
+      return { type: "fivesec", selectedIds: [] };
+    case "scale":
+      return { type: "scale", value: null };
+    case "ab":
+      return { type: "ab", selected: null };
+    case "cardsort":
+      return { type: "cardsort", placements: {} };
   }
 }

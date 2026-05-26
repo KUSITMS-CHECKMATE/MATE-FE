@@ -1,5 +1,5 @@
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
-import type { AbRatio } from "@/shared/constants/imageRatio";
+import type { AbRatio } from "@/features/question-ab/model/types";
 
 export type { AbRatio };
 

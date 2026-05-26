@@ -326,49 +326,49 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
         {showGuide && (
           <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />
         )}
-        {activeQuestion?.typeId === "OBJECTIVE" && (
+        {activeQuestion?.typeId === "multiple" && (
           <MultipleCreatePage
             key="question-multiple"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "SUBJECTIVE" && (
+        {activeQuestion?.typeId === "subjective" && (
           <SubjectiveCreatePage
             key="question-subjective"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "SCALE" && (
+        {activeQuestion?.typeId === "scale" && (
           <ScaleCreatePage
             key="question-scale"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "AB_TEST" && (
+        {activeQuestion?.typeId === "ab" && (
           <AbCreatePage
             key="question-ab"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "CARD_SORTING" && (
+        {activeQuestion?.typeId === "card" && (
           <CardSortCreatePage
             key="question-card"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "TREE_TEST" && (
+        {activeQuestion?.typeId === "tree" && (
           <TreeCreatePage
             key="question-tree"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "FIVE_SECOND" && (
+        {activeQuestion?.typeId === "fivesec" && (
           <FivesecCreatePage
             key="question-fivesec"
             questionId={activeQuestion.id}
