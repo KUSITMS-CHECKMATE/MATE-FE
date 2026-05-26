@@ -6,7 +6,7 @@ import { QUESTION_TYPE_LABEL } from "@/features/test-participate/model/constants
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { TreeNodeItem } from "../model/types";
 
-export function TreeAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"tree">) {
+export function TreeAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"TREE_TEST">) {
   const { title, description, nodes } = question.data;
   const selectedNodeId = answer?.selectedNodeId ?? null;
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -25,7 +25,7 @@ export function TreeAnswerPage({ question, answer, onChange }: QuestionAnswerPro
 
   return (
     <>
-      <QuestionHeader categoryLabel={QUESTION_TYPE_LABEL.tree} title={title} description={description} />
+      <QuestionHeader categoryLabel={QUESTION_TYPE_LABEL.TREE_TEST} title={title} description={description} />
       <div>
         {nodes.map((node) => (
           <TreeNodeRow
@@ -35,7 +35,7 @@ export function TreeAnswerPage({ question, answer, onChange }: QuestionAnswerPro
             expandedIds={expandedIds}
             selectedNodeId={selectedNodeId}
             onToggleExpand={toggleExpanded}
-            onSelect={(nodeId) => onChange({ type: "tree", selectedNodeId: nodeId })}
+            onSelect={(nodeId) => onChange({ type: "TREE_TEST", selectedNodeId: nodeId })}
           />
         ))}
       </div>

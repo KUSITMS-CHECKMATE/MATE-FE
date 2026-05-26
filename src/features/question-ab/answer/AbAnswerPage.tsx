@@ -8,7 +8,7 @@ import { QUESTION_TYPE_LABEL } from "@/features/test-participate/model/constants
 export function AbAnswerPage({
   question,
   answer,
-}: QuestionAnswerProps<"ab">) {
+}: QuestionAnswerProps<"AB_TEST">) {
   const { data } = question;
   const selected = answer?.selected ?? null;
   const aspectRatio = (data.ratio ?? "9:16").replace(":", "/");
@@ -17,7 +17,7 @@ export function AbAnswerPage({
   return (
     <div className="flex flex-col">
       <QuestionHeader
-        categoryLabel={QUESTION_TYPE_LABEL.ab}
+        categoryLabel={QUESTION_TYPE_LABEL.AB_TEST}
         title={data.title}
         description={data.description}
         lower={

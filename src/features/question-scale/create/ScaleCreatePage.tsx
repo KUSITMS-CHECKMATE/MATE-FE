@@ -33,7 +33,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "scale"; value: number | null }>({ type: "scale", value: null });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SCALE"; value: number | null }>({ type: "SCALE", value: null });
 
   const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
     useQuestionImageUpload(setQuestionImageUrl);
@@ -166,7 +166,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
           <ScaleAnswerPage
             question={{
               id: "preview",
-              type: "scale",
+              type: "SCALE",
               data: {
                 title: questionTitle,
                 description: questionDescription,

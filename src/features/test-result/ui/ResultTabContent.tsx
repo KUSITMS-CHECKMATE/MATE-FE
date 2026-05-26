@@ -15,7 +15,7 @@ export function ResultTabContent() {
       <div className="w-full  p-5 flex flex-col gap-4 items-center">
         {MOCK_RESULTS.map((result, i) => {
           switch (result.type) {
-            case "multiple":
+            case "OBJECTIVE":
               return (
                 <MultipleResultCard
                   key={i}
@@ -24,9 +24,9 @@ export function ResultTabContent() {
                   options={result.options}
                 />
               );
-            case "subjective":
+            case "SUBJECTIVE":
               return <SubjectiveResultCard key={i} title={result.title} answers={result.answers} />;
-            case "scale":
+            case "SCALE":
               return (
                 <ScaleResultCard
                   key={i}
@@ -35,13 +35,13 @@ export function ResultTabContent() {
                   scores={result.scores}
                 />
               );
-            case "ab":
+            case "AB_TEST":
               return <AbResultCard key={i} title={result.title} options={result.options} />;
-            case "cardSort":
+            case "CARD_SORTING":
               return (
                 <CardSortResultCard key={i} title={result.title} categories={result.categories} />
               );
-            case "tree":
+            case "TREE_TEST":
               return (
                 <TreeResultCard
                   key={i}
@@ -50,7 +50,7 @@ export function ResultTabContent() {
                   paths={result.paths}
                 />
               );
-            case "fiveSec":
+            case "FIVE_SECOND":
               return (
                 <FiveSecResultCard
                   key={i}

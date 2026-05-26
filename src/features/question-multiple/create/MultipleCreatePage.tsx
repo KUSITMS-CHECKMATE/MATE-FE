@@ -50,7 +50,7 @@ export function MultipleCreatePage({
   );
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "multiple"; selectedIds: string[] }>({ type: "multiple", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "OBJECTIVE"; selectedIds: string[] }>({ type: "OBJECTIVE", selectedIds: [] });
 
   const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length < 2;
@@ -187,7 +187,7 @@ export function MultipleCreatePage({
           <MultipleAnswerPage
             question={{
               id: "preview",
-              type: "multiple",
+              type: "OBJECTIVE",
               data: {
                 title: questionTitle,
                 description: questionDescription,

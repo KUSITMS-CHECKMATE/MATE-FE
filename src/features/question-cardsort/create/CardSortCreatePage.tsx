@@ -33,7 +33,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
   const [cards, setCards] = useState<CardSortCard[]>(existingCardSort?.cards ?? []);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "cardsort"; placements: Record<string, string> }>({ type: "cardsort", placements: {} });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "CARD_SORTING"; placements: Record<string, string> }>({ type: "CARD_SORTING", placements: {} });
 
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
@@ -174,7 +174,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
           <CardSortAnswerPage
             question={{
               id: "preview",
-              type: "cardsort",
+              type: "CARD_SORTING",
               data: {
                 title: questionTitle,
                 description: questionDescription,

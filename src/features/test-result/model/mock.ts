@@ -3,7 +3,7 @@ import type { ParticipateQuestion } from "@/features/test-participate/model/type
 
 export const MOCK_RESULTS: QuestionResult[] = [
   {
-    type: "multiple",
+    type: "OBJECTIVE",
     title: "전반적인 사용 경험에 만족하시나요?",
     options: [
       { label: "프로필", count: 32, percentage: 58, isHighlight: true },
@@ -12,12 +12,12 @@ export const MOCK_RESULTS: QuestionResult[] = [
     ],
   },
   {
-    type: "subjective",
+    type: "SUBJECTIVE",
     title: "전반적인 사용 경험에 만족하시나요?",
     answers: Array(15).fill("만족해요"),
   },
   {
-    type: "scale",
+    type: "SCALE",
     title: "전반적인 사용 경험에 만족하시나요?",
     average: 3.5,
     scores: [
@@ -29,7 +29,7 @@ export const MOCK_RESULTS: QuestionResult[] = [
     ],
   },
   {
-    type: "ab",
+    type: "AB_TEST",
     title: "전반적인 사용 경험에 만족하시나요?",
     options: [
       { label: "A안 (27.2%)", height: 45, isHighlight: false },
@@ -37,7 +37,7 @@ export const MOCK_RESULTS: QuestionResult[] = [
     ],
   },
   {
-    type: "cardSort",
+    type: "CARD_SORTING",
     title: "전반적인 사용 경험에 만족하시나요?",
     categories: [
       {
@@ -65,7 +65,7 @@ export const MOCK_RESULTS: QuestionResult[] = [
     ],
   },
   {
-    type: "tree",
+    type: "TREE_TEST",
     title: "내 프로필을 수정하려면 어디로 가야 할까요?",
     paths: [
       { label: "프로필", count: 32, percentage: 58, isHighlight: true },
@@ -74,7 +74,7 @@ export const MOCK_RESULTS: QuestionResult[] = [
     ],
   },
   {
-    type: "fiveSec",
+    type: "FIVE_SECOND",
     title: "5초동안 보고 기억에 남는것은?",
     imageUrl: undefined,
     answers: [
@@ -100,7 +100,7 @@ export const MOCK_QUESTIONS = [
 export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   {
     id: "q1",
-    type: "subjective",
+    type: "SUBJECTIVE",
     data: {
       title: "서비스에서 불편한 점은 무엇인가요?",
       description: "자유롭게 작성해주세요",
@@ -111,7 +111,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q2",
-    type: "multiple",
+    type: "OBJECTIVE",
     data: {
       title: "자주 사용하는 기능은 무엇인가요?",
       description: "해당하는 항목을 선택해주세요",
@@ -129,7 +129,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q3",
-    type: "scale",
+    type: "SCALE",
     data: {
       title: "전반적인 만족도는 어떠신가요?",
       description: "",
@@ -140,7 +140,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q4",
-    type: "ab",
+    type: "AB_TEST",
     data: {
       title: "어떤 디자인이 더 마음에 드시나요?",
       description: "두 디자인 중 선호하는 것을 선택해주세요",
@@ -151,7 +151,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q5",
-    type: "fivesec",
+    type: "FIVE_SECOND",
     data: {
       title: "화면에서 가장 먼저 눈에 띈 것은?",
       description: "5초 동안 화면을 보고 기억에 남는 것을 선택해주세요",
@@ -173,7 +173,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q6",
-    type: "cardsort",
+    type: "CARD_SORTING",
     data: {
       title: "카드를 분류해 주세요",
       description: "각 카드를 알맞은 카테고리에 배치해주세요",
@@ -195,7 +195,7 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
   },
   {
     id: "q7",
-    type: "tree",
+    type: "TREE_TEST",
     data: {
       title: "고객센터를 찾아보세요",
       description: "메뉴를 탐색해서 원하는 항목을 찾아주세요",
