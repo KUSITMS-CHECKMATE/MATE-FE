@@ -23,7 +23,7 @@ type NodeSheetMode =
 export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingTree = existing?.typeId === "tree" ? existing : null;
+  const existingTree = existing?.typeId === "TREE_TEST" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
     existingTree?.title ?? "",
@@ -41,7 +41,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const [isManageMode, setIsManageMode] = useState(false);
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "tree"; selectedNodeId: string | null }>({ type: "tree", selectedNodeId: null });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "TREE_TEST"; selectedNodeId: string | null }>({ type: "TREE_TEST", selectedNodeId: null });
 
   const isCompleteDisabled =
     questionTitle.trim().length === 0 ||
@@ -168,7 +168,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "tree",
+                typeId: "TREE_TEST",
                 title: questionTitle,
                 description: questionDescription,
                 nodes,
@@ -190,7 +190,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
           <TreeAnswerPage
             question={{
               id: "preview",
-              type: "tree",
+              type: "TREE_TEST",
               data: {
                 title: questionTitle,
                 description: questionDescription,

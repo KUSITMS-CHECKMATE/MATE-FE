@@ -15,7 +15,7 @@ function getCategoryColor(index: number): string {
   return adaptive.blue500;
 }
 
-export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"cardsort">) {
+export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"CARD_SORTING">) {
   const { data } = question;
   const placements = answer?.placements ?? {};
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
     if (placements[cardId]) {
       const next = { ...placements };
       delete next[cardId];
-      onChange({ type: "cardsort", placements: next });
+      onChange({ type: "CARD_SORTING", placements: next });
       return;
     }
     if (selectedCardId === cardId && !pickTooltipDone) setPickTooltipDone(true);
@@ -47,14 +47,14 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
   const handleCategoryTap = (categoryId: string) => {
     if (!selectedCardId) return;
     if (!pickTooltipDone) setPickTooltipDone(true);
-    onChange({ type: "cardsort", placements: { ...placements, [selectedCardId]: categoryId } });
+    onChange({ type: "CARD_SORTING", placements: { ...placements, [selectedCardId]: categoryId } });
     setSelectedCardId(null);
   };
 
   return (
     <div className="flex flex-col">
       <QuestionHeader
-        categoryLabel={QUESTION_TYPE_LABEL.cardsort}
+        categoryLabel={QUESTION_TYPE_LABEL.CARD_SORTING}
         title={data.title}
         description={data.description}
       />

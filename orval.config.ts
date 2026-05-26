@@ -49,8 +49,16 @@ export default defineConfig({
     input: makeInput(["[USERS] 사용자 API"]),
     output: makeOutput("users"),
   },
+  testDraft: {
+    input: makeInput(["[TEST DRAFT] 테스트 초안 API"]),
+    output: makeOutput("testDraft"),
+  },
   report: {
-    input: makeInput(["[REPORT] 통계 API"]),
+    input: makeInput(["[REPORT] 리포트 API"]),
     output: makeOutput("report"),
+  },
+  payment: {
+    input: makeInput(["[MOCK PAYMENT] 결제 API"]),
+    output: makeOutput("payment"),
   },
 });

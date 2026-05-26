@@ -42,15 +42,14 @@ export const getGetReportUrl = (testId: number,) => {
 }
 
 /**
- * 메이커가 자신의 테스트에 대한 질문 목록 및 질문 유형별 응답 리포트를 조회합니다. MKST_01/MKST_02 화면에 해당합니다.
+ * 메이커가 자신의 테스트에 대한 질문 유형별 응답 리포트를 조회합니다. MKST_02 화면에 해당하는 api 입니다.
 - 테스트 소유자(메이커)만 조회할 수 있습니다.
-- `testStatus`가 `IN_PROGRESS`이면 `reports`는 빈 리스트를 반환합니다.
+- `testStatus`가 `COMPLETED`가 아니면 `reports`는 빈 리스트를 반환합니다.
 - `testStatus`가 `COMPLETED`이고 `reportStatus`가 `IN_PROGRESS`이면 집계 중으로 `reports`는 빈 리스트입니다.
-- `reportStatus`가 `COMPLETED`이면 질문 유형별 리포트가 포함됩니다.
-- `questions`는 질문 탭(MKST_01), `reports`는 결과 탭(MKST_02)에 사용됩니다.
-- `reports[].result` 구조는 질문 유형(`type`)마다 다릅니다. 아래 예시 응답을 참고하세요.
+- `reportStatus`가 `COMPLETED`이면 `reports`를 반환합니다.
+- `reports[].result` 구조는 질문 유형(`type`)마다 다릅니다. 아래 예시 응답을 참고해주세요.
 
- * @summary 테스트 리포트 전체 조회
+ * @summary ✔️ 리포트 전체 조회
  */
 export const getReport = async (testId: number, options?: RequestInit): Promise<getReportResponse> => {
 
@@ -98,7 +97,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetReportMutationError = ErrorType<unknown>
 
     /**
- * @summary 테스트 리포트 전체 조회
+ * @summary ✔️ 리포트 전체 조회
  */
 export const useGetReport = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getReport>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}

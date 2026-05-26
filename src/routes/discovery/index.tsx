@@ -19,7 +19,7 @@ function HomePage() {
     title: item.title ?? "",
     description: item.description ?? "",
     reward: item.reward ?? 0,
-    thumbnailUrl: item.thumbnailKey ?? "",
+    thumbnailUrl: item.thumbnailUrl ?? "",
     liked: item.isLiked ?? false,
   }));
 

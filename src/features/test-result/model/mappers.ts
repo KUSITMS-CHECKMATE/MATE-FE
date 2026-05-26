@@ -23,7 +23,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
   switch (item.type) {
     case "SUBJECTIVE":
       return {
-        type: "subjective",
+        type: "SUBJECTIVE",
         title: item.title,
         answers: item.result.texts,
       };
@@ -31,7 +31,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
     case "OBJECTIVE": {
       const max = Math.max(...item.result.options.map((o) => o.count), 1);
       return {
-        type: "multiple",
+        type: "OBJECTIVE",
         title: item.title,
         options: item.result.options.map((o) => ({
           label: o.content,
@@ -44,9 +44,8 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
 
     case "FIVE_SECOND": {
       if ("texts" in item.result) {
-        // 주관식 형태 → FiveSecResultCard 텍스트 모드
         return {
-          type: "fiveSec",
+          type: "FIVE_SECOND",
           title: item.title,
           imageUrl: undefined,
           answers: item.result.texts.map((text) => ({
@@ -57,10 +56,9 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
           })),
         };
       }
-      // 객관식 형태
       const max = Math.max(...item.result.options.map((o) => o.count), 1);
       return {
-        type: "fiveSec",
+        type: "FIVE_SECOND",
         title: item.title,
         imageUrl: undefined,
         answers: item.result.options.map((o) => ({
@@ -75,13 +73,13 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
     case "SCALE": {
       const maxCount = Math.max(...item.result.distribution.map((d) => d.count), 1);
       return {
-        type: "scale",
+        type: "SCALE",
         title: item.title,
         average: item.result.average,
         scores: item.result.distribution.map((d) => ({
           label: `${d.score}점`,
           height: Math.round((d.count / maxCount) * MAX_BAR_HEIGHT),
-          isHighlight: d.count === maxCount,
+          isHighlight: d.score === item.result.mostVoted,
         })),
       };
     }
@@ -89,7 +87,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
     case "AB_TEST": {
       const aWins = item.result.A.count >= item.result.B.count;
       return {
-        type: "ab",
+        type: "AB_TEST",
         title: item.title,
         options: [
           {
@@ -108,7 +106,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
 
     case "CARD_SORTING":
       return {
-        type: "cardSort",
+        type: "CARD_SORTING",
         title: item.title,
         categories: item.result.byCategory.map((cat) => ({
           name: cat.category,
@@ -125,7 +123,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
     case "TREE_TEST": {
       const max = Math.max(...item.result.nodeFrequency.map((n) => n.count), 1);
       return {
-        type: "tree",
+        type: "TREE_TEST",
         title: item.title,
         paths: item.result.nodeFrequency.map((node) => ({
           label: node.label,

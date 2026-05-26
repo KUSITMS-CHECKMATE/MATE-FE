@@ -122,7 +122,7 @@ export const getGenerateUploadUrlUrl = (params: GenerateUploadUrlParams,) => {
 | FILE_002 | 400 | 지원하지 않는 파일 형식 |
 | FILE_003 | 400 | 파일 크기 50MB 초과 |
 
- * @summary 파일 업로드 URL 발급
+ * @summary ✔️ 파일 업로드 URL 발급
  */
 export const generateUploadUrl = async (params: GenerateUploadUrlParams, options?: RequestInit): Promise<generateUploadUrlResponse> => {
 
@@ -193,7 +193,7 @@ export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateU
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 파일 업로드 URL 발급
+ * @summary ✔️ 파일 업로드 URL 발급
  */
 
 export function useGenerateUploadUrl<TData = Awaited<ReturnType<typeof generateUploadUrl>>, TError = ErrorType<unknown>>(
@@ -251,7 +251,7 @@ export const getGenerateDownloadUrlUrl = (params: GenerateDownloadUrlParams,) =>
 |------|------|------|
 | COMMON_004 | 400 | fileKey 파라미터 누락 |
 
- * @summary 파일 다운로드 URL 발급
+ * @summary ✔️ 파일 다운로드 URL 발급
  */
 export const generateDownloadUrl = async (params: GenerateDownloadUrlParams, options?: RequestInit): Promise<generateDownloadUrlResponse> => {
 
@@ -299,7 +299,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GenerateDownloadUrlMutationError = ErrorType<unknown>
 
     /**
- * @summary 파일 다운로드 URL 발급
+ * @summary ✔️ 파일 다운로드 URL 발급
  */
 export const useGenerateDownloadUrl = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateDownloadUrl>>, TError,{params: GenerateDownloadUrlParams}, TContext>, request?: SecondParameter<typeof kyMutator>}

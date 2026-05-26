@@ -21,7 +21,7 @@ export function MultipleCreatePage({
 }: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingMultiple = existing?.typeId === "multiple" ? existing : null;
+  const existingMultiple = existing?.typeId === "OBJECTIVE" ? existing : null;
 
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
     existingMultiple?.isOtherInputEnabled ?? false,
@@ -50,7 +50,7 @@ export function MultipleCreatePage({
   );
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "multiple"; selectedIds: string[] }>({ type: "multiple", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "OBJECTIVE"; selectedIds: string[] }>({ type: "OBJECTIVE", selectedIds: [] });
 
   const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length < 2;
@@ -127,7 +127,7 @@ export function MultipleCreatePage({
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "multiple",
+                typeId: "OBJECTIVE",
                 title: questionTitle,
                 description: questionDescription,
                 choices,
@@ -187,7 +187,7 @@ export function MultipleCreatePage({
           <MultipleAnswerPage
             question={{
               id: "preview",
-              type: "multiple",
+              type: "OBJECTIVE",
               data: {
                 title: questionTitle,
                 description: questionDescription,
