@@ -30,7 +30,7 @@ export function MyHelpSection() {
             />
           }
           verticalPadding="large"
-          onClick={() => navigate({ to: '/my/history/' })}
+          onClick={() => navigate({ to: '/my/history' })}
         />
         <ListRow
           left={
@@ -46,6 +46,7 @@ export function MyHelpSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: '/my/notice' })}
         />
         <ListRow
           left={
