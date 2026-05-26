@@ -8,7 +8,7 @@ import { FivesecMultipleAnswerPhase } from "./FivesecMultipleAnswerPhase";
 
 type Phase = "ready" | "preview" | "countdown" | "answer";
 
-interface Props extends QuestionAnswerProps<"fivesec"> {
+interface Props extends QuestionAnswerProps<"FIVE_SECOND"> {
   onPrev: () => void;
   onGoNext: () => void;
   isFirst: boolean;
@@ -59,10 +59,10 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "fivesec", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "fivesec", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next });
     }
   }
 
@@ -97,7 +97,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         isLast={isLast}
         prevLabel={prevLabel}
         onlyPrev={isPreview}
-        onChange={(text) => onChange({ type: "fivesec", selectedIds: [], text })}
+        onChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: [], text })}
         onPrev={onPrev}
         onGoNext={onGoNext}
       />
