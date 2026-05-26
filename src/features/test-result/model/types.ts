@@ -35,7 +35,7 @@ export interface CardSortItem {
   isHighlight: boolean;
 }
 
-export interface CardSortCategory {
+export interface CardSortResultCategory {
   name: string;
   items: CardSortItem[];
 }
@@ -45,6 +45,6 @@ export type QuestionResult =
   | { type: "SUBJECTIVE"; title: string; answers: string[] }
   | { type: "SCALE"; title: string; average: number; scores: ScoreBar[] }
   | { type: "AB_TEST"; title: string; options: AbOption[] }
-  | { type: "CARD_SORTING"; title: string; categories: CardSortCategory[] }
+  | { type: "CARD_SORTING"; title: string; categories: CardSortResultCategory[] }
   | { type: "TREE_TEST"; title: string; imageUrl?: string; paths: TreeResultPath[] }
   | { type: "FIVE_SECOND"; title: string; imageUrl?: string; answers: FiveSecAnswer[] };
