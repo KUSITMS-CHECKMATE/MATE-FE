@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: "/",
   DISCOVERY: "/discovery",
   INTEREST: "/interest",
+  INTEREST_DETAIL: "/interest/$testId",
   MY: "/my",
   TEST: "/test",
   TEST_CREATE: "/test/create",
