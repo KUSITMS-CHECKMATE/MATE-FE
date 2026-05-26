@@ -182,7 +182,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
             label: node.name,
             children: node.children?.map((child) => ({
               label: child.name,
-              children: child.children?.length > 0 ? child.children : undefined,
+              children: child.children?.length ? child.children : undefined,
             })),
           })) ?? [],
       } satisfies TreeTestCreateRequest;

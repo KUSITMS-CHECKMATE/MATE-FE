@@ -86,7 +86,7 @@ export function ParticipatePage({ testId }: Props) {
         />
       )}
 
-      {isAbQuestion && currentQuestion.type === "AB_TEST" && (
+      {isAbQuestion && (
         <AbSelectionBottomSheet
           data={currentQuestion.data}
           open={isAbSheetOpen}

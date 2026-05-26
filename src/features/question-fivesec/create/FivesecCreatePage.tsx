@@ -27,7 +27,7 @@ import { useTestCreateForm } from "@/features/test-create/model/useTestCreateFor
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
 import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
-import { RATIO_TO_CSS, type AbRatio } from "@/features/question-ab/model/types";
+import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface FivesecCreatePageProps {
   questionId: string;
