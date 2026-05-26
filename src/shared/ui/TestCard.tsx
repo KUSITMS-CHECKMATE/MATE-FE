@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
@@ -31,11 +31,8 @@ export function TestCard({
   liked,
   onClick,
 }: Props) {
-  const [isLiked, setIsLiked] = useState(liked);
-
-  useEffect(() => {
-    setIsLiked(liked);
-  }, [liked]);
+  const [pendingLiked, setPendingLiked] = useState<boolean | null>(null);
+  const isLiked = pendingLiked ?? liked;
 
   const queryClient = useQueryClient();
 
@@ -75,15 +72,16 @@ export function TestCard({
         };
       });
 
-      setIsLiked(true);
-      return { prevTests, prevLikedTests, prevLiked: isLiked };
+      setPendingLiked(true);
+      return { prevTests, prevLikedTests };
     },
     onError: (_, __, context) => {
-      setIsLiked(context?.prevLiked ?? false);
+      setPendingLiked(null);
       if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
       if (context?.prevLikedTests) queryClient.setQueryData([getListLikedTestsUrl()], context.prevLikedTests);
     },
     onSettled: () => {
+      setPendingLiked(null);
       queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
       queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
     },
@@ -124,15 +122,16 @@ export function TestCard({
         };
       });
 
-      setIsLiked(false);
-      return { prevTests, prevLikedTests, prevLiked: isLiked };
+      setPendingLiked(false);
+      return { prevTests, prevLikedTests };
     },
     onError: (_, __, context) => {
-      setIsLiked(context?.prevLiked ?? true);
+      setPendingLiked(null);
       if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
       if (context?.prevLikedTests) queryClient.setQueryData([getListLikedTestsUrl()], context.prevLikedTests);
     },
     onSettled: () => {
+      setPendingLiked(null);
       queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
       queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
     },
