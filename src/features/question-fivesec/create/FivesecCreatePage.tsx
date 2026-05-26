@@ -27,13 +27,7 @@ import { useTestCreateForm } from "@/features/test-create/model/useTestCreateFor
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
 import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
-import type { AbRatio } from "@/features/question-ab/model/types";
-
-const RATIO_TO_CSS: Record<AbRatio, string> = {
-  "9:16": "9/16",
-  "1:1": "1/1",
-  "4:3": "4/3",
-};
+import { RATIO_TO_CSS, type AbRatio } from "@/features/question-ab/model/types";
 
 interface FivesecCreatePageProps {
   questionId: string;
