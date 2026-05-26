@@ -2,7 +2,7 @@ import { TextArea } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
-type Props = QuestionAnswerProps<"subjective">;
+type Props = QuestionAnswerProps<"SUBJECTIVE">;
 
 export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
   const { title, description, imageUrl, placeholder, maxLength } =
@@ -35,7 +35,7 @@ export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
         placeholder={placeholder || "답변을 입력해주세요"}
         height={200}
         maxLength={maxLength ?? undefined}
-        onChange={(e) => onChange({ type: "subjective", text: e.target.value })}
+        onChange={(e) => onChange({ type: "SUBJECTIVE", text: e.target.value })}
       />
     </div>
   );

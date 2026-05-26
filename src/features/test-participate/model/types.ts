@@ -9,24 +9,24 @@ import type { CardSortQuestionData } from "@/features/question-cardsort/model/ty
 export type { ScaleQuestionData, AbQuestionData, CardSortQuestionData };
 
 export type ParticipateQuestion =
-  | { id: string; type: "subjective"; data: SubjectiveQuestionData }
-  | { id: string; type: "multiple"; data: MultipleQuestionData }
-  | { id: string; type: "tree"; data: TreeQuestionData }
-  | { id: string; type: "fivesec"; data: FivesecQuestionData }
-  | { id: string; type: "scale"; data: ScaleQuestionData }
-  | { id: string; type: "ab"; data: AbQuestionData }
-  | { id: string; type: "cardsort"; data: CardSortQuestionData };
+  | { id: string; type: "SUBJECTIVE"; data: SubjectiveQuestionData }
+  | { id: string; type: "OBJECTIVE"; data: MultipleQuestionData }
+  | { id: string; type: "TREE_TEST"; data: TreeQuestionData }
+  | { id: string; type: "FIVE_SECOND"; data: FivesecQuestionData }
+  | { id: string; type: "SCALE"; data: ScaleQuestionData }
+  | { id: string; type: "AB_TEST"; data: AbQuestionData }
+  | { id: string; type: "CARD_SORTING"; data: CardSortQuestionData };
 
 export type QuestionType = ParticipateQuestion["type"];
 
 export type Answer =
-  | { type: "subjective"; text: string }
-  | { type: "multiple"; selectedIds: string[]; otherText?: string }
-  | { type: "tree"; selectedNodeId: string | null }
-  | { type: "fivesec"; selectedIds: string[]; text?: string }
-  | { type: "scale"; value: number | null }
-  | { type: "ab"; selected: "A" | "B" | null }
-  | { type: "cardsort"; placements: Record<string, string> };
+  | { type: "SUBJECTIVE"; text: string }
+  | { type: "OBJECTIVE"; selectedIds: string[]; otherText?: string }
+  | { type: "TREE_TEST"; selectedNodeId: string | null }
+  | { type: "FIVE_SECOND"; selectedIds: string[]; text?: string }
+  | { type: "SCALE"; value: number | null }
+  | { type: "AB_TEST"; selected: "A" | "B" | null }
+  | { type: "CARD_SORTING"; placements: Record<string, string> };
 
 export type AnswerOf<T extends QuestionType> = Extract<Answer, { type: T }>;
 
