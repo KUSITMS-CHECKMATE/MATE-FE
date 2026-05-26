@@ -80,7 +80,7 @@ export function FivesecCreatePage({
   const [ratio, setRatio] = useState<AbRatio>(existingFivesec?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "fivesec"; selectedIds: string[]; text?: string }>({ type: "fivesec", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "FIVE_SECOND"; selectedIds: string[]; text?: string }>({ type: "FIVE_SECOND", selectedIds: [] });
 
   const hasTitle = title.trim().length > 0;
   const editingChoice =
@@ -390,7 +390,7 @@ export function FivesecCreatePage({
           <FivesecAnswerPage
             question={{
               id: "preview",
-              type: "fivesec",
+              type: "FIVE_SECOND",
               data: {
                 title,
                 description,

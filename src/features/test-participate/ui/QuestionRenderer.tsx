@@ -27,52 +27,52 @@ export function QuestionRenderer({
   isLast,
 }: Props) {
   switch (question.type) {
-    case "scale":
+    case "SCALE":
       return (
         <ScaleAnswerPage
           question={question}
-          answer={answer?.type === "scale" ? answer : undefined}
+          answer={answer?.type === "SCALE" ? answer : undefined}
           onChange={onChange}
         />
       );
-    case "ab":
+    case "AB_TEST":
       return (
         <AbAnswerPage
           question={question}
-          answer={answer?.type === "ab" ? answer : undefined}
+          answer={answer?.type === "AB_TEST" ? answer : undefined}
           onChange={onChange}
         />
       );
-    case "cardsort":
+    case "CARD_SORTING":
       return (
         <CardSortAnswerPage
           question={question}
-          answer={answer?.type === "cardsort" ? answer : undefined}
+          answer={answer?.type === "CARD_SORTING" ? answer : undefined}
           onChange={onChange}
         />
       );
-    case "multiple":
+    case "OBJECTIVE":
       return (
         <MultipleAnswerPage
           question={question}
-          answer={answer?.type === "multiple" ? answer : undefined}
+          answer={answer?.type === "OBJECTIVE" ? answer : undefined}
           onChange={onChange}
         />
       );
-    case "subjective":
+    case "SUBJECTIVE":
       return (
         <SubjectiveAnswerPage
           question={question}
-          answer={answer?.type === "subjective" ? answer : undefined}
+          answer={answer?.type === "SUBJECTIVE" ? answer : undefined}
           onChange={onChange}
         />
       );
-    case "fivesec":
+    case "FIVE_SECOND":
       return (
         <FivesecAnswerPage
           key={question.id}
           question={question}
-          answer={answer?.type === "fivesec" ? answer : undefined}
+          answer={answer?.type === "FIVE_SECOND" ? answer : undefined}
           onChange={onChange}
           onPrev={onPrev ?? (() => {})}
           onGoNext={onGoNext ?? (() => {})}
@@ -80,11 +80,11 @@ export function QuestionRenderer({
           isLast={isLast ?? false}
         />
       );
-    case "tree":
+    case "TREE_TEST":
       return (
         <TreeAnswerPage
           question={question}
-          answer={answer?.type === "tree" ? answer : undefined}
+          answer={answer?.type === "TREE_TEST" ? answer : undefined}
           onChange={onChange}
         />
       );
