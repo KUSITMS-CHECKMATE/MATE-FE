@@ -1,7 +1,8 @@
 import { Asset, Result, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
-import { TestCard } from "@/features/discovery/ui/TestCard";
+import { TestCard } from "@/shared/ui/TestCard";
+import { ROUTES } from "@/shared/constants/routes";
 
 const MOCK_TESTS = [
   {
@@ -46,7 +47,7 @@ export function InterestList({ onRetry }: Props) {
         <Text color={adaptive.grey800} typography="t4" fontWeight="bold">
           관심
         </Text>
-        <Text color="#4365cc" typography="t4" fontWeight="bold">
+        <Text color={adaptive.blue600} typography="t4" fontWeight="bold">
           {tests.length}
         </Text>
       </div>
@@ -64,7 +65,7 @@ export function InterestList({ onRetry }: Props) {
               liked={test.liked}
               onClick={() =>
                 navigate({
-                  to: "/interest/$testId",
+                  to: ROUTES.INTEREST_DETAIL,
                   params: { testId: String(test.id) },
                 })
               }

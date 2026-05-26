@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BottomCTA } from "@toss/tds-mobile";
+import { Asset, BottomCTA, Result } from "@toss/tds-mobile";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 import {
   TestDetailHeader,
@@ -20,7 +20,7 @@ function InterestTestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
   });
@@ -28,8 +28,31 @@ function InterestTestDetailPage() {
   const detail = data?.data?.data;
   const isClosed = CLOSED_TEST_IDS.has(Number(testId));
 
-  if (isLoading || !detail) {
+  if (isLoading) {
     return <div className="flex flex-col min-h-screen bg-white" />;
+  }
+
+  if (isError || !detail) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white items-center justify-center px-6">
+        <Result
+          title="테스트를 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요"
+          figure={
+            <Asset.Lottie
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/lotties-common/error-spot.json"
+              aria-hidden={true}
+            />
+          }
+          button={
+            <Result.Button color="dark" variant="weak" onClick={() => navigate({ to: ROUTES.INTEREST })}>
+              돌아가기
+            </Result.Button>
+          }
+        />
+      </div>
+    );
   }
 
   return (
