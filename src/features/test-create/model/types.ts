@@ -49,43 +49,43 @@ export interface QuestionType {
 
 export const QUESTION_TYPES = [
   {
-    id: "multiple",
+    id: "OBJECTIVE",
     label: "객관식",
     description: "텍스트/사진 혼합 선택형",
     iconName: "icon-check-circle",
   },
   {
-    id: "subjective",
+    id: "SUBJECTIVE",
     label: "주관식",
     description: "자유 텍스트 입력",
     iconName: "icon-pencil-blue",
   },
   {
-    id: "scale",
+    id: "SCALE",
     label: "척도 질문",
     description: "리커트 척도 평가",
     iconName: "icon-graph-bar-double-short-blue",
   },
   {
-    id: "ab",
+    id: "AB_TEST",
     label: "A/B 테스트",
     description: "두 디자인 분류",
     iconName: "icon-ab-choice",
   },
   {
-    id: "card",
+    id: "CARD_SORTING",
     label: "카드 소팅",
     description: "카테고리 분류",
     iconName: "icon-document-blue",
   },
   {
-    id: "tree",
+    id: "TREE_TEST",
     label: "트리 테스트",
     description: "정보 구조 탐색",
     iconName: "icon-graph-bar-flow-3-cyan",
   },
   {
-    id: "fivesec",
+    id: "FIVE_SECOND",
     label: "5초 테스트",
     description: "짧은 노출 후 기억",
     iconName: "icon-clock-10-hour",
@@ -103,13 +103,13 @@ import type { FivesecQuestionData } from "@/features/question-fivesec/model/type
 import type { CardSortQuestionData } from "@/features/question-cardsort/model/types";
 
 export type QuestionData =
-  | ({ typeId: "multiple" } & MultipleQuestionData)
-  | ({ typeId: "scale" } & ScaleQuestionData)
-  | ({ typeId: "ab" } & AbQuestionData)
-  | ({ typeId: "tree" } & TreeQuestionData)
-  | ({ typeId: "subjective" } & SubjectiveQuestionData)
-  | ({ typeId: "fivesec" } & FivesecQuestionData)
-  | ({ typeId: "card" } & CardSortQuestionData);
+  | ({ typeId: "OBJECTIVE" } & MultipleQuestionData)
+  | ({ typeId: "SCALE" } & ScaleQuestionData)
+  | ({ typeId: "AB_TEST" } & AbQuestionData)
+  | ({ typeId: "TREE_TEST" } & TreeQuestionData)
+  | ({ typeId: "SUBJECTIVE" } & SubjectiveQuestionData)
+  | ({ typeId: "FIVE_SECOND" } & FivesecQuestionData)
+  | ({ typeId: "CARD_SORTING" } & CardSortQuestionData);
 
 export interface PendingQuestion {
   id: string;

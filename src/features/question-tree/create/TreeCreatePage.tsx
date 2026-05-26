@@ -23,7 +23,7 @@ type NodeSheetMode =
 export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingTree = existing?.typeId === "tree" ? existing : null;
+  const existingTree = existing?.typeId === "TREE_TEST" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
     existingTree?.title ?? "",
@@ -168,7 +168,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "tree",
+                typeId: "TREE_TEST",
                 title: questionTitle,
                 description: questionDescription,
                 nodes,

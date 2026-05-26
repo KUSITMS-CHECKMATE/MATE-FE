@@ -21,7 +21,7 @@ export function MultipleCreatePage({
 }: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingMultiple = existing?.typeId === "multiple" ? existing : null;
+  const existingMultiple = existing?.typeId === "OBJECTIVE" ? existing : null;
 
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
     existingMultiple?.isOtherInputEnabled ?? false,
@@ -127,7 +127,7 @@ export function MultipleCreatePage({
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "multiple",
+                typeId: "OBJECTIVE",
                 title: questionTitle,
                 description: questionDescription,
                 choices,

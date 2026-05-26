@@ -19,7 +19,7 @@ interface SubjectiveCreatePageProps {
 export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingSubjective = existing?.typeId === "subjective" ? existing : null;
+  const existingSubjective = existing?.typeId === "SUBJECTIVE" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
     existingSubjective?.title ?? "",
@@ -118,7 +118,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "subjective",
+                typeId: "SUBJECTIVE",
                 title: questionTitle,
                 description: questionDescription,
                 imageUrl: questionImageUrl,

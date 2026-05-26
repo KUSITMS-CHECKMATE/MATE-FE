@@ -21,7 +21,7 @@ interface AbCreatePageProps {
 export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingAb = existing?.typeId === "ab" ? existing : null;
+  const existingAb = existing?.typeId === "AB_TEST" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(existingAb?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingAb?.description ?? "");
@@ -136,7 +136,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "ab",
+                typeId: "AB_TEST",
                 title: questionTitle,
                 description: questionDescription,
                 imageUrlA,

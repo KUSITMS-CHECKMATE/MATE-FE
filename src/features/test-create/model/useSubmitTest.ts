@@ -5,7 +5,7 @@ import ky, { HTTPError } from "ky";
 import { createDraft, updateDraft } from "@/shared/api/generated/testDraft";
 import { generateUploadUrl } from "@/shared/api/generated/file";
 import { useTestCreateForm } from "./useTestCreateForm";
-import type { CategoryId, PendingQuestion } from "./types";
+import type { PendingQuestion } from "./types";
 import { ROUTES } from "@/shared/constants/routes";
 
 interface ObjectiveCreateRequest {
@@ -68,15 +68,7 @@ interface FiveSecondCreateRequest {
   options?: { content?: string }[];
 }
 
-type QuestionRequestItem =
-  | ObjectiveCreateRequest
-  | SubjectiveCreateRequest
-  | ScaleCreateRequest
-  | AbTestCreateRequest
-  | CardSortingCreateRequest
-  | TreeTestCreateRequest
-  | FiveSecondCreateRequest;
-
+type QuestionRequestItem = ObjectiveCreateRequest | SubjectiveCreateRequest | ScaleCreateRequest | AbTestCreateRequest | CardSortingCreateRequest | TreeTestCreateRequest | FiveSecondCreateRequest;
 
 function dataUriToBlob(dataUri: string): Blob {
   const [header, base64] = dataUri.split(",");
@@ -116,12 +108,12 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
   const data = question.data;
 
   switch (data.typeId) {
-    case "multiple": {
+    case "OBJECTIVE": {
       const options = await Promise.all(
         data.choices.map(async (c) => ({
           content: c.name,
           imageKey: await uploadBase64(c.imageUrl || undefined),
-        }))
+        })),
       );
       return {
         type: "OBJECTIVE",
@@ -135,7 +127,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies ObjectiveCreateRequest;
     }
 
-    case "subjective": {
+    case "SUBJECTIVE": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       return {
         type: "SUBJECTIVE",
@@ -145,7 +137,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies SubjectiveCreateRequest;
     }
 
-    case "scale": {
+    case "SCALE": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       return {
         type: "SCALE",
@@ -158,11 +150,8 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies ScaleCreateRequest;
     }
 
-    case "ab": {
-      const [aImageKey, bImageKey] = await Promise.all([
-        uploadBase64(data.imageUrlA || undefined),
-        uploadBase64(data.imageUrlB || undefined),
-      ]);
+    case "AB_TEST": {
+      const [aImageKey, bImageKey] = await Promise.all([uploadBase64(data.imageUrlA || undefined), uploadBase64(data.imageUrlB || undefined)]);
       return {
         type: "AB_TEST",
         title: data.title,
@@ -173,7 +162,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies AbTestCreateRequest;
     }
 
-    case "card": {
+    case "CARD_SORTING": {
       return {
         type: "CARD_SORTING",
         title: data.title,
@@ -183,22 +172,23 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       } satisfies CardSortingCreateRequest;
     }
 
-    case "tree": {
+    case "TREE_TEST": {
       return {
         type: "TREE_TEST",
         title: data.title,
         description: data.description,
-        features: data.nodes?.map((node) => ({
-          label: node.name,
-          children: node.children?.map((child) => ({
-            label: child.name,
-            children: child.children?.length > 0 ? child.children : undefined,
-          })),
-        })) ?? [],
+        features:
+          data.nodes?.map((node) => ({
+            label: node.name,
+            children: node.children?.map((child) => ({
+              label: child.name,
+              children: child.children?.length > 0 ? child.children : undefined,
+            })),
+          })) ?? [],
       } satisfies TreeTestCreateRequest;
     }
 
-    case "fivesec": {
+    case "FIVE_SECOND": {
       const imageKey = await uploadBase64(data.imageUrl || undefined);
       const isObjective = data.answerType === "multiple";
       return {
@@ -230,9 +220,7 @@ export function useSubmitTest() {
     mutationFn: async () => {
       let imageKeys: string[] = [];
       try {
-        imageKeys = (
-          await Promise.all(form.images.map((img) => uploadBase64(img)))
-        ).filter((k): k is string => !!k);
+        imageKeys = (await Promise.all(form.images.map((img) => uploadBase64(img)))).filter((k): k is string => !!k);
       } catch (e) {
         throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
@@ -249,9 +237,7 @@ export function useSubmitTest() {
 
       let mappedQuestions: QuestionRequestItem[] = [];
       try {
-        mappedQuestions = (
-          await Promise.all(form.questions.map(mapQuestion))
-        ).filter((q): q is QuestionRequestItem => q !== null);
+        mappedQuestions = (await Promise.all(form.questions.map(mapQuestion))).filter((q): q is QuestionRequestItem => q !== null);
       } catch (e) {
         throw new Error(`[질문 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }

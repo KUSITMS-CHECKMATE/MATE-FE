@@ -20,7 +20,7 @@ interface ScaleCreatePageProps {
 export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingScale = existing?.typeId === "scale" ? existing : null;
+  const existingScale = existing?.typeId === "SCALE" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(existingScale?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingScale?.description ?? "");
@@ -134,7 +134,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "scale",
+                typeId: "SCALE",
                 title: questionTitle,
                 description: questionDescription,
                 scaleCount,
