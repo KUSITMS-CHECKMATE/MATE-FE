@@ -2,7 +2,7 @@ import { Checkbox, List, ListRow } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
-type Props = QuestionAnswerProps<"multiple">;
+type Props = QuestionAnswerProps<"OBJECTIVE">;
 
 export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   const { title, description, choices, isMultiSelectEnabled, maxSelectCount } =
@@ -18,10 +18,10 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "multiple", selectedIds: next });
+      onChange({ type: "OBJECTIVE", selectedIds: next });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "multiple", selectedIds: next });
+      onChange({ type: "OBJECTIVE", selectedIds: next });
     }
   }
 

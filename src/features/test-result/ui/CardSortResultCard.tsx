@@ -2,14 +2,14 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Asset, IconButton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { CardSortCategory, CardSortItem } from "../model/types";
+import type { CardSortResultCategory, CardSortItem } from "../model/types";
 import { ResultCardBase } from "./_shared";
 
-export type { CardSortCategory, CardSortItem };
+export type { CardSortResultCategory, CardSortItem };
 
 interface Props {
   title: string;
-  categories: CardSortCategory[];
+  categories: CardSortResultCategory[];
 }
 
 export function CardSortResultCard({ title, categories }: Props) {
