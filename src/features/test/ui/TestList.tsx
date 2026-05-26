@@ -1,14 +1,38 @@
-import { Asset, Result, Text } from "@toss/tds-mobile";
+import { Asset, Result, Skeleton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import type { UserTest } from "../model";
 import { TestCard } from "./TestCard";
 
 interface Props {
   tests: UserTest[];
+  isLoading?: boolean;
   onCardClick?: (testId: number) => void;
 }
 
-export function TestList({ tests, onCardClick }: Props) {
+function TestListSkeleton() {
+  return (
+    <div className="flex flex-col">
+      <div className="w-full bg-white px-6 py-6">
+        <Skeleton custom={["title"]} repeatLastItemCount={0} />
+      </div>
+      <div className="flex flex-col gap-3 px-4 pb-24">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            custom={["title", "subtitle"]}
+            repeatLastItemCount={0}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TestList({ tests, isLoading = false, onCardClick }: Props) {
+  if (isLoading) {
+    return <TestListSkeleton />;
+  }
+
   return (
     <div className="flex flex-col">
       <div className="w-full bg-white px-6 py-6 flex flex-row gap-1">

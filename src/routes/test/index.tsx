@@ -14,7 +14,7 @@ function MakerHomePage() {
   console.log("MakerHomePage 렌더링됨");
   const navigate = useNavigate();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["listMyTests"],
     queryFn: () => listMyTests(),
   });
@@ -32,6 +32,7 @@ function MakerHomePage() {
       <TestBanner />
       <TestList
         tests={tests}
+        isLoading={isLoading}
         onCardClick={(testId) =>
           navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } })
         }
