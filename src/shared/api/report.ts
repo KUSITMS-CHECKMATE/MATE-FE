@@ -12,19 +12,22 @@ export type QuestionType =
   | "CARD_SORTING"
   | "TREE_TEST";
 
-export type TestStatus = "IN_PROGRESS" | "COMPLETED";
+export type TestStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED" | "REJECTED";
 export type ReportStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 
-export interface ReportQuestion {
-  questionId: number;
-  sequence: number;
-  title: string;
-  type: QuestionType;
+// ─── AI 클러스터 ──────────────────────────────────────────────────────────────
+
+export interface Cluster {
+  representative: string;
+  count: number;
+  responses: string[];
 }
 
 // ─── result 타입 (type별 discriminated union) ─────────────────────────────────
 
 export interface SubjectiveResult {
+  aiSummary: string;
+  clusters: Cluster[];
   texts: string[];
 }
 
@@ -37,16 +40,20 @@ export interface ObjectiveOption {
 
 export interface ObjectiveResult {
   options: ObjectiveOption[];
+  aiSummary: string;
+  clusters: Cluster[];
   otherTexts?: string[];
 }
 
 /** FIVE_SECOND는 주관식(texts) / 객관식(options) 둘 다 가능 */
 export type FiveSecondResult =
-  | { texts: string[] }
-  | { options: ObjectiveOption[] };
+  | { aiSummary: string; clusters: Cluster[]; texts: string[] }
+  | { options: ObjectiveOption[]; aiSummary: string; clusters: Cluster[]; otherTexts?: string[] };
 
 export interface ScaleResult {
   average: number;
+  mostVoted: number;
+  endValue: { minLabel: string; maxLabel: string };
   distribution: { score: number; count: number }[];
 }
 
@@ -88,7 +95,6 @@ export interface ReportData {
   reportStatus: ReportStatus;
   questionCount: number;
   participantCount: number;
-  questions: ReportQuestion[];
   reports: ReportItem[];
 }
 

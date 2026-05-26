@@ -6,6 +6,9 @@ import { ResultTabContent } from "./ResultTabContent";
 import { QuestionTabContent } from "./QuestionTabContent";
 import { DownloadSheet } from "./DownloadSheet";
 import { MOCK_PREVIEW_QUESTIONS } from "../model/mock";
+import { mapReportItemToQuestionResult } from "../model/mappers";
+import { useGetReportQuery } from "@/shared/api/report";
+import type { TestStatus } from "@/shared/api/report";
 import { QuestionRenderer } from "@/features/test-participate/ui/QuestionRenderer";
 import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 
@@ -13,8 +16,16 @@ import type { ParticipateQuestion } from "@/features/test-participate/model/type
 
 interface Props {
   testId: string;
-  status: "active" | "ended";
 }
+
+type BadgeConfig = { text: string; color: "green" | "elephant" | "red" | "yellow"; variant: "weak" };
+
+const STATUS_BADGE: Record<TestStatus, BadgeConfig> = {
+  WAITING:     { text: "검토중", color: "yellow",   variant: "weak" },
+  IN_PROGRESS: { text: "진행중", color: "green",    variant: "weak" },
+  COMPLETED:   { text: "종료",   color: "elephant", variant: "weak" },
+  REJECTED:    { text: "반려",   color: "red",      variant: "weak" },
+};
 
 const OVERLAY_MOTION = {
   initial: { opacity: 0 },
@@ -82,17 +93,26 @@ function FivesecPreviewOverlay({
   );
 }
 
-export function TestResultPage({ testId: _testId, status }: Props) {
+export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+
+  const { data: reportData } = useGetReportQuery(Number(testId));
+  const report = reportData?.data;
+  console.log("[report]", reportData);
+
+  const testStatus: TestStatus = report?.testStatus ?? "IN_PROGRESS";
+  const isEnded = testStatus === "COMPLETED";
+  const showParticipant = testStatus === "IN_PROGRESS" || testStatus === "COMPLETED";
+  const results = (report?.reports ?? []).map(mapReportItemToQuestionResult);
 
   const previewQuestion = previewIndex !== null ? MOCK_PREVIEW_QUESTIONS[previewIndex] : null;
   const isFivesecPreview = previewQuestion?.type === "FIVE_SECOND";
 
   return (
     <div>
-      {status === "ended" && (
+      {isEnded && (
         <div className="w-full sticky top-0 z-10 bg-white px-6 py-2">
           <div className="w-full h-9.5 bg-[#f2f4f6] rounded-[20px] px-2.5 py-2 flex flex-row gap-2 justify-start items-center">
             <Asset.Icon
@@ -115,17 +135,12 @@ export function TestResultPage({ testId: _testId, status }: Props) {
           </Top.TitleParagraph>
         }
         subtitleTop={
-          <Top.SubtitleBadges
-            badges={[
-              status === "active"
-                ? { text: "진행중", color: "green", variant: "weak" }
-                : { text: "종료", color: "elephant", variant: "weak" },
-            ]}
-          />
+          <Top.SubtitleBadges badges={[STATUS_BADGE[testStatus]]} />
         }
         subtitleBottom={
           <Top.SubtitleParagraph size={15}>
-            총 0개 질문 · 0명 참여
+            총 {report?.questionCount ?? 0}개 질문
+            {showParticipant && ` · ${report?.participantCount ?? 0}명 참여`}
           </Top.SubtitleParagraph>
         }
       />
@@ -134,7 +149,7 @@ export function TestResultPage({ testId: _testId, status }: Props) {
         <Button
           size="large"
           display="block"
-          disabled={status !== "ended"}
+          disabled={!isEnded}
           onClick={() => setIsDownloadSheetOpen(true)}
         >
           통계 다운받기
@@ -157,7 +172,7 @@ export function TestResultPage({ testId: _testId, status }: Props) {
 
       {selectedTabIndex === 0 && <QuestionTabContent onSelectQuestion={setPreviewIndex} />}
 
-      {selectedTabIndex === 1 && status === "active" && (
+      {selectedTabIndex === 1 && !isEnded && (
         <Result
           title="아직 진행하고 있는 테스트에요"
           description="테스트가 끝나고 결과를 알려드릴게요"
@@ -172,7 +187,7 @@ export function TestResultPage({ testId: _testId, status }: Props) {
         />
       )}
 
-      {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
+      {selectedTabIndex === 1 && isEnded && <ResultTabContent results={results} />}
 
       {previewQuestion !== null && !isFivesecPreview && (
         <QuestionPreviewOverlay question={previewQuestion} onClose={() => setPreviewIndex(null)} />
