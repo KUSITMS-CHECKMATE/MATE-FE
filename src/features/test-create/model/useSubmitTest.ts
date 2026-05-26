@@ -2,33 +2,83 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import ky, { HTTPError } from "ky";
-import { createTest } from "@/shared/api/generated/test";
-import { createQuestions } from "@/shared/api/generated/question";
+import { createDraft, updateDraft } from "@/shared/api/generated/testDraft";
+import type { TestDraftUpdateRequestCategoriesItem } from "@/shared/api/generated/testDraft";
 import { generateUploadUrl } from "@/shared/api/generated/file";
-import type { TestCreateRequestCategoriesItem } from "@/shared/api/generated/test";
-import type {
-  AbTestCreateRequest,
-  CardSortingCreateRequest,
-  FiveSecondCreateRequest,
-  ObjectiveCreateRequest,
-  ScaleCreateRequest,
-  SubjectiveCreateRequest,
-  TreeTestCreateRequest,
-} from "@/shared/api/generated/question";
 import { useTestCreateForm } from "./useTestCreateForm";
 import type { CategoryId, PendingQuestion } from "./types";
 import { ROUTES } from "@/shared/constants/routes";
 
+interface ObjectiveCreateRequest {
+  type: "OBJECTIVE";
+  title?: string;
+  description?: string;
+  isDuplicate?: boolean;
+  maxSelect?: number;
+  minSelect?: number;
+  isOther?: boolean;
+  options?: { content?: string; imageKey?: string }[];
+}
+interface SubjectiveCreateRequest {
+  type: "SUBJECTIVE";
+  title?: string;
+  description?: string;
+  imageKey?: string;
+}
+interface ScaleCreateRequest {
+  type: "SCALE";
+  title?: string;
+  description?: string;
+  imageKey?: string;
+  minLabel?: string;
+  maxLabel?: string;
+  range?: number;
+}
+interface AbTestCreateRequest {
+  type: "AB_TEST";
+  title?: string;
+  description?: string;
+  aImageKey?: string;
+  bImageKey?: string;
+  imageRatio?: string;
+}
+interface CardSortingCreateRequest {
+  type: "CARD_SORTING";
+  title?: string;
+  description?: string;
+  cards?: string[];
+  categories?: string[];
+}
+interface TreeTestCreateRequest {
+  type: "TREE_TEST";
+  title?: string;
+  description?: string;
+  features?: unknown[];
+}
+interface FiveSecondCreateRequest {
+  type: "FIVE_SECOND";
+  title?: string;
+  description?: string;
+  imageKey?: string;
+  imageRatio?: string;
+  isObjective?: boolean;
+  isDuplicate?: boolean;
+  minSelect?: number;
+  maxSelect?: number;
+  isOther?: boolean;
+  options?: { content?: string }[];
+}
+
 type QuestionRequestItem =
+  | ObjectiveCreateRequest
+  | SubjectiveCreateRequest
+  | ScaleCreateRequest
   | AbTestCreateRequest
   | CardSortingCreateRequest
-  | FiveSecondCreateRequest
-  | ObjectiveCreateRequest
-  | ScaleCreateRequest
-  | SubjectiveCreateRequest
-  | TreeTestCreateRequest;
+  | TreeTestCreateRequest
+  | FiveSecondCreateRequest;
 
-const CATEGORY_MAP: Record<CategoryId, TestCreateRequestCategoriesItem> = {
+const CATEGORY_MAP: Record<CategoryId, TestDraftUpdateRequestCategoriesItem> = {
   daily: "DAILY",
   finance: "FINANCE",
   health: "HEALTH",
@@ -69,7 +119,7 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
     throw new Error(`이미지 크기가 10MB를 초과해요 (${(blob.size / 1024 / 1024).toFixed(1)}MB)`);
   }
 
-  const uploadResponse = await generateUploadUrl({ extension: "jpg" });
+  const uploadResponse = await generateUploadUrl({ extension: "jpg", fileSizeBytes: blob.size });
   const { presignedUrl, fileKey } = uploadResponse.data.data ?? {};
   if (!presignedUrl || !fileKey) throw new Error("업로드 URL 발급 실패");
 
@@ -207,21 +257,14 @@ export function useSubmitTest() {
         throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
-      let testId: number;
+      let draftId: number;
       try {
-        const testResponse = await createTest({
-          title: form.name,
-          description: form.summary,
-          categories: form.categories.map((c) => CATEGORY_MAP[c]),
-          serviceName: form.serviceName || undefined,
-          serviceDescription: form.description || undefined,
-          imageKeys,
-        });
-        const id = testResponse.data.data?.id;
-        if (!id) throw new Error("테스트 ID를 받지 못했습니다.");
-        testId = id;
+        const draftResponse = await createDraft();
+        const id = draftResponse.data.data?.draftId;
+        if (!id) throw new Error("드래프트 ID를 받지 못했습니다.");
+        draftId = id;
       } catch (e) {
-        throw new Error(`[테스트 생성 실패] ${e instanceof Error ? e.message : String(e)}`);
+        throw new Error(`[테스트 초안 생성 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
       let mappedQuestions: QuestionRequestItem[] = [];
@@ -233,19 +276,25 @@ export function useSubmitTest() {
         throw new Error(`[질문 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
-      if (mappedQuestions.length > 0) {
-        try {
-          await createQuestions(testId, { questions: mappedQuestions });
-        } catch (e) {
-          throw new Error(`[질문 등록 실패] ${e instanceof Error ? e.message : String(e)}`);
-        }
+      try {
+        await updateDraft(draftId, {
+          title: form.name,
+          description: form.summary,
+          categories: form.categories.map((c) => CATEGORY_MAP[c]),
+          serviceName: form.serviceName || undefined,
+          serviceDescription: form.description || undefined,
+          imageKeys,
+          questionsPayload: { questions: mappedQuestions },
+        });
+      } catch (e) {
+        throw new Error(`[테스트 초안 업데이트 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
-      return testId;
+      return draftId;
     },
-    onSuccess: (testId) => {
+    onSuccess: () => {
       form.reset();
-      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } });
+      navigate({ to: ROUTES.TEST_PAYMENT });
     },
     onError: async (error) => {
       let message = `실패: ${String(error)}`;
