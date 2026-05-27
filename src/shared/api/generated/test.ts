@@ -55,12 +55,35 @@ export interface TestSummaryResponse {
   categories?: string[];
 }
 
-export interface ApiResponseListTestSummaryResponse {
+/**
+ * 테스트 목록 조회 응답
+ */
+export interface TestSummaryListResponse {
+  /** 참여 가능한 전체 테스트 개수 */
+  testCount?: number;
+  /** 테스트 목록 */
+  tests?: TestSummaryResponse[];
+}
+
+export interface ApiResponseTestSummaryListResponse {
   success?: boolean;
   code?: string;
   message?: string;
-  data?: TestSummaryResponse[];
+  data?: TestSummaryListResponse;
 }
+
+/**
+ * 테스트 상태. `COMPLETED`(종료) 등으로 참여 버튼 비활성화에 사용
+ */
+export type TestDetailResponseTestStatus = typeof TestDetailResponseTestStatus[keyof typeof TestDetailResponseTestStatus];
+
+
+export const TestDetailResponseTestStatus = {
+  WAITING: 'WAITING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED',
+} as const;
 
 export interface TestDetailResponse {
   id?: number;
@@ -71,6 +94,10 @@ export interface TestDetailResponse {
   description?: string;
   serviceName?: string;
   serviceDescription?: string;
+  /** 테스트 상태. `COMPLETED`(종료) 등으로 참여 버튼 비활성화에 사용 */
+  testStatus?: TestDetailResponseTestStatus;
+  /** 현재 로그인한 사용자의 테스트 응답 여부. true면 참여 버튼 비활성화 */
+  hasResponded?: boolean;
 }
 
 export interface ApiResponseTestDetailResponse {
@@ -105,6 +132,8 @@ export interface MyTestSummaryItem {
   title?: string;
   /** 현재 참여 인원 */
   pplCount?: number;
+  /** 테스트 가능 최대 인원수 */
+  goalPpl?: number;
 }
 
 /**
@@ -390,7 +419,7 @@ export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TE
 
 
 export type listTestsResponse200 = {
-  data: ApiResponseListTestSummaryResponse
+  data: ApiResponseTestSummaryListResponse
   status: 200
 }
 
@@ -411,16 +440,15 @@ export const getListTestsUrl = () => {
 
 /**
  * 전체 테스트 요약 목록을 최신순으로 조회합니다. 발견 탭 HM_01 57 화면에 해당하는 api 입니다.
-`IN_PROGRESS`(진행 중) 이거나, `WAITING`(검수 중) 인 테스트를 반환합니다.
 추후 페이지네이션 적용하여 무한 스크롤 지원하도록 리팩토링이 필요합니다.
 
+- **testCount**: 참여 가능한 전체 테스트 개수
 - **thumbnailUrl**: 업로드된 이미지 중 첫 번째의 Public URL, 없으면 null을 반환
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
 - ui상 사용하지 않는 필드: likeCount, categories
-- 버그 사항: 전체 테스트 개수 필드 누락. testStatus(진행 중, 검수 중)이고 마감기한(당일까지 조회)이 지나지 않았고 삭제되지 않은 테스트를 필터링.
 
- * @summary ⚠️ 테스트 목록 조회
+ * @summary ✔️ 테스트 목록 조회
  */
 export const listTests = async ( options?: RequestInit): Promise<listTestsResponse> => {
 
@@ -468,7 +496,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListTestsMutationError = ErrorType<unknown>
 
     /**
- * @summary ⚠️ 테스트 목록 조회
+ * @summary ✔️ 테스트 목록 조회
  */
 export const useListTests = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -505,9 +533,10 @@ export const getGetTestUrl = (testId: number,) => {
  * 특정 테스트의 상세 정보를 조회합니다. TT_01 화면에 해당하는 api 입니다.
 삭제된 테스트는 조회되지 않습니다.<br>
 
-- 버그 사항: 로그인한 사용자의 테스트 응답 여부, testStatus 필드 누락
+- **testStatus**: `WAITING`(검수 중), `IN_PROGRESS`(진행 중), `COMPLETED`(종료), `REJECTED`(반려). 종료(`COMPLETED`) 시 참여 버튼 비활성화
+- **hasResponded**: 현재 로그인한 사용자가 이미 응답했으면 true. true면 참여 버튼 비활성화
 
- * @summary ⚠️ 테스트 상세 조회
+ * @summary ✔️ 테스트 상세 조회
  */
 export const getTest = async (testId: number, options?: RequestInit): Promise<getTestResponse> => {
 
@@ -555,7 +584,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetTestMutationError = ErrorType<unknown>
 
     /**
- * @summary ⚠️ 테스트 상세 조회
+ * @summary ✔️ 테스트 상세 조회
  */
 export const useGetTest = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -596,6 +625,7 @@ export const getListMyTestsUrl = () => {
 - **testStatus**: `WAITING`(검수 중), `IN_PROGRESS`(진행 중), `COMPLETED`(종료), `REJECTED`(반려)
 - **title**: 테스트 제목
 - **pplCount**: 현재 참여 인원
+- **goalPpl**: 테스트 가능 최대 인원수
 
  * @summary ️✔️ 내 테스트 목록 조회
  */
@@ -680,7 +710,6 @@ export const getListLikedTestsUrl = () => {
 
 /**
  * 현재 로그인한 사용자가 찜한 테스트 목록을 찜한 시각 최신순으로 조회합니다. 관심 탭 HM_01 19 화면에 해당하는 api 입니다.<br>
-삭제되지 않았고 진행 중(`IN_PROGRESS`)인 테스트만 반환합니다.<br>
 추후 페이지네이션 적용하여 무한 스크롤 지원하도록 리팩토링이 필요합니다.
 
 - **testCount**: 테스트 개수
@@ -689,10 +718,8 @@ export const getListLikedTestsUrl = () => {
 - **title**: 테스트명
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
-- 버그 사항: testStatus(진행 중, 검수 중, 종료)이고 삭제되지 않은 테스트를 필터링.
 
-
- * @summary ⚠️ 찜한 테스트 목록 조회
+ * @summary ✔️ 찜한 테스트 목록 조회
  */
 export const listLikedTests = async ( options?: RequestInit): Promise<listLikedTestsResponse> => {
 
@@ -740,7 +767,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListLikedTestsMutationError = ErrorType<unknown>
 
     /**
- * @summary ⚠️ 찜한 테스트 목록 조회
+ * @summary ✔️ 찜한 테스트 목록 조회
  */
 export const useListLikedTests = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLikedTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
