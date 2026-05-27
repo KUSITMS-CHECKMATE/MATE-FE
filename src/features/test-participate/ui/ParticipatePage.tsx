@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { CTAButton, FixedBottomCTA, ProgressBar } from "@toss/tds-mobile";
 import { useParticipateFunnel } from "../model";
@@ -36,42 +35,23 @@ export function ParticipatePage({ testId }: Props) {
     );
   }
 
-  return <ParticipateFunnelContent test={data.test} testId={testId} raw={data.raw} />;
+  return <ParticipateFunnelContent test={data.test} testId={testId} />;
 }
 
 interface FunnelProps {
   test: ParticipateTest;
   testId: number;
-  raw: unknown;
 }
 
-function ParticipateFunnelContent({ test, testId, raw }: FunnelProps) {
+function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   const navigate = useNavigate();
-  const { mutate: submitAnswers, isPending, isSuccess, isError: isMutationError, error: mutationError } = useSubmitAnswersMutation();
-  const [showRaw, setShowRaw] = useState(false);
-  const [debugBody, setDebugBody] = useState<string | null>(null);
-  const [apiErrorBody, setApiErrorBody] = useState<string | null>(null);
+  const { mutate: submitAnswers } = useSubmitAnswersMutation();
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
-    setDebugBody(JSON.stringify(body, null, 2));
-    setApiErrorBody(null);
     submitAnswers(
       { testId, body },
-      {
-        onSuccess: () => navigate({ to: ROUTES.DISCOVERY }),
-        onError: async (error) => {
-          const httpError = error as { response?: Response };
-          if (httpError.response) {
-            try {
-              const errBody = await httpError.response.clone().json();
-              setApiErrorBody(JSON.stringify(errBody, null, 2));
-            } catch {
-              setApiErrorBody(error instanceof Error ? error.message : String(error));
-            }
-          }
-        },
-      },
+      { onSuccess: () => navigate({ to: ROUTES.DISCOVERY }) },
     );
   });
 
@@ -114,22 +94,6 @@ function ParticipateFunnelContent({ test, testId, raw }: FunnelProps) {
             </CTAButton>
           }
         />
-      )}
-
-      <div
-        className="fixed top-8 left-2 right-2 z-50 bg-black/80 text-white text-xs p-2 rounded cursor-pointer"
-        onClick={() => setShowRaw(true)}
-      >
-        <div>idx: {currentIndex}/{totalCount - 1} | isLast: {String(isLast)} | canGoNext: {String(canGoNext)} | {isPending ? "pending..." : isSuccess ? "✅ success" : isMutationError ? `❌ ${mutationError instanceof Error ? mutationError.message : "error"}` : "idle"}</div>
-        {apiErrorBody && <div className="text-red-400 mt-1">❌ API 에러 응답 — 탭하면 상세 보기</div>}
-        {!apiErrorBody && debugBody && <div className="text-yellow-300 mt-1">탭하면 요청 바디 전체 보기</div>}
-      </div>
-      {showRaw && (
-        <div className="fixed inset-0 z-40 bg-black/90 overflow-auto p-4 pt-10" onClick={() => setShowRaw(false)}>
-          <pre className="text-xs text-green-300 whitespace-pre-wrap break-all">
-            {apiErrorBody ? `=== API 에러 응답 ===\n${apiErrorBody}\n\n=== 요청 바디 ===\n${debugBody}` : (debugBody ?? JSON.stringify(raw, null, 2))}
-          </pre>
-        </div>
       )}
     </div>
   );
