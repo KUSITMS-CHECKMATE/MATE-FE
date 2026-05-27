@@ -80,7 +80,7 @@ export function usePaymentSubmit() {
       }
     },
     onSuccess: (testId) => {
-      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } });
+      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
     },
     onError: (error) => {
       openToast(error instanceof Error ? error.message : "결제 중 오류가 발생했어요", {
