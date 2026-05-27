@@ -116,6 +116,7 @@ export interface ApiFiveSecondQuestion {
   isOtherInputEnabled?: boolean;
   isDuplicate?: boolean;
   isMultiSelectEnabled?: boolean;
+  imageRatio?: string;
   options?: ApiFiveSecondOption[];
   choices?: ApiChoiceItem[];
   minSelect?: number;
