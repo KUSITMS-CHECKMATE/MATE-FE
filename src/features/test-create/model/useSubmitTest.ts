@@ -253,7 +253,7 @@ export function useSubmitTest(draftId: number | undefined) {
       return draftId;
     },
     onSuccess: (draftId) => {
-      navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId } });
+      navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId }, replace: true });
     },
     onError: async (error) => {
       let message = `실패: ${String(error)}`;
