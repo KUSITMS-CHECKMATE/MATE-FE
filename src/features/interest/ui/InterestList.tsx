@@ -1,45 +1,55 @@
-import { Asset, Result, Text } from "@toss/tds-mobile";
+import { useQuery } from "@tanstack/react-query";
+import { Asset, Result, Skeleton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
+import { listLikedTests, getListLikedTestsUrl } from "@/shared/api/generated/test";
 import { TestCard } from "@/shared/ui/TestCard";
 import { ROUTES } from "@/shared/constants/routes";
 
-const MOCK_TESTS = [
-  {
-    id: 1,
-    title: "테스트명 한줄만 보이게아아아아아아",
-    description: "테스트 한줄 소개 한줄만 보이게탈탈탈라탈리라라라라라라",
-    reward: 300,
-    thumbnailUrl:
-      "https://static.toss.im/assets/homepage/tossapp/toss-app-main.png",
-    liked: true,
-  },
-  {
-    id: 2,
-    title: "테스트명 한줄만 보이게",
-    description: "테스트 한줄 소개 한줄만 보이게",
-    reward: 300,
-    thumbnailUrl: "",
-    liked: true,
-  },
-  {
-    id: 3,
-    title: "테스트명 세 번째",
-    description: "테스트 한줄 소개",
-    reward: 150,
-    thumbnailUrl:
-      "https://static.toss.im/assets/homepage/tossapp/toss-app-main.png",
-    liked: true,
-  },
-];
-
-interface Props {
-  onRetry?: () => void;
-}
-
-export function InterestList({ onRetry }: Props) {
+export function InterestList() {
   const navigate = useNavigate();
-  const tests = MOCK_TESTS;
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: [getListLikedTestsUrl()],
+    queryFn: () => listLikedTests(),
+  });
+
+  const tests = (data?.data?.data?.tests ?? []).filter(
+    (test): test is typeof test & { id: number } => test.id !== undefined
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-3 px-4 pt-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} custom={["card", "title", "subtitle"]} repeatLastItemCount={0} />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center px-6">
+        <Result
+          title="목록을 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요"
+          figure={
+            <Asset.Lottie
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/lotties-common/error-spot.json"
+              aria-hidden={true}
+            />
+          }
+          button={
+            <Result.Button color="dark" variant="weak" onClick={() => refetch()}>
+              다시 시도하기
+            </Result.Button>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
@@ -58,11 +68,11 @@ export function InterestList({ onRetry }: Props) {
             <TestCard
               key={test.id}
               id={test.id}
-              title={test.title}
-              description={test.description}
-              reward={test.reward}
-              thumbnailUrl={test.thumbnailUrl}
-              liked={test.liked}
+              title={test.title ?? ""}
+              description={test.description ?? ""}
+              reward={test.reward ?? 0}
+              thumbnailUrl={test.thumbnailUrl ?? ""}
+              liked={true}
               onClick={() =>
                 navigate({
                   to: ROUTES.INTEREST_DETAIL,
@@ -83,11 +93,7 @@ export function InterestList({ onRetry }: Props) {
               aria-hidden={true}
             />
           }
-          button={
-            <Result.Button color="dark" variant="weak" onClick={onRetry}>
-              다시 시도하기
-            </Result.Button>
-          }
+          button={undefined}
         />
       )}
     </div>
