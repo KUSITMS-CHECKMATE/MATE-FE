@@ -4,7 +4,6 @@ import { CTAButton, FixedBottomCTA, ProgressBar } from "@toss/tds-mobile";
 import { useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
-import { AbSelectionBottomSheet } from "@/features/question-ab/answer";
 import { useParticipateTestQuery } from "../api/useParticipateTestQuery";
 import { useSubmitAnswersMutation } from "../api/useSubmitAnswersMutation";
 import { mapAnswersToApiRequest } from "../api/mappers";
@@ -37,18 +36,19 @@ export function ParticipatePage({ testId }: Props) {
     );
   }
 
-  return <ParticipateFunnelContent test={data.test} testId={testId} />;
+  return <ParticipateFunnelContent test={data.test} testId={testId} raw={data.raw} />;
 }
 
 interface FunnelProps {
   test: ParticipateTest;
   testId: number;
+  raw: unknown;
 }
 
-function ParticipateFunnelContent({ test, testId }: FunnelProps) {
+function ParticipateFunnelContent({ test, testId, raw }: FunnelProps) {
   const navigate = useNavigate();
   const { mutate: submitAnswers } = useSubmitAnswersMutation();
-  const [isAbSheetOpen, setIsAbSheetOpen] = useState(false);
+  const [showRaw, setShowRaw] = useState(false);
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
@@ -62,7 +62,6 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
     funnel;
 
   const progress = (currentIndex + 1) / totalCount;
-  const isAbQuestion = currentQuestion.type === "AB_TEST";
   const isFivesecQuestion = currentQuestion.type === "FIVE_SECOND";
 
   return (
@@ -81,32 +80,9 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
         />
       </main>
 
-      {isFivesecQuestion ? null : isAbQuestion ? (
-        isFirst ? (
-          <FixedBottomCTA
-            topAccessory="두 가지 안을 확인하고 선택하기를 눌러요"
-            onClick={() => setIsAbSheetOpen(true)}
-          >
-            선택하기
-          </FixedBottomCTA>
-        ) : (
-          <FixedBottomCTA.Double
-            topAccessory="두 가지 안을 확인하고 선택하기를 눌러요"
-            leftButton={
-              <CTAButton color="dark" variant="weak" onClick={goPrev}>
-                이전
-              </CTAButton>
-            }
-            rightButton={
-              <CTAButton onClick={() => setIsAbSheetOpen(true)}>
-                {isLast ? "완료하기" : "선택하기"}
-              </CTAButton>
-            }
-          />
-        )
-      ) : isFirst ? (
+      {isFivesecQuestion ? null : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={goNext}>
-          다음
+          {"다음"}
         </FixedBottomCTA>
       ) : (
         <FixedBottomCTA.Double
@@ -123,19 +99,18 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
         />
       )}
 
-      {isAbQuestion && (
-        <AbSelectionBottomSheet
-          data={currentQuestion.data}
-          open={isAbSheetOpen}
-          onClose={() => setIsAbSheetOpen(false)}
-          onConfirm={(selected) => {
-            setIsAbSheetOpen(false);
-            funnel.goNextWithAnswer({ type: "AB_TEST", selected });
-          }}
-          initialSelected={
-            funnel.currentAnswer?.type === "AB_TEST" ? funnel.currentAnswer.selected : null
-          }
-        />
+      <button
+        className="fixed top-2 right-2 z-50 bg-black/60 text-white text-xs px-2 py-1 rounded"
+        onClick={() => setShowRaw((v) => !v)}
+      >
+        {showRaw ? "숨기기" : "API 데이터"}
+      </button>
+      {showRaw && (
+        <div className="fixed inset-0 z-40 bg-black/70 overflow-auto p-4 pt-10">
+          <pre className="text-xs text-green-300 whitespace-pre-wrap break-all">
+            {JSON.stringify(raw, null, 2)}
+          </pre>
+        </div>
       )}
     </div>
   );

@@ -52,7 +52,7 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
         data: {
           title: q.title,
           description: q.description ?? "",
-          scaleCount: q.scaleCount,
+          scaleCount: q.range as 5 | 7,
           minLabel: q.minLabel,
           maxLabel: q.maxLabel,
           imageUrl: q.imageUrl,
@@ -91,7 +91,24 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
           nodes: (q.nodes ?? []).map(mapApiTreeNode),
         },
       };
-    case "FIVE_SECOND":
+    case "FIVE_SECOND": {
+      const isObjective =
+        q.answerType === "multiple" || q.isObjective === true;
+      const isMultiSelectEnabled =
+        q.isMultiSelectEnabled ?? q.isDuplicate ?? false;
+      const fiveSecondChoices =
+        q.options != null
+          ? q.options.map((c) => ({
+              id: String(c.fiveSecondOptionId),
+              name: c.content,
+              imageUrl: "",
+            }))
+          : (q.choices ?? []).map((c) => ({
+              id: String(c.id),
+              name: c.name,
+              imageUrl: c.imageUrl ?? "",
+            }));
+
       return {
         id,
         type: "FIVE_SECOND",
@@ -99,22 +116,21 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
           title: q.title,
           description: q.description ?? "",
           imageUrl: q.imageUrl ?? "",
-          duration: q.duration,
           answerExample: "",
-          answerType: q.answerType,
-          isMultipleAnswer: q.isMultipleAnswer,
-          isOtherInputEnabled: q.isOtherInputEnabled,
-          isMultiSelectEnabled: q.isMultiSelectEnabled,
-          choices: (q.choices ?? []).map((c) => ({
-            id: String(c.id),
-            name: c.name,
-            imageUrl: c.imageUrl ?? "",
-          })),
-          minSelectCount: q.minSelectCount,
-          maxSelectCount: q.maxSelectCount,
+          answerType: isObjective ? "multiple" : "subjective",
+          isMultipleAnswer: q.isMultipleAnswer ?? isObjective,
+          isOtherInputEnabled: q.isOtherInputEnabled ?? q.isOther ?? false,
+          isMultiSelectEnabled,
+          choices: fiveSecondChoices,
+          minSelectCount: q.minSelectCount ?? q.minSelect ?? 1,
+          maxSelectCount:
+            q.maxSelectCount ??
+            q.maxSelect ??
+            (isMultiSelectEnabled ? fiveSecondChoices.length : 1),
           placeholder: q.placeholder,
         },
       };
+    }
   }
 }
 
