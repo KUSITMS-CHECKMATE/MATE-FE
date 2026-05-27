@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Asset, FixedBottomCTA, Spacing, Stepper, StepperRow, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
+import { appLogin } from "@apps-in-toss/web-framework";
+import { loginWithToss } from "@/shared/api/generated/auth";
+import { setToken, setRefreshToken } from "@/shared/api/client";
 import { ROUTES } from "@/shared/constants/routes";
 
 const STEPS = [
@@ -11,6 +15,23 @@ const STEPS = [
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleStart() {
+    setIsLoading(true);
+    try {
+      const { authorizationCode, referrer } = await appLogin();
+      const { data: body } = await loginWithToss({ authorizationCode, referrer });
+      const token = body.data?.accessToken;
+      const refreshToken = body.data?.refreshToken;
+      if (!token) throw new Error("토큰을 받지 못했습니다.");
+      setToken(token);
+      if (refreshToken) setRefreshToken(refreshToken);
+      navigate({ to: ROUTES.DISCOVERY });
+    } catch {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-dvh bg-white">
@@ -40,7 +61,9 @@ export function ServiceIntroPage() {
           />
         ))}
       </Stepper>
-      <FixedBottomCTA onClick={() => navigate({ to: ROUTES.DISCOVERY })}>시작하기</FixedBottomCTA>
+      <FixedBottomCTA onClick={handleStart} disabled={isLoading}>
+        {isLoading ? "로그인 중" : "시작하기"}
+      </FixedBottomCTA>
     </div>
   );
 }
