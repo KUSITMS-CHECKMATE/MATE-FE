@@ -1,4 +1,4 @@
-import { Checkbox, List, ListRow } from "@toss/tds-mobile";
+import { Checkbox, ListRow } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
@@ -25,6 +25,11 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
     }
   }
 
+  console.log(
+    "[MultipleAnswerPage] choices imageUrls:",
+    choices.map((c) => ({ id: c.id, imageUrl: c.imageUrl })),
+  );
+
   return (
     <div className="flex flex-col">
       <QuestionHeader
@@ -32,11 +37,15 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         title={title}
         description={description}
       />
-      <List>
+      <div>
         {choices.map((choice) => {
           const checked = selectedIds.includes(choice.id);
           return (
-            <div key={choice.id} className="bg-white" onClick={() => handleSelect(choice.id)}>
+            <div
+              key={choice.id}
+              className="bg-white"
+              onClick={() => handleSelect(choice.id)}
+            >
               <ListRow
                 role="checkbox"
                 aria-checked={checked}
@@ -55,14 +64,15 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
                   <img
                     src={choice.imageUrl}
                     alt={choice.name}
-                    className="w-full h-47.5 rounded-2xl object-cover"
+                    className="w-full rounded-2xl object-cover"
+                    style={{ height: "190px" }}
                   />
                 </div>
               )}
             </div>
           );
         })}
-      </List>
+      </div>
     </div>
   );
 }
