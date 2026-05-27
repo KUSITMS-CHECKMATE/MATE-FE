@@ -71,11 +71,7 @@ export function isAnswerValid(
     }
     case "CARD_SORTING": {
       const a = answer as Extract<Answer, { type: "CARD_SORTING" }>;
-      const placedCount = Object.keys(a.placements).length;
-      if (question.data.requireAllPlaced) {
-        return placedCount === question.data.cards.length;
-      }
-      return placedCount > 0;
+      return Object.keys(a.placements).length === question.data.cards.length;
     }
   }
 }
