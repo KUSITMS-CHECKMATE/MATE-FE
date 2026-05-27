@@ -55,13 +55,7 @@ export function AbAnswerPage({
               type="button"
               onClick={() => onChange({ type: "AB_TEST", selected: option })}
               className={`relative overflow-hidden border-0 p-0 bg-transparent cursor-pointer ${isPortrait && !isExpanded ? "flex-1" : "w-full"}`}
-              style={{
-                aspectRatio,
-                borderRadius: 16,
-                boxShadow: isSelected
-                  ? "inset 0 0 0 2px #4265CD"
-                  : "inset 0 0 0 1px var(--token-tds-color-grey-opacity-100, var(--adaptiveGreyOpacity100, rgba(2,32,71,0.05)))",
-              }}
+              style={{ aspectRatio, borderRadius: 16 }}
             >
               {imageUrl ? (
                 <img
@@ -76,6 +70,15 @@ export function AbAnswerPage({
                   style={{ background: adaptive.greyOpacity50, borderRadius: 16 }}
                 />
               )}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  borderRadius: 16,
+                  boxShadow: isSelected
+                    ? "inset 0 0 0 2px #4265CD"
+                    : "inset 0 0 0 1px var(--token-tds-color-grey-opacity-100, var(--adaptiveGreyOpacity100, rgba(2,32,71,0.05)))",
+                }}
+              />
               <div className="absolute top-3 left-3">
                 <Badge size="small" color={isSelected ? "blue" : "elephant"} variant="fill">
                   {option}안
