@@ -21,6 +21,8 @@ import { usePdfDownload } from "../model/usePdfDownload";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
+import { saveBase64Data } from "@apps-in-toss/web-framework";
+import { client } from "@/shared/api/client";
 
 interface Props {
   testId: string;
@@ -72,8 +74,27 @@ export function TestResultPage({ testId }: Props) {
   }
 
   async function handleDownload(formats: { pdf: boolean; csv: boolean }) {
-    if (formats.pdf) {
-      await generatePdf();
+    try {
+      if (formats.pdf) {
+        await generatePdf();
+      }
+      if (formats.csv) {
+        const blob = await client(`api/v1/tests/${testId}/report/excel`).blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        await saveBase64Data({
+          data: base64,
+          fileName: `MATE_통계보고서_${testId}.xlsx`,
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+      }
+    } catch (e) {
+      console.error("[handleDownload] 실패:", e);
+      alert("다운로드에 실패했습니다. 다시 시도해주세요.");
     }
     setIsDownloadSheetOpen(false);
   }

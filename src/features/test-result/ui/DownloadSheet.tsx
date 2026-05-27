@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BottomSheet, Button, Checkbox, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+
+type Format = "pdf" | "csv" | null;
 
 interface Props {
   open: boolean;
@@ -10,31 +12,35 @@ interface Props {
 }
 
 export function DownloadSheet({ open, onClose, onDownload, isGenerating = false }: Props) {
-  const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+  const [selected, setSelected] = useState<Format>(null);
 
-  function toggleFormat(format: "pdf" | "csv") {
-    setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
-  }
+  useEffect(() => {
+    if (!open) setSelected(null);
+  }, [open]);
 
   function handleDownload() {
-    onDownload(selectedFormats);
+    if (!selected) return;
+    onDownload({ pdf: selected === "pdf", csv: selected === "csv" });
   }
 
   return (
     <BottomSheet
       header={<BottomSheet.Header>다운로드할 형식을 선택해주세요</BottomSheet.Header>}
       open={open}
-      onClose={onClose}
+      onClose={() => {
+        setSelected(null);
+        onClose();
+      }}
       cta={
         <BottomSheet.DoubleCTA
           leftButton={
-            <Button color="dark" variant="weak" onClick={onClose}>
+            <Button color="dark" variant="weak" onClick={() => { setSelected(null); onClose(); }}>
               닫기
             </Button>
           }
           rightButton={
             <Button
-              disabled={(!selectedFormats.pdf && !selectedFormats.csv) || isGenerating}
+              disabled={selected === null || isGenerating}
               onClick={handleDownload}
             >
               {isGenerating ? "생성 중..." : "다운받기"}
@@ -44,9 +50,9 @@ export function DownloadSheet({ open, onClose, onDownload, isGenerating = false 
       }
     >
       <ListRow
-        role="checkbox"
-        aria-checked={selectedFormats.pdf}
-        onClick={() => toggleFormat("pdf")}
+        role="radio"
+        aria-checked={selected === "pdf"}
+        onClick={() => setSelected("pdf")}
         left={<ListRow.AssetIcon size="xsmall" shape="original" name="icon-document-pdf" />}
         contents={
           <ListRow.Texts
@@ -55,13 +61,13 @@ export function DownloadSheet({ open, onClose, onDownload, isGenerating = false 
             topProps={{ color: adaptive.grey700 }}
           />
         }
-        right={<Checkbox.Line size={24} checked={selectedFormats.pdf} />}
+        right={<Checkbox.Line size={24} checked={selected === "pdf"} />}
         verticalPadding="large"
       />
       <ListRow
-        role="checkbox"
-        aria-checked={selectedFormats.csv}
-        onClick={() => toggleFormat("csv")}
+        role="radio"
+        aria-checked={selected === "csv"}
+        onClick={() => setSelected("csv")}
         left={
           <ListRow.AssetIcon
             size="xsmall"
@@ -73,7 +79,7 @@ export function DownloadSheet({ open, onClose, onDownload, isGenerating = false 
         contents={
           <ListRow.Texts type="1RowTypeA" top="CSV" topProps={{ color: adaptive.grey700 }} />
         }
-        right={<Checkbox.Line size={24} checked={selectedFormats.csv} />}
+        right={<Checkbox.Line size={24} checked={selected === "csv"} />}
         verticalPadding="large"
       />
     </BottomSheet>
