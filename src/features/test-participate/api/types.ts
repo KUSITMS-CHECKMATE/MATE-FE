@@ -78,8 +78,11 @@ export interface ApiAbTestQuestion {
   type: "AB_TEST";
   title: string;
   description?: string;
-  imageUrlA: string;
-  imageUrlB: string;
+  aImageUrl?: string;
+  bImageUrl?: string;
+  imageUrlA?: string;
+  imageUrlB?: string;
+  imageRatio?: string;
 }
 
 export interface ApiCardSortingQuestion {

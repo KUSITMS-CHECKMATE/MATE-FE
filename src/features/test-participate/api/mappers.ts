@@ -59,17 +59,20 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
           imageUrl: q.imageUrl,
         },
       };
-    case "AB_TEST":
+    case "AB_TEST": {
+      const qRaw = q as unknown as Record<string, unknown>;
       return {
         id,
         type: "AB_TEST",
         data: {
           title: q.title,
           description: q.description ?? "",
-          imageUrlA: q.imageUrlA,
-          imageUrlB: q.imageUrlB,
+          imageUrlA: (qRaw.aImageUrl ?? qRaw.imageUrlA ?? "") as string,
+          imageUrlB: (qRaw.bImageUrl ?? qRaw.imageUrlB ?? "") as string,
+          ratio: (q.imageRatio as AbRatio) ?? undefined,
         },
       };
+    }
     case "CARD_SORTING":
       return {
         id,
