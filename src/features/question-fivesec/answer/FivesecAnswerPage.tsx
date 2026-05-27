@@ -54,10 +54,10 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "FIVE_SECOND", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: answer?.text });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "FIVE_SECOND", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: answer?.text });
     }
   }
 
@@ -110,7 +110,9 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       isFirst={isFirst}
       isLast={isLast}
       prevLabel={prevLabel}
+      otherText={answer?.text ?? ""}
       onSelect={handleSelect}
+      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds, text })}
       onPrev={onPrev}
       onGoNext={onGoNext}
     />
