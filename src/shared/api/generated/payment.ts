@@ -75,7 +75,7 @@ export interface PaymentRefundResponse {
   transactionId?: string;
   payToken?: string;
   payStatus?: PaymentRefundResponsePayStatus;
-  approvalTime?: string;
+  approvedAt?: string;
 }
 
 export interface ApiResponsePaymentRefundResponse {
@@ -117,7 +117,7 @@ export interface PaymentExecuteResponse {
   payToken?: string;
   transactionId?: string;
   payMethod?: PaymentExecuteResponsePayMethod;
-  approvalTime?: string;
+  approvedAt?: string;
 }
 
 export interface ApiResponsePaymentExecuteResponse {
@@ -159,7 +159,7 @@ export interface PaymentStatusResponse {
   amount?: number;
   paidAmount?: number;
   transactionId?: string;
-  approvalTime?: string;
+  approvedAt?: string;
 }
 
 export interface ApiResponsePaymentStatusResponse {
@@ -431,9 +431,8 @@ export const getExecutePaymentUrl = (paymentId: number,) => {
 
 /**
  * mock 결제를 실행하고 승인 결과를 반환합니다.
-- 버그 사항: 부가세 포함하여 최종 결제 금액 산정
 
- * @summary ⚠️ 결제 실행
+ * @summary ✔️ 결제 실행
  */
 export const executePayment = async (paymentId: number, options?: RequestInit): Promise<executePaymentResponse> => {
 
@@ -504,7 +503,7 @@ export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayme
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ⚠️ 결제 실행
+ * @summary ✔️ 결제 실행
  */
 
 export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
