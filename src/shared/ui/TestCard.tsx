@@ -51,7 +51,10 @@ export function TestCard({
           ...old,
           data: {
             ...old.data,
-            data: old.data.data?.map((t) => (t.id === id ? { ...t, isLiked: true } : t)),
+            data: {
+              ...old.data.data,
+              tests: old.data.data?.tests?.map((t) => (t.id === id ? { ...t, isLiked: true } : t)),
+            },
           },
         };
       });
@@ -102,7 +105,10 @@ export function TestCard({
           ...old,
           data: {
             ...old.data,
-            data: old.data.data?.map((t) => (t.id === id ? { ...t, isLiked: false } : t)),
+            data: {
+              ...old.data.data,
+              tests: old.data.data?.tests?.map((t) => (t.id === id ? { ...t, isLiked: false } : t)),
+            },
           },
         };
       });
