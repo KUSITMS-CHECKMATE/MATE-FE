@@ -1,4 +1,4 @@
-import { Asset, FixedBottomCTA, Spacing, Stepper, StepperRow, Top } from "@toss/tds-mobile";
+import { Asset, FixedBottomCTA, Stepper, StepperRow, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
 import { ROUTES } from "@/shared/constants/routes";
@@ -34,7 +34,7 @@ export function ServiceIntroPage() {
         }
         subtitleBottom={<Top.SubtitleParagraph>리워드를 받아요</Top.SubtitleParagraph>}
       />
-      <Spacing size={260} />
+      <img src="/images/intro.png" alt="" aria-hidden={true} className="w-full" />
       <Stepper>
         {STEPS.map((step, i) => (
           <StepperRow
