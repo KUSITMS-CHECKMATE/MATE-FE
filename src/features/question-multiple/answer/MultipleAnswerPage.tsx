@@ -11,7 +11,8 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   const selectedIds = answer?.selectedIds ?? [];
   const otherText = answer?.otherText ?? "";
   const categoryLabel = isMultiSelectEnabled ? "복수 선택" : "단일 선택";
-  const hasOtherChoice = choices.some((c) => c.name === "기타 (직접 입력)");
+  const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
+  const hasOtherChoice = !!otherChoice;
 
   function handleSelect(id: string) {
     if (isMultiSelectEnabled) {
@@ -85,7 +86,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
             value={otherText}
             placeholder="답변을 작성해 주세요"
             onChange={(e) =>
-              onChange({ type: "OBJECTIVE", selectedIds: [], otherText: e.target.value })
+              onChange({ type: "OBJECTIVE", selectedIds: otherChoice ? [otherChoice.id] : [], otherText: e.target.value })
             }
           />
         </div>

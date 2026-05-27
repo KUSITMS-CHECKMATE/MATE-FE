@@ -27,7 +27,8 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   const selectedIds = answer?.selectedIds ?? [];
   const isSubjective = question.data.answerType === "subjective";
   const minRequired = minSelectCount > 0 ? minSelectCount : 1;
-  const hasOtherChoice = choices.some((c) => c.name === "기타 (직접 입력)");
+  const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
+  const hasOtherChoice = !!otherChoice;
   const canGoNext = isSubjective
     ? (answer?.text ?? "").trim().length > 0
     : hasOtherChoice && (answer?.text ?? "").trim().length > 0
@@ -115,7 +116,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       prevLabel={prevLabel}
       otherText={answer?.text ?? ""}
       onSelect={handleSelect}
-      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: [], text })}
+      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: otherChoice ? [otherChoice.id] : [], text })}
       onPrev={onPrev}
       onGoNext={onGoNext}
     />
