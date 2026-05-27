@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import { RATIO_TO_CSS } from "@/shared/constants/imageRatio";
+import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface Props {
   imageUrl: string;
@@ -23,6 +23,7 @@ export function FivesecCountdownPhase({ imageUrl, ratio }: Props) {
         <div
           className="relative overflow-hidden rounded-2xl"
           style={{
+            alignSelf: "flex-start",
             width: `min(100%, calc((100dvh - 200px) * ${RATIO_TO_CSS[ratio]}))`,
             aspectRatio: RATIO_TO_CSS[ratio],
             boxShadow: "inset 0 0 0 1px rgba(2,32,71,0.05)",

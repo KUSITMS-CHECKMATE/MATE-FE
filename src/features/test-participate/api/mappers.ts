@@ -2,6 +2,7 @@ import type { ParticipateQuestion, ParticipateTest, Answer } from "../model/type
 import type { TreeNodeItem } from "@/features/question-tree/model/types";
 import type { ApiQuestion, ApiTreeNode, ApiQuestionsDetailData } from "./types";
 import type { AnswerCreateRequest } from "@/shared/api/generated/answer";
+import type { AbRatio } from "@/shared/constants/imageRatio";
 
 function mapApiTreeNode(node: ApiTreeNode): TreeNodeItem {
   return {
@@ -128,6 +129,7 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
             q.maxSelect ??
             (isMultiSelectEnabled ? fiveSecondChoices.length : 1),
           placeholder: q.placeholder,
+          ratio: (q.imageRatio as AbRatio) ?? undefined,
         },
       };
     }

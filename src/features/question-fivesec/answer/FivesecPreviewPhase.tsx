@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { adaptive } from "@toss/tds-colors";
 import { Text } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import { RATIO_TO_CSS } from "@/shared/constants/imageRatio";
+import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface Props {
   ratio: AbRatio;
@@ -21,6 +21,7 @@ export function FivesecPreviewPhase({ ratio, onStart }: Props) {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
           style={{
+            alignSelf: "flex-start",
             width: `min(100%, calc((100dvh - 200px) * ${RATIO_TO_CSS[ratio]}))`,
             aspectRatio: RATIO_TO_CSS[ratio],
             backgroundColor: adaptive.grey100,
