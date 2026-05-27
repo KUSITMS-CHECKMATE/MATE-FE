@@ -4,15 +4,19 @@ import { adaptive } from "@toss/tds-colors";
 import { Border, CTAButton, FixedBottomCTA, ListRow, Text, Top } from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW } from "../model/calcPayment";
+import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { ROUTES } from "@/shared/constants/routes";
+import { Route } from "@/routes/test/payment";
 
 export function PaymentFunnel() {
   const navigate = useNavigate();
+  const { draftId } = Route.useSearch();
+  const { mutate: submitPayment, isPending } = usePaymentSubmit();
 
   const handleGoBack = () => {
-    navigate({ to: ROUTES.TEST_CREATE, search: { payment: true } });
+    navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true } });
   };
 
   const [step, setStep] = useState<PaymentStep>("main");
@@ -196,7 +200,16 @@ export function PaymentFunnel() {
               이전
             </CTAButton>
           }
-          rightButton={<CTAButton onClick={() => {}}>{toKRW(payment.total)} 결제하기</CTAButton>}
+          rightButton={
+            <CTAButton
+              onClick={() =>
+                submitPayment({ draftId, testerCount: testerCount!, rewardAmount: rewardAmount! })
+              }
+              disabled={isPending}
+            >
+              {toKRW(payment.total)} 결제하기
+            </CTAButton>
+          }
         />
       )}
     </div>
