@@ -1,15 +1,28 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
-import { updateDraft } from "@/shared/api/generated/testDraft";
+import { HTTPError } from "ky";
+import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { createPayment, executePayment } from "@/shared/api/generated/payment";
 import { ROUTES } from "@/shared/constants/routes";
 import type { TesterCount, RewardAmount } from "./types";
+
+async function stepError(label: string, e: unknown): Promise<Error> {
+  let detail = e instanceof Error ? e.message : String(e);
+  if (e instanceof HTTPError) {
+    try {
+      const body = await e.response.json() as { code?: string; message?: string };
+      detail = `${e.response.status} ${body.code ?? ""} ${body.message ?? ""}`.trim();
+    } catch { /* ignore */ }
+  }
+  return new Error(`[${label}] ${detail}`);
+}
 
 interface PaymentSubmitInput {
   draftId: number;
   testerCount: TesterCount;
   rewardAmount: RewardAmount;
+  responsePeriod: number;
 }
 
 export function usePaymentSubmit() {
@@ -17,21 +30,54 @@ export function usePaymentSubmit() {
   const { openToast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ draftId, testerCount, rewardAmount }: PaymentSubmitInput) => {
-      const closedAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
+      const closedAt = new Date(Date.now() + responsePeriod * 24 * 60 * 60 * 1000)
         .toISOString()
         .slice(0, 10);
-      await updateDraft(draftId, { goalPpl: testerCount, reward: rewardAmount, closedAt });
 
-      const payRes = await createPayment({ draftId, isTestPayment: true });
-      const paymentId = payRes.data.data?.paymentId;
-      if (!paymentId) throw new Error("결제 등록 실패: paymentId를 받지 못했습니다.");
+      try {
+        const draftRes = await getDraft(draftId);
+        const status = draftRes.data.data?.status;
+        const BLOCKED: Record<string, string> = {
+          PAYMENT_CREATED: "이미 결제가 진행 중인 테스트입니다.",
+          PAYMENT_FAILED: "이전 결제가 실패했습니다. 새 테스트를 만들어 주세요.",
+          PUBLISHING: "발행 처리 중인 테스트입니다.",
+          PUBLISHED: "이미 발행된 테스트입니다.",
+          PUBLISH_FAILED: "발행에 실패한 테스트입니다. 새 테스트를 만들어 주세요.",
+          EXPIRED: "만료된 테스트입니다.",
+        };
+        if (status && status !== "DRAFT") {
+          throw new Error(BLOCKED[status] ?? `결제할 수 없는 상태입니다. (${status})`);
+        }
+      } catch (e) {
+        if (e instanceof Error && !e.message.startsWith("[")) throw e;
+        throw await stepError("초안 상태 조회 실패", e);
+      }
 
-      const execRes = await executePayment(paymentId);
-      const testId = execRes.data.data?.testId;
-      if (!testId) throw new Error("결제 실행 실패: testId를 받지 못했습니다.");
+      try {
+        await updateDraft(draftId, { goalPpl: testerCount, reward: rewardAmount, closedAt });
+      } catch (e) {
+        throw await stepError("초안 업데이트 실패", e);
+      }
 
-      return testId;
+      let paymentId: number;
+      try {
+        const payRes = await createPayment({ draftId, isTestPayment: true });
+        const id = payRes.data.data?.paymentId;
+        if (!id) throw new Error("paymentId를 받지 못했습니다.");
+        paymentId = id;
+      } catch (e) {
+        throw await stepError("결제 등록 실패", e);
+      }
+
+      try {
+        const execRes = await executePayment(paymentId);
+        const testId = execRes.data.data?.testId;
+        if (!testId) throw new Error("testId를 받지 못했습니다.");
+        return testId;
+      } catch (e) {
+        throw await stepError("결제 실행 실패", e);
+      }
     },
     onSuccess: (testId) => {
       navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } });

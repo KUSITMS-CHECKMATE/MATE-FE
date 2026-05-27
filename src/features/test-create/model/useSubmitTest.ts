@@ -251,7 +251,6 @@ export function useSubmitTest(draftId: number | undefined) {
       return draftId;
     },
     onSuccess: (draftId) => {
-      form.reset();
       navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId } });
     },
     onError: async (error) => {
