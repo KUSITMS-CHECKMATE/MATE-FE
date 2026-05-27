@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { listMyTests } from "@/shared/api/generated/test";
 import type { UserTest } from "@/features/test/model";
-import { TestBanner, TestCreateButton, TestList } from "@/features/test/ui";
+import { ServiceBanner } from "@/shared/ui/ServiceBanner";
+import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
 
@@ -35,7 +36,7 @@ function MakerHomePage() {
 
   return (
     <div className="flex flex-col">
-      <TestBanner />
+      <ServiceBanner />
       <TestList
         tests={tests}
         isLoading={isLoading}
