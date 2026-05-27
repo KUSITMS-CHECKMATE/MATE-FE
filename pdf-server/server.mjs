@@ -6,7 +6,7 @@ import path from 'path';
 
 const PORT = 3001;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const HTML_PATH = path.resolve(__dirname, '../public/stats-report.html');
+const HTML_PATH = path.resolve(__dirname, './stats-report.html'); // 같은 폴더에 위치
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);

@@ -23,7 +23,7 @@
     "test:e2e:debug": "playwright test --debug",
     "orval": "doppler run -- orval --config orval.config.ts",
     "orval:watch": "doppler run -- orval --config orval.config.ts --watch",
-    "pdf:server": "node scripts/pdf-server.mjs"
+    "pdf:server": "node pdf-server/server.mjs"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "^2.4.1",
