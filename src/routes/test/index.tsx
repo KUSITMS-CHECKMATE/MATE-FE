@@ -6,12 +6,18 @@ import { TestBanner, TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
 
+const STATUS_MAP: Record<string, UserTest["status"]> = {
+  IN_PROGRESS: "active",
+  COMPLETED: "ended",
+  WAITING: "waiting",
+  REJECTED: "rejected",
+};
+
 export const Route = createFileRoute("/test/")({
   component: MakerHomePage,
 });
 
 function MakerHomePage() {
-  console.log("MakerHomePage 렌더링됨");
   const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
@@ -23,8 +29,8 @@ function MakerHomePage() {
     id: item.id ?? 0,
     title: item.title ?? "",
     participantCount: item.pplCount ?? 0,
-    maxParticipantCount: 0,
-    status: item.testStatus === "IN_PROGRESS" ? "active" : "ended",
+    maxParticipantCount: item.goalPpl ?? 0,
+    status: STATUS_MAP[item.testStatus ?? ""] ?? "ended",
   }));
 
   return (

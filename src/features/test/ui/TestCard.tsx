@@ -13,7 +13,7 @@ interface Props {
 const STATUS_CONFIG = {
   active: {
     badgeColor: "green" as const,
-    badgeLabel: "진행중",
+    badgeLabel: "진행 중",
     titleColor: adaptive.grey800,
     iconName: "icon-user-two-align-mono",
     iconColor: adaptive.grey600,
@@ -23,6 +23,24 @@ const STATUS_CONFIG = {
   ended: {
     badgeColor: "elephant" as const,
     badgeLabel: "종료",
+    titleColor: adaptive.grey700,
+    iconName: "icon-user-two",
+    iconColor: undefined,
+    participantColor: adaptive.grey600,
+    participantWeight: "medium" as const,
+  },
+  waiting: {
+    badgeColor: "yellow" as const,
+    badgeLabel: "검수 중",
+    titleColor: adaptive.grey800,
+    iconName: "icon-user-two-align-mono",
+    iconColor: adaptive.grey600,
+    participantColor: adaptive.grey700,
+    participantWeight: "medium" as const,
+  },
+  rejected: {
+    badgeColor: "red" as const,
+    badgeLabel: "반려",
     titleColor: adaptive.grey700,
     iconName: "icon-user-two",
     iconColor: undefined,
