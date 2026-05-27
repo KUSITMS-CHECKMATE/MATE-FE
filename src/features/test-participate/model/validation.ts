@@ -45,8 +45,19 @@ export function isAnswerValid(
       if (question.data.answerType === "subjective") {
         return (a.text ?? "").trim().length > 0;
       }
-      const { minSelectCount, maxSelectCount } = question.data;
       const n = a.selectedIds.length;
+
+      if (!question.data.isMultiSelectEnabled) {
+        return n === 1;
+      }
+
+      const minSelectCount =
+        question.data.minSelectCount > 0 ? question.data.minSelectCount : 1;
+      const maxSelectCount =
+        question.data.maxSelectCount > 0
+          ? question.data.maxSelectCount
+          : question.data.choices.length;
+
       return n >= minSelectCount && n <= maxSelectCount;
     }
     case "SCALE": {

@@ -4,6 +4,13 @@ export interface ApiChoiceItem {
   imageUrl?: string;
 }
 
+export interface ApiFiveSecondOption {
+  fiveSecondOptionId: number;
+  content: string;
+  sequence: number;
+  isOtherOption: boolean;
+}
+
 export interface ApiObjectiveOption {
   objectiveOptionId: number;
   content: string;
@@ -54,11 +61,12 @@ export interface ApiObjectiveQuestion {
 
 export interface ApiScaleQuestion {
   questionId: number;
+  scaleId: number;
   sequence: number;
   type: "SCALE";
   title: string;
   description?: string;
-  scaleCount: 5 | 7;
+  range: number;
   minLabel: string;
   maxLabel: string;
   imageUrl?: string;
@@ -101,14 +109,19 @@ export interface ApiFiveSecondQuestion {
   title: string;
   description?: string;
   imageUrl?: string;
-  duration: number;
-  answerType: "multiple" | "subjective";
-  isMultipleAnswer: boolean;
-  isOtherInputEnabled: boolean;
-  isMultiSelectEnabled: boolean;
-  choices: ApiChoiceItem[];
-  minSelectCount: number;
-  maxSelectCount: number;
+  answerType?: "multiple" | "subjective";
+  isObjective?: boolean;
+  isMultipleAnswer?: boolean;
+  isOther?: boolean;
+  isOtherInputEnabled?: boolean;
+  isDuplicate?: boolean;
+  isMultiSelectEnabled?: boolean;
+  options?: ApiFiveSecondOption[];
+  choices?: ApiChoiceItem[];
+  minSelect?: number;
+  maxSelect?: number;
+  minSelectCount?: number;
+  maxSelectCount?: number;
   placeholder?: string;
 }
 

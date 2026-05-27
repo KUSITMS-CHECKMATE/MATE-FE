@@ -156,7 +156,6 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
       title: "화면에서 가장 먼저 눈에 띈 것은?",
       description: "5초 동안 화면을 보고 기억에 남는 것을 선택해주세요",
       imageUrl: "",
-      duration: 5,
       answerExample: "",
       answerType: "multiple",
       isMultipleAnswer: false,

@@ -8,6 +8,7 @@ import { QUESTION_TYPE_LABEL } from "@/features/test-participate/model/constants
 export function AbAnswerPage({
   question,
   answer,
+  onChange,
 }: QuestionAnswerProps<"AB_TEST">) {
   const { data } = question;
   const selected = answer?.selected ?? null;
@@ -38,15 +39,17 @@ export function AbAnswerPage({
           const imageUrl = option === "A" ? data.imageUrlA : data.imageUrlB;
           const isSelected = selected === option;
           return (
-            <div
+            <button
               key={option}
-              className={`relative overflow-hidden ${isExpanded ? "w-full" : "flex-1"}`}
+              type="button"
+              onClick={() => onChange({ type: "AB_TEST", selected: option })}
+              className={`relative overflow-hidden border-0 p-0 bg-transparent cursor-pointer ${isExpanded ? "w-full" : "flex-1"}`}
               style={{
                 aspectRatio,
                 borderRadius: 16,
                 boxShadow: isSelected
-                  ? `inset 0 0 0 2px #4265cc`
-                  : `inset 0 0 0 1px ${adaptive.greyOpacity100}`,
+                  ? "inset 0 0 0 2px #4265CD"
+                  : "inset 0 0 0 1px var(--token-tds-color-grey-opacity-100, var(--adaptiveGreyOpacity100, rgba(2,32,71,0.05)))",
               }}
             >
               {imageUrl ? (
@@ -59,19 +62,18 @@ export function AbAnswerPage({
               ) : (
                 <div
                   className="absolute inset-0"
-                  style={{ background: adaptive.greyOpacity50 }}
+                  style={{ background: adaptive.greyOpacity50, borderRadius: 16 }}
                 />
               )}
               <div className="absolute top-3 left-3">
-                <Badge size="small" color="red" variant="fill">
+                <Badge size="small" color={isSelected ? "blue" : "elephant"} variant="fill">
                   {option}안
                 </Badge>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
-
     </div>
   );
 }
