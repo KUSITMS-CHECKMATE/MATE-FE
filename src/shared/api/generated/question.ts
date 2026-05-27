@@ -6,272 +6,29 @@
  * OpenAPI spec version: v1.0.0
  */
 import {
-  useMutation,
-  useQuery
+  useMutation
 } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
   UseMutationOptions,
-  UseMutationResult,
-  UseQueryOptions,
-  UseQueryResult
+  UseMutationResult
 } from '@tanstack/react-query';
 
 import { kyMutator } from '../mutator';
 import type { ErrorType } from '../mutator';
-export interface QuestionCreateItem {
-  type: string;
-}
+/**
+ * 테스트 상태 (WAITING / IN_PROGRESS / COMPLETED / REJECTED)
+ */
+export type QuestionSummaryResponseTestStatus = typeof QuestionSummaryResponseTestStatus[keyof typeof QuestionSummaryResponseTestStatus];
 
-export type AbTestCreateRequestImageRatio = typeof AbTestCreateRequestImageRatio[keyof typeof AbTestCreateRequestImageRatio];
 
-
-export const AbTestCreateRequestImageRatio = {
-  '9:16': '9:16',
-  '1:1': '1:1',
-  '4:3': '4:3',
+export const QuestionSummaryResponseTestStatus = {
+  WAITING: 'WAITING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED',
 } as const;
-
-export type AbTestCreateRequest = QuestionCreateItem & {
-  /**
-     * @minLength 0
-     * @maxLength 34
-     */
-  title?: string;
-  /**
-     * @minLength 0
-     * @maxLength 50
-     */
-  description?: string;
-  /** @minLength 1 */
-  aImageKey?: string;
-  /** @minLength 1 */
-  bImageKey?: string;
-  imageRatio: AbTestCreateRequestImageRatio;
-};
-
-export type CardSortingCreateRequest = QuestionCreateItem & {
-  /** @minLength 1 */
-  title?: string;
-  description?: string;
-  /**
-     * @minItems 4
-     * @maxItems 12
-     * @items.minLength 0
-     * @items.maxLength 16
-     */
-  cards: string[];
-  /**
-     * @minItems 1
-     * @maxItems 3
-     * @items.minLength 0
-     * @items.maxLength 12
-     */
-  categories: string[];
-};
-
-export type FiveSecondCreateRequestImageRatio = typeof FiveSecondCreateRequestImageRatio[keyof typeof FiveSecondCreateRequestImageRatio];
-
-
-export const FiveSecondCreateRequestImageRatio = {
-  '9:16': '9:16',
-  '1:1': '1:1',
-  '4:3': '4:3',
-} as const;
-
-export interface FiveSecondOptionRequest {
-  /**
-     * @minLength 0
-     * @maxLength 50
-     */
-  content?: string;
-}
-
-export type FiveSecondCreateRequest = QuestionCreateItem & {
-  /**
-     * @minLength 0
-     * @maxLength 34
-     */
-  title?: string;
-  /**
-     * @minLength 0
-     * @maxLength 50
-     */
-  description?: string;
-  /** @minLength 1 */
-  imageKey?: string;
-  imageRatio: FiveSecondCreateRequestImageRatio;
-  isObjective: boolean;
-  /** 객관식일 때만 사용합니다. 주관식일 때는 null이어야 합니다. */
-  isDuplicate?: boolean;
-  /** 중복 선택 객관식일 때만 사용합니다. 주관식이거나 단일 선택 객관식일 때는 null이어야 합니다. */
-  minSelect?: number;
-  /** 중복 선택 객관식일 때만 사용합니다. 주관식이거나 단일 선택 객관식일 때는 null이어야 합니다. */
-  maxSelect?: number;
-  /** 객관식일 때만 필수입니다. 주관식일 때는 null이어야 합니다. */
-  isOther?: boolean;
-  /**
-     * 5초 테스트 객관식 선택지
-     * @minItems 0
-     * @maxItems 10
-     */
-  options?: FiveSecondOptionRequest[];
-};
-
-export interface ObjectiveOptionRequest {
-  /**
-     * @minLength 0
-     * @maxLength 17
-     */
-  content?: string;
-  imageKey?: string;
-}
-
-export type ObjectiveCreateRequest = QuestionCreateItem & {
-  /**
-     * @minLength 0
-     * @maxLength 34
-     */
-  title?: string;
-  /**
-     * @minLength 0
-     * @maxLength 55
-     */
-  description?: string;
-  isDuplicate: boolean;
-  maxSelect?: number;
-  minSelect?: number;
-  isOther: boolean;
-  /**
-     * 객관식 선택지 목록
-     * @minItems 2
-     * @maxItems 2147483647
-     */
-  options: ObjectiveOptionRequest[];
-};
-
-export type ScaleCreateRequestRange = typeof ScaleCreateRequestRange[keyof typeof ScaleCreateRequestRange];
-
-
-export const ScaleCreateRequestRange = {
-  NUMBER_5: 5,
-  NUMBER_7: 7,
-} as const;
-
-export type ScaleCreateRequest = QuestionCreateItem & {
-  /**
-     * @minLength 0
-     * @maxLength 34
-     */
-  title?: string;
-  /**
-     * @minLength 0
-     * @maxLength 50
-     */
-  description?: string;
-  imageKey?: string;
-  /**
-     * @minLength 0
-     * @maxLength 100
-     */
-  minLabel?: string;
-  /**
-     * @minLength 0
-     * @maxLength 100
-     */
-  maxLabel?: string;
-  range: ScaleCreateRequestRange;
-};
-
-export type SubjectiveCreateRequest = QuestionCreateItem & {
-  /**
-     * @minLength 0
-     * @maxLength 34
-     */
-  title?: string;
-  /**
-     * @minLength 0
-     * @maxLength 55
-     */
-  description?: string;
-  imageKey?: string;
-};
-
-export interface TreeNode {
-  /** @minLength 1 */
-  label?: string;
-  /** 다음 단계 하위 노드 목록 */
-  children?: unknown;
-}
-
-export interface Feature {
-  /** @minLength 1 */
-  label?: string;
-  /**
-     * 하위 노드 목록
-     * @minItems 0
-     * @maxItems 4
-     */
-  children?: TreeNode[];
-}
-
-export type TreeTestCreateRequest = QuestionCreateItem & {
-  /** @minLength 1 */
-  title?: string;
-  description?: string;
-  /**
-     * 트리테스트 루트 기능 목록
-     * @minItems 1
-     * @maxItems 4
-     */
-  features: Feature[];
-};
-
-export interface QuestionCreateRequest {
-  /**
-     * 등록할 질문 문항 목록
-     * @minItems 1
-     */
-  questions?: (AbTestCreateRequest | CardSortingCreateRequest | FiveSecondCreateRequest | ObjectiveCreateRequest | ScaleCreateRequest | SubjectiveCreateRequest | TreeTestCreateRequest)[];
-}
-
-export type QuestionCreateResultType = typeof QuestionCreateResultType[keyof typeof QuestionCreateResultType];
-
-
-export const QuestionCreateResultType = {
-  OBJECTIVE: 'OBJECTIVE',
-  SUBJECTIVE: 'SUBJECTIVE',
-  FIVE_SECOND: 'FIVE_SECOND',
-  SCALE: 'SCALE',
-  AB_TEST: 'AB_TEST',
-  CARD_SORTING: 'CARD_SORTING',
-  TREE_TEST: 'TREE_TEST',
-} as const;
-
-export interface QuestionCreateResult {
-  questionId?: number;
-  type?: QuestionCreateResultType;
-  sequence?: number;
-  title?: string;
-}
-
-export interface QuestionCreateResponse {
-  questions?: QuestionCreateResult[];
-}
-
-export interface ApiResponseQuestionCreateResponse {
-  success?: boolean;
-  code?: string;
-  message?: string;
-  data?: QuestionCreateResponse;
-}
 
 /**
  * 질문 유형
@@ -307,6 +64,8 @@ export interface QuestionSummaryItem {
  * 질문 목록 조회 응답
  */
 export interface QuestionSummaryResponse {
+  /** 테스트 상태 (WAITING / IN_PROGRESS / COMPLETED / REJECTED) */
+  testStatus?: QuestionSummaryResponseTestStatus;
   /** 질문 개수 */
   questionCount?: number;
   /** 테스트 참여자 수 */
@@ -353,7 +112,7 @@ export const getGetQuestionsDetailsUrl = (testId: number,) => {
 - 모든 로그인한 사용자가 조회할 수 있습니다.
 - 각 질문은 공통 필드와 유형별 상세 필드를 모두 포함합니다.
 
- * @summary 질문 전체 조회
+ * @summary ➰ 질문 전체 조회
  */
 export const getQuestionsDetails = async (testId: number, options?: RequestInit): Promise<getQuestionsDetailsResponse> => {
 
@@ -401,7 +160,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionsDetailsMutationError = ErrorType<unknown>
 
     /**
- * @summary 질문 전체 조회
+ * @summary ➰ 질문 전체 조회
  */
 export const useGetQuestionsDetails = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -413,135 +172,6 @@ export const useGetQuestionsDetails = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getGetQuestionsDetailsMutationOptions(options), queryClient);
     }
-
-export type createQuestionsResponse200 = {
-  data: ApiResponseQuestionCreateResponse
-  status: 200
-}
-
-export type createQuestionsResponseSuccess = (createQuestionsResponse200) & {
-  headers: Headers;
-};
-;
-
-export type createQuestionsResponse = (createQuestionsResponseSuccess)
-
-export const getCreateQuestionsUrl = (testId: number,) => {
-
-
-
-
-  return `/api/v1/tests/${testId}/questions`
-}
-
-/**
- * 여러 유형의 질문 문항을 한 번에 등록합니다. MKTT_03 (질문 목록) 화면에 해당하는 api 입니다.
-- `questions` 배열 순서대로 `sequence`가 부여됩니다.
-- 같은 유형 중복 요청, 없는 유형 생략이 가능합니다.
-- `FIVE_SECOND`, `OBJECTIVE`에서 `isOther`=true면 기타 (직접 입력) 선택지는 서버가 자동 생성합니다.
-
-질문 유형
-- 각 문항은 `type` 필드로 유형을 구분합니다.
-- OBJECTIVE, SUBJECTIVE, FIVE_SECOND, SCALE, AB_TEST, CARD_SORTING, TREE_TEST
-
- * @summary 질문 전체 등록
- */
-export const createQuestions = async (testId: number,
-    questionCreateRequest: QuestionCreateRequest, options?: RequestInit): Promise<createQuestionsResponse> => {
-
-  return kyMutator<createQuestionsResponse>(getCreateQuestionsUrl(testId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(questionCreateRequest)
-  }
-);}
-
-
-
-
-
-export const getCreateQuestionsQueryKey = (testId: number,
-    questionCreateRequest?: QuestionCreateRequest,) => {
-    return [
-    'POST', `/api/v1/tests/${testId}/questions`, questionCreateRequest
-    ] as const;
-    }
-
-
-export const getCreateQuestionsQueryOptions = <TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(testId: number,
-    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCreateQuestionsQueryKey(testId,questionCreateRequest);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof createQuestions>>> = ({ signal }) => createQuestions(testId,questionCreateRequest, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CreateQuestionsQueryResult = NonNullable<Awaited<ReturnType<typeof createQuestions>>>
-export type CreateQuestionsQueryError = ErrorType<unknown>
-
-
-export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
- testId: number,
-    questionCreateRequest: QuestionCreateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createQuestions>>,
-          TError,
-          Awaited<ReturnType<typeof createQuestions>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof kyMutator>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
- testId: number,
-    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createQuestions>>,
-          TError,
-          Awaited<ReturnType<typeof createQuestions>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof kyMutator>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
- testId: number,
-    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary 질문 전체 등록
- */
-
-export function useCreateQuestions<TData = Awaited<ReturnType<typeof createQuestions>>, TError = ErrorType<unknown>>(
- testId: number,
-    questionCreateRequest: QuestionCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createQuestions>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCreateQuestionsQueryOptions(testId,questionCreateRequest,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-
-
 
 export type getQuestionDetailResponseDefault = {
   data: unknown
@@ -565,13 +195,13 @@ export const getGetQuestionDetailUrl = (testId: number,
 }
 
 /**
- * testId에 해당하는 테스트의 특정 질문 문항 하나를 상세조회합니다. 통계의 질문 탭 MKST_01 화면에 해당하는 api입니다.
+ * testId에 해당하는 테스트의 특정 질문 문항 하나를 상세조회합니다. 통계의 질문 탭 MKST_01-1 화면에 해당하는 api입니다.
 - 응답 루트에 `testId`와 `question`을 함께 반환합니다.
 - `question`은 공통 필드와 유형별 상세 필드를 모두 포함합니다.
 - 별도로 조회 요청한 유저가 해당 테스트 메이커인지 검증하지 않습니다.
 - 테스트 종료 여부를 검증하지 않습니다.
 
- * @summary 질문 상세 조회
+ * @summary ➰ 질문 상세 조회
  */
 export const getQuestionDetail = async (testId: number,
     questionId: number, options?: RequestInit): Promise<getQuestionDetailResponse> => {
@@ -620,7 +250,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionDetailMutationError = ErrorType<unknown>
 
     /**
- * @summary 질문 상세 조회
+ * @summary ➰ 질문 상세 조회
  */
 export const useGetQuestionDetail = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError,{testId: number;questionId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -654,12 +284,12 @@ export const getGetQuestionSummaryUrl = (testId: number,) => {
 }
 
 /**
- * testId에 해당하는 테스트의 질문 목록 정보를 조회합니다. 통계의 질문 탭 MKST_01 화면에 해당하는 api입니다.
+ * testId에 해당하는 테스트의 질문 목록 정보를 조회합니다. 통계의 질문 탭 MKST_01 29 화면에 해당하는 api입니다.
 - 테스트 메이커만 조회할 수 있습니다.
-- 테스트가 종료된 경우에만 조회할 수 있습니다.
-- 질문 개수, 테스트 참여자 수, 질문 목록을 반환합니다.
+- 테스트 종료 여부와 관계없이 조회할 수 있습니다.
+- 테스트 상태, 질문 개수, 테스트 참여자 수, 질문 목록을 반환합니다.
 
- * @summary 질문 목록 조회
+ * @summary ✔️ 질문 목록 조회
  */
 export const getQuestionSummary = async (testId: number, options?: RequestInit): Promise<getQuestionSummaryResponse> => {
 
@@ -707,7 +337,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionSummaryMutationError = ErrorType<unknown>
 
     /**
- * @summary 질문 목록 조회
+ * @summary ✔️ 질문 목록 조회
  */
 export const useGetQuestionSummary = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}

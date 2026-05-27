@@ -1,27 +1,78 @@
 import { useState } from "react";
-import { Asset, BottomSheet, Button, Checkbox, ListRow, Result, Tab, Text, Top } from "@toss/tds-mobile";
-import { ResultTabContent } from "./ResultTabContent";
+import {
+  Asset,
+  Button,
+  ListHeader,
+  Result,
+  Skeleton,
+  Tab,
+  Text,
+  Top,
+} from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { MOCK_QUESTIONS } from "../model/mock";
+import { ResultTabContent } from "./ResultTabContent";
+import { QuestionTabContent } from "./QuestionTabContent";
+import { DownloadSheet } from "./DownloadSheet";
+import { ReviewGuideAccordion } from "./ReviewGuideAccordion";
+import { QuestionPreviewOverlay } from "./QuestionPreviewOverlay";
+import { mapReportItemToQuestionResult } from "../model/mappers";
+import { STATUS_BADGE } from "../model/constants";
 import { usePdfDownload } from "../model/usePdfDownload";
+import { useGetReportQuery } from "@/shared/api/report";
+import type { TestStatus } from "@/shared/api/report";
+import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
 
 interface Props {
   testId: string;
-  status: "active" | "ended";
 }
 
-export function TestResultPage({ testId, status }: Props) {
+function TestResultSkeleton() {
+  return (
+    <div className="flex flex-col">
+      <div className="px-5 pt-8 pb-4">
+        <Skeleton
+          custom={["subtitle", "title", "subtitle"]}
+          repeatLastItemCount={0}
+          background="greyOpacity100"
+        />
+      </div>
+      <div className="px-5 pb-3">
+        <Skeleton custom={["card"]} repeatLastItemCount={0} height={52} background="greyOpacity100" />
+      </div>
+      <div className="px-5 pb-4">
+        <Skeleton custom={["subtitle"]} repeatLastItemCount={0} background="greyOpacity100" />
+      </div>
+      <div className="px-5">
+        <Skeleton custom={["listWithIcon"]} repeatLastItemCount={4} background="greyOpacity100" />
+      </div>
+    </div>
+  );
+}
+
+export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
-  const [selectedFormats, setSelectedFormats] = useState({ pdf: false, csv: false });
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
   const { generate: generatePdf, isGenerating } = usePdfDownload(testId);
 
-  function toggleFormat(format: "pdf" | "csv") {
-    setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
+  const { data: reportData, isLoading } = useGetReportQuery(Number(testId));
+  const report = reportData?.data;
+
+  const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
+  const { data: previewQuestion } = useGetQuestionDetailQuery(Number(testId), selectedQuestionId);
+
+  const testStatus: TestStatus = report?.testStatus ?? "IN_PROGRESS";
+  const isEnded = testStatus === "COMPLETED";
+  const isReviewState = testStatus === "WAITING" || testStatus === "REJECTED";
+  const showParticipant = testStatus === "IN_PROGRESS" || testStatus === "COMPLETED";
+  const results = (report?.reports ?? []).map(mapReportItemToQuestionResult);
+
+  if (isLoading) {
+    return <TestResultSkeleton />;
   }
 
-  async function handleDownload() {
-    if (selectedFormats.pdf) {
+  async function handleDownload(formats: { pdf: boolean; csv: boolean }) {
+    if (formats.pdf) {
       await generatePdf();
     }
     setIsDownloadSheetOpen(false);
@@ -29,7 +80,7 @@ export function TestResultPage({ testId, status }: Props) {
 
   return (
     <div>
-      {status === "ended" && (
+      {isEnded && (
         <div className="w-full sticky top-0 z-10 bg-white px-6 py-2">
           <div className="w-full h-9.5 bg-[#f2f4f6] rounded-[20px] px-2.5 py-2 flex flex-row gap-2 justify-start items-center">
             <Asset.Icon
@@ -44,179 +95,106 @@ export function TestResultPage({ testId, status }: Props) {
           </div>
         </div>
       )}
+
       <Top
+        lowerGap={isReviewState ? 0 : undefined}
         title={
           <Top.TitleParagraph size={22} color={adaptive.grey900}>
             질문별 결과 요약
           </Top.TitleParagraph>
         }
-        subtitleTop={
-          <Top.SubtitleBadges
-            badges={[
-              status === "active"
-                ? { text: "진행중", color: "green", variant: "weak" }
-                : { text: "종료", color: "elephant", variant: "weak" },
-            ]}
-          />
-        }
+        subtitleTop={<Top.SubtitleBadges badges={[STATUS_BADGE[testStatus]]} />}
         subtitleBottom={
-          <Top.SubtitleParagraph size={15}>총 8개 질문 · 100명 참여</Top.SubtitleParagraph>
+          <Top.SubtitleParagraph size={15}>
+            총 {report?.questionCount ?? 0}개 질문
+            {showParticipant && ` · ${report?.participantCount ?? 0}명 참여`}
+          </Top.SubtitleParagraph>
         }
       />
-      <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
-        <Button
-          size="large"
-          display="block"
-          disabled={status !== "ended"}
-          onClick={() => setIsDownloadSheetOpen(true)}
-        >
-          통계 다운받기
-        </Button>
-      </div>
-      <Tab
-        fluid={false}
-        size="large"
-        style={{ backgroundColor: adaptive.background }}
-        onChange={(index) => setSelectedTabIndex(index)}
-      >
-        <Tab.Item key="0-질문" selected={selectedTabIndex === 0}>
-          질문
-        </Tab.Item>
-        <Tab.Item key="1-결과" selected={selectedTabIndex === 1}>
-          결과
-        </Tab.Item>
-      </Tab>
-      {selectedTabIndex === 0 && (
-        <div className="flex flex-col py-4">
-          {MOCK_QUESTIONS.map((question, index) => (
-            <div
-              key={question.id}
-              className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center"
-            >
-              <div className="w-full flex flex-row gap-3 items-center">
-                <Asset.Text
-                  frameShape={Asset.frameShape.CircleMedium}
-                  backgroundColor={adaptive.greyOpacity100}
-                  style={{ color: `#4365cb`, fontSize: `13px`, fontWeight: `bold` }}
-                  aria-label=""
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </Asset.Text>
-                <div className="w-full flex flex-row gap-3 justify-between items-center">
-                  <div className="w-full flex flex-col">
-                    <Text
-                      display="block"
-                      color={adaptive.grey800}
-                      typography="t5"
-                      fontWeight="semibold"
-                    >
-                      {question.title}
-                    </Text>
-                    <Text
-                      display="block"
-                      color={adaptive.grey600}
-                      typography="t6"
-                      fontWeight="medium"
-                    >
-                      {question.type}
-                    </Text>
-                  </div>
-                  <Asset.Icon
-                    frameShape={Asset.frameShape.CleanW24}
-                    backgroundColor="transparent"
-                    name="icon-system-arrow-right-outlined"
-                    aria-hidden={true}
-                    ratio="1/1"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      {selectedTabIndex === 1 && status === "active" && (
-        <Result
-          title="아직 진행하고 있는 테스트에요"
-          description="테스트가 끝나고 결과를 알려드릴게요"
-          className="my-10"
-          figure={
-            <Asset.Image
-              frameShape={Asset.frameShape.CleanW60}
-              src="https://static.toss.im/2d-emojis/png/4x/u1F50D.png"
-              aria-hidden={true}
-            />
-          }
-        />
-      )}
-      {selectedTabIndex === 1 && status === "ended" && <ResultTabContent />}
-      <BottomSheet
-        header={
-          <BottomSheet.Header>다운로드할 형식을 선택해주세요</BottomSheet.Header>
-        }
-        open={isDownloadSheetOpen}
-        onClose={() => setIsDownloadSheetOpen(false)}
-        cta={
-          <BottomSheet.DoubleCTA
-            leftButton={
-              <Button color="dark" variant="weak" onClick={() => setIsDownloadSheetOpen(false)}>
-                닫기
-              </Button>
-            }
-            rightButton={
-              <Button
-                disabled={(!selectedFormats.pdf && !selectedFormats.csv) || isGenerating}
-                onClick={handleDownload}
-              >
-                {isGenerating ? "생성 중..." : "다운받기"}
-              </Button>
+
+      {isReviewState ? (
+        <>
+          <ReviewGuideAccordion />
+          <ListHeader
+            titleWidthRatio={0.6}
+            title={
+              <ListHeader.TitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey800}>
+                질문 목록
+              </ListHeader.TitleParagraph>
             }
           />
-        }
-      >
-        <ListRow
-          role="checkbox"
-          aria-checked={selectedFormats.pdf}
-          onClick={() => toggleFormat("pdf")}
-          left={
-            <ListRow.AssetIcon
-              size="xsmall"
-              shape="original"
-              name="icon-document-pdf"
+          <QuestionTabContent
+            questions={questionSummary}
+            onSelectQuestion={setSelectedQuestionId}
+            noPadding
+          />
+        </>
+      ) : (
+        <>
+          <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
+            <Button
+              size="large"
+              display="block"
+              disabled={!isEnded}
+              onClick={() => setIsDownloadSheetOpen(true)}
+            >
+              통계 다운받기
+            </Button>
+          </div>
+
+          <Tab
+            className="mb-4"
+            fluid={false}
+            size="large"
+            style={{ backgroundColor: adaptive.background }}
+            onChange={(index) => setSelectedTabIndex(index)}
+          >
+            <Tab.Item key="0-질문" selected={selectedTabIndex === 0}>
+              질문
+            </Tab.Item>
+            <Tab.Item key="1-결과" selected={selectedTabIndex === 1}>
+              결과
+            </Tab.Item>
+          </Tab>
+
+          {selectedTabIndex === 0 && (
+            <QuestionTabContent
+              questions={questionSummary}
+              onSelectQuestion={setSelectedQuestionId}
             />
-          }
-          contents={
-            <ListRow.Texts
-              type="1RowTypeA"
-              top="통계 보고서"
-              topProps={{ color: adaptive.grey700 }}
+          )}
+
+          {selectedTabIndex === 1 && !isEnded && (
+            <Result
+              title="아직 진행하고 있는 테스트에요"
+              description="테스트가 끝나고 결과를 알려드릴게요"
+              className="my-10"
+              figure={
+                <Asset.Image
+                  frameShape={Asset.frameShape.CleanW60}
+                  src="https://static.toss.im/2d-emojis/png/4x/u1F50D.png"
+                  aria-hidden={true}
+                />
+              }
             />
-          }
-          right={<Checkbox.Line size={24} checked={selectedFormats.pdf} />}
-          verticalPadding="large"
-        />
-        <ListRow
-          role="checkbox"
-          aria-checked={selectedFormats.csv}
-          onClick={() => toggleFormat("csv")}
-          left={
-            <ListRow.AssetIcon
-              size="xsmall"
-              shape="original"
-              name="icon-googlespreadsheet-mono"
-              color={adaptive.green600}
-            />
-          }
-          contents={
-            <ListRow.Texts
-              type="1RowTypeA"
-              top="CSV"
-              topProps={{ color: adaptive.grey700 }}
-            />
-          }
-          right={<Checkbox.Line size={24} checked={selectedFormats.csv} />}
-          verticalPadding="large"
-        />
-      </BottomSheet>
+          )}
+
+          {selectedTabIndex === 1 && isEnded && <ResultTabContent results={results} />}
+        </>
+      )}
+
+      <QuestionPreviewOverlay
+        selectedQuestionId={selectedQuestionId}
+        previewQuestion={previewQuestion}
+        onClose={() => setSelectedQuestionId(null)}
+      />
+
+      <DownloadSheet
+        open={isDownloadSheetOpen}
+        onClose={() => setIsDownloadSheetOpen(false)}
+        onDownload={handleDownload}
+        isGenerating={isGenerating}
+      />
     </div>
   );
 }

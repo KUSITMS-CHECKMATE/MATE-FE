@@ -21,7 +21,7 @@ interface AbCreatePageProps {
 export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingAb = existing?.typeId === "ab" ? existing : null;
+  const existingAb = existing?.typeId === "AB_TEST" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(existingAb?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingAb?.description ?? "");
@@ -32,7 +32,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
   const [imageUrlB, setImageUrlB] = useState(existingAb?.imageUrlB ?? "");
   const [activeSlot, setActiveSlot] = useState<"a" | "b" | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "ab"; selected: "A" | "B" | null }>({ type: "ab", selected: null });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "AB_TEST"; selected: "A" | "B" | null }>({ type: "AB_TEST", selected: null });
   const [ratio, setRatio] = useState<AbRatio>(existingAb?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
 
@@ -136,7 +136,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "ab",
+                typeId: "AB_TEST",
                 title: questionTitle,
                 description: questionDescription,
                 imageUrlA,
@@ -173,7 +173,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
           <AbAnswerPage
             question={{
               id: "preview",
-              type: "ab",
+              type: "AB_TEST",
               data: {
                 title: questionTitle,
                 description: questionDescription,

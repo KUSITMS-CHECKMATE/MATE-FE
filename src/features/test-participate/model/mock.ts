@@ -6,7 +6,7 @@ const MOCK_TEST_1: ParticipateTest = {
   questions: [
     {
       id: "q1",
-      type: "subjective",
+      type: "SUBJECTIVE",
       data: {
         title: "오늘의 기분이 어떤지 작성해주세요",
         description: "좋은 하루 보내셨길 바랍니다",
@@ -17,7 +17,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q2",
-      type: "subjective",
+      type: "SUBJECTIVE",
       data: {
         title: "저녁 뭐 드셨나요?",
         description: "좋은 하루 보내셨길 바랍니다",
@@ -28,7 +28,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q3",
-      type: "tree",
+      type: "TREE_TEST",
       data: {
         title: "내 프로필 사진을 수정하려면 어디로 가야할까요?",
         description: "",
@@ -83,7 +83,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q5",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 서비스가 2030 여성으로서 도움이 되고 편리하다고 느껴지셨나요?",
         description: "1~5점 중에서 생각한 점수를 알려주세요.",
@@ -94,7 +94,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q6",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "전반적인 만족도를 7점 척도로 평가해주세요.",
         description: "1~7점 중에서 생각한 점수를 알려주세요.",
@@ -105,7 +105,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q7",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 디자인이 브랜드 이미지와 잘 어울린다고 생각하시나요?",
         description: "1~5점 중에서 생각한 점수를 알려주세요.",
@@ -117,7 +117,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q8",
-      type: "ab",
+      type: "AB_TEST",
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
@@ -127,7 +127,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "cs1",
-      type: "cardsort",
+      type: "CARD_SORTING",
       data: {
         title: "카드를 적절한 카테고리로 분류해주세요",
         description: "각 카드를 하나의 카테고리에 배치해주세요",
@@ -149,7 +149,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q4",
-      type: "multiple",
+      type: "OBJECTIVE",
       data: {
         title: "오늘의 기분이 어떤지 체크해주세요",
         description: "솔직하게 답변해 주세요",
@@ -166,7 +166,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q5",
-      type: "multiple",
+      type: "OBJECTIVE",
       data: {
         title: "선호하는 색상을 모두 골라주세요",
         description: "1개 이상 3개 이하로 선택",
@@ -184,7 +184,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q7",
-      type: "subjective",
+      type: "SUBJECTIVE",
       data: {
         title: "오늘의 기분이 어떤지 작성해주세요",
         description: "좋은 하루 보내셨길 바랍니다",
@@ -195,7 +195,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q8",
-      type: "subjective",
+      type: "SUBJECTIVE",
       data: {
         title: "이 이미지를 보고 느낀 점을 작성해주세요",
         description: "자유롭게 작성해주세요",
@@ -206,7 +206,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q6",
-      type: "fivesec",
+      type: "FIVE_SECOND",
       data: {
         title: "5초 안에 떠오르는 것을 골라주세요",
         description: "1개 이상 2개 이하로 선택",
@@ -228,7 +228,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q9",
-      type: "fivesec",
+      type: "FIVE_SECOND",
       data: {
         title: "이 이미지를 보고 가장 먼저 떠오르는 단어를 선택해주세요",
         description: "1개만 선택",
@@ -251,7 +251,7 @@ const MOCK_TEST_1: ParticipateTest = {
     },
     {
       id: "q10",
-      type: "fivesec",
+      type: "FIVE_SECOND",
       data: {
         title: "사진을 보고 느낀 점을 알려주세요",
         description: "아무거나 다 괜찮아요.",
@@ -277,7 +277,7 @@ const MOCK_TEST_2: ParticipateTest = {
   questions: [
     {
       id: "ab1",
-      type: "ab",
+      type: "AB_TEST",
       data: {
         title: "누가 더 귀엽나요?",
         description: "솔직하게 답변해 주세요",
@@ -287,7 +287,7 @@ const MOCK_TEST_2: ParticipateTest = {
     },
     {
       id: "s1",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 서비스가 전반적으로 사용하기 편리했나요?",
         description: "1~5점 중에서 생각한 점수를 알려주세요.",
@@ -298,7 +298,7 @@ const MOCK_TEST_2: ParticipateTest = {
     },
     {
       id: "s2",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 서비스를 다른 사람에게 추천할 의향이 있나요?",
         description: "1~7점 중에서 생각한 점수를 알려주세요.",
@@ -309,7 +309,7 @@ const MOCK_TEST_2: ParticipateTest = {
     },
     {
       id: "s3",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 디자인이 브랜드 이미지와 잘 어울린다고 생각하시나요?",
         description: "1~5점 중에서 생각한 점수를 알려주세요.",
@@ -321,7 +321,7 @@ const MOCK_TEST_2: ParticipateTest = {
     },
     {
       id: "s4",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "이 화면 구성이 목적에 맞게 명확하게 전달되나요?",
         description: "1~7점 중에서 생각한 점수를 알려주세요.",
@@ -340,7 +340,7 @@ const MOCK_TEST_3: ParticipateTest = {
   questions: [
     {
       id: "cs1",
-      type: "cardsort",
+      type: "CARD_SORTING",
       data: {
         title: "카드를 적절한 카테고리로 분류해주세요",
         description: "각 카드를 하나의 카테고리에 배치해주세요",
@@ -368,7 +368,7 @@ const MOCK_TEST_3: ParticipateTest = {
     },
     {
       id: "s1",
-      type: "scale",
+      type: "SCALE",
       data: {
         title: "분류 작업이 얼마나 직관적이었나요?",
         description: "1~5점 중에서 생각한 점수를 알려주세요.",
@@ -386,7 +386,7 @@ const MOCK_TEST_4: ParticipateTest = {
   questions: [
     {
       id: "fivesec-multiple",
-      type: "fivesec",
+      type: "FIVE_SECOND",
       data: {
         title: "5초 안에 떠오르는 것을 골라주세요",
         description: "1개 이상 2개 이하로 선택",
@@ -416,7 +416,7 @@ const MOCK_TEST_5: ParticipateTest = {
   questions: [
     {
       id: "fivesec-subjective",
-      type: "fivesec",
+      type: "FIVE_SECOND",
       data: {
         title: "사진을 보고 느낀 점을 알려주세요",
         description: "아무거나 다 괜찮아요.",

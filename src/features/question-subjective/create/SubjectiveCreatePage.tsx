@@ -19,7 +19,7 @@ interface SubjectiveCreatePageProps {
 export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
-  const existingSubjective = existing?.typeId === "subjective" ? existing : null;
+  const existingSubjective = existing?.typeId === "SUBJECTIVE" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(
     existingSubjective?.title ?? "",
@@ -44,7 +44,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "subjective"; text: string }>({ type: "subjective", text: "" });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SUBJECTIVE"; text: string }>({ type: "SUBJECTIVE", text: "" });
 
   return (
     <motion.div
@@ -118,7 +118,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
             onCancel={onClose}
             onComplete={() => {
               updateQuestion(questionId, {
-                typeId: "subjective",
+                typeId: "SUBJECTIVE",
                 title: questionTitle,
                 description: questionDescription,
                 imageUrl: questionImageUrl,
@@ -149,7 +149,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
           <SubjectiveAnswerPage
             question={{
               id: "preview",
-              type: "subjective",
+              type: "SUBJECTIVE",
               data: {
                 title: questionTitle,
                 description: questionDescription,
