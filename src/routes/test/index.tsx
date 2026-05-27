@@ -25,7 +25,7 @@ function MakerHomePage() {
     onSuccess: (res) => {
       const draftId = res.data.data?.draftId;
       if (!draftId) return;
-      navigate({ to: ROUTES.TEST_CREATE, search: { draftId } });
+      navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: false } });
     },
   });
 
@@ -52,7 +52,7 @@ function MakerHomePage() {
           navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } })
         }
       />
-      <TestCreateButton onClick={() => initDraft()} disabled={isPending} />
+      <TestCreateButton onClick={() => initDraft(undefined)} disabled={isPending} />
 
       <BottomTabBar activeTab="test" />
     </div>
