@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Asset, FixedBottomCTA, Spacing, Stepper, StepperRow, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
@@ -15,11 +15,9 @@ const STEPS = [
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
-  async function handleStart() {
-    setIsLoading(true);
-    try {
+  const loginMutation = useMutation({
+    mutationFn: async () => {
       const { authorizationCode, referrer } = await appLogin();
       const { data: body } = await loginWithToss({ authorizationCode, referrer });
       const token = body.data?.accessToken;
@@ -27,11 +25,14 @@ export function ServiceIntroPage() {
       if (!token) throw new Error("토큰을 받지 못했습니다.");
       setToken(token);
       if (refreshToken) setRefreshToken(refreshToken);
+    },
+    onSuccess: () => {
       navigate({ to: ROUTES.DISCOVERY });
-    } catch {
-      setIsLoading(false);
-    }
-  }
+    },
+    onError: () => {
+      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    },
+  });
 
   return (
     <div className="flex flex-col min-h-dvh bg-white">
@@ -61,8 +62,8 @@ export function ServiceIntroPage() {
           />
         ))}
       </Stepper>
-      <FixedBottomCTA onClick={handleStart} disabled={isLoading}>
-        {isLoading ? "로그인 중" : "시작하기"}
+      <FixedBottomCTA onClick={() => loginMutation.mutate()} disabled={loginMutation.isPending}>
+        {loginMutation.isPending ? "로그인 중" : "시작하기"}
       </FixedBottomCTA>
     </div>
   );
