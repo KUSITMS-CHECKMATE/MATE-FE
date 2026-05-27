@@ -47,14 +47,31 @@ interface FunnelProps {
 
 function ParticipateFunnelContent({ test, testId, raw }: FunnelProps) {
   const navigate = useNavigate();
-  const { mutate: submitAnswers } = useSubmitAnswersMutation();
+  const { mutate: submitAnswers, isPending, isSuccess, isError: isMutationError, error: mutationError } = useSubmitAnswersMutation();
   const [showRaw, setShowRaw] = useState(false);
+  const [debugBody, setDebugBody] = useState<string | null>(null);
+  const [apiErrorBody, setApiErrorBody] = useState<string | null>(null);
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
+    setDebugBody(JSON.stringify(body, null, 2));
+    setApiErrorBody(null);
     submitAnswers(
       { testId, body },
-      { onSuccess: () => navigate({ to: ROUTES.DISCOVERY }) },
+      {
+        onSuccess: () => navigate({ to: ROUTES.DISCOVERY }),
+        onError: async (error) => {
+          const httpError = error as { response?: Response };
+          if (httpError.response) {
+            try {
+              const errBody = await httpError.response.clone().json();
+              setApiErrorBody(JSON.stringify(errBody, null, 2));
+            } catch {
+              setApiErrorBody(error instanceof Error ? error.message : String(error));
+            }
+          }
+        },
+      },
     );
   });
 
@@ -99,16 +116,18 @@ function ParticipateFunnelContent({ test, testId, raw }: FunnelProps) {
         />
       )}
 
-      <button
-        className="fixed top-2 right-2 z-50 bg-black/60 text-white text-xs px-2 py-1 rounded"
-        onClick={() => setShowRaw((v) => !v)}
+      <div
+        className="fixed top-8 left-2 right-2 z-50 bg-black/80 text-white text-xs p-2 rounded cursor-pointer"
+        onClick={() => setShowRaw(true)}
       >
-        {showRaw ? "숨기기" : "API 데이터"}
-      </button>
+        <div>idx: {currentIndex}/{totalCount - 1} | isLast: {String(isLast)} | canGoNext: {String(canGoNext)} | {isPending ? "pending..." : isSuccess ? "✅ success" : isMutationError ? `❌ ${mutationError instanceof Error ? mutationError.message : "error"}` : "idle"}</div>
+        {apiErrorBody && <div className="text-red-400 mt-1">❌ API 에러 응답 — 탭하면 상세 보기</div>}
+        {!apiErrorBody && debugBody && <div className="text-yellow-300 mt-1">탭하면 요청 바디 전체 보기</div>}
+      </div>
       {showRaw && (
-        <div className="fixed inset-0 z-40 bg-black/70 overflow-auto p-4 pt-10">
+        <div className="fixed inset-0 z-40 bg-black/90 overflow-auto p-4 pt-10" onClick={() => setShowRaw(false)}>
           <pre className="text-xs text-green-300 whitespace-pre-wrap break-all">
-            {JSON.stringify(raw, null, 2)}
+            {apiErrorBody ? `=== API 에러 응답 ===\n${apiErrorBody}\n\n=== 요청 바디 ===\n${debugBody}` : (debugBody ?? JSON.stringify(raw, null, 2))}
           </pre>
         </div>
       )}

@@ -21,6 +21,10 @@ export function isAnswerValid(
     }
     case "OBJECTIVE": {
       const a = answer as Extract<Answer, { type: "OBJECTIVE" }>;
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.otherText ?? "").trim().length > 0) {
+        return true;
+      }
       const n = a.selectedIds.length;
 
       if (!question.data.isMultiSelectEnabled) {
@@ -44,6 +48,10 @@ export function isAnswerValid(
       const a = answer as Extract<Answer, { type: "FIVE_SECOND" }>;
       if (question.data.answerType === "subjective") {
         return (a.text ?? "").trim().length > 0;
+      }
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.text ?? "").trim().length > 0) {
+        return true;
       }
       const n = a.selectedIds.length;
 

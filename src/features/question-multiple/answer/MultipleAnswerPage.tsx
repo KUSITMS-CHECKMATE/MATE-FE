@@ -20,10 +20,10 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: answer?.otherText });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: answer?.otherText });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
     }
   }
 
@@ -85,7 +85,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
             value={otherText}
             placeholder="답변을 작성해 주세요"
             onChange={(e) =>
-              onChange({ type: "OBJECTIVE", selectedIds, otherText: e.target.value })
+              onChange({ type: "OBJECTIVE", selectedIds: [], otherText: e.target.value })
             }
           />
         </div>
