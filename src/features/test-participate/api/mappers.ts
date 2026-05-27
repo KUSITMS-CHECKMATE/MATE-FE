@@ -80,9 +80,13 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
         data: {
           title: q.title,
           description: q.description ?? "",
-          cards: (q.cards ?? []).map((c) => ({ id: String(c.id), label: c.name })),
-          categories: (q.categories ?? []).map((c) => ({ id: String(c.id), label: c.name })),
-          requireAllPlaced: q.requireAllPlaced,
+          cards: (q.cards ?? []).map((c, i) =>
+            typeof c === "string" ? { id: String(i), label: c } : { id: String(c.id), label: c.name }
+          ),
+          categories: (q.categories ?? []).map((c, i) =>
+            typeof c === "string" ? { id: String(i), label: c } : { id: String(c.id), label: c.name }
+          ),
+          requireAllPlaced: q.requireAllPlaced ?? false,
         },
       };
     case "TREE_TEST":

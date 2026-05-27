@@ -87,13 +87,14 @@ export interface ApiAbTestQuestion {
 
 export interface ApiCardSortingQuestion {
   questionId: number;
+  cardSortingId?: number;
   sequence: number;
   type: "CARD_SORTING";
   title: string;
   description?: string;
-  cards: ApiCardItem[];
-  categories: ApiCategoryItem[];
-  requireAllPlaced: boolean;
+  cards: (ApiCardItem | string)[];
+  categories: (ApiCategoryItem | string)[];
+  requireAllPlaced?: boolean;
 }
 
 export interface ApiTreeTestQuestion {
