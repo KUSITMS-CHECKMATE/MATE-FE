@@ -18,7 +18,6 @@ function TestListSkeleton() {
           key={i}
           custom={["card", "title", "subtitle"]}
           repeatLastItemCount={0}
-          background="greyOpacity100"
         />
       ))}
     </div>

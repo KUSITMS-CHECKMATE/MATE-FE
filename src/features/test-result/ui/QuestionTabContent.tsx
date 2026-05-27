@@ -1,32 +1,22 @@
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { QUESTION_TYPE_LABEL } from "../model/mappers";
-import type { QuestionType } from "@/shared/api/report";
-
-export interface QuestionSummaryItem {
-  questionId: number;
-  sequence: number;
-  title: string;
-  type: QuestionType;
-}
+import { MOCK_QUESTIONS } from "../model/mock";
 
 interface Props {
-  questions: QuestionSummaryItem[];
-  onSelectQuestion: (questionId: number) => void;
-  noPadding?: boolean;
+  onSelectQuestion: (index: number) => void;
 }
 
-export function QuestionTabContent({ questions, onSelectQuestion, noPadding = false }: Props) {
+export function QuestionTabContent({ onSelectQuestion }: Props) {
   return (
-    <div className={`flex flex-col ${noPadding ? "" : "py-4"}`}>
-      {questions.map((question) => (
+    <div className="flex flex-col py-4">
+      {MOCK_QUESTIONS.map((question, index) => (
         <div
-          key={question.questionId}
+          key={question.id}
           role="button"
           tabIndex={0}
           className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center active:bg-gray-50 cursor-pointer"
-          onClick={() => onSelectQuestion(question.questionId)}
-          onKeyDown={(e) => e.key === "Enter" && onSelectQuestion(question.questionId)}
+          onClick={() => onSelectQuestion(index)}
+          onKeyDown={(e) => e.key === "Enter" && onSelectQuestion(index)}
         >
           <div className="w-full flex flex-row gap-3 items-center">
             <Asset.Text
@@ -35,20 +25,15 @@ export function QuestionTabContent({ questions, onSelectQuestion, noPadding = fa
               style={{ color: "#4365cb", fontSize: "13px", fontWeight: "bold" }}
               aria-label=""
             >
-              {String(question.sequence).padStart(2, "0")}
+              {String(index + 1).padStart(2, "0")}
             </Asset.Text>
             <div className="w-full flex flex-row gap-3 justify-between items-center">
               <div className="w-full flex flex-col">
-                <Text
-                  display="block"
-                  color={adaptive.grey800}
-                  typography="t5"
-                  fontWeight="semibold"
-                >
+                <Text display="block" color={adaptive.grey800} typography="t5" fontWeight="semibold">
                   {question.title}
                 </Text>
                 <Text display="block" color={adaptive.grey600} typography="t6" fontWeight="medium">
-                  {QUESTION_TYPE_LABEL[question.type]}
+                  {question.type}
                 </Text>
               </div>
               <Asset.Icon

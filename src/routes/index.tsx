@@ -1,6 +1,7 @@
-import { ServiceIntroPage } from "@/features/intro/ui/ServiceIntroPage";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: ServiceIntroPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/discovery" });
+  },
 });

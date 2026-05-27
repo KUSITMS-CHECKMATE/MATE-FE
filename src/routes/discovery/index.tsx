@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
-import { ServiceBanner } from "@/shared/ui/ServiceBanner";
-import { TestList } from "@/features/discovery/ui";
+import { DiscoveryBanner, TestList } from "@/features/discovery/ui";
 import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
 
 export const Route = createFileRoute("/discovery/")({
@@ -28,7 +27,7 @@ function HomePage() {
 
   return (
     <div className="flex flex-col pb-19">
-      <ServiceBanner />
+      <DiscoveryBanner />
       <TestList tests={tests} isLoading={isLoading} onRetry={refetch} />
       <BottomTabBar activeTab="discover" />
     </div>
