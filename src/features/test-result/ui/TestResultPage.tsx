@@ -17,10 +17,10 @@ import { adaptive } from "@toss/tds-colors";
 import { ResultTabContent } from "./ResultTabContent";
 import { QuestionTabContent } from "./QuestionTabContent";
 import { DownloadSheet } from "./DownloadSheet";
-import { MOCK_PREVIEW_QUESTIONS } from "../model/mock";
 import { mapReportItemToQuestionResult } from "../model/mappers";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
+import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
 import { QuestionRenderer } from "@/features/test-participate/ui/QuestionRenderer";
 import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 
@@ -49,6 +49,25 @@ const OVERLAY_MOTION = {
   exit: { opacity: 0 },
   transition: { duration: 0.2 },
 } as const;
+
+function QuestionPreviewSkeleton({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div {...OVERLAY_MOTION} className="fixed inset-0 z-60 flex flex-col bg-white">
+      <div className="flex-1 overflow-y-auto px-5 pt-8">
+        <Skeleton custom={["title", "subtitle"]} repeatLastItemCount={0} background="greyOpacity100" />
+        <div className="mt-6">
+          <Skeleton custom={["card"]} repeatLastItemCount={0} height={200} background="greyOpacity100" />
+        </div>
+        <div className="mt-6">
+          <Skeleton custom={["list"]} repeatLastItemCount={3} background="greyOpacity100" />
+        </div>
+      </div>
+      <BottomCTA.Single color="dark" variant="weak" onClick={onClose}>
+        뒤로가기
+      </BottomCTA.Single>
+    </motion.div>
+  );
+}
 
 function QuestionPreviewOverlay({
   question,
@@ -147,13 +166,19 @@ function TestResultSkeleton() {
 export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
 
   const [isGuideExpanded, setIsGuideExpanded] = useState(false);
 
   const { data: reportData, isLoading } = useGetReportQuery(Number(testId));
   const report = reportData?.data;
-  console.log("[report]", reportData);
+
+  const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
+
+  const {
+    data: previewQuestion,
+    isLoading: isQuestionLoading,
+  } = useGetQuestionDetailQuery(Number(testId), selectedQuestionId);
 
   const testStatus: TestStatus = report?.testStatus ?? "IN_PROGRESS";
   const isEnded = testStatus === "COMPLETED";
@@ -161,7 +186,6 @@ export function TestResultPage({ testId }: Props) {
   const showParticipant = testStatus === "IN_PROGRESS" || testStatus === "COMPLETED";
   const results = (report?.reports ?? []).map(mapReportItemToQuestionResult);
 
-  const previewQuestion = previewIndex !== null ? MOCK_PREVIEW_QUESTIONS[previewIndex] : null;
   const isFivesecPreview = previewQuestion?.type === "FIVE_SECOND";
 
   if (isLoading) {
@@ -298,7 +322,7 @@ export function TestResultPage({ testId }: Props) {
               </ListHeader.TitleParagraph>
             }
           />
-          <QuestionTabContent onSelectQuestion={setPreviewIndex} />
+          <QuestionTabContent questions={questionSummary} onSelectQuestion={setSelectedQuestionId} noPadding />
         </>
       ) : (
         <>
@@ -328,7 +352,7 @@ export function TestResultPage({ testId }: Props) {
             </Tab.Item>
           </Tab>
 
-          {selectedTabIndex === 0 && <QuestionTabContent onSelectQuestion={setPreviewIndex} />}
+          {selectedTabIndex === 0 && <QuestionTabContent questions={questionSummary} onSelectQuestion={setSelectedQuestionId} />}
 
           {selectedTabIndex === 1 && !isEnded && (
             <Result
@@ -349,13 +373,16 @@ export function TestResultPage({ testId }: Props) {
         </>
       )}
 
-      {previewQuestion !== null && !isFivesecPreview && (
-        <QuestionPreviewOverlay question={previewQuestion} onClose={() => setPreviewIndex(null)} />
+      {selectedQuestionId !== null && isQuestionLoading && (
+        <QuestionPreviewSkeleton onClose={() => setSelectedQuestionId(null)} />
       )}
-      {isFivesecPreview && previewQuestion !== null && (
+      {previewQuestion != null && !isFivesecPreview && (
+        <QuestionPreviewOverlay question={previewQuestion} onClose={() => setSelectedQuestionId(null)} />
+      )}
+      {isFivesecPreview && previewQuestion != null && (
         <FivesecPreviewOverlay
           question={previewQuestion as Extract<ParticipateQuestion, { type: "FIVE_SECOND" }>}
-          onClose={() => setPreviewIndex(null)}
+          onClose={() => setSelectedQuestionId(null)}
         />
       )}
 

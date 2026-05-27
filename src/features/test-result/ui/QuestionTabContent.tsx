@@ -1,22 +1,32 @@
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { MOCK_QUESTIONS } from "../model/mock";
+import { QUESTION_TYPE_LABEL } from "../model/mappers";
+import type { QuestionType } from "@/shared/api/report";
 
-interface Props {
-  onSelectQuestion: (index: number) => void;
+export interface QuestionSummaryItem {
+  questionId: number;
+  sequence: number;
+  title: string;
+  type: QuestionType;
 }
 
-export function QuestionTabContent({ onSelectQuestion }: Props) {
+interface Props {
+  questions: QuestionSummaryItem[];
+  onSelectQuestion: (questionId: number) => void;
+  noPadding?: boolean;
+}
+
+export function QuestionTabContent({ questions, onSelectQuestion, noPadding = false }: Props) {
   return (
-    <div className="flex flex-col">
-      {MOCK_QUESTIONS.map((question, index) => (
+    <div className={`flex flex-col ${noPadding ? "" : "py-4"}`}>
+      {questions.map((question) => (
         <div
-          key={question.id}
+          key={question.questionId}
           role="button"
           tabIndex={0}
           className="w-full bg-white py-3 px-5 flex flex-row gap-1 items-center active:bg-gray-50 cursor-pointer"
-          onClick={() => onSelectQuestion(index)}
-          onKeyDown={(e) => e.key === "Enter" && onSelectQuestion(index)}
+          onClick={() => onSelectQuestion(question.questionId)}
+          onKeyDown={(e) => e.key === "Enter" && onSelectQuestion(question.questionId)}
         >
           <div className="w-full flex flex-row gap-3 items-center">
             <Asset.Text
@@ -25,7 +35,7 @@ export function QuestionTabContent({ onSelectQuestion }: Props) {
               style={{ color: "#4365cb", fontSize: "13px", fontWeight: "bold" }}
               aria-label=""
             >
-              {String(index + 1).padStart(2, "0")}
+              {String(question.sequence).padStart(2, "0")}
             </Asset.Text>
             <div className="w-full flex flex-row gap-3 justify-between items-center">
               <div className="w-full flex flex-col">
@@ -38,7 +48,7 @@ export function QuestionTabContent({ onSelectQuestion }: Props) {
                   {question.title}
                 </Text>
                 <Text display="block" color={adaptive.grey600} typography="t6" fontWeight="medium">
-                  {question.type}
+                  {QUESTION_TYPE_LABEL[question.type]}
                 </Text>
               </div>
               <Asset.Icon
