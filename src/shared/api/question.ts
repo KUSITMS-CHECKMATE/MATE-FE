@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getQuestionDetail, getQuestionSummary } from "./generated/question";
-import type { QuestionSummaryItem as GeneratedSummaryItem } from "./generated/question";
 import type { ParticipateQuestion } from "@/features/test-participate/model/types";
 import type { QuestionType } from "@/shared/api/report";
+import type { AbRatio } from "@/shared/constants/imageRatio";
 
 // ─── API 응답 타입 ───────────────────────────────────────────────
 
@@ -162,7 +162,7 @@ export function mapQuestionRawToParticipate(raw: QuestionRaw): ParticipateQuesti
           })),
           minSelectCount: raw.minSelect ?? 1,
           maxSelectCount: raw.maxSelect ?? 1,
-          ratio: (raw.imageRatio as any) ?? undefined,
+          ratio: (raw.imageRatio ?? undefined) as AbRatio | undefined,
         },
       };
 
@@ -188,7 +188,7 @@ export function mapQuestionRawToParticipate(raw: QuestionRaw): ParticipateQuesti
           description: raw.description,
           imageUrlA: raw.aImageUrl,
           imageUrlB: raw.bImageUrl,
-          ratio: (raw.imageRatio as any) ?? undefined,
+          ratio: (raw.imageRatio ?? undefined) as AbRatio | undefined,
         },
       };
 
@@ -232,8 +232,7 @@ export function useGetQuestionSummaryQuery(testId: number) {
     queryKey: ["questionSummary", testId],
     queryFn: async () => {
       const res = await getQuestionSummary(testId);
-      const body = (res as any).data as { data?: { questions?: GeneratedSummaryItem[] } };
-      const items = body.data?.questions ?? [];
+      const items = res.data.data?.questions ?? [];
       return items.map((q) => ({
         questionId: q.questionId!,
         sequence: q.sequence!,
@@ -252,7 +251,7 @@ export function useGetQuestionDetailQuery(testId: number, questionId: number | n
     queryKey: ["questionDetail", testId, questionId],
     queryFn: async () => {
       const res = await getQuestionDetail(testId, questionId!);
-      const body = (res as any).data as { data: QuestionDetailData };
+      const body = (res.data as { data: QuestionDetailData });
       return mapQuestionRawToParticipate(body.data.question);
     },
     enabled: questionId !== null,

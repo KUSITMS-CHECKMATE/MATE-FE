@@ -1,4 +1,5 @@
 import { CATEGORIES, MAX_CATEGORIES } from "@/shared/constants/categories";
+import type { CategoryId } from "@/shared/constants/categories";
 export type { Category, CategoryId } from "@/shared/constants/categories";
 export { CATEGORIES, MAX_CATEGORIES };
 
