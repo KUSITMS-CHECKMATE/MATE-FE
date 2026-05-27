@@ -6,6 +6,7 @@ let _refreshPromise: Promise<string> | null = null;
 
 export const setToken = (token: string) => { _accessToken = token; };
 export const clearToken = () => { _accessToken = null; };
+export const getToken = () => _accessToken;
 export const setRefreshToken = (token: string) => { _refreshToken = token; };
 export const clearRefreshToken = () => { _refreshToken = null; };
 
