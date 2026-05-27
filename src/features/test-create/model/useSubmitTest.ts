@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import ky, { HTTPError } from "ky";
-import { createDraft, updateDraft } from "@/shared/api/generated/testDraft";
+import { updateDraft } from "@/shared/api/generated/testDraft";
 import { generateUploadUrl } from "@/shared/api/generated/file";
 import { useTestCreateForm } from "./useTestCreateForm";
 import type { PendingQuestion } from "./types";
@@ -211,28 +211,20 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
   }
 }
 
-export function useSubmitTest() {
+export function useSubmitTest(draftId: number | undefined) {
   const navigate = useNavigate();
   const form = useTestCreateForm();
   const { openToast } = useToast();
 
   return useMutation({
     mutationFn: async () => {
+      if (!draftId) throw new Error("드래프트 ID가 없습니다. 처음부터 다시 시도해주세요.");
+
       let imageKeys: string[] = [];
       try {
         imageKeys = (await Promise.all(form.images.map((img) => uploadBase64(img)))).filter((k): k is string => !!k);
       } catch (e) {
         throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
-      }
-
-      let draftId: number;
-      try {
-        const draftResponse = await createDraft();
-        const id = draftResponse.data.data?.draftId;
-        if (!id) throw new Error("드래프트 ID를 받지 못했습니다.");
-        draftId = id;
-      } catch (e) {
-        throw new Error(`[테스트 초안 생성 실패] ${e instanceof Error ? e.message : String(e)}`);
       }
 
       let mappedQuestions: QuestionRequestItem[] = [];
@@ -258,9 +250,9 @@ export function useSubmitTest() {
 
       return draftId;
     },
-    onSuccess: () => {
+    onSuccess: (draftId) => {
       form.reset();
-      navigate({ to: ROUTES.TEST_PAYMENT });
+      navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId } });
     },
     onError: async (error) => {
       let message = `실패: ${String(error)}`;
