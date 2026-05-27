@@ -135,7 +135,7 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
           </CTAButton>
         }
         rightButton={
-          <CTAButton className="w-full" disabled={questions.length === 0} onClick={() => setIsSaveDialogOpen(true)}>
+          <CTAButton className="w-full" onClick={() => setIsSaveDialogOpen(true)}>
             저장하기
           </CTAButton>
         }
