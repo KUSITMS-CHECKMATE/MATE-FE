@@ -88,7 +88,7 @@ export function TestResultPage({ status }: Props) {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const previewQuestion = previewIndex !== null ? MOCK_PREVIEW_QUESTIONS[previewIndex] : null;
-  const isFivesecPreview = previewQuestion?.type === "FIVE_SECOND";
+  const isFivesecPreview = previewQuestion?.type === "fivesec";
 
   return (
     <div>
