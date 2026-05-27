@@ -27,11 +27,14 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   const selectedIds = answer?.selectedIds ?? [];
   const isSubjective = question.data.answerType === "subjective";
   const minRequired = minSelectCount > 0 ? minSelectCount : 1;
+  const hasOtherChoice = choices.some((c) => c.name === "기타 (직접 입력)");
   const canGoNext = isSubjective
     ? (answer?.text ?? "").trim().length > 0
-    : isMultiSelectEnabled
-      ? selectedIds.length >= minRequired
-      : selectedIds.length === 1;
+    : hasOtherChoice && (answer?.text ?? "").trim().length > 0
+      ? true
+      : isMultiSelectEnabled
+        ? selectedIds.length >= minRequired
+        : selectedIds.length === 1;
 
   useEffect(() => {
     return () => {
@@ -54,10 +57,10 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "FIVE_SECOND", selectedIds: next, text: answer?.text });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "FIVE_SECOND", selectedIds: next, text: answer?.text });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
     }
   }
 
@@ -112,7 +115,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       prevLabel={prevLabel}
       otherText={answer?.text ?? ""}
       onSelect={handleSelect}
-      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds, text })}
+      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: [], text })}
       onPrev={onPrev}
       onGoNext={onGoNext}
     />
