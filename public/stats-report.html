@@ -278,469 +278,308 @@ body {
 </style>
 </head>
 <body>
+<script>
+(async () => {
+  // ─── 파라미터 파싱 ────────────────────────────────────────────────
+  const p = new URLSearchParams(location.search);
+  const testId  = p.get('testId');
+  const token   = p.get('token');
+  const apiBase = (p.get('apiBase') ?? '').replace(/\/$/, '');
+  const testTitle = p.get('title') ?? '테스트 이름';
 
-<!-- ═══════════════════════════════════════════
-     Page 1 · 객관식
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">객관식 (단일 선택)</div>
-    <div class="q-title">다음 중 가장 자주 사용하는 기능은 무엇인가요?</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="hbar">
-      <div class="hbar-row">
-        <div class="hbl">파일 공유 기능</div>
-        <div class="hbt"><div class="hbf p" style="width:70%"></div></div>
-        <div class="hbv">— 응답 35 (35%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">메시지 기능</div>
-        <div class="hbt"><div class="hbf g" style="width:52%"></div></div>
-        <div class="hbv">— 응답 26 (26%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">알림 설정</div>
-        <div class="hbt"><div class="hbf g" style="width:24%"></div></div>
-        <div class="hbv">— 응답 12 (12%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">검색 기능</div>
-        <div class="hbt"><div class="hbf g" style="width:18%"></div></div>
-        <div class="hbv">— 응답 9 (9%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">캘린더 연동</div>
-        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
-        <div class="hbv">— 응답 7 (7%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">마이페이지</div>
-        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
-        <div class="hbv">— 응답 5 (5%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">보고서 내보내기</div>
-        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
-        <div class="hbv">— 응답 4 (4%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">권한 관리</div>
-        <div class="hbt"><div class="hbf g" style="width:4%"></div></div>
-        <div class="hbv">— 응답 2 (2%)</div>
-      </div>
-    </div>
-  </div>
-  <div class="ft">1/7</div>
-</div>
+  console.log('[stats-report] location.href:', location.href);
+  console.log('[stats-report] location.search:', location.search);
+  console.log('[stats-report] 파싱된 params:', { testId, token: token ? '있음' : '없음', apiBase, testTitle });
 
-<!-- ═══════════════════════════════════════════
-     Page 2 · 주관식
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">주관식</div>
-    <div class="q-title">이 서비스를 사용하면서 불편했던 점은 무엇인가요?</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="ai-head">
-      <span class="ai-icon">✦</span>
-      AI 요약
-    </div>
-    <div class="ai-sub">모든 응답을 보고 싶다면 엑셀 파일로 확인해주세요.</div>
-    <div class="ai-box">
-      응답자들은 주로 <b>로딩 속도 저하</b>와 <b>직관적이지 않은 네비게이션</b>을 불편 사항으로 꼽았습니다. 특히 파일 첨부 시 처리 시간이 길고, 메뉴 구조가 복잡해 원하는 기능을 찾기 어렵다는 의견이 많았습니다. 일부 응답자는 모바일 환경에서의 UI 최적화 부족도 지적했습니다.
-    </div>
+  if (!testId) {
+    const msg = `[stats-report] testId 파라미터가 없습니다.\nlocation.href: ${location.href}`;
+    console.error(msg);
+    alert(msg);
+    document.body.innerHTML = '<p style="color:red;padding:20px">testId 파라미터가 필요합니다.</p>';
+    return;
+  }
 
-    <div class="sj-head">주요 응답 유형</div>
-    <div class="sj-sub">많이 나온 의견들로 정리했어요.</div>
-    <div class="sj-list">
-      <div class="sj-item">로딩 속도가 너무 느려서 업무 효율이 떨어졌습니다.</div>
-      <div class="sj-item">메뉴 구조가 복잡해서 원하는 기능을 찾기 어려웠어요.</div>
-      <div class="sj-item">파일 첨부 시 오류가 자주 발생했습니다.</div>
-      <div class="sj-item">모바일에서 버튼이 너무 작아 터치하기 불편했어요.</div>
-      <div class="sj-item">알림이 너무 많이 와서 중요한 알림을 놓쳤습니다.</div>
-      <div class="sj-item">검색 결과가 정확하지 않은 경우가 많았습니다.</div>
-      <div class="sj-item">다크모드 지원이 없어서 장시간 사용 시 눈이 피로했어요.</div>
-    </div>
-  </div>
-  <div class="ft">2/7</div>
-</div>
+  // ─── API 호출 (pdf-server가 주입한 데이터 우선 사용, 없으면 직접 fetch) ──
+  let data;
+  if (window.__REPORT_DATA__) {
+    console.log('[stats-report] window.__REPORT_DATA__ 사용 (pdf-server 주입)');
+    console.log('[stats-report] 응답 데이터:', JSON.stringify(window.__REPORT_DATA__));
+    data = window.__REPORT_DATA__.data;
+  } else {
+    console.log('[stats-report] 직접 fetch 시도');
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const url = `${apiBase}/api/v1/tests/${testId}/report`;
+      console.log('[stats-report] 요청 URL:', url);
+      const res = await fetch(url, { headers });
+      console.log('[stats-report] 응답 status:', res.status);
+      const json = await res.json();
+      console.log('[stats-report] 응답 데이터:', JSON.stringify(json));
+      data = json.data;
+    } catch (e) {
+      const msg = `[stats-report] API 오류: ${e.message}\n요청 URL: ${apiBase}/api/v1/tests/${testId}/report`;
+      console.error(msg, e);
+      alert(msg);
+      document.body.innerHTML = `<p style="color:red;padding:20px">데이터를 불러오지 못했습니다: ${e.message}</p>`;
+      return;
+    }
+  }
 
-<!-- ═══════════════════════════════════════════
-     Page 3 · A/B 테스트
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">A/B 테스트</div>
-    <div class="q-title">두 가지 홈 화면 디자인 중 어떤 것이 더 직관적인가요?</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="pie-area">
-      <!-- A안 77% (277.2°), B안 23% (82.8°)
-           End of A slice (after 277.2° clockwise from top):
-           θ = 90° - 277.2° = -187.2°
-           x = 90 + 85*cos(-187.2°) ≈ 5.7
-           y = 90 - 85*sin(-187.2°) ≈ 79.3 -->
-      <svg width="180" height="180" viewBox="0 0 180 180">
-        <path d="M90,90 L90,5 A85,85 0 1,1 5.7,79.3 Z" fill="#EF4444"/>
-        <path d="M90,90 L5.7,79.3 A85,85 0 0,1 90,5 Z" fill="#3D5AFE"/>
-      </svg>
-      <div class="pie-legend">
-        <div class="pie-li"><div class="pdot" style="background:#EF4444"></div> A안</div>
-        <div class="pie-li"><div class="pdot" style="background:#3D5AFE"></div> B안</div>
-      </div>
-    </div>
+  if (!data?.reports?.length) {
+    const msg = `[stats-report] reports 데이터가 없습니다.\n응답: ${JSON.stringify(data)}`;
+    console.warn(msg);
+    alert(msg);
+    document.body.innerHTML = '<p style="padding:20px">리포트 데이터가 없습니다.</p>';
+    return;
+  }
 
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>분류</th>
-          <th>응답률</th>
-          <th>응답 수</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>A안</td>
-          <td>77%</td>
-          <td>77</td>
-        </tr>
-        <tr>
-          <td>B안</td>
-          <td>23%</td>
-          <td>23</td>
-        </tr>
-        <tr class="tr-total">
-          <td>합계</td>
-          <td>100%</td>
-          <td>100</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="ft">3/7</div>
-</div>
+  // ─── 유틸 ─────────────────────────────────────────────────────────
+  const CATEGORY_COLORS = [
+    '#3D5AFE','#10B981','#F59E0B','#EF4444','#8B5CF6',
+    '#06B6D4','#F97316','#EC4899','#14B8A6','#84CC16'
+  ];
 
-<!-- ═══════════════════════════════════════════
-     Page 4 · 척도 평가
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">척도 평가 (5점 척도)</div>
-    <div class="q-title">이 서비스의 전반적인 사용성을 평가해 주세요.</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="vbar-wrap">
-      <div class="vbar-inner">
-        <!-- col 1 -->
+  const TYPE_LABEL = {
+    OBJECTIVE:    '객관식',
+    SUBJECTIVE:   '주관식',
+    FIVE_SECOND:  '5초 테스트',
+    SCALE:        '척도 평가',
+    AB_TEST:      'A/B 테스트',
+    CARD_SORTING: '카드 소팅',
+    TREE_TEST:    '트리 테스트',
+  };
+
+  function esc(str) {
+    return String(str ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function makeHeader(title) {
+    return `<div class="hd"><span>MATE 통계결과</span><span>${esc(title)}</span></div>`;
+  }
+
+  function makeTop(typeLabel, questionTitle, count) {
+    return `
+      <div class="top">
+        <div class="badge">${esc(typeLabel)}</div>
+        <div class="q-title">${esc(questionTitle)}</div>
+        <div class="q-cnt">응답 ${count}개</div>
+      </div>`;
+  }
+
+  function makeFooter(idx, total) {
+    return `<div class="ft">${idx}/${total}</div>`;
+  }
+
+  // ─── 가로 막대 차트 (OBJECTIVE / TREE_TEST / FIVE_SECOND 객관식) ──
+  function renderHBar(options) {
+    // options: [{label, count, ratio}]
+    const maxRatio = Math.max(...options.map(o => o.ratio), 1);
+    return `<div class="hbar">${options.map((o, i) => `
+      <div class="hbar-row">
+        <div class="hbl">${esc(o.label)}</div>
+        <div class="hbt"><div class="hbf ${i === 0 ? 'p' : 'g'}" style="width:${(o.ratio / maxRatio * 100).toFixed(1)}%"></div></div>
+        <div class="hbv">— 응답 ${o.count} (${o.ratio}%)</div>
+      </div>`).join('')}</div>`;
+  }
+
+  // ─── 주관식 ───────────────────────────────────────────────────────
+  function renderSubjective(result) {
+    const items = (result.clusters ?? []).flatMap(c => c.responses ?? [])
+                    .concat(result.texts ?? []).slice(0, 7);
+    return `
+      <div class="ai-head"><span class="ai-icon">✦</span> AI 요약</div>
+      <div class="ai-sub">모든 응답을 보고 싶다면 엑셀 파일로 확인해주세요.</div>
+      <div class="ai-box">${esc(result.aiSummary ?? '')}</div>
+      <div class="sj-head">주요 응답 유형</div>
+      <div class="sj-sub">많이 나온 의견들로 정리했어요.</div>
+      <div class="sj-list">${items.map(t => `<div class="sj-item">${esc(t)}</div>`).join('')}</div>`;
+  }
+
+  // ─── 세로 막대 차트 (SCALE) ───────────────────────────────────────
+  function renderVBar(result) {
+    const dist = result.distribution ?? [];
+    const maxCount = Math.max(...dist.map(d => d.count), 1);
+    const MAX_H = 164;
+    const cols = dist.map(d => {
+      const h = Math.round(d.count / maxCount * MAX_H);
+      const isPeak = d.score === result.mostVoted;
+      return `
         <div class="vbar-col">
-          <div class="vbar-above">응답 8&#10;(8%)</div>
-          <div class="vbar-bar g" style="height:40px"></div>
-        </div>
-        <!-- col 2 -->
-        <div class="vbar-col">
-          <div class="vbar-above">응답 12&#10;(12%)</div>
-          <div class="vbar-bar g" style="height:60px"></div>
-        </div>
-        <!-- col 3 (highlighted) -->
-        <div class="vbar-col">
-          <div class="vbar-above" style="color:#3D5AFE;font-weight:600">응답 45&#10;(45%)</div>
-          <div class="vbar-bar p" style="height:164px"></div>
-        </div>
-        <!-- col 4 -->
-        <div class="vbar-col">
-          <div class="vbar-above">응답 22&#10;(22%)</div>
-          <div class="vbar-bar g" style="height:80px"></div>
-        </div>
-        <!-- col 5 -->
-        <div class="vbar-col">
-          <div class="vbar-above">응답 13&#10;(13%)</div>
-          <div class="vbar-bar g" style="height:47px"></div>
-        </div>
-      </div>
-      <div class="vbar-xaxis">
-        <div class="vbar-xcol">
-          <span class="xn">1</span>
-          <span class="xs">전혀 아니다</span>
-        </div>
-        <div class="vbar-xcol">
-          <span class="xn">2</span>
-          <span class="xs"></span>
-        </div>
-        <div class="vbar-xcol">
-          <span class="xn">3</span>
-          <span class="xs"></span>
-        </div>
-        <div class="vbar-xcol">
-          <span class="xn">4</span>
-          <span class="xs"></span>
-        </div>
-        <div class="vbar-xcol">
-          <span class="xn">5</span>
-          <span class="xs">매우 그렇다</span>
-        </div>
-      </div>
-    </div>
+          <div class="vbar-above" ${isPeak ? 'style="color:#3D5AFE;font-weight:600"' : ''}>응답 ${d.count}&#10;(${Math.round(d.count/dist.reduce((s,x)=>s+x.count,0)*100)}%)</div>
+          <div class="vbar-bar ${isPeak ? 'p' : 'g'}" style="height:${h}px"></div>
+        </div>`;
+    }).join('');
 
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>평균 점수</th>
-          <th>최다 득표</th>
-          <th>응답률</th>
-          <th>응답 수</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>3.59</td>
-          <td>3점</td>
-          <td>45%</td>
-          <td>45</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="ft">4/7</div>
-</div>
+    const xCols = dist.map((d, i) => {
+      const isFirst = i === 0;
+      const isLast  = i === dist.length - 1;
+      return `
+        <div class="vbar-xcol">
+          <span class="xn">${d.score}</span>
+          <span class="xs">${isFirst ? esc(result.endValue?.minLabel ?? '') : isLast ? esc(result.endValue?.maxLabel ?? '') : ''}</span>
+        </div>`;
+    }).join('');
 
-<!-- ═══════════════════════════════════════════
-     Page 5 · 카드 소팅
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">카드 소팅</div>
-    <div class="q-title">다음 항목들을 알맞은 카테고리에 분류해 주세요.</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="sbar-legend">
-      <div class="sbl-item"><div class="sbl-dot" style="background:#3D5AFE"></div>상의</div>
-      <div class="sbl-item"><div class="sbl-dot" style="background:#10B981"></div>하의</div>
-      <div class="sbl-item"><div class="sbl-dot" style="background:#F59E0B"></div>신발</div>
-    </div>
-    <div class="sbar-rows">
-      <div class="sbar-row">
-        <div class="sbl">니트 스웨터</div>
-        <div class="sbt">
-          <div class="sbs" style="width:58%;background:#3D5AFE;opacity:0.85"></div>
-          <div class="sbs" style="width:27%;background:#10B981;opacity:0.7"></div>
-          <div class="sbs" style="width:15%;background:#F59E0B;opacity:0.7"></div>
-        </div>
-        <div class="sbv">58  27  15</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">청바지</div>
-        <div class="sbt">
-          <div class="sbs" style="width:12%;background:#3D5AFE;opacity:0.5"></div>
-          <div class="sbs" style="width:72%;background:#10B981;opacity:0.85"></div>
-          <div class="sbs" style="width:16%;background:#F59E0B;opacity:0.7"></div>
-        </div>
-        <div class="sbv">12  72  16</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">스니커즈</div>
-        <div class="sbt">
-          <div class="sbs" style="width:8%;background:#3D5AFE;opacity:0.5"></div>
-          <div class="sbs" style="width:14%;background:#10B981;opacity:0.5"></div>
-          <div class="sbs" style="width:78%;background:#F59E0B;opacity:0.85"></div>
-        </div>
-        <div class="sbv">8  14  78</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">후드 집업</div>
-        <div class="sbt">
-          <div class="sbs" style="width:65%;background:#3D5AFE;opacity:0.85"></div>
-          <div class="sbs" style="width:22%;background:#10B981;opacity:0.7"></div>
-          <div class="sbs" style="width:13%;background:#F59E0B;opacity:0.5"></div>
-        </div>
-        <div class="sbv">65  22  13</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">슬랙스</div>
-        <div class="sbt">
-          <div class="sbs" style="width:10%;background:#3D5AFE;opacity:0.5"></div>
-          <div class="sbs" style="width:80%;background:#10B981;opacity:0.85"></div>
-          <div class="sbs" style="width:10%;background:#F59E0B;opacity:0.5"></div>
-        </div>
-        <div class="sbv">10  80  10</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">로퍼</div>
-        <div class="sbt">
-          <div class="sbs" style="width:5%;background:#3D5AFE;opacity:0.5"></div>
-          <div class="sbs" style="width:18%;background:#10B981;opacity:0.5"></div>
-          <div class="sbs" style="width:77%;background:#F59E0B;opacity:0.85"></div>
-        </div>
-        <div class="sbv">5  18  77</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">폴로 셔츠</div>
-        <div class="sbt">
-          <div class="sbs" style="width:70%;background:#3D5AFE;opacity:0.85"></div>
-          <div class="sbs" style="width:20%;background:#10B981;opacity:0.7"></div>
-          <div class="sbs" style="width:10%;background:#F59E0B;opacity:0.5"></div>
-        </div>
-        <div class="sbv">70  20  10</div>
-      </div>
-      <div class="sbar-row">
-        <div class="sbl">숏 패딩</div>
-        <div class="sbt">
-          <div class="sbs" style="width:48%;background:#3D5AFE;opacity:0.85"></div>
-          <div class="sbs" style="width:32%;background:#10B981;opacity:0.7"></div>
-          <div class="sbs" style="width:20%;background:#F59E0B;opacity:0.6"></div>
-        </div>
-        <div class="sbv">48  32  20</div>
-      </div>
-    </div>
-  </div>
-  <div class="ft">5/7</div>
-</div>
+    const total = dist.reduce((s, d) => s + d.count, 0);
+    const avg = result.average?.toFixed(2) ?? '-';
+    const mostVoted = result.mostVoted ?? '-';
+    const peakItem = dist.find(d => d.score === result.mostVoted);
+    const peakRatio = peakItem ? Math.round(peakItem.count / total * 100) : '-';
 
-<!-- ═══════════════════════════════════════════
-     Page 6 · 트리 테스트
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">트리 테스트</div>
-    <div class="q-title">고객센터 문의하기는 어디서 찾을 수 있을 것 같나요?</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="hbar">
-      <div class="hbar-row">
-        <div class="hbl">마이페이지 &gt; 고객센터</div>
-        <div class="hbt"><div class="hbf p" style="width:62%"></div></div>
-        <div class="hbv">— 응답 31 (31%)</div>
+    return `
+      <div class="vbar-wrap">
+        <div class="vbar-inner">${cols}</div>
+        <div class="vbar-xaxis">${xCols}</div>
       </div>
-      <div class="hbar-row">
-        <div class="hbl">홈 &gt; 도움말</div>
-        <div class="hbt"><div class="hbf g" style="width:40%"></div></div>
-        <div class="hbv">— 응답 20 (20%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">설정 &gt; 지원</div>
-        <div class="hbt"><div class="hbf g" style="width:28%"></div></div>
-        <div class="hbv">— 응답 14 (14%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">홈 &gt; 공지사항</div>
-        <div class="hbt"><div class="hbf g" style="width:22%"></div></div>
-        <div class="hbv">— 응답 11 (11%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">마이페이지 &gt; 설정</div>
-        <div class="hbt"><div class="hbf g" style="width:16%"></div></div>
-        <div class="hbv">— 응답 8 (8%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">홈 &gt; 이벤트</div>
-        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
-        <div class="hbv">— 응답 7 (7%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">하단 탭 &gt; 더보기</div>
-        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
-        <div class="hbv">— 응답 5 (5%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">설정 &gt; 계정관리</div>
-        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
-        <div class="hbv">— 응답 4 (4%)</div>
-      </div>
-    </div>
-  </div>
-  <div class="ft">6/7</div>
-</div>
+      <table class="tbl">
+        <thead><tr><th>평균 점수</th><th>최다 득표</th><th>응답률</th><th>응답 수</th></tr></thead>
+        <tbody><tr>
+          <td>${avg}</td><td>${mostVoted}점</td><td>${peakRatio}%</td><td>${peakItem?.count ?? '-'}</td>
+        </tr></tbody>
+      </table>`;
+  }
 
-<!-- ═══════════════════════════════════════════
-     Page 7 · 5초 테스트
-     ═══════════════════════════════════════════ -->
-<div class="page">
-  <div class="hd">
-    <span>MATE 통계결과</span>
-    <span>테스트 이름</span>
-  </div>
-  <div class="top">
-    <div class="badge">5초 테스트 (객관식 - 단일 선택)</div>
-    <div class="q-title">방금 본 화면에서 가장 눈에 띈 요소는 무엇인가요?</div>
-    <div class="q-cnt">응답 100개</div>
-  </div>
-  <div class="body">
-    <div class="hbar">
-      <div class="hbar-row">
-        <div class="hbl">상단 배너 이미지</div>
-        <div class="hbt"><div class="hbf p" style="width:66%"></div></div>
-        <div class="hbv">— 응답 33 (33%)</div>
+  // ─── 파이 차트 (AB_TEST) ──────────────────────────────────────────
+  function renderAbTest(result) {
+    // API ratio는 0~1 값 → % 변환
+    const rA = Math.round((result.A?.ratio ?? 0) * 100);
+    const rB = Math.round((result.B?.ratio ?? 0) * 100);
+    const cA = result.A?.count ?? 0;
+    const cB = result.B?.count ?? 0;
+    const total = cA + cB;
+
+    // SVG arc: center(90,90), r=85, start from top (rA는 0~100)
+    function polarToXY(pct) {
+      const angle = (pct / 100 * 360 - 90) * Math.PI / 180;
+      return { x: 90 + 85 * Math.cos(angle), y: 90 + 85 * Math.sin(angle) };
+    }
+
+    let pieSvg;
+    if (rA === 0 || rA === 100) {
+      // 한쪽이 0%면 전체 원으로 처리
+      const color = rA === 100 ? '#EF4444' : '#3D5AFE';
+      pieSvg = `
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="85" fill="${color}"/>
+        </svg>`;
+    } else {
+      const endA = polarToXY(rA);
+      const largeA = rA > 50 ? 1 : 0;
+      const largeB = rB > 50 ? 1 : 0;
+      pieSvg = `
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <path d="M90,90 L90,5 A85,85 0 ${largeA},1 ${endA.x.toFixed(2)},${endA.y.toFixed(2)} Z" fill="#EF4444"/>
+          <path d="M90,90 L${endA.x.toFixed(2)},${endA.y.toFixed(2)} A85,85 0 ${largeB},1 90,5 Z" fill="#3D5AFE"/>
+        </svg>`;
+    }
+
+    return `
+      <div class="pie-area">
+        ${pieSvg}
+        <div class="pie-legend">
+          <div class="pie-li"><div class="pdot" style="background:#EF4444"></div> A안</div>
+          <div class="pie-li"><div class="pdot" style="background:#3D5AFE"></div> B안</div>
+        </div>
       </div>
-      <div class="hbar-row">
-        <div class="hbl">메인 CTA 버튼</div>
-        <div class="hbt"><div class="hbf g" style="width:46%"></div></div>
-        <div class="hbv">— 응답 23 (23%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">내비게이션 메뉴</div>
-        <div class="hbt"><div class="hbf g" style="width:30%"></div></div>
-        <div class="hbv">— 응답 15 (15%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">제품 이미지</div>
-        <div class="hbt"><div class="hbf g" style="width:22%"></div></div>
-        <div class="hbv">— 응답 11 (11%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">가격 정보</div>
-        <div class="hbt"><div class="hbf g" style="width:14%"></div></div>
-        <div class="hbv">— 응답 7 (7%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">로고</div>
-        <div class="hbt"><div class="hbf g" style="width:10%"></div></div>
-        <div class="hbv">— 응답 5 (5%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">할인 뱃지</div>
-        <div class="hbt"><div class="hbf g" style="width:8%"></div></div>
-        <div class="hbv">— 응답 4 (4%)</div>
-      </div>
-      <div class="hbar-row">
-        <div class="hbl">리뷰 별점</div>
-        <div class="hbt"><div class="hbf g" style="width:4%"></div></div>
-        <div class="hbv">— 응답 2 (2%)</div>
-      </div>
-    </div>
-  </div>
-  <div class="ft">7/7</div>
-</div>
+      <table class="tbl">
+        <thead><tr><th>분류</th><th>응답률</th><th>응답 수</th></tr></thead>
+        <tbody>
+          <tr><td>A안</td><td>${rA}%</td><td>${cA}</td></tr>
+          <tr><td>B안</td><td>${rB}%</td><td>${cB}</td></tr>
+          <tr class="tr-total"><td>합계</td><td>100%</td><td>${total}</td></tr>
+        </tbody>
+      </table>`;
+  }
+
+  // ─── 스택 막대 차트 (CARD_SORTING) ───────────────────────────────
+  function renderCardSorting(result) {
+    const byCard = result.byCard ?? [];
+    const categories = [...new Set(byCard.flatMap(c => Object.keys(c.categories ?? {})))];
+
+    const legend = categories.map((cat, i) => `
+      <div class="sbl-item">
+        <div class="sbl-dot" style="background:${CATEGORY_COLORS[i % CATEGORY_COLORS.length]}"></div>
+        ${esc(cat)}
+      </div>`).join('');
+
+    const rows = byCard.map(card => {
+      const total = Object.values(card.categories ?? {}).reduce((s, v) => s + v, 0) || 1;
+      const segs = categories.map((cat, i) => {
+        const cnt = card.categories?.[cat] ?? 0;
+        const pct = (cnt / total * 100).toFixed(1);
+        return `<div class="sbs" style="width:${pct}%;background:${CATEGORY_COLORS[i % CATEGORY_COLORS.length]};opacity:0.85"></div>`;
+      }).join('');
+      const vals = categories.map(cat => card.categories?.[cat] ?? 0).join('  ');
+      return `
+        <div class="sbar-row">
+          <div class="sbl">${esc(card.cardName)}</div>
+          <div class="sbt">${segs}</div>
+          <div class="sbv">${vals}</div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="sbar-legend">${legend}</div>
+      <div class="sbar-rows">${rows}</div>`;
+  }
+
+  // ─── 페이지 생성 ──────────────────────────────────────────────────
+  const total = data.reports.length;
+  document.body.innerHTML = '';
+
+  data.reports.forEach((item, idx) => {
+    const typeLabel = TYPE_LABEL[item.type] ?? item.type;
+    const participantCount = data.participantCount ?? 0;
+    let bodyHtml = '';
+
+    if (item.type === 'OBJECTIVE') {
+      const opts = (item.result.options ?? []).map(o => ({
+        label: o.content, count: o.count, ratio: Math.round(o.ratio * 100)
+      }));
+      bodyHtml = renderHBar(opts);
+    } else if (item.type === 'SUBJECTIVE') {
+      bodyHtml = renderSubjective(item.result);
+    } else if (item.type === 'FIVE_SECOND') {
+      if ('options' in item.result && item.result.options) {
+        const opts = item.result.options.map(o => ({
+          label: o.content, count: o.count, ratio: Math.round(o.ratio * 100)
+        }));
+        bodyHtml = renderHBar(opts);
+      } else {
+        bodyHtml = renderSubjective(item.result);
+      }
+    } else if (item.type === 'SCALE') {
+      bodyHtml = renderVBar(item.result);
+    } else if (item.type === 'AB_TEST') {
+      bodyHtml = renderAbTest(item.result);
+    } else if (item.type === 'CARD_SORTING') {
+      bodyHtml = renderCardSorting(item.result);
+    } else if (item.type === 'TREE_TEST') {
+      const opts = (item.result.nodeFrequency ?? []).map(n => ({
+        label: n.label, count: n.count, ratio: Math.round(n.ratio * 100)
+      }));
+      bodyHtml = renderHBar(opts);
+    }
+
+    const page = document.createElement('div');
+    page.className = 'page';
+    page.innerHTML = `
+      ${makeHeader(testTitle)}
+      ${makeTop(typeLabel, item.title, participantCount)}
+      <div class="body">${bodyHtml}</div>
+      ${makeFooter(idx + 1, total)}`;
+    document.body.appendChild(page);
+  });
+
+  // 렌더링 완료 마커 (pdf-server가 이걸 기다렸다가 PDF 생성)
+  document.body.setAttribute('data-rendered', 'true');
+  console.log('[stats-report] 렌더링 완료');
+})();
+</script>
+
 
 </body>
 </html>

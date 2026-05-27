@@ -8,14 +8,14 @@ export function ScaleAnswerPage({
   question,
   answer,
   onChange,
-}: QuestionAnswerProps<"scale">) {
+}: QuestionAnswerProps<"SCALE">) {
   const { data } = question;
   const selectedValue = answer?.value ?? null;
 
   return (
     <div className="flex flex-col">
       <QuestionHeader
-        categoryLabel={QUESTION_TYPE_LABEL.scale}
+        categoryLabel={QUESTION_TYPE_LABEL.SCALE}
         title={data.title}
         description={data.description}
       />
@@ -41,7 +41,7 @@ export function ScaleAnswerPage({
             <button
               key={value}
               type="button"
-              onClick={() => onChange({ type: "scale", value })}
+              onClick={() => onChange({ type: "SCALE", value })}
               className="flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer"
             >
               <Asset.Text

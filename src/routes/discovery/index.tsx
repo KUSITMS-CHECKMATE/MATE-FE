@@ -14,12 +14,14 @@ function HomePage() {
     queryFn: listTests,
   });
 
-  const tests = (data?.data.data ?? []).map((item) => ({
+  type TestsPayload = { testCount?: number; tests?: { id?: number; title?: string; description?: string; reward?: number; thumbnailUrl?: string; isLiked?: boolean }[] };
+  const rawTests = (data?.data?.data as TestsPayload | undefined)?.tests;
+  const tests = (Array.isArray(rawTests) ? rawTests : []).map((item) => ({
     id: item.id ?? 0,
     title: item.title ?? "",
     description: item.description ?? "",
     reward: item.reward ?? 0,
-    thumbnailUrl: item.thumbnailKey ?? "",
+    thumbnailUrl: item.thumbnailUrl ?? "",
     liked: item.isLiked ?? false,
   }));
 
