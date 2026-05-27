@@ -5,10 +5,11 @@ import type { AnswerCreateRequest } from "@/shared/api/generated/answer";
 import type { AbRatio } from "@/shared/constants/imageRatio";
 
 function mapApiTreeNode(node: ApiTreeNode): TreeNodeItem {
+  const raw = node as Record<string, unknown>;
   return {
-    id: String(node.id),
-    name: node.name,
-    children: node.children.map(mapApiTreeNode),
+    id: String(raw.treeTestId ?? raw.id),
+    name: node.name ?? node.label ?? "",
+    children: (node.children ?? []).map(mapApiTreeNode),
   };
 }
 
@@ -96,7 +97,7 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
         data: {
           title: q.title,
           description: q.description ?? "",
-          nodes: (q.nodes ?? []).map(mapApiTreeNode),
+          nodes: (q.features ?? q.nodes ?? []).map(mapApiTreeNode),
         },
       };
     case "FIVE_SECOND": {

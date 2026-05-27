@@ -1,4 +1,4 @@
-import { Checkbox, ListRow } from "@toss/tds-mobile";
+import { Checkbox, ListRow, TextArea } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
@@ -9,7 +9,9 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
     question.data;
 
   const selectedIds = answer?.selectedIds ?? [];
+  const otherText = answer?.otherText ?? "";
   const categoryLabel = isMultiSelectEnabled ? "복수 선택" : "단일 선택";
+  const hasOtherChoice = choices.some((c) => c.name === "기타 (직접 입력)");
 
   function handleSelect(id: string) {
     if (isMultiSelectEnabled) {
@@ -18,10 +20,10 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "OBJECTIVE", selectedIds: next });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: answer?.otherText });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "OBJECTIVE", selectedIds: next });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: answer?.otherText });
     }
   }
 
@@ -38,7 +40,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         description={description}
       />
       <div>
-        {choices.map((choice) => {
+        {choices.filter((c) => c.name !== "기타 (직접 입력)").map((choice) => {
           const checked = selectedIds.includes(choice.id);
           return (
             <div
@@ -73,6 +75,21 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
           );
         })}
       </div>
+      {hasOtherChoice && (
+        <div className="pt-2 pb-4">
+          <TextArea
+            variant="line"
+            hasError={false}
+            label="기타 답변"
+            labelOption="sustain"
+            value={otherText}
+            placeholder="답변을 작성해 주세요"
+            onChange={(e) =>
+              onChange({ type: "OBJECTIVE", selectedIds, otherText: e.target.value })
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }

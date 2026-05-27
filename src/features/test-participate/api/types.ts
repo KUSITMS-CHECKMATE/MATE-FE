@@ -30,9 +30,11 @@ export interface ApiCategoryItem {
 }
 
 export interface ApiTreeNode {
-  id: number;
-  name: string;
-  children: ApiTreeNode[];
+  id?: number;
+  treeTestId?: number;
+  name?: string;
+  label?: string;
+  children?: ApiTreeNode[];
 }
 
 export interface ApiSubjectiveQuestion {
@@ -103,7 +105,8 @@ export interface ApiTreeTestQuestion {
   type: "TREE_TEST";
   title: string;
   description?: string;
-  nodes: ApiTreeNode[];
+  nodes?: ApiTreeNode[];
+  features?: ApiTreeNode[];
 }
 
 export interface ApiFiveSecondQuestion {
