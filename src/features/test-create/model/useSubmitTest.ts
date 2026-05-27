@@ -6,6 +6,7 @@ import { updateDraft } from "@/shared/api/generated/testDraft";
 import { generateUploadUrl } from "@/shared/api/generated/file";
 import { useTestCreateForm } from "./useTestCreateForm";
 import type { PendingQuestion } from "./types";
+import type { TreeNodeItem } from "@/features/question-tree/model/types";
 import { ROUTES } from "@/shared/constants/routes";
 
 interface ObjectiveCreateRequest {
@@ -48,11 +49,15 @@ interface CardSortingCreateRequest {
   cards?: string[];
   categories?: string[];
 }
+interface TreeFeatureNode {
+  label: string;
+  children: TreeFeatureNode[];
+}
 interface TreeTestCreateRequest {
   type: "TREE_TEST";
   title?: string;
   description?: string;
-  features?: unknown[];
+  features?: TreeFeatureNode[];
 }
 interface FiveSecondCreateRequest {
   type: "FIVE_SECOND";
@@ -173,18 +178,15 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
     }
 
     case "TREE_TEST": {
+      const toFeatureNode = (node: TreeNodeItem): TreeFeatureNode => ({
+        label: node.name,
+        children: node.children?.map(toFeatureNode) ?? [],
+      });
       return {
         type: "TREE_TEST",
         title: data.title,
         description: data.description,
-        features:
-          data.nodes?.map((node) => ({
-            label: node.name,
-            children: node.children?.map((child) => ({
-              label: child.name,
-              children: child.children?.length ? child.children : undefined,
-            })),
-          })) ?? [],
+        features: data.nodes?.map(toFeatureNode) ?? [],
       } satisfies TreeTestCreateRequest;
     }
 
