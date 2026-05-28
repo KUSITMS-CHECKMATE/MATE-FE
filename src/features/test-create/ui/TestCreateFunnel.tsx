@@ -9,6 +9,7 @@ import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
 import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
+import { TestGuidePage } from "./TestGuidePage";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { EditPhaseSheet } from "./EditPhaseSheet";
 import { BasicInfoEditPage } from "./BasicInfoEditPage";
@@ -27,11 +28,16 @@ import { SubjectiveCreatePage } from "@/features/question-subjective/create";
 import { FivesecCreatePage } from "@/features/question-fivesec/create";
 import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
-export function TestCreateFunnel() {
+interface Props {
+  draftId?: number;
+  fromPayment?: boolean;
+}
+
+export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   const navigate = useNavigate();
-  const funnel = useFunnel();
+  const funnel = useFunnel(fromPayment ? "register" : "basic");
   const form = useTestCreateForm();
-  const submitTest = useSubmitTest();
+
   const [basicSubStep, setBasicSubStep] = useState<BasicSubStep>("name");
   const [registerTab, setRegisterTab] = useState<RegisterTab>("questions");
   const [isFocused, setIsFocused] = useState(false);
@@ -47,6 +53,8 @@ export function TestCreateFunnel() {
     typeId: QuestionTypeId;
   } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const { mutate: submitTest, isPending: isSubmitting } = useSubmitTest(draftId);
+  const [showGuide, setShowGuide] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
 
@@ -72,11 +80,14 @@ export function TestCreateFunnel() {
   }, []);
 
   useEffect(() => {
-    useTestCreateForm.getState().reset();
+    if (!fromPayment) {
+      useTestCreateForm.getState().reset();
+    }
 
     return () => {
       if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExitConfirm = () => {
@@ -197,7 +208,7 @@ export function TestCreateFunnel() {
             funnel.prev();
           }
         }}
-        onSubmit={() => submitTest.mutate()}
+        onSubmit={() => submitTest()}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         isConfirmDisabled={isConfirmDisabled}
@@ -215,14 +226,15 @@ export function TestCreateFunnel() {
               ? "이전"
               : "취소"
         }
-        isSubmitDisabled={submitTest.isPending || !isAllComplete || !form.questions.some((q) => !!q.data)}
-        submitLabel={submitTest.isPending ? "등록 중..." : "테스트 만들기"}
+        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSubmitting}
+        submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
           <TestRegisterStep
             activeTab={registerTab}
             onTabChange={setRegisterTab}
             onEnterQuestion={setActiveQuestion}
+            onGuideView={() => setShowGuide(true)}
           />
         ) : funnel.step === "image" ? (
           <motion.div
@@ -314,49 +326,52 @@ export function TestCreateFunnel() {
             onClose={() => setEditPhase(null)}
           />
         )}
-        {activeQuestion?.typeId === "multiple" && (
+        {showGuide && (
+          <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />
+        )}
+        {activeQuestion?.typeId === "OBJECTIVE" && (
           <MultipleCreatePage
             key="question-multiple"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "subjective" && (
+        {activeQuestion?.typeId === "SUBJECTIVE" && (
           <SubjectiveCreatePage
             key="question-subjective"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "scale" && (
+        {activeQuestion?.typeId === "SCALE" && (
           <ScaleCreatePage
             key="question-scale"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "ab" && (
+        {activeQuestion?.typeId === "AB_TEST" && (
           <AbCreatePage
             key="question-ab"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "card" && (
+        {activeQuestion?.typeId === "CARD_SORTING" && (
           <CardSortCreatePage
             key="question-card"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "tree" && (
+        {activeQuestion?.typeId === "TREE_TEST" && (
           <TreeCreatePage
             key="question-tree"
             questionId={activeQuestion.id}
             onClose={() => setActiveQuestion(null)}
           />
         )}
-        {activeQuestion?.typeId === "fivesec" && (
+        {activeQuestion?.typeId === "FIVE_SECOND" && (
           <FivesecCreatePage
             key="question-fivesec"
             questionId={activeQuestion.id}

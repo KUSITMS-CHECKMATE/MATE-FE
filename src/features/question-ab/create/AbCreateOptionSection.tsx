@@ -1,16 +1,10 @@
 import { Asset, Button, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { AbRatio } from "@/features/question-ab/model/types";
+import { RATIO_TO_CSS, type AbRatio } from "@/features/question-ab/model/types";
 
 const IMAGE_SLOT_HORIZONTAL_PADDING = 22;
 const IMAGE_SLOT_LABEL_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
 const AB_IMAGE_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
-
-const RATIO_TO_CSS: Record<AbRatio, string> = {
-  "9:16": "9/16",
-  "1:1": "1/1",
-  "4:3": "4/3",
-};
 
 interface AbCreateOptionSectionProps {
   imageUrlA: string;

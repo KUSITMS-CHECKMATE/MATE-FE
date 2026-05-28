@@ -5,21 +5,27 @@
  * MATE 서버 API 문서
  * OpenAPI spec version: v1.0.0
  */
-import { useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
-  UseQueryResult,
-} from "@tanstack/react-query";
+  UseQueryResult
+} from '@tanstack/react-query';
 
-import { kyMutator } from "../mutator";
-import type { ErrorType } from "../mutator";
+import { kyMutator } from '../mutator';
+import type { ErrorType } from '../mutator';
 export interface AnswerCreateItem {
   type: string;
 }
@@ -73,15 +79,7 @@ export type TreeTestAnswerCreateRequest = AnswerCreateItem & {
 
 export interface AnswerCreateRequest {
   /** @minItems 1 */
-  answers?: (
-    | AbTestAnswerCreateRequest
-    | CardSortingAnswerCreateRequest
-    | FiveSecondAnswerCreateRequest
-    | ObjectiveAnswerCreateRequest
-    | ScaleAnswerCreateRequest
-    | SubjectiveAnswerCreateRequest
-    | TreeTestAnswerCreateRequest
-  )[];
+  answers?: (AbTestAnswerCreateRequest | CardSortingAnswerCreateRequest | FiveSecondAnswerCreateRequest | ObjectiveAnswerCreateRequest | ScaleAnswerCreateRequest | SubjectiveAnswerCreateRequest | TreeTestAnswerCreateRequest)[];
 }
 
 export interface AnswerBatchCreateResponse {
@@ -95,25 +93,52 @@ export interface ApiResponseAnswerBatchCreateResponse {
   data?: AnswerBatchCreateResponse;
 }
 
+export interface MyAnswerItem {
+  testId?: number;
+  testName?: string;
+  createdAt?: string;
+  reward?: number;
+}
+
+export interface MyAnswerResponse {
+  totalPromotionReward?: number;
+  answers?: MyAnswerItem[];
+}
+
+export interface ApiResponseMyAnswerResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: MyAnswerResponse;
+}
+
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
-export type createAnswersResponse200 = {
-  data: ApiResponseAnswerBatchCreateResponse;
-  status: 200;
-};
 
-export type createAnswersResponseSuccess = createAnswersResponse200 & {
+
+export type createAnswersResponse200 = {
+  data: ApiResponseAnswerBatchCreateResponse
+  status: 200
+}
+
+export type createAnswersResponseSuccess = (createAnswersResponse200) & {
   headers: Headers;
 };
-export type createAnswersResponse = createAnswersResponseSuccess;
+;
 
-export const getCreateAnswersUrl = (testId: number) => {
-  return `/api/v1/tests/${testId}/answers`;
-};
+export type createAnswersResponse = (createAnswersResponseSuccess)
+
+export const getCreateAnswersUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/answers`
+}
 
 /**
- * 참여자가 테스트의 모든 문항에 대한 응답을 한 번에 제출합니다.
-- 테스트가 진행 중(`IN_PROGRESS`)이고 승인(`ACCEPTED`) 상태여야 합니다.
+ * 참여자가 테스트의 모든 문항에 대한 응답을 한 번에 제출합니다. TT01-01 화면에 해당하는 api 입니다.
+- 테스트가 진행 중(`IN_PROGRESS`) 상태여야 합니다.
 - 목표 인원 수(`goalPpl`)이 초과된 경우 참여 불가합니다.
 - 이미 참여한 테스트에 중복 제출 불가합니다.
 - 응답(`answers`) 배열의 각 항목은 질문 유형(`type`) 필드로 구분합니다.
@@ -128,79 +153,187 @@ export const getCreateAnswersUrl = (testId: number) => {
 - **CARD_SORTING**: groups 필수
 - **TREE_TEST**: nodeId 필수, path 필수 (루트부터 최종 노드까지 클릭 순서), 최종 선택은 leaf node여야 함
 
- * @summary 응답 전체 등록
+ * @summary ➰ 응답 전체 등록
  */
-export const createAnswers = async (testId: number, answerCreateRequest: AnswerCreateRequest, options?: RequestInit): Promise<createAnswersResponse> => {
-  return kyMutator<createAnswersResponse>(getCreateAnswersUrl(testId), {
+export const createAnswers = async (testId: number,
+    answerCreateRequest: AnswerCreateRequest, options?: RequestInit): Promise<createAnswersResponse> => {
+
+  return kyMutator<createAnswersResponse>(getCreateAnswersUrl(testId),
+  {
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(answerCreateRequest),
-  });
-};
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(answerCreateRequest)
+  }
+);}
 
-export const getCreateAnswersQueryKey = (testId: number, answerCreateRequest?: AnswerCreateRequest) => {
-  return ["POST", `/api/v1/tests/${testId}/answers`, answerCreateRequest] as const;
-};
 
-export const getCreateAnswersQueryOptions = <TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
-  testId: number,
-  answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
+
+
+
+export const getCreateAnswersQueryKey = (testId: number,
+    answerCreateRequest?: AnswerCreateRequest,) => {
+    return [
+    'POST', `/api/v1/tests/${testId}/answers`, answerCreateRequest
+    ] as const;
+    }
+
+
+export const getCreateAnswersQueryOptions = <TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(testId: number,
+    answerCreateRequest: AnswerCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getCreateAnswersQueryKey(testId, answerCreateRequest);
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof createAnswers>>> = ({ signal }) => createAnswers(testId, answerCreateRequest, { signal, ...requestOptions });
+  const queryKey =  queryOptions?.queryKey ?? getCreateAnswersQueryKey(testId,answerCreateRequest);
 
-  return { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
 
-export type CreateAnswersQueryResult = NonNullable<Awaited<ReturnType<typeof createAnswers>>>;
-export type CreateAnswersQueryError = ErrorType<unknown>;
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createAnswers>>> = ({ signal }) => createAnswers(testId,answerCreateRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CreateAnswersQueryResult = NonNullable<Awaited<ReturnType<typeof createAnswers>>>
+export type CreateAnswersQueryError = ErrorType<unknown>
+
 
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
-  testId: number,
-  answerCreateRequest: AnswerCreateRequest,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> &
-      Pick<DefinedInitialDataOptions<Awaited<ReturnType<typeof createAnswers>>, TError, Awaited<ReturnType<typeof createAnswers>>>, "initialData">;
-    request?: SecondParameter<typeof kyMutator>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    answerCreateRequest: AnswerCreateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createAnswers>>,
+          TError,
+          Awaited<ReturnType<typeof createAnswers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
-  testId: number,
-  answerCreateRequest: AnswerCreateRequest,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> &
-      Pick<UndefinedInitialDataOptions<Awaited<ReturnType<typeof createAnswers>>, TError, Awaited<ReturnType<typeof createAnswers>>>, "initialData">;
-    request?: SecondParameter<typeof kyMutator>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    answerCreateRequest: AnswerCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createAnswers>>,
+          TError,
+          Awaited<ReturnType<typeof createAnswers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
-  testId: number,
-  answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+ testId: number,
+    answerCreateRequest: AnswerCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 응답 전체 등록
+ * @summary ➰ 응답 전체 등록
  */
 
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
-  testId: number,
-  answerCreateRequest: AnswerCreateRequest,
-  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>; request?: SecondParameter<typeof kyMutator> },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getCreateAnswersQueryOptions(testId, answerCreateRequest, options);
+ testId: number,
+    answerCreateRequest: AnswerCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createAnswers>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const queryOptions = getCreateAnswersQueryOptions(testId,answerCreateRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+
+
+export type listMyAnswersResponse200 = {
+  data: ApiResponseMyAnswerResponse
+  status: 200
+}
+
+export type listMyAnswersResponseSuccess = (listMyAnswersResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listMyAnswersResponse = (listMyAnswersResponseSuccess)
+
+export const getListMyAnswersUrl = () => {
+
+
+
+
+  return `/api/v1/answers/me`
+}
+
+/**
+ * 현재 로그인한 사용자가 응답한 테스트 목록을 최신순으로 조회합니다. 참여기록20 화면에 해당하는 api 입니다.
+- createdAt은 yyyy.MM.dd 형식으로 반환합니다.
+- totalPromotionReward는 로그인한 사용자의 누적 프로모션 리워드 합계입니다.
+
+ * @summary ✔️ 내 응답 목록 조회
+ */
+export const listMyAnswers = async ( options?: RequestInit): Promise<listMyAnswersResponse> => {
+
+  return kyMutator<listMyAnswersResponse>(getListMyAnswersUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getListMyAnswersMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext> => {
+
+const mutationKey = ['listMyAnswers'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listMyAnswers>>, void> = () => {
+
+
+          return  listMyAnswers(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListMyAnswersMutationResult = NonNullable<Awaited<ReturnType<typeof listMyAnswers>>>
+
+    export type ListMyAnswersMutationError = ErrorType<unknown>
+
+    /**
+ * @summary ✔️ 내 응답 목록 조회
+ */
+export const useListMyAnswers = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listMyAnswers>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListMyAnswersMutationOptions(options), queryClient);
+    }

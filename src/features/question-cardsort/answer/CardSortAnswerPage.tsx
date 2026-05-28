@@ -15,7 +15,7 @@ function getCategoryColor(index: number): string {
   return adaptive.blue500;
 }
 
-export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"cardsort">) {
+export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswerProps<"CARD_SORTING">) {
   const { data } = question;
   const placements = answer?.placements ?? {};
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
     if (placements[cardId]) {
       const next = { ...placements };
       delete next[cardId];
-      onChange({ type: "cardsort", placements: next });
+      onChange({ type: "CARD_SORTING", placements: next });
       return;
     }
     if (selectedCardId === cardId && !pickTooltipDone) setPickTooltipDone(true);
@@ -47,14 +47,14 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
   const handleCategoryTap = (categoryId: string) => {
     if (!selectedCardId) return;
     if (!pickTooltipDone) setPickTooltipDone(true);
-    onChange({ type: "cardsort", placements: { ...placements, [selectedCardId]: categoryId } });
+    onChange({ type: "CARD_SORTING", placements: { ...placements, [selectedCardId]: categoryId } });
     setSelectedCardId(null);
   };
 
   return (
     <div className="flex flex-col">
       <QuestionHeader
-        categoryLabel={QUESTION_TYPE_LABEL.cardsort}
+        categoryLabel={QUESTION_TYPE_LABEL.CARD_SORTING}
         title={data.title}
         description={data.description}
       />
@@ -90,7 +90,7 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
               }}
               onClick={() => handleCategoryTap(category.id)}
             >
-              <span style={{ fontWeight: 700, fontSize: 16, color: adaptive.grey900 }}>
+              <span style={{ fontWeight: 700, fontSize: 16, color: adaptive.grey800 }}>
                 {category.label}
               </span>
               <span style={{ fontSize: 13, color: adaptive.grey500, marginTop: 4 }}>
@@ -120,7 +120,7 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
                 borderRadius: 14,
                 paddingTop: isSelected ? 19 : 20,
                 paddingBottom: isSelected ? 19 : 20,
-                background: isAssigned && !isSelected ? SELECTED_BG : isSelected ? SELECTED_BG : "white",
+                background: isAssigned && !isSelected ? SELECTED_BG : isSelected ? SELECTED_BG : adaptive.background,
                 opacity: isAssigned && !isSelected ? 0.4 : 1,
                 backdropFilter: "blur(0px)",
               }}
@@ -130,7 +130,7 @@ export function CardSortAnswerPage({ question, answer, onChange }: QuestionAnswe
                 style={{
                   fontWeight: 600,
                   fontSize: 15,
-                  color: isAssigned && !isSelected ? adaptive.grey700 : adaptive.grey800,
+                  color: adaptive.grey700,
                 }}
               >
                 {card.label}

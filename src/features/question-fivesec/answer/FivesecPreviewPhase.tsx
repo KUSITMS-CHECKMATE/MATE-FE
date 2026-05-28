@@ -2,13 +2,7 @@ import { motion } from "framer-motion";
 import { adaptive } from "@toss/tds-colors";
 import { Text } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
-import type { AbRatio } from "@/features/question-ab/model/types";
-
-const RATIO_TO_CSS: Record<AbRatio, string> = {
-  "9:16": "9/16",
-  "1:1": "1/1",
-  "4:3": "4/3",
-};
+import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface Props {
   ratio: AbRatio;
@@ -18,11 +12,8 @@ interface Props {
 export function FivesecPreviewPhase({ ratio, onStart }: Props) {
   return (
     <div className="flex flex-col flex-1 bg-white">
-      <QuestionHeader
-        categoryLabel="5초 테스트"
-        title="5초간 아래 사진에 집중해주세요"
-      />
-      <div className="flex-1 px-5 pt-4">
+      <QuestionHeader categoryLabel="5초 테스트" title={`5초간\n아래 사진에 집중해주세요`} />
+      <div className="flex-1 px-5 pt-4 flex justify-center">
         <motion.div
           role="button"
           onClick={onStart}
@@ -30,7 +21,8 @@ export function FivesecPreviewPhase({ ratio, onStart }: Props) {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
           style={{
-            width: "100%",
+            alignSelf: "flex-start",
+            width: `min(100%, calc((100dvh - 200px) * ${RATIO_TO_CSS[ratio]}))`,
             aspectRatio: RATIO_TO_CSS[ratio],
             backgroundColor: adaptive.grey100,
             borderRadius: 16,

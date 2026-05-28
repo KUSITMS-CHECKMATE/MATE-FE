@@ -1,34 +1,22 @@
-import { useEffect, useState } from 'react'
-import { appLogin } from '@apps-in-toss/web-framework'
-import { loginWithToss } from '@/shared/api/generated/auth'
-import { setToken } from '@/shared/api/client'
-
-type AuthStatus = 'pending' | 'authenticated' | 'unauthenticated'
+import { useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { getToken } from '@/shared/api/client'
+import { ROUTES } from '@/shared/constants/routes'
 
 interface AuthGuardProps {
   children: React.ReactNode
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const [status, setStatus] = useState<AuthStatus>('pending')
+  const navigate = useNavigate()
 
   useEffect(() => {
-    async function login() {
-      try {
-        const { authorizationCode, referrer } = await appLogin()
-        const { data: body } = await loginWithToss({ authorizationCode, referrer })
-        const token = body.data?.accessToken
-        if (!token) throw new Error('토큰을 받지 못했습니다.')
-        setToken(token)
-        setStatus('authenticated')
-      } catch {
-        setStatus('unauthenticated')
-      }
+    if (!getToken()) {
+      navigate({ to: ROUTES.HOME })
     }
-    login()
-  }, [])
+  }, [navigate])
 
-  if (status === 'pending') return null
+  if (!getToken()) return null
 
   return <>{children}</>
 }

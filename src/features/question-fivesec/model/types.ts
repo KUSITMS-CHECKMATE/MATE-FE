@@ -1,5 +1,5 @@
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
-import type { AbRatio } from "@/features/question-ab/model/types";
+import type { AbRatio } from "@/shared/constants/imageRatio";
 
 export type { AbRatio };
 
@@ -7,7 +7,7 @@ export interface FivesecQuestionData {
   title: string;
   description: string;
   imageUrl: string;
-  duration: number;
+  duration?: number;
   answerExample: string;
   answerType: "multiple" | "subjective";
   isMultipleAnswer: boolean;
