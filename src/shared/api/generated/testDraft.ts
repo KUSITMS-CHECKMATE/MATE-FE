@@ -52,6 +52,7 @@ export interface TestDraftResponse {
   categories?: string[];
   goalPpl?: number;
   reward?: number;
+  closedAt?: string;
   questionsPayload?: JsonNode;
   status?: TestDraftResponseStatus;
   publishedTestId?: number;
@@ -138,6 +139,7 @@ export interface TestDraftUpdateRequest {
   goalPpl?: number;
   /** @minimum 0 */
   reward?: number;
+  closedAt?: string;
   questionsPayload?: JsonNode;
 }
 
@@ -160,6 +162,7 @@ export interface MyTestDraftItem {
   status?: MyTestDraftItemStatus;
   goalPpl?: number;
   reward?: number;
+  closedAt?: string;
   updatedAt?: string;
 }
 
@@ -514,9 +517,9 @@ export const getUpdateDraftUrl = (draftId: number,) => {
 
 /**
  * 테스트 초안의 기본 정보, 질문 payload, 목표 인원, 리워드, 마감 기한을 수정합니다. MKTT_02, MKTT_03, 결제하기 화면에 해당하는 api 입니다.<br>
-- 버그 사항: 마감기한 필드 추가
+- **closedAt**: yyyy-MM-dd 형식으로 요청해주세요.
 
- * @summary ⚠️ 테스트 초안 수정
+ * @summary ✔️ 테스트 초안 수정
  */
 export const updateDraft = async (draftId: number,
     testDraftUpdateRequest: TestDraftUpdateRequest, options?: RequestInit): Promise<updateDraftResponse> => {
@@ -593,7 +596,7 @@ export function useUpdateDraft<TData = Awaited<ReturnType<typeof updateDraft>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ⚠️ 테스트 초안 수정
+ * @summary ✔️ 테스트 초안 수정
  */
 
 export function useUpdateDraft<TData = Awaited<ReturnType<typeof updateDraft>>, TError = ErrorType<unknown>>(

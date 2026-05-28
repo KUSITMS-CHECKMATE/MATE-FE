@@ -6,16 +6,20 @@
  * OpenAPI spec version: v1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
@@ -87,6 +91,25 @@ export interface ApiResponseAnswerBatchCreateResponse {
   code?: string;
   message?: string;
   data?: AnswerBatchCreateResponse;
+}
+
+export interface MyAnswerItem {
+  testId?: number;
+  testName?: string;
+  createdAt?: string;
+  reward?: number;
+}
+
+export interface MyAnswerResponse {
+  totalPromotionReward?: number;
+  answers?: MyAnswerItem[];
+}
+
+export interface ApiResponseMyAnswerResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: MyAnswerResponse;
 }
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -222,3 +245,95 @@ export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+
+
+export type listMyAnswersResponse200 = {
+  data: ApiResponseMyAnswerResponse
+  status: 200
+}
+
+export type listMyAnswersResponseSuccess = (listMyAnswersResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listMyAnswersResponse = (listMyAnswersResponseSuccess)
+
+export const getListMyAnswersUrl = () => {
+
+
+
+
+  return `/api/v1/answers/me`
+}
+
+/**
+ * 현재 로그인한 사용자가 응답한 테스트 목록을 최신순으로 조회합니다. 참여기록20 화면에 해당하는 api 입니다.
+- createdAt은 yyyy.MM.dd 형식으로 반환합니다.
+- totalPromotionReward는 로그인한 사용자의 누적 프로모션 리워드 합계입니다.
+
+ * @summary ✔️ 내 응답 목록 조회
+ */
+export const listMyAnswers = async ( options?: RequestInit): Promise<listMyAnswersResponse> => {
+
+  return kyMutator<listMyAnswersResponse>(getListMyAnswersUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getListMyAnswersMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext> => {
+
+const mutationKey = ['listMyAnswers'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listMyAnswers>>, void> = () => {
+
+
+          return  listMyAnswers(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListMyAnswersMutationResult = NonNullable<Awaited<ReturnType<typeof listMyAnswers>>>
+
+    export type ListMyAnswersMutationError = ErrorType<unknown>
+
+    /**
+ * @summary ✔️ 내 응답 목록 조회
+ */
+export const useListMyAnswers = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listMyAnswers>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListMyAnswersMutationOptions(options), queryClient);
+    }

@@ -7,13 +7,17 @@ import { AbResultCard } from "./AbResultCard";
 import { CardSortResultCard } from "./CardSortResultCard";
 import { TreeResultCard } from "./TreeResultCard";
 import { FiveSecResultCard } from "./FiveSecResultCard";
-import { MOCK_RESULTS } from "../model/mock";
+import type { QuestionResult } from "../model/types";
 
-export function ResultTabContent() {
+interface Props {
+  results: QuestionResult[];
+}
+
+export function ResultTabContent({ results }: Props) {
   return (
     <div className="w-full flex flex-col bg-[#f2f4f6] pb-21.5">
       <div className="w-full  p-5 flex flex-col gap-4 items-center">
-        {MOCK_RESULTS.map((result, i) => {
+        {results.map((result, i) => {
           switch (result.type) {
             case "OBJECTIVE":
               return (
