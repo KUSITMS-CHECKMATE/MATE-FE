@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BottomSheet, Button, Checkbox, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
@@ -13,10 +13,6 @@ interface Props {
 
 export function DownloadSheet({ open, onClose, onDownload, isGenerating = false }: Props) {
   const [selected, setSelected] = useState<Format>(null);
-
-  useEffect(() => {
-    if (!open) setSelected(null);
-  }, [open]);
 
   function handleDownload() {
     if (!selected) return;

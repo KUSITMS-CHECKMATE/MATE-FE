@@ -3,9 +3,10 @@ import { adaptive } from "@toss/tds-colors";
 
 interface Props {
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export function TestCreateButton({ onClick }: Props) {
+export function TestCreateButton({ onClick, disabled }: Props) {
   return (
     <div className="flex justify-end fixed right-4 bottom-24 w-full h-fit overflow-visible">
       <IconButton
@@ -16,6 +17,7 @@ export function TestCreateButton({ onClick }: Props) {
         bgColor="#4365CC"
         aria-label="테스트 등록"
         style={{ borderRadius: "9999px" }}
+        disabled={disabled}
         onClick={onClick}
       />
     </div>
