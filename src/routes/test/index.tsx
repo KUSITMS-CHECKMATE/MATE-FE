@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { listMyTests } from "@/shared/api/generated/test";
 import type { UserTest } from "@/features/test/model";
 import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
+import { createDraft } from "@/shared/api/generated/testDraft";
 
 const STATUS_MAP: Record<string, UserTest["status"]> = {
   IN_PROGRESS: "active",
@@ -20,6 +21,14 @@ export const Route = createFileRoute("/test/")({
 
 function MakerHomePage() {
   const navigate = useNavigate();
+  const { mutate: initDraft, isPending } = useMutation({
+    mutationFn: createDraft,
+    onSuccess: (res) => {
+      const draftId = res.data.data?.draftId;
+      if (!draftId) return;
+      navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: false } });
+    },
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["listMyTests"],
@@ -44,7 +53,7 @@ function MakerHomePage() {
           navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } })
         }
       />
-      <TestCreateButton onClick={() => navigate({ to: ROUTES.TEST_CREATE })} />
+      <TestCreateButton onClick={() => initDraft(undefined)} disabled={isPending} />
 
       <BottomTabBar activeTab="test" />
     </div>

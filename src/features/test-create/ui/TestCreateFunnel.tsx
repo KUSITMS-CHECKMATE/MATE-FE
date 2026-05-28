@@ -17,6 +17,7 @@ import { ServiceDescriptionEditPage } from "./ServiceDescriptionEditPage";
 import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
+import { useSubmitTest } from "../model/useSubmitTest";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
@@ -28,10 +29,11 @@ import { FivesecCreatePage } from "@/features/question-fivesec/create";
 import { CardSortCreatePage } from "@/features/question-cardsort/create";
 
 interface Props {
+  draftId?: number;
   fromPayment?: boolean;
 }
 
-export function TestCreateFunnel({ fromPayment = false }: Props) {
+export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   const navigate = useNavigate();
   const funnel = useFunnel(fromPayment ? "register" : "basic");
   const form = useTestCreateForm();
@@ -51,6 +53,7 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
     typeId: QuestionTypeId;
   } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const { mutate: submitTest, isPending: isSubmitting } = useSubmitTest(draftId);
   const [showGuide, setShowGuide] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -205,7 +208,7 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
             funnel.prev();
           }
         }}
-        onSubmit={() => navigate({ to: ROUTES.TEST_PAYMENT })}
+        onSubmit={() => submitTest()}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         isConfirmDisabled={isConfirmDisabled}
@@ -223,7 +226,7 @@ export function TestCreateFunnel({ fromPayment = false }: Props) {
               ? "이전"
               : "취소"
         }
-        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data)}
+        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSubmitting}
         submitLabel="테스트 만들기"
       >
         {funnel.step === "register" ? (
