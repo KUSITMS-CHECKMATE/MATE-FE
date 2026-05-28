@@ -7,7 +7,7 @@ type Format = "pdf" | "csv" | null;
 interface Props {
   open: boolean;
   onClose: () => void;
-  onDownload: (formats: { pdf: boolean; csv: boolean }) => void;
+  onDownload: (format: "pdf" | "csv") => void;
   isGenerating?: boolean;
 }
 
@@ -16,7 +16,7 @@ export function DownloadSheet({ open, onClose, onDownload, isGenerating = false 
 
   function handleDownload() {
     if (!selected) return;
-    onDownload({ pdf: selected === "pdf", csv: selected === "csv" });
+    onDownload(selected);
   }
 
   return (
