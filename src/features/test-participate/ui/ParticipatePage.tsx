@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { CTAButton, FixedBottomCTA, ProgressBar } from "@toss/tds-mobile";
@@ -56,16 +57,23 @@ interface FunnelProps {
 function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { mutate: submitAnswers } = useSubmitAnswersMutation();
+  const { mutate: submitAnswers, isError: isSubmitError, error: submitError } = useSubmitAnswersMutation();
+  const [debugInfo, setDebugInfo] = useState<{ req: string; res: string } | null>(null);
 
-  const funnel = useParticipateFunnel(test.questions, (answers) => {
+  const funnel = useParticipateFunnel(test.questions, async (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
+    const req = JSON.stringify(body, null, 2);
     submitAnswers(
       { testId, body },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
           navigate({ to: ROUTES.DISCOVERY });
+        },
+        onError: async (err) => {
+          const raw = (err as { response?: Response }).response;
+          const res = raw ? await raw.clone().text().catch(() => "") : "";
+          setDebugInfo({ req, res });
         },
       },
     );
@@ -80,6 +88,19 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   return (
     <div className="flex flex-col min-h-dvh">
       <ProgressBar progress={progress} size="normal" />
+      {isSubmitError && (
+        <div className="mx-4 mt-2 flex flex-col gap-1">
+          <div className="text-xs text-red-500">
+            제출 실패: {submitError instanceof Error ? submitError.message : "알 수 없는 오류"}
+          </div>
+          {debugInfo && (
+            <pre className="text-xs bg-gray-100 rounded p-2 overflow-auto whitespace-pre-wrap break-all">
+              {"[요청]\n"}{debugInfo.req}{"\n\n[응답]\n"}{debugInfo.res}
+            </pre>
+          )}
+        </div>
+      )}
+
       <main className="flex flex-col flex-1">
         <QuestionRenderer
           question={currentQuestion}

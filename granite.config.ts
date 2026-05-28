@@ -3,9 +3,9 @@ import { defineConfig } from "@apps-in-toss/web-framework/config";
 export default defineConfig({
   appName: "mate",
   brand: {
-    displayName: "메이트",
-    primaryColor: "#4265CC",
-    icon: "https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png",
+    displayName: "mate", // 화면에 노출될 앱의 한글 이름으로 바꿔주세요.
+    primaryColor: "#4265CC", // 화면에 노출될 앱의 기본 색상으로 바꿔주세요.
+    icon: "/vite.svg", // 화면에 노출될 앱의 아이콘 이미지 주소로 바꿔주세요.
   },
   web: {
     host: "localhost",
@@ -20,4 +20,8 @@ export default defineConfig({
     { name: "photos", access: "read" },
   ],
   outdir: "dist",
+  webViewProps: {
+    pullToRefreshEnabled: false,
+    overScrollMode: "never",
+  },
 });
