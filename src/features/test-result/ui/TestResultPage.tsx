@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { graniteEvent } from "@apps-in-toss/web-framework";
 import {
   Asset,
   Button,
@@ -56,6 +57,33 @@ export function TestResultPage({ testId }: Props) {
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
   const { generate: generatePdf, isGenerating } = usePdfDownload(testId);
+  const selectedQuestionIdRef = useRef(selectedQuestionId);
+  useEffect(() => {
+    selectedQuestionIdRef.current = selectedQuestionId;
+  }, [selectedQuestionId]);
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+    try {
+      unsubscribe = graniteEvent.addEventListener("backEvent", {
+        onEvent: () => {
+          if (selectedQuestionIdRef.current !== null) {
+            setSelectedQuestionId(null);
+          } else {
+            window.history.back();
+          }
+        },
+        onError: (error) => {
+          console.error("backEvent error", error);
+        },
+      });
+    } catch {
+      console.warn("backEvent listener not supported in browser");
+    }
+    return () => {
+      unsubscribe?.();
+    };
+  }, []);
 
   const { data: reportData, isLoading } = useGetReportQuery(Number(testId));
   const report = reportData?.data;
