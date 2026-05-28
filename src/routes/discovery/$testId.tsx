@@ -22,11 +22,13 @@ function TestDetailPage() {
     queryFn: () => getTest(Number(testId)),
   });
 
-  const detail = data?.data?.data;
+  const detail = data?.data?.data as ({ testStatus?: string; id?: number; title?: string; categories?: string[]; imageUrls?: string[]; reward?: number; description?: string; serviceName?: string; serviceDescription?: string }) | undefined;
 
   if (isLoading || !detail) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
+
+  const isWaiting = detail.testStatus === "WAITING";
 
   return (
     <div className="flex flex-col min-h-screen bg-white pb-17">
@@ -46,11 +48,12 @@ function TestDetailPage() {
 
       <div className="fixed bottom-0 left-0 w-full">
         <BottomCTA.Single
+          disabled={isWaiting}
           onClick={() =>
             navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId } })
           }
         >
-          테스트 참여하기
+          {isWaiting ? "검토중인 테스트예요" : "테스트 참여하기"}
         </BottomCTA.Single>
       </div>
     </div>

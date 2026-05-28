@@ -48,7 +48,6 @@ export function FivesecCreatePage({
     (existingFivesec?.title ?? "").trim().length > 0,
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
-  const duration = 5;
   const [answerType, setAnswerType] = useState<"multiple" | "subjective">(
     existingFivesec?.answerType ?? "subjective",
   );
@@ -358,7 +357,6 @@ export function FivesecCreatePage({
                     title,
                     description,
                     imageUrl,
-                    duration,
                     answerExample: "",
                     answerType,
                     isMultipleAnswer: answerType === "multiple",
@@ -395,7 +393,6 @@ export function FivesecCreatePage({
                 title,
                 description,
                 imageUrl,
-                duration,
                 answerExample: "",
                 answerType,
                 isMultipleAnswer: answerType === "multiple",

@@ -1,4 +1,4 @@
-import { CTAButton, Checkbox, FixedBottomCTA, List, ListRow } from "@toss/tds-mobile";
+import { CTAButton, Checkbox, FixedBottomCTA, List, ListRow, TextArea } from "@toss/tds-mobile";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 
@@ -12,7 +12,9 @@ interface Props {
   isFirst: boolean;
   isLast: boolean;
   prevLabel?: string;
+  otherText?: string;
   onSelect: (id: string) => void;
+  onOtherTextChange?: (text: string) => void;
   onPrev: () => void;
   onGoNext: () => void;
 }
@@ -27,10 +29,13 @@ export function FivesecMultipleAnswerPhase({
   isFirst,
   isLast,
   prevLabel = "이전",
+  otherText = "",
   onSelect,
+  onOtherTextChange,
   onPrev,
   onGoNext,
 }: Props) {
+  const hasOtherChoice = choices.some((c) => c.name === "기타 (직접 입력)");
   return (
     <>
       <div className="flex flex-col flex-1">
@@ -40,7 +45,7 @@ export function FivesecMultipleAnswerPhase({
           description={description}
         />
         <List>
-          {choices.map((choice) => {
+          {choices.filter((c) => c.name !== "기타 (직접 입력)").map((choice) => {
             const checked = selectedIds.includes(choice.id);
             return (
               <div
@@ -65,6 +70,19 @@ export function FivesecMultipleAnswerPhase({
             );
           })}
         </List>
+        {hasOtherChoice && (
+          <div className="pt-2 pb-4">
+            <TextArea
+              variant="line"
+              hasError={false}
+              label="기타 답변"
+              labelOption="sustain"
+              value={otherText}
+              placeholder="답변을 작성해 주세요"
+              onChange={(e) => onOtherTextChange?.(e.target.value)}
+            />
+          </div>
+        )}
       </div>
       {isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>

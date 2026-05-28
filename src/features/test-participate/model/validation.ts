@@ -21,8 +21,23 @@ export function isAnswerValid(
     }
     case "OBJECTIVE": {
       const a = answer as Extract<Answer, { type: "OBJECTIVE" }>;
-      const { minSelectCount, maxSelectCount } = question.data;
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.otherText ?? "").trim().length > 0) {
+        return true;
+      }
       const n = a.selectedIds.length;
+
+      if (!question.data.isMultiSelectEnabled) {
+        return n === 1;
+      }
+
+      const minSelectCount =
+        question.data.minSelectCount > 0 ? question.data.minSelectCount : 1;
+      const maxSelectCount =
+        question.data.maxSelectCount > 0
+          ? question.data.maxSelectCount
+          : question.data.choices.length;
+
       return n >= minSelectCount && n <= maxSelectCount;
     }
     case "TREE_TEST": {
@@ -34,8 +49,23 @@ export function isAnswerValid(
       if (question.data.answerType === "subjective") {
         return (a.text ?? "").trim().length > 0;
       }
-      const { minSelectCount, maxSelectCount } = question.data;
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.text ?? "").trim().length > 0) {
+        return true;
+      }
       const n = a.selectedIds.length;
+
+      if (!question.data.isMultiSelectEnabled) {
+        return n === 1;
+      }
+
+      const minSelectCount =
+        question.data.minSelectCount > 0 ? question.data.minSelectCount : 1;
+      const maxSelectCount =
+        question.data.maxSelectCount > 0
+          ? question.data.maxSelectCount
+          : question.data.choices.length;
+
       return n >= minSelectCount && n <= maxSelectCount;
     }
     case "SCALE": {
@@ -49,11 +79,7 @@ export function isAnswerValid(
     }
     case "CARD_SORTING": {
       const a = answer as Extract<Answer, { type: "CARD_SORTING" }>;
-      const placedCount = Object.keys(a.placements).length;
-      if (question.data.requireAllPlaced) {
-        return placedCount === question.data.cards.length;
-      }
-      return placedCount > 0;
+      return Object.keys(a.placements).length === question.data.cards.length;
     }
   }
 }
