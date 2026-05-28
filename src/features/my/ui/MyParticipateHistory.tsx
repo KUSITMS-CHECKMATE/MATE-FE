@@ -1,14 +1,52 @@
-import { Asset, Text, Result, Spacing, ListRow, List, Top, Border, Paragraph } from '@toss/tds-mobile';
+import { Asset, Text, Result, Spacing, ListRow, List, Top, Border, Paragraph, Skeleton } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
 import type { ParticipateRecord } from '../model';
 
 interface Props {
   records: ParticipateRecord[];
   totalPoints: number;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
   onRecordClick?: (id: number) => void;
 }
 
-export function MyParticipateHistory({ records, totalPoints, onRecordClick }: Props) {
+function HistorySkeleton() {
+  return (
+    <div className="flex flex-col gap-1 px-4 pt-6">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Skeleton key={i} custom={['title', 'subtitle']} repeatLastItemCount={0} />
+      ))}
+    </div>
+  );
+}
+
+export function MyParticipateHistory({ records, totalPoints, isLoading = false, isError = false, onRetry, onRecordClick }: Props) {
+  if (isLoading) {
+    return <HistorySkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <Result
+        title="데이터를 불러오지 못했어요"
+        description="잠시 후 다시 시도해 주세요"
+        figure={
+          <Asset.Lottie
+            frameShape={Asset.frameShape.CleanW60}
+            src="https://static.toss.im/lotties-common/empty-spot.json"
+            aria-hidden={true}
+          />
+        }
+        button={
+          <Result.Button color="dark" variant="weak" onClick={onRetry}>
+            다시 시도하기
+          </Result.Button>
+        }
+      />
+    );
+  }
+
   return (
     <>
       <Top

@@ -7,7 +7,7 @@ export interface FivesecQuestionData {
   title: string;
   description: string;
   imageUrl: string;
-  duration: number;
+  duration?: number;
   answerExample: string;
   answerType: "multiple" | "subjective";
   isMultipleAnswer: boolean;

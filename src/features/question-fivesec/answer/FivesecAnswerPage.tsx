@@ -7,6 +7,7 @@ import { FivesecSubjectiveAnswerPhase } from "./FivesecSubjectiveAnswerPhase";
 import { FivesecMultipleAnswerPhase } from "./FivesecMultipleAnswerPhase";
 
 type Phase = "ready" | "preview" | "countdown" | "answer";
+const FIVE_SECOND_DURATION = 5;
 
 interface Props extends QuestionAnswerProps<"FIVE_SECOND"> {
   onPrev: () => void;
@@ -18,38 +19,36 @@ interface Props extends QuestionAnswerProps<"FIVE_SECOND"> {
 }
 
 export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext, isFirst, isLast, prevLabel, isPreview }: Props) {
-  const { duration, isMultiSelectEnabled, minSelectCount, maxSelectCount, choices, imageUrl, ratio } = question.data;
+  const { isMultiSelectEnabled, minSelectCount, maxSelectCount, choices, imageUrl, ratio } = question.data;
 
   const [phase, setPhase] = useState<Phase>("ready");
-  const [remaining, setRemaining] = useState(duration);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectedIds = answer?.selectedIds ?? [];
   const isSubjective = question.data.answerType === "subjective";
+  const minRequired = minSelectCount > 0 ? minSelectCount : 1;
+  const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
+  const hasOtherChoice = !!otherChoice;
   const canGoNext = isSubjective
     ? (answer?.text ?? "").trim().length > 0
-    : selectedIds.length >= minSelectCount;
+    : hasOtherChoice && (answer?.text ?? "").trim().length > 0
+      ? true
+      : isMultiSelectEnabled
+        ? selectedIds.length >= minRequired
+        : selectedIds.length === 1;
 
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
   function startCountdown() {
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setPhase("countdown");
-    setRemaining(duration);
-    intervalRef.current = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          setPhase("answer");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    timeoutRef.current = setTimeout(() => {
+      setPhase("answer");
+    }, FIVE_SECOND_DURATION * 1000);
   }
 
   function handleSelect(id: string) {
@@ -59,10 +58,10 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "FIVE_SECOND", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "FIVE_SECOND", selectedIds: next });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
     }
   }
 
@@ -82,7 +81,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   if (phase === "countdown") {
-    return <FivesecCountdownPhase remaining={remaining} imageUrl={imageUrl} ratio={ratio ?? "9:16"} hideCountdown={isPreview} />;
+    return <FivesecCountdownPhase imageUrl={imageUrl} ratio={ratio ?? "9:16"} />;
   }
 
   if (isSubjective) {
@@ -115,7 +114,9 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       isFirst={isFirst}
       isLast={isLast}
       prevLabel={prevLabel}
+      otherText={answer?.text ?? ""}
       onSelect={handleSelect}
+      onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: otherChoice ? [otherChoice.id] : [], text })}
       onPrev={onPrev}
       onGoNext={onGoNext}
     />
