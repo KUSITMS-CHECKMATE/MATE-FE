@@ -1,11 +1,4 @@
-import {
-  Border,
-  ListHeader,
-  ListRow,
-  Paragraph,
-  Spacing,
-  Text,
-} from "@toss/tds-mobile";
+import { ListHeader, ListRow, Paragraph, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
 interface Props {
@@ -15,12 +8,7 @@ interface Props {
   serviceDescription: string;
 }
 
-export function TestDetailInfo({
-  reward,
-  description,
-  serviceName,
-  serviceDescription,
-}: Props) {
+export function TestDetailInfo({ reward, description, serviceName, serviceDescription }: Props) {
   return (
     <>
       <ListRow
@@ -36,9 +24,7 @@ export function TestDetailInfo({
             type="2RowTypeF"
             top="보상 머니"
             topProps={{ color: adaptive.grey500 }}
-            bottom={
-              <Paragraph.Text>{reward.toLocaleString()}원</Paragraph.Text>
-            }
+            bottom={<Paragraph.Text>{reward.toLocaleString()}원</Paragraph.Text>}
             bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
           />
         }
@@ -67,10 +53,6 @@ export function TestDetailInfo({
         horizontalPadding="small"
       />
 
-      <Spacing size={16} />
-      <Border variant="height16" />
-      <Spacing size={16} />
-
       <ListRow
         left={
           <ListRow.AssetIcon
@@ -93,29 +75,14 @@ export function TestDetailInfo({
 
       <ListHeader
         title={
-          <ListHeader.TitleParagraph
-            color={adaptive.grey800}
-            fontWeight="bold"
-            typography="t5"
-          >
+          <ListHeader.TitleParagraph color={adaptive.grey800} fontWeight="bold" typography="t5">
             {serviceName}
           </ListHeader.TitleParagraph>
         }
-        description={
-          <ListHeader.DescriptionParagraph>
-            서비스명
-          </ListHeader.DescriptionParagraph>
-        }
-        descriptionPosition="top"
+        descriptionPosition="bottom"
       />
-
-      <div className="px-6 pb-4">
-        <Text
-          display="block"
-          color={adaptive.grey700}
-          typography="t5"
-          fontWeight="regular"
-        >
+      <div className="w-full flex flex-row justify-start items-center px-6 pb-4">
+        <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="regular">
           {serviceDescription}
         </Text>
       </div>
