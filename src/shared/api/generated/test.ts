@@ -39,6 +39,42 @@ export interface ApiResponseTestLikeResponse {
   data?: TestLikeResponse;
 }
 
+export type TestStatusUpdateRequestStatus = typeof TestStatusUpdateRequestStatus[keyof typeof TestStatusUpdateRequestStatus];
+
+
+export const TestStatusUpdateRequestStatus = {
+  WAITING: 'WAITING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED',
+} as const;
+
+export interface TestStatusUpdateRequest {
+  status: TestStatusUpdateRequestStatus;
+}
+
+export type TestStatusUpdateResponseTestStatus = typeof TestStatusUpdateResponseTestStatus[keyof typeof TestStatusUpdateResponseTestStatus];
+
+
+export const TestStatusUpdateResponseTestStatus = {
+  WAITING: 'WAITING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED',
+} as const;
+
+export interface TestStatusUpdateResponse {
+  testId?: number;
+  testStatus?: TestStatusUpdateResponseTestStatus;
+}
+
+export interface ApiResponseTestStatusUpdateResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: TestStatusUpdateResponse;
+}
+
 /**
  * 테스트 목록·카드 노출용 요약
  */
@@ -406,6 +442,132 @@ export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TE
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getUnlikeTestQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export type updateTestStatusResponse200 = {
+  data: ApiResponseTestStatusUpdateResponse
+  status: 200
+}
+
+export type updateTestStatusResponseSuccess = (updateTestStatusResponse200) & {
+  headers: Headers;
+};
+;
+
+export type updateTestStatusResponse = (updateTestStatusResponseSuccess)
+
+export const getUpdateTestStatusUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/status`
+}
+
+/**
+ * 테스트 상태를 변경합니다.
+
+- `COMPLETED`: 메이커 본인만 가능, 현재 상태가 `IN_PROGRESS`일 때만 허용
+- `IN_PROGRESS`: 관리자만 가능 (테스트 승인)
+- `REJECTED`: 관리자만 가능 (테스트 반려)
+
+ * @summary ✔️ 테스트 상태 변경
+ */
+export const updateTestStatus = async (testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options?: RequestInit): Promise<updateTestStatusResponse> => {
+
+  return kyMutator<updateTestStatusResponse>(getUpdateTestStatusUrl(testId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(testStatusUpdateRequest)
+  }
+);}
+
+
+
+
+
+export const getUpdateTestStatusQueryKey = (testId: number,
+    testStatusUpdateRequest?: TestStatusUpdateRequest,) => {
+    return [
+    'PATCH', `/api/v1/tests/${testId}/status`, testStatusUpdateRequest
+    ] as const;
+    }
+
+
+export const getUpdateTestStatusQueryOptions = <TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUpdateTestStatusQueryKey(testId,testStatusUpdateRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateTestStatus>>> = ({ signal }) => updateTestStatus(testId,testStatusUpdateRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UpdateTestStatusQueryResult = NonNullable<Awaited<ReturnType<typeof updateTestStatus>>>
+export type UpdateTestStatusQueryError = ErrorType<unknown>
+
+
+export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(
+ testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateTestStatus>>,
+          TError,
+          Awaited<ReturnType<typeof updateTestStatus>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(
+ testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateTestStatus>>,
+          TError,
+          Awaited<ReturnType<typeof updateTestStatus>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(
+ testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary ✔️ 테스트 상태 변경
+ */
+
+export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(
+ testId: number,
+    testStatusUpdateRequest: TestStatusUpdateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateTestStatus>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUpdateTestStatusQueryOptions(testId,testStatusUpdateRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

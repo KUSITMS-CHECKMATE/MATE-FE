@@ -18,6 +18,8 @@ import { ReviewGuideAccordion } from "./ReviewGuideAccordion";
 import { QuestionPreviewOverlay } from "./QuestionPreviewOverlay";
 import { mapReportItemToQuestionResult } from "../model/mappers";
 import { STATUS_BADGE } from "../model/constants";
+import { usePdfDownload } from "../model/usePdfDownload";
+import { useCsvDownload } from "../model/useCsvDownload";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
@@ -53,6 +55,9 @@ export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
+  const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId);
+  const { generate: generateCsv, isGenerating: isCsvGenerating } = useCsvDownload(testId);
+  const isGenerating = isPdfGenerating || isCsvGenerating;
   const selectedQuestionIdRef = useRef(selectedQuestionId);
   useEffect(() => {
     selectedQuestionIdRef.current = selectedQuestionId;
@@ -95,6 +100,16 @@ export function TestResultPage({ testId }: Props) {
 
   if (isLoading) {
     return <TestResultSkeleton />;
+  }
+
+  async function handleDownload(format: "pdf" | "csv") {
+    try {
+      if (format === "pdf") await generatePdf();
+      if (format === "csv") await generateCsv();
+    } catch {
+      alert("다운로드에 실패했습니다. 다시 시도해주세요.");
+    }
+    setIsDownloadSheetOpen(false);
   }
 
   return (
@@ -208,7 +223,12 @@ export function TestResultPage({ testId }: Props) {
         onClose={() => setSelectedQuestionId(null)}
       />
 
-      <DownloadSheet open={isDownloadSheetOpen} onClose={() => setIsDownloadSheetOpen(false)} />
+      <DownloadSheet
+        open={isDownloadSheetOpen}
+        onClose={() => setIsDownloadSheetOpen(false)}
+        onDownload={handleDownload}
+        isGenerating={isGenerating}
+      />
     </div>
   );
 }
