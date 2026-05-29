@@ -1,4 +1,6 @@
-import { Checkbox, ListRow, TextArea } from "@toss/tds-mobile";
+import { useRef } from "react";
+import { adaptive } from "@toss/tds-colors";
+import { Checkbox, ListRow, TextField } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
@@ -13,6 +15,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   const categoryLabel = isMultiSelectEnabled ? "복수 선택" : "단일 선택";
   const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
   const hasOtherChoice = !!otherChoice;
+  const otherFieldRef = useRef<HTMLDivElement>(null);
 
   function handleSelect(id: string) {
     if (isMultiSelectEnabled) {
@@ -26,6 +29,33 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
       const next = selectedIds.includes(id) ? [] : [id];
       onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
     }
+  }
+
+  function handleOtherRowClick() {
+    otherFieldRef.current?.querySelector("input")?.focus();
+  }
+
+  function handleOtherFocus() {
+    if (!otherChoice || selectedIds.includes(otherChoice.id)) return;
+    if (isMultiSelectEnabled) {
+      const next =
+        selectedIds.length < maxSelectCount
+          ? [...selectedIds, otherChoice.id]
+          : selectedIds;
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText });
+    } else {
+      onChange({ type: "OBJECTIVE", selectedIds: [otherChoice.id], otherText });
+    }
+  }
+
+  function handleOtherTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!otherChoice) return;
+    const next = selectedIds.includes(otherChoice.id)
+      ? selectedIds
+      : isMultiSelectEnabled
+        ? [...selectedIds, otherChoice.id]
+        : [otherChoice.id];
+    onChange({ type: "OBJECTIVE", selectedIds: next, otherText: e.target.value });
   }
 
   console.log(
@@ -77,19 +107,43 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         })}
       </div>
       {hasOtherChoice && (
-        <div className="pt-2 pb-4">
-          <TextArea
-            variant="line"
-            hasError={false}
-            label="기타 답변"
-            labelOption="sustain"
-            value={otherText}
-            placeholder="답변을 작성해 주세요"
-            onChange={(e) =>
-              onChange({ type: "OBJECTIVE", selectedIds: otherChoice ? [otherChoice.id] : [], otherText: e.target.value })
-            }
-          />
-        </div>
+        <>
+          <div className="bg-white" onClick={handleOtherRowClick}>
+            <ListRow
+              role="checkbox"
+              aria-checked={selectedIds.includes(otherChoice!.id)}
+              contents={
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top="기타"
+                  topProps={{ color: adaptive.grey700 }}
+                />
+              }
+              right={
+                isMultiSelectEnabled ? (
+                  <Checkbox.Line size={24} checked={selectedIds.includes(otherChoice!.id)} />
+                ) : (
+                  <Checkbox.Circle size={24} checked={selectedIds.includes(otherChoice!.id)} />
+                )
+              }
+              verticalPadding="small"
+            />
+          </div>
+          <div ref={otherFieldRef} className="pb-4">
+            <TextField.Clearable
+              variant="line"
+              hasError={false}
+              label=""
+              labelOption="sustain"
+              value={otherText}
+              placeholder=""
+              suffix=""
+              prefix=":"
+              onFocus={handleOtherFocus}
+              onChange={handleOtherTextChange}
+            />
+          </div>
+        </>
       )}
     </div>
   );
