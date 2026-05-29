@@ -20,8 +20,4 @@ export default defineConfig({
     { name: "photos", access: "read" },
   ],
   outdir: "dist",
-  webViewProps: {
-    pullToRefreshEnabled: false,
-    overScrollMode: "never",
-  },
 });
