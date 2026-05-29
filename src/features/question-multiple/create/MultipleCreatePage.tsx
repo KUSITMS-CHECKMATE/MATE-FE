@@ -191,7 +191,12 @@ export function MultipleCreatePage({
               data: {
                 title: questionTitle,
                 description: questionDescription,
-                choices,
+                choices: [
+                  ...choices,
+                  ...(isOtherInputEnabled
+                    ? [{ id: "other-preview", name: "기타 (직접 입력)", imageUrl: "" }]
+                    : []),
+                ],
                 isMultiSelectEnabled,
                 isOtherInputEnabled,
                 minSelectCount,
