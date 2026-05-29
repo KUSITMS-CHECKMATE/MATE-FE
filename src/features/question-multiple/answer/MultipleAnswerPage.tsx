@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { adaptive } from "@toss/tds-colors";
-import { Checkbox, ListRow, TextField } from "@toss/tds-mobile";
+import { Checkbox, FixedBottomCTA, ListRow, TextField } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import type { QuestionAnswerProps } from "@/features/test-participate/model/types";
 
@@ -16,6 +16,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
   const hasOtherChoice = !!otherChoice;
   const otherFieldRef = useRef<HTMLDivElement>(null);
+  const [isOtherFieldFocused, setIsOtherFieldFocused] = useState(false);
 
   function handleSelect(id: string) {
     if (isMultiSelectEnabled) {
@@ -36,6 +37,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   }
 
   function handleOtherFocus() {
+    setIsOtherFieldFocused(true);
     if (!otherChoice || selectedIds.includes(otherChoice.id)) return;
     if (isMultiSelectEnabled) {
       const next =
@@ -46,6 +48,14 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
     } else {
       onChange({ type: "OBJECTIVE", selectedIds: [otherChoice.id], otherText });
     }
+  }
+
+  function handleOtherBlur() {
+    requestAnimationFrame(() => setIsOtherFieldFocused(false));
+  }
+
+  function handleConfirm() {
+    otherFieldRef.current?.querySelector("input")?.blur();
   }
 
   function handleOtherTextChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -64,6 +74,7 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
   );
 
   return (
+    <>
     <div className="flex flex-col">
       <QuestionHeader
         categoryLabel={categoryLabel}
@@ -140,11 +151,16 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
               suffix=""
               prefix=":"
               onFocus={handleOtherFocus}
+              onBlur={handleOtherBlur}
               onChange={handleOtherTextChange}
             />
           </div>
         </>
       )}
     </div>
+    {isOtherFieldFocused && (
+      <FixedBottomCTA onClick={handleConfirm}>확인</FixedBottomCTA>
+    )}
+    </>
   );
 }
