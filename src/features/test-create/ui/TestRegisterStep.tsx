@@ -248,7 +248,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                     type="2RowTypeF"
                     top="보상 머니"
                     topProps={{ color: adaptive.grey500 }}
-                    bottom="1,500원"
+                    bottom="200원"
                     bottomProps={{
                       color: adaptive.grey800,
                       fontWeight: "bold",
