@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { adaptive } from "@toss/tds-colors";
 import { CTAButton, Checkbox, FixedBottomCTA, List, ListRow, TextField } from "@toss/tds-mobile";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
@@ -40,14 +40,24 @@ export function FivesecMultipleAnswerPhase({
   const otherChoice = choices.find((c) => c.name === "기타 (직접 입력)");
   const hasOtherChoice = !!otherChoice;
   const otherFieldRef = useRef<HTMLDivElement>(null);
+  const [isOtherFieldFocused, setIsOtherFieldFocused] = useState(false);
 
   function handleOtherRowClick() {
     otherFieldRef.current?.querySelector("input")?.focus();
   }
 
   function handleOtherFocus() {
+    setIsOtherFieldFocused(true);
     if (!otherChoice || selectedIds.includes(otherChoice.id)) return;
     onSelect(otherChoice.id);
+  }
+
+  function handleOtherBlur() {
+    requestAnimationFrame(() => setIsOtherFieldFocused(false));
+  }
+
+  function handleConfirm() {
+    otherFieldRef.current?.querySelector("input")?.blur();
   }
 
   function handleOtherTextChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -125,13 +135,16 @@ export function FivesecMultipleAnswerPhase({
                 suffix=""
                 prefix=":"
                 onFocus={handleOtherFocus}
+                onBlur={handleOtherBlur}
                 onChange={handleOtherTextChange}
               />
             </div>
           </>
         )}
       </div>
-      {isFirst ? (
+      {isOtherFieldFocused ? (
+        <FixedBottomCTA onClick={handleConfirm}>확인</FixedBottomCTA>
+      ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
           {isLast ? "완료하기" : "다음"}
         </FixedBottomCTA>
