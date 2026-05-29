@@ -398,7 +398,12 @@ export function FivesecCreatePage({
                 isMultipleAnswer: answerType === "multiple",
                 isOtherInputEnabled,
                 isMultiSelectEnabled,
-                choices,
+                choices: [
+                  ...choices,
+                  ...(isOtherInputEnabled
+                    ? [{ id: "other-preview", name: "기타 (직접 입력)", imageUrl: "" }]
+                    : []),
+                ],
                 minSelectCount,
                 maxSelectCount,
                 ratio,
