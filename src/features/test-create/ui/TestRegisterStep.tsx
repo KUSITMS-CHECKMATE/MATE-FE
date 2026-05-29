@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List } from "@toss/tds-mobile";
+import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List, ListHeader } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
 import { QuestionManageSheet } from "./QuestionManageSheet";
@@ -194,9 +194,11 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                 />
               }
               lower={
-                <Top.LowerButton color="primary" size="small" variant="weak" display="inline">
-                  어떤 서비스인가요?
-                </Top.LowerButton>
+                !form.serviceName ? (
+                  <Top.LowerButton color="primary" size="small" variant="weak" display="inline">
+                    어떤 서비스인가요?
+                  </Top.LowerButton>
+                ) : undefined
               }
             />
             <div
@@ -246,7 +248,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                     type="2RowTypeF"
                     top="보상 머니"
                     topProps={{ color: adaptive.grey500 }}
-                    bottom="1,500원"
+                    bottom="200원"
                     bottomProps={{
                       color: adaptive.grey800,
                       fontWeight: "bold",
@@ -273,7 +275,41 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                 verticalPadding="small"
                 horizontalPadding="small"
               />
+              {form.serviceName && (
+                <ListRow
+                  left={<ListRow.AssetIcon size="medium" name="icon-loudspeaker" backgroundColor={adaptive.red50} />}
+                  contents={
+                    <ListRow.Texts
+                      type="2RowTypeC"
+                      top="서비스 소개"
+                      topProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+                      bottom="진행될 테스트의 서비스를 소개할게요"
+                      bottomProps={{ color: adaptive.grey500 }}
+                    />
+                  }
+                  verticalPadding="small"
+                />
+              )}
             </List>
+            {form.serviceName && (
+              <>
+                <ListHeader
+                  title={
+                    <ListHeader.TitleParagraph color={adaptive.grey800} fontWeight="bold" typography="t5">
+                      {form.serviceName}
+                    </ListHeader.TitleParagraph>
+                  }
+                  descriptionPosition="bottom"
+                />
+                {form.description && (
+                  <div className="w-full flex flex-row justify-start items-center px-6 pb-4">
+                    <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="regular">
+                      {form.description}
+                    </Text>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </motion.div>
