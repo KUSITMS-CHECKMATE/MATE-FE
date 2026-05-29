@@ -125,7 +125,7 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           </Post.Paragraph>
         </GuideAccordionItem>
       </div>
-      <BottomCTA.Single fixed onClick={onClose}>시작하기</BottomCTA.Single>
+      <BottomCTA.Single fixed color="dark" variant="weak" onClick={onClose}>이전으로</BottomCTA.Single>
     </motion.div>
   );
 }
