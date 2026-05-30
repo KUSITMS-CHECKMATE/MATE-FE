@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CTAButton, FixedBottomCTA, ProgressBar } from "@toss/tds-mobile";
+import { Asset, CTAButton, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
+import { adaptive } from "@toss/tds-colors";
 import { useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
@@ -57,6 +59,7 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: submitAnswers } = useSubmitAnswersMutation();
+  const [submitted, setSubmitted] = useState(false);
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
@@ -65,11 +68,47 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
-          navigate({ to: ROUTES.DISCOVERY });
+          setSubmitted(true);
         },
       },
     );
   });
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col min-h-dvh items-center">
+        <Spacing size={169} />
+        <Asset.Image
+          frameShape={{ width: 100 }}
+          src="https://static.toss.im/3d-emojis/u1F44F-apng.png"
+          aria-hidden={true}
+        />
+        <Spacing size={24} />
+        <Text
+          display="block"
+          color={adaptive.grey800}
+          typography="t2"
+          fontWeight="bold"
+          textAlign="center"
+        >
+          테스트를 제출했어요
+        </Text>
+        <Spacing size={8} />
+        <Text
+          display="block"
+          color={adaptive.grey700}
+          typography="t5"
+          fontWeight="regular"
+          textAlign="center"
+        >
+          적립 예정 보상 500원{"\n"}보상은 24시간 이내 지급돼요.
+        </Text>
+        <FixedBottomCTA onClick={() => navigate({ to: ROUTES.DISCOVERY })}>
+          확인
+        </FixedBottomCTA>
+      </div>
+    );
+  }
 
   const { currentIndex, totalCount, currentQuestion, isFirst, isLast, canGoNext, goNext, goPrev } =
     funnel;
