@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
 import { Asset, CTAButton, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
 import { useParticipateTestQuery } from "../api/useParticipateTestQuery";
-import { useSubmitAnswersMutation } from "../api/useSubmitAnswersMutation";
-import { mapAnswersToApiRequest } from "../api/mappers";
-import { getListTestsUrl } from "@/shared/api/generated/test";
+// import { useSubmitAnswersMutation } from "../api/useSubmitAnswersMutation";
+// import { mapAnswersToApiRequest } from "../api/mappers";
+// import { getListTestsUrl } from "@/shared/api/generated/test";
 import type { ParticipateTest } from "../model/types";
 
 interface Props {
@@ -55,23 +55,24 @@ interface FunnelProps {
   testId: number;
 }
 
-function ParticipateFunnelContent({ test, testId }: FunnelProps) {
+function ParticipateFunnelContent({ test }: FunnelProps) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { mutate: submitAnswers } = useSubmitAnswersMutation();
+  // const queryClient = useQueryClient();
+  // const { mutate: submitAnswers } = useSubmitAnswersMutation();
   const [submitted, setSubmitted] = useState(false);
 
-  const funnel = useParticipateFunnel(test.questions, (answers) => {
-    const body = mapAnswersToApiRequest(test.questions, answers);
-    submitAnswers(
-      { testId, body },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
-          setSubmitted(true);
-        },
-      },
-    );
+  const funnel = useParticipateFunnel(test.questions, () => {
+    // const body = mapAnswersToApiRequest(test.questions, answers);
+    // submitAnswers(
+    //   { testId, body },
+    //   {
+    //     onSuccess: () => {
+    //       queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
+    //       setSubmitted(true);
+    //     },
+    //   },
+    // );
+    setSubmitted(true);
   });
 
   if (submitted) {
