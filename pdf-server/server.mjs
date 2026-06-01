@@ -32,7 +32,20 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // stats-report.html을 HTTP로 서빙 (file:// 대신 http:// 사용해야 쿼리 파라미터가 정상 동작)
+  if (req.method === 'GET' && url.pathname.startsWith('/img/')) {
+    const imgFile = path.basename(url.pathname);
+    const imgPath = path.resolve(__dirname, 'img', imgFile);
+    try {
+      const data = fs.readFileSync(imgPath);
+      res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+      res.end(data);
+    } catch {
+      res.writeHead(404);
+      res.end('Image not found');
+    }
+    return;
+  }
+
   if (req.method === 'GET' && url.pathname === '/stats-report.html') {
     try {
       const html = fs.readFileSync(HTML_PATH, 'utf-8');
