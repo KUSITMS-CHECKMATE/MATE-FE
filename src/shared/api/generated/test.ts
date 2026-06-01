@@ -143,6 +143,15 @@ export interface ApiResponseTestDetailResponse {
   data?: TestDetailResponse;
 }
 
+export type ApiResponseVoidData = { [key: string]: unknown };
+
+export interface ApiResponseVoid {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: ApiResponseVoidData;
+}
+
 /**
  * 진행 상태
  */
@@ -221,6 +230,18 @@ export interface ApiResponseLikedTestSummaryResponse {
   message?: string;
   data?: LikedTestSummaryResponse;
 }
+
+export type DeleteTestParams = {
+mode: DeleteTestMode;
+};
+
+export type DeleteTestMode = typeof DeleteTestMode[keyof typeof DeleteTestMode];
+
+
+export const DeleteTestMode = {
+  SOFT: 'SOFT',
+  HARD: 'HARD',
+} as const;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -758,6 +779,146 @@ export const useGetTest = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getGetTestMutationOptions(options), queryClient);
     }
+
+export type deleteTestResponse200 = {
+  data: ApiResponseVoid
+  status: 200
+}
+
+export type deleteTestResponseSuccess = (deleteTestResponse200) & {
+  headers: Headers;
+};
+;
+
+export type deleteTestResponse = (deleteTestResponseSuccess)
+
+export const getDeleteTestUrl = (testId: number,
+    params: DeleteTestParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/tests/${testId}?${stringifiedParams}` : `/api/v1/tests/${testId}`
+}
+
+/**
+ * 테스트를 soft 삭제 또는 hard 삭제합니다. 해당 api는 관리자 계정으로만 요청 가능합니다.
+- `mode=SOFT`: 테스트와 연관된 엔티티를 논리 삭제합니다.
+  - soft delete 대상: `test`, `question`, `answer`, `participation`, `report`
+  - 유지 대상: `test_like`, `payment`, `promotion_reward`, `test_category`
+
+- `mode=HARD`: 테스트와 연관된 엔티티를 모두 영구 삭제합니다. **요청 시, X-MATE-Hard-Delete-Key 헤더에 비밀키를 입력해주세요.**
+  - hard delete 대상: `test`, `question`, `answer`, `participation`, `report`,
+      `test_like`, `test_category`, `payment`, `promotion_reward`,
+      `objective`, `objective_option`, `subjective`, `ab_test`, `scale`, `card_sorting`,
+      `five_second`, `five_second_option`, `tree_test`
+  - 또한, 테스트/질문에 사용된 이미지 파일도 blob storage에서 함께 영구 삭제됩니다.
+
+ * @summary 🔐️ 테스트 삭제
+ */
+export const deleteTest = async (testId: number,
+    params: DeleteTestParams, options?: RequestInit): Promise<deleteTestResponse> => {
+
+  return kyMutator<deleteTestResponse>(getDeleteTestUrl(testId,params),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteTestQueryKey = (testId: number,
+    params?: DeleteTestParams,) => {
+    return [
+    'DELETE', `/api/v1/tests/${testId}`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getDeleteTestQueryOptions = <TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(testId: number,
+    params: DeleteTestParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteTestQueryKey(testId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteTest>>> = ({ signal }) => deleteTest(testId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteTestQueryResult = NonNullable<Awaited<ReturnType<typeof deleteTest>>>
+export type DeleteTestQueryError = ErrorType<unknown>
+
+
+export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
+ testId: number,
+    params: DeleteTestParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteTest>>,
+          TError,
+          Awaited<ReturnType<typeof deleteTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
+ testId: number,
+    params: DeleteTestParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteTest>>,
+          TError,
+          Awaited<ReturnType<typeof deleteTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
+ testId: number,
+    params: DeleteTestParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 🔐️ 테스트 삭제
+ */
+
+export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
+ testId: number,
+    params: DeleteTestParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteTestQueryOptions(testId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 
 export type listMyTestsResponse200 = {
   data: ApiResponseMyTestSummaryResponse
