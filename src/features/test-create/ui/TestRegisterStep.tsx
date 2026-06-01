@@ -92,7 +92,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
             />
             <div
               style={{
-                backgroundColor: "var(--adaptiveCardBgGrey)",
+                backgroundColor: "#00173305",
                 borderRadius: 16,
                 margin: "0 20px",
                 overflow: "hidden",
