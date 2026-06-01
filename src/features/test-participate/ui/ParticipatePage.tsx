@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Asset, CTAButton, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
+import { Asset, CTAButton, ConfirmDialog, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { graniteEvent } from "@apps-in-toss/web-framework";
 import { useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
@@ -60,6 +61,30 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   const queryClient = useQueryClient();
   const { mutate: submitAnswers } = useSubmitAnswersMutation();
   const [submitted, setSubmitted] = useState(false);
+  const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const exitUnsubscribeRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (submitted) return;
+    try {
+      const unsubscribe = graniteEvent.addEventListener("backEvent", {
+        onEvent: () => {
+          setIsExitDialogOpen(true);
+        },
+        onError: (error) => {
+          console.error("backEvent error", error);
+        },
+      });
+      exitUnsubscribeRef.current = unsubscribe;
+      return () => {
+        unsubscribe();
+        exitUnsubscribeRef.current = null;
+      };
+    } catch {
+      console.warn("backEvent listener not supported in browser");
+      return () => {};
+    }
+  }, [submitted]);
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
@@ -153,6 +178,24 @@ function ParticipateFunnelContent({ test, testId }: FunnelProps) {
           }
         />
       )}
+
+      <ConfirmDialog
+        open={isExitDialogOpen}
+        title="테스트를 그만둘까요?"
+        description="지금 나가면 리워드를 못 받아요"
+        cancelButton={
+          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
+            닫기
+          </ConfirmDialog.CancelButton>
+        }
+        confirmButton={
+          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={() => navigate({ to: ROUTES.DISCOVERY })}>
+            나가기
+          </ConfirmDialog.ConfirmButton>
+        }
+        onClose={() => setIsExitDialogOpen(false)}
+        closeOnBackEvent={false}
+      />
     </div>
   );
 }
