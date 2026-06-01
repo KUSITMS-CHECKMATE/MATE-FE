@@ -35,3 +35,5 @@ mate.ait
 .tanstack/
 test-results/
 playwright-report/
+
+pdf-server/fonts/
