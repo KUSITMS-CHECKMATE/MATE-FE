@@ -1,7 +1,6 @@
 import { saveBase64Data } from '@apps-in-toss/web-framework';
 import { useState } from 'react';
-import { client } from '@/shared/api/client';
-import { getDownloadPdfReportUrl } from '@/shared/api/generated/report';
+import { downloadPdfReport } from '@/shared/api/generated/report';
 
 export function usePdfDownload(testId: string) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -9,8 +8,10 @@ export function usePdfDownload(testId: string) {
   async function generate() {
     setIsGenerating(true);
     try {
-      const url = getDownloadPdfReportUrl(Number(testId)).replace(/^\//, '');
-      const buffer = await client.get(url).arrayBuffer();
+      const res = await downloadPdfReport(Number(testId));
+      const downloadUrl = (res as { data: { data: string } }).data.data;
+
+      const buffer = await fetch(downloadUrl).then((r) => r.arrayBuffer());
 
       const uint8 = new Uint8Array(buffer);
       let binary = '';
