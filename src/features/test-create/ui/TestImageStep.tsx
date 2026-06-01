@@ -320,6 +320,14 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
             </div>
           </SortableContext>
 
+          {imageUris.length >= 2 && (
+            <div className="px-5 pt-2">
+              <Text color="#4365cc" typography="t6" fontWeight="regular">
+                사진을 꾹 눌러 순서를 바꿀 수 있어요
+              </Text>
+            </div>
+          )}
+
           <DragOverlay modifiers={[restrictToHorizontalAxis]} dropAnimation={null}>
             {activeUri !== null ? (
               <div
