@@ -1,9 +1,29 @@
 import { useState, useEffect, useRef } from "react";
 import { Top, Asset, Text, Badge, BottomSheet, ListRow, Checkbox } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
-import { DndContext, DragOverlay, TouchSensor, useSensor, useSensors, closestCenter, type DragStartEvent, type DragEndEvent, type Modifier } from "@dnd-kit/core";
-import { SortableContext, useSortable, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  openCamera,
+  fetchAlbumPhotos,
+  OpenCameraPermissionError,
+  FetchAlbumPhotosPermissionError,
+} from "@apps-in-toss/web-framework";
+import {
+  DndContext,
+  DragOverlay,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragStartEvent,
+  type DragEndEvent,
+  type Modifier,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
@@ -14,8 +34,7 @@ const PREVIEW_SURFACE = "var(--token-tds-color-white, var(--adaptiveBackground, 
 
 const restrictToHorizontalAxis: Modifier = ({ transform }) => ({ ...transform, y: 0 });
 
-const getImageSortableIds = (uris: string[]) =>
-  uris.map((_, index) => `image-${index}`);
+const getImageSortableIds = (uris: string[]) => uris.map((_, index) => `image-${index}`);
 
 interface TestImageStepProps {
   onHasImagesChange?: (hasImages: boolean) => void;
@@ -31,7 +50,9 @@ interface SortableImageItemProps {
 }
 
 function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImageItemProps) {
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id });
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+    id,
+  });
 
   return (
     <div
@@ -119,7 +140,10 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
   );
 }
 
-export function TestImageStep({ onHasImagesChange, title = "테스트를 나타낼 수 있는 이미지를 첨부해주세요" }: TestImageStepProps) {
+export function TestImageStep({
+  onHasImagesChange,
+  title = "테스트를 나타낼 수 있는 이미지를 첨부해주세요",
+}: TestImageStepProps) {
   const form = useTestCreateForm();
   const imageUris = form.images;
   const imageListRef = useRef<HTMLDivElement | null>(null);
@@ -130,7 +154,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
   const sensors = useSensors(
     useSensor(TouchSensor, {
       activationConstraint: { delay: 500, tolerance: 8 },
-    })
+    }),
   );
 
   useEffect(() => {
@@ -201,7 +225,11 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
     try {
       const remaining = MAX_IMAGES - imageUris.length;
       if (remaining <= 0) return;
-      const response = await fetchAlbumPhotos({ base64: true, maxWidth: 1280, maxCount: remaining });
+      const response = await fetchAlbumPhotos({
+        base64: true,
+        maxWidth: 1280,
+        maxCount: remaining,
+      });
       addImages(response.map((img) => `data:image/jpeg;base64,${img.dataUri}`));
     } catch (error) {
       if (error instanceof FetchAlbumPhotosPermissionError) {
@@ -253,7 +281,7 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
             </Top.TitleParagraph>
           }
           subtitleBottom={
-            <Top.SubtitleParagraph size={15} color={adaptive.blue500}>
+            <Top.SubtitleParagraph size={15} color={adaptive.grey600}>
               16:9 비율이 최적이에요.
             </Top.SubtitleParagraph>
           }
@@ -269,14 +297,18 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
           onDragCancel={handleDragCancel}
         >
           <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
-            <div ref={imageListRef} className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide">
+            <div
+              ref={imageListRef}
+              className="px-5 flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide"
+            >
               {imageUris.length < MAX_IMAGES && (
                 <button
                   type="button"
                   style={{
                     width: 88,
                     height: 88,
-                    backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
+                    backgroundColor:
+                      "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
                     borderRadius: 16,
                     padding: 16,
                     display: "flex",
@@ -362,12 +394,19 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
       <BottomSheet
         header={<BottomSheet.Header>이미지 미리보기</BottomSheet.Header>}
         headerDescription={
-          <BottomSheet.HeaderDescription>테스트 상세 화면에 이렇게 보여요</BottomSheet.HeaderDescription>
+          <BottomSheet.HeaderDescription>
+            테스트 상세 화면에 이렇게 보여요
+          </BottomSheet.HeaderDescription>
         }
         open={previewIndex !== null}
         onClose={() => setPreviewIndex(null)}
         cta={
-          <BottomSheet.CTA color="dark" variant="weak" disabled={false} onClick={() => setPreviewIndex(null)}>
+          <BottomSheet.CTA
+            color="dark"
+            variant="weak"
+            disabled={false}
+            onClick={() => setPreviewIndex(null)}
+          >
             닫기
           </BottomSheet.CTA>
         }
@@ -398,7 +437,13 @@ export function TestImageStep({ onHasImagesChange, title = "테스트를 나타�
                   <img
                     src={previewUri}
                     alt=""
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
               </div>
