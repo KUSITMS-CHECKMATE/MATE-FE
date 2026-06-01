@@ -2,7 +2,7 @@ import { saveBase64Data } from '@apps-in-toss/web-framework';
 import { useState } from 'react';
 import { downloadPdfReport } from '@/shared/api/generated/report';
 
-export function usePdfDownload(testId: string) {
+export function usePdfDownload(testId: string, title: string) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   async function generate() {
@@ -18,9 +18,12 @@ export function usePdfDownload(testId: string) {
       uint8.forEach((b) => { binary += String.fromCharCode(b); });
       const base64 = btoa(binary);
 
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const safeName = title.replace(/[\\/:*?"<>|]/g, '_');
+
       await saveBase64Data({
         data: base64,
-        fileName: `MATE_통계보고서_${testId}.pdf`,
+        fileName: `${date}_${safeName}.pdf`,
         mimeType: 'application/pdf',
       });
     } catch (e) {
