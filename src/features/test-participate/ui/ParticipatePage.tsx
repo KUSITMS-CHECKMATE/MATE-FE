@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Asset, CTAButton, ConfirmDialog, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
+import { Asset, CTAButton, FixedBottomCTA, ProgressBar, Spacing, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { graniteEvent } from "@apps-in-toss/web-framework";
 import { useParticipateFunnel } from "../model";
 import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
@@ -15,10 +14,9 @@ import type { ParticipateTest } from "../model/types";
 
 interface Props {
   testId: number;
-  reward?: number;
 }
 
-export function ParticipatePage({ testId, reward }: Props) {
+export function ParticipatePage({ testId }: Props) {
   const { data, isLoading, isError, error } = useParticipateTestQuery(testId);
 
   if (isLoading) {
@@ -49,44 +47,19 @@ export function ParticipatePage({ testId, reward }: Props) {
     );
   }
 
-  return <ParticipateFunnelContent test={data.test} testId={testId} reward={reward} />;
+  return <ParticipateFunnelContent test={data.test} testId={testId} />;
 }
 
 interface FunnelProps {
   test: ParticipateTest;
   testId: number;
-  reward?: number;
 }
 
-function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
+function ParticipateFunnelContent({ test, testId }: FunnelProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { mutate: submitAnswers, isPending: isSubmitting } = useSubmitAnswersMutation();
+  const { mutate: submitAnswers } = useSubmitAnswersMutation();
   const [submitted, setSubmitted] = useState(false);
-  const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
-  const exitUnsubscribeRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    if (submitted) return;
-    try {
-      const unsubscribe = graniteEvent.addEventListener("backEvent", {
-        onEvent: () => {
-          setIsExitDialogOpen(true);
-        },
-        onError: (error) => {
-          console.error("backEvent error", error);
-        },
-      });
-      exitUnsubscribeRef.current = unsubscribe;
-      return () => {
-        unsubscribe();
-        exitUnsubscribeRef.current = null;
-      };
-    } catch {
-      console.warn("backEvent listener not supported in browser");
-      return () => {};
-    }
-  }, [submitted]);
 
   const funnel = useParticipateFunnel(test.questions, (answers) => {
     const body = mapAnswersToApiRequest(test.questions, answers);
@@ -128,7 +101,7 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
           fontWeight="regular"
           textAlign="center"
         >
-          {reward != null ? `적립 예정 보상 ${reward.toLocaleString()}원` : "적립 예정 보상이 지급돼요."}{"\n"}보상은 24시간 이내 지급돼요.
+          적립 예정 보상 500원{"\n"}보상은 24시간 이내 지급돼요.
         </Text>
         <FixedBottomCTA onClick={() => navigate({ to: ROUTES.DISCOVERY })}>
           확인
@@ -163,41 +136,23 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
           {"다음"}
         </FixedBottomCTA>
       ) : isFirst && isLast ? (
-        <FixedBottomCTA disabled={!canGoNext || isSubmitting} onClick={goNext}>
-          {isSubmitting ? "제출 중" : "완료하기"}
+        <FixedBottomCTA disabled={!canGoNext} onClick={goNext}>
+          {"완료하기"}
         </FixedBottomCTA>
       ) : (
         <FixedBottomCTA.Double
           leftButton={
-            <CTAButton color="dark" variant="weak" onClick={goPrev} disabled={isSubmitting}>
+            <CTAButton color="dark" variant="weak" onClick={goPrev}>
               이전
             </CTAButton>
           }
           rightButton={
-            <CTAButton disabled={!canGoNext || isSubmitting} onClick={goNext}>
-              {isLast ? (isSubmitting ? "제출 중" : "완료하기") : "다음"}
+            <CTAButton disabled={!canGoNext} onClick={goNext}>
+              {isLast ? "완료하기" : "다음"}
             </CTAButton>
           }
         />
       )}
-
-      <ConfirmDialog
-        open={isExitDialogOpen}
-        title="테스트를 그만둘까요?"
-        description="지금 나가면 리워드를 못 받아요"
-        cancelButton={
-          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
-            닫기
-          </ConfirmDialog.CancelButton>
-        }
-        confirmButton={
-          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={() => navigate({ to: ROUTES.DISCOVERY })}>
-            나가기
-          </ConfirmDialog.ConfirmButton>
-        }
-        onClose={() => setIsExitDialogOpen(false)}
-        closeOnBackEvent={false}
-      />
     </div>
   );
 }

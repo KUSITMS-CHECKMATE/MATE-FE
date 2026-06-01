@@ -21,14 +21,10 @@ export function isAnswerValid(
     }
     case "OBJECTIVE": {
       const a = answer as Extract<Answer, { type: "OBJECTIVE" }>;
-      const otherChoice = question.data.choices.find((c) => c.name === "기타 (직접 입력)");
-      const isOtherSelected = !!otherChoice && a.selectedIds.includes(otherChoice.id);
-
-      // "기타"가 선택됐는데 텍스트가 비어있으면 무효
-      if (isOtherSelected && (a.otherText ?? "").trim().length === 0) {
-        return false;
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.otherText ?? "").trim().length > 0) {
+        return true;
       }
-
       const n = a.selectedIds.length;
 
       if (!question.data.isMultiSelectEnabled) {
@@ -53,14 +49,10 @@ export function isAnswerValid(
       if (question.data.answerType === "subjective") {
         return (a.text ?? "").trim().length > 0;
       }
-      const otherChoice = question.data.choices.find((c) => c.name === "기타 (직접 입력)");
-      const isOtherSelected = !!otherChoice && a.selectedIds.includes(otherChoice.id);
-
-      // "기타"가 선택됐는데 텍스트가 비어있으면 무효
-      if (isOtherSelected && (a.text ?? "").trim().length === 0) {
-        return false;
+      const hasOtherChoice = question.data.choices.some((c) => c.name === "기타 (직접 입력)");
+      if (hasOtherChoice && (a.text ?? "").trim().length > 0) {
+        return true;
       }
-
       const n = a.selectedIds.length;
 
       if (!question.data.isMultiSelectEnabled) {

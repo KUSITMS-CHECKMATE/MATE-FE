@@ -25,9 +25,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const [questionTitle, setQuestionTitle] = useState(existingScale?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(existingScale?.description ?? "");
   const [questionImageUrl, setQuestionImageUrl] = useState(existingScale?.imageUrl ?? "");
-  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
-    (existingScale?.title ?? "").trim().length > 0,
-  );
+  const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState((existingScale?.title ?? "").trim().length > 0);
   const [scaleCount, setScaleCount] = useState<5 | 7>(existingScale?.scaleCount ?? 5);
   const [minLabel, setMinLabel] = useState(existingScale?.minLabel ?? "전혀 아니다");
   const [maxLabel, setMaxLabel] = useState(existingScale?.maxLabel ?? "매우 그렇다");
@@ -35,10 +33,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SCALE"; value: number | null }>({
-    type: "SCALE",
-    value: null,
-  });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SCALE"; value: number | null }>({ type: "SCALE", value: null });
 
   const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
     useQuestionImageUpload(setQuestionImageUrl);
@@ -108,18 +103,8 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
                   }}
                 >
                   <div className="flex h-full w-full flex-col items-end justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setQuestionImageUrl("")}
-                      aria-label="이미지 삭제"
-                    >
-                      <Asset.Icon
-                        frameShape={Asset.frameShape.CircleXSmall}
-                        backgroundColor={adaptive.greyOpacity600}
-                        name="icon-sweetshop-x-white"
-                        scale={0.66}
-                        aria-hidden
-                      />
+                    <button type="button" onClick={() => setQuestionImageUrl("")} aria-label="이미지 삭제">
+                      <Asset.Icon frameShape={Asset.frameShape.CircleXSmall} backgroundColor={adaptive.greyOpacity600} name="icon-sweetshop-x-white" scale={0.66} aria-hidden />
                     </button>
                   </div>
                 </div>
@@ -194,7 +179,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>

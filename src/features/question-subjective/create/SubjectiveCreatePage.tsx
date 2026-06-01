@@ -21,13 +21,21 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingSubjective = existing?.typeId === "SUBJECTIVE" ? existing : null;
 
-  const [questionTitle, setQuestionTitle] = useState(existingSubjective?.title ?? "");
+  const [questionTitle, setQuestionTitle] = useState(
+    existingSubjective?.title ?? "",
+  );
   const [questionDescription, setQuestionDescription] = useState(
     existingSubjective?.description ?? "",
   );
-  const [questionImageUrl, setQuestionImageUrl] = useState(existingSubjective?.imageUrl ?? "");
-  const [placeholder] = useState(existingSubjective?.placeholder ?? "");
-  const [maxLength] = useState<number | null>(existingSubjective?.maxLength ?? null);
+  const [questionImageUrl, setQuestionImageUrl] = useState(
+    existingSubjective?.imageUrl ?? "",
+  );
+  const [placeholder] = useState(
+    existingSubjective?.placeholder ?? "",
+  );
+  const [maxLength] = useState<number | null>(
+    existingSubjective?.maxLength ?? null,
+  );
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
     (existingSubjective?.title ?? "").trim().length > 0,
   );
@@ -36,10 +44,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SUBJECTIVE"; text: string }>({
-    type: "SUBJECTIVE",
-    text: "",
-  });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "SUBJECTIVE"; text: string }>({ type: "SUBJECTIVE", text: "" });
 
   return (
     <motion.div
@@ -156,7 +161,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>

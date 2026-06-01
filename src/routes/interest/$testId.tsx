@@ -77,7 +77,7 @@ function InterestTestDetailPage() {
         ) : (
           <BottomCTA.Single
             onClick={() =>
-              navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } })
+              navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId } })
             }
           >
             테스트 참여하기

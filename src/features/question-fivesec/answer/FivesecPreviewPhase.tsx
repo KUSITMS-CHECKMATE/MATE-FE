@@ -1,17 +1,15 @@
 import { motion } from "framer-motion";
 import { adaptive } from "@toss/tds-colors";
-import { FixedBottomCTA, Text } from "@toss/tds-mobile";
+import { Text } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface Props {
   ratio: AbRatio;
   onStart: () => void;
-  onPrev?: () => void;
-  prevLabel?: string;
 }
 
-export function FivesecPreviewPhase({ ratio, onStart, onPrev, prevLabel = "돌아가기" }: Props) {
+export function FivesecPreviewPhase({ ratio, onStart }: Props) {
   return (
     <div className="flex flex-col flex-1 bg-white">
       <QuestionHeader categoryLabel="5초 테스트" title={`5초간\n아래 사진에 집중해주세요`} />
@@ -40,13 +38,7 @@ export function FivesecPreviewPhase({ ratio, onStart, onPrev, prevLabel = "돌�
           </Text>
         </motion.div>
       </div>
-      {onPrev ? (
-        <FixedBottomCTA color="dark" variant="weak" onClick={onPrev}>
-          {prevLabel}
-        </FixedBottomCTA>
-      ) : (
-        <div className="h-18 shrink-0" aria-hidden={true} />
-      )}
+      <div className="h-18 shrink-0" aria-hidden={true} />
     </div>
   );
 }
