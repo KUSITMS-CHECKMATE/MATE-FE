@@ -18,6 +18,20 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'GET' && url.pathname.startsWith('/fonts/')) {
+    const fontFile = path.basename(url.pathname);
+    const fontPath = path.resolve(__dirname, 'fonts', fontFile);
+    try {
+      const data = fs.readFileSync(fontPath);
+      res.writeHead(200, { 'Content-Type': 'font/woff2' });
+      res.end(data);
+    } catch {
+      res.writeHead(404);
+      res.end('Font not found');
+    }
+    return;
+  }
+
   // stats-report.html을 HTTP로 서빙 (file:// 대신 http:// 사용해야 쿼리 파라미터가 정상 동작)
   if (req.method === 'GET' && url.pathname === '/stats-report.html') {
     try {
