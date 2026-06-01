@@ -23,6 +23,8 @@ import { useCsvDownload } from "../model/useCsvDownload";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
+import { useQuery } from "@tanstack/react-query";
+import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 
 interface Props {
   testId: string;
@@ -55,8 +57,14 @@ export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
-  const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId);
-  const { generate: generateCsv, isGenerating: isCsvGenerating } = useCsvDownload(testId);
+  const { data: testDetailData } = useQuery({
+    queryKey: [getGetTestUrl(Number(testId))],
+    queryFn: () => getTest(Number(testId)),
+  });
+  const testTitle = (testDetailData?.data?.data as { title?: string } | undefined)?.title ?? testId;
+
+  const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId, testTitle);
+  const { generate: generateCsv, isGenerating: isCsvGenerating } = useCsvDownload(testId, testTitle);
   const isGenerating = isPdfGenerating || isCsvGenerating;
   const selectedQuestionIdRef = useRef(selectedQuestionId);
   useEffect(() => {
