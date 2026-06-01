@@ -392,13 +392,16 @@ body {
 
   // ─── 주관식 ───────────────────────────────────────────────────────
   function renderSubjective(result) {
+    const hasAiSummary = result.aiSummary != null && result.aiSummary !== '';
     const items = (result.clusters ?? []).flatMap(c => c.responses ?? [])
                     .concat(result.texts ?? []).slice(0, 7);
-    return `
+    const aiSection = hasAiSummary ? `
       <div class="ai-head"><span class="ai-icon">✦</span> AI 요약</div>
       <div class="ai-sub">모든 응답을 보고 싶다면 엑셀 파일로 확인해주세요.</div>
-      <div class="ai-box">${esc(result.aiSummary ?? '')}</div>
-      <div class="sj-head">주요 응답 유형</div>
+      <div class="ai-box">${esc(result.aiSummary)}</div>` : '';
+    return `
+      ${aiSection}
+      <div class="sj-head">${hasAiSummary ? '주요 응답 유형' : '응답 모음'}</div>
       <div class="sj-sub">많이 나온 의견들로 정리했어요.</div>
       <div class="sj-list">${items.map(t => `<div class="sj-item">${esc(t)}</div>`).join('')}</div>`;
   }
