@@ -50,7 +50,7 @@ function TestDetailPage() {
         <BottomCTA.Single
           disabled={isWaiting}
           onClick={() =>
-            navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId } })
+            navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } })
           }
         >
           {isWaiting ? "검토중인 테스트예요" : "테스트 참여하기"}
