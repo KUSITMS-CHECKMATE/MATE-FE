@@ -16,6 +16,7 @@ RUN mkdir -p /app/fonts && \
 # 서버 파일 및 HTML 템플릿 복사 (같은 폴더에 위치)
 COPY server.mjs ./
 COPY stats-report.html ./
+COPY img/ ./img/
 
 EXPOSE 3001
 
