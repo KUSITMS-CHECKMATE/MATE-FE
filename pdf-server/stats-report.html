@@ -612,7 +612,7 @@ body {
   }
 
   // ─── 파이 차트 (OBJECTIVE 중복허용) ──────────────────────────────
-  const PIE_COLORS = ['#4265cc','#5e9cf8','#47b39c','#ffc542','#f04452','#8b5cf6','#06b6d4','#f97316'];
+  const PIE_COLORS = ['#1A7AF9', '#F04452', '#FFC342', '#03B26C', '#A234C7'];
 
   function renderObjectivePie(options) {
     const total = options.reduce((s, o) => s + o.count, 0) || 1;
@@ -903,7 +903,7 @@ body {
             직접 입력 답변은 다음장에 있어요
           </div>
         </div>` : '';
-      const chartHtml = (item.result.isDuplicate ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice;
+      const chartHtml = (opts.length <= 5 ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice;
       pages.push({ typeLabel, title: item.title, bodyHtml: chartHtml });
       if (hasOther) {
         const otherResult = {
@@ -928,7 +928,7 @@ body {
               직접 입력 답변은 다음장에 있어요
             </div>
           </div>` : '';
-        const chartHtml5 = (item.result.isDuplicate ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice5;
+        const chartHtml5 = (opts.length <= 5 ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice5;
         pages.push({ typeLabel, title: item.title, bodyHtml: chartHtml5 });
         if (hasOther5) {
           const otherResult5 = {
@@ -952,7 +952,7 @@ body {
       });
     } else if (item.type === 'TREE_TEST') {
       const opts = (item.result.nodeFrequency ?? []).map(n => ({ label: n.label, count: n.count, ratio: Math.round(n.ratio * 100) }));
-      pages.push({ typeLabel, title: item.title, bodyHtml: renderHBar(opts) });
+      pages.push({ typeLabel, title: item.title, bodyHtml: opts.length <= 5 ? renderObjectivePie(opts) : renderHBar(opts) });
     }
   });
 
