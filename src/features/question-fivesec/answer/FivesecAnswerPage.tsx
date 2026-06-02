@@ -77,7 +77,14 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   if (phase === "preview") {
-    return <FivesecPreviewPhase ratio={ratio ?? "9:16"} onStart={startCountdown} />;
+    return (
+      <FivesecPreviewPhase
+        ratio={ratio ?? "9:16"}
+        onStart={startCountdown}
+        onPrev={isPreview ? onPrev : undefined}
+        prevLabel={prevLabel}
+      />
+    );
   }
 
   if (phase === "countdown") {
