@@ -227,9 +227,6 @@ const server = http.createServer(async (req, res) => {
 
       console.log('[pdf-server] /generate 요청 수신', { testId, title: title || '(없음)' });
 
-      const params = new URLSearchParams({ testId, ...(title ? { title } : {}) });
-      const HTML_URL = `http://localhost:${PORT}/stats-report.html?${params.toString()}`;
-
       const reportUrl = `${MATE_API_BASE_URL}/api/v1/tests/${testId}/report`;
       console.log(`[pdf-server] API 호출: ${reportUrl}`);
       const apiRes = await fetch(reportUrl, {
@@ -243,6 +240,12 @@ const server = http.createServer(async (req, res) => {
       }
       const reportJson = await apiRes.json();
       console.log('[pdf-server] API 응답 data.reports 개수:', reportJson?.data?.reports?.length ?? 0);
+
+      const resolvedTitle = title || reportJson?.data?.title || '';
+      console.log('[pdf-server] 사용할 title:', resolvedTitle || '(없음)');
+
+      const params = new URLSearchParams({ testId, ...(resolvedTitle ? { title: resolvedTitle } : {}) });
+      const HTML_URL = `http://localhost:${PORT}/stats-report.html?${params.toString()}`;
 
       console.log(`Generating PDF for testId=${testId}...`);
       const browser = await chromium.launch({ headless: true });
