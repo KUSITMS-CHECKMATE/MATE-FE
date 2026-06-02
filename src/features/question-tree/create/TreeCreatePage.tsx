@@ -10,7 +10,6 @@ import { useTestCreateForm } from "@/features/test-create/model/useTestCreateFor
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 
-
 interface TreeCreatePageProps {
   questionId: string;
   onClose: () => void;
@@ -25,33 +24,27 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingTree = existing?.typeId === "TREE_TEST" ? existing : null;
 
-  const [questionTitle, setQuestionTitle] = useState(
-    existingTree?.title ?? "",
-  );
-  const [questionDescription, setQuestionDescription] = useState(
-    existingTree?.description ?? "",
-  );
+  const [questionTitle, setQuestionTitle] = useState(existingTree?.title ?? "");
+  const [questionDescription, setQuestionDescription] = useState(existingTree?.description ?? "");
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
     (existingTree?.title ?? "").trim().length > 0,
   );
-  const [nodes, setNodes] = useState<TreeNodeItem[]>(
-    existingTree?.nodes ?? [],
-  );
+  const [nodes, setNodes] = useState<TreeNodeItem[]>(existingTree?.nodes ?? []);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
   const [nodeSheetMode, setNodeSheetMode] = useState<NodeSheetMode | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "TREE_TEST"; selectedNodeId: string | null }>({ type: "TREE_TEST", selectedNodeId: null });
+  const [previewAnswer, setPreviewAnswer] = useState<{
+    type: "TREE_TEST";
+    selectedNodeId: string | null;
+  }>({ type: "TREE_TEST", selectedNodeId: null });
 
   const isCompleteDisabled =
     questionTitle.trim().length === 0 ||
     nodes.length === 0 ||
     nodes.some((node) => node.children.length === 0);
 
-  const findNode = (
-    list: TreeNodeItem[],
-    nodeId: string,
-  ): TreeNodeItem | null => {
+  const findNode = (list: TreeNodeItem[], nodeId: string): TreeNodeItem | null => {
     for (const node of list) {
       if (node.id === nodeId) return node;
       const found = findNode(node.children, nodeId);
@@ -60,21 +53,14 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
     return null;
   };
 
-  const renameNode = (
-    list: TreeNodeItem[],
-    nodeId: string,
-    name: string,
-  ): TreeNodeItem[] =>
+  const renameNode = (list: TreeNodeItem[], nodeId: string, name: string): TreeNodeItem[] =>
     list.map((node) =>
       node.id === nodeId
         ? { ...node, name }
         : { ...node, children: renameNode(node.children, nodeId, name) },
     );
 
-  const deleteNode = (
-    list: TreeNodeItem[],
-    nodeId: string,
-  ): TreeNodeItem[] =>
+  const deleteNode = (list: TreeNodeItem[], nodeId: string): TreeNodeItem[] =>
     list
       .filter((node) => node.id !== nodeId)
       .map((node) => ({ ...node, children: deleteNode(node.children, nodeId) }));
@@ -119,10 +105,8 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
     setNodes((prev) => appendChild(prev, parentId, createNode(newName)));
   };
 
-  const sheetTitle =
-    nodeSheetMode?.kind === "rename" ? "기능 이름 수정" : "기능 추가하기";
-  const sheetInitialName =
-    nodeSheetMode?.kind === "rename" ? nodeSheetMode.initialName : "";
+  const sheetTitle = nodeSheetMode?.kind === "rename" ? "기능 이름 수정" : "기능 추가하기";
+  const sheetInitialName = nodeSheetMode?.kind === "rename" ? nodeSheetMode.initialName : "";
 
   return (
     <motion.div
@@ -200,14 +184,18 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>
       )}
 
       <TreeNodeAddSheet
-        key={nodeSheetMode ? `${nodeSheetMode.kind}-${'nodeId' in nodeSheetMode ? nodeSheetMode.nodeId : 'root'}` : 'closed'}
+        key={
+          nodeSheetMode
+            ? `${nodeSheetMode.kind}-${"nodeId" in nodeSheetMode ? nodeSheetMode.nodeId : "root"}`
+            : "closed"
+        }
         open={nodeSheetMode !== null}
         title={sheetTitle}
         initialName={sheetInitialName}

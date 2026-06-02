@@ -25,15 +25,22 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
   const existingCardSort = existing?.typeId === "CARD_SORTING" ? existing : null;
 
   const [questionTitle, setQuestionTitle] = useState(existingCardSort?.title ?? "");
-  const [questionDescription, setQuestionDescription] = useState(existingCardSort?.description ?? "");
+  const [questionDescription, setQuestionDescription] = useState(
+    existingCardSort?.description ?? "",
+  );
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
     (existingCardSort?.title ?? "").trim().length > 0,
   );
-  const [categories, setCategories] = useState<CardSortCategory[]>(existingCardSort?.categories ?? []);
+  const [categories, setCategories] = useState<CardSortCategory[]>(
+    existingCardSort?.categories ?? [],
+  );
   const [cards, setCards] = useState<CardSortCard[]>(existingCardSort?.cards ?? []);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "CARD_SORTING"; placements: Record<string, string> }>({ type: "CARD_SORTING", placements: {} });
+  const [previewAnswer, setPreviewAnswer] = useState<{
+    type: "CARD_SORTING";
+    placements: Record<string, string>;
+  }>({ type: "CARD_SORTING", placements: {} });
 
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
@@ -58,9 +65,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
 
   const handleConfirmCategory = (label: string) => {
     if (editingCategoryId) {
-      setCategories((prev) =>
-        prev.map((c) => (c.id === editingCategoryId ? { ...c, label } : c)),
-      );
+      setCategories((prev) => prev.map((c) => (c.id === editingCategoryId ? { ...c, label } : c)));
     } else {
       setCategories((prev) => [...prev, { id: generateId(), label }]);
     }
@@ -80,9 +85,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
 
   const handleConfirmCard = (label: string) => {
     if (editingCardId) {
-      setCards((prev) =>
-        prev.map((c) => (c.id === editingCardId ? { ...c, label } : c)),
-      );
+      setCards((prev) => prev.map((c) => (c.id === editingCardId ? { ...c, label } : c)));
     } else {
       setCards((prev) => [...prev, { id: generateId(), label }]);
     }
@@ -186,7 +189,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>
