@@ -20,6 +20,7 @@ import { useTestCreateForm } from "../model/useTestCreateForm";
 import { useSubmitTest } from "../model/useSubmitTest";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { ROUTES } from "@/shared/constants/routes";
+import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
 import { ScaleCreatePage } from "@/features/question-scale/create";
 import { AbCreatePage } from "@/features/question-ab/create";
@@ -55,6 +56,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const { mutate: submitTest, isPending: isSubmitting } = useSubmitTest(draftId);
   const [showGuide, setShowGuide] = useState(false);
+
+  const isOverlayOpen =
+    isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide;
+  useScrollLock(isOverlayOpen);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
 

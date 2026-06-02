@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
+import { FixedBottomCTA } from "@toss/tds-mobile";
 import { QuestionHeader } from "@/features/test-participate/ui/QuestionHeader";
 import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
 
 interface Props {
   imageUrl: string;
   ratio: AbRatio;
+  onPrev?: () => void;
+  prevLabel?: string;
 }
 
-export function FivesecCountdownPhase({ imageUrl, ratio }: Props) {
+export function FivesecCountdownPhase({ imageUrl, ratio, onPrev, prevLabel = "돌아가기" }: Props) {
   return (
     <motion.div
       className="flex flex-col flex-1 bg-white"
@@ -32,7 +35,13 @@ export function FivesecCountdownPhase({ imageUrl, ratio }: Props) {
           <img src={imageUrl} alt="5초 테스트 이미지" className="h-full w-full object-cover" />
         </div>
       </div>
-      <div className="h-18 shrink-0" aria-hidden={true} />
+      {onPrev ? (
+        <FixedBottomCTA color="dark" variant="weak" onClick={onPrev}>
+          {prevLabel}
+        </FixedBottomCTA>
+      ) : (
+        <div className="h-18 shrink-0" aria-hidden={true} />
+      )}
     </motion.div>
   );
 }

@@ -77,11 +77,25 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   if (phase === "preview") {
-    return <FivesecPreviewPhase ratio={ratio ?? "9:16"} onStart={startCountdown} />;
+    return (
+      <FivesecPreviewPhase
+        ratio={ratio ?? "9:16"}
+        onStart={startCountdown}
+        onPrev={isPreview ? onPrev : undefined}
+        prevLabel={prevLabel}
+      />
+    );
   }
 
   if (phase === "countdown") {
-    return <FivesecCountdownPhase imageUrl={imageUrl} ratio={ratio ?? "9:16"} />;
+    return (
+      <FivesecCountdownPhase
+        imageUrl={imageUrl}
+        ratio={ratio ?? "9:16"}
+        onPrev={isPreview ? onPrev : undefined}
+        prevLabel={prevLabel}
+      />
+    );
   }
 
   if (isSubjective) {
@@ -114,6 +128,7 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
       isFirst={isFirst}
       isLast={isLast}
       prevLabel={prevLabel}
+      onlyPrev={isPreview}
       otherText={answer?.text ?? ""}
       onSelect={handleSelect}
       onOtherTextChange={(text) => onChange({ type: "FIVE_SECOND", selectedIds: otherChoice ? [otherChoice.id] : [], text })}
