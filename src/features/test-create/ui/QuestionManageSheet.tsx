@@ -5,9 +5,9 @@ import {
   FixedBottomCTA,
   CTAButton,
   ListRow,
+  ListHeader,
   IconButton,
   Asset,
-  Text,
   ConfirmDialog,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
@@ -146,6 +146,7 @@ export function QuestionManageSheet({
       transition={{ duration: 0.2 }}
     >
       <Top
+        lowerGap={0}
         title={
           <Top.TitleParagraph size={22} color={adaptive.grey900}>
             질문을 삭제하거나
@@ -155,11 +156,16 @@ export function QuestionManageSheet({
         }
       />
 
-      <div className="px-6 pt-6 pb-2">
-        <Text color={adaptive.grey700} typography="t7" fontWeight="regular">
-          질문 목록
-        </Text>
-      </div>
+      <ListHeader
+        descriptionPosition="bottom"
+        rightAlignment="center"
+        titleWidthRatio={0.6}
+        title={
+          <ListHeader.TitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey600}>
+            질문 목록
+          </ListHeader.TitleParagraph>
+        }
+      />
 
       <div className="flex-1 overflow-y-auto pb-28">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
