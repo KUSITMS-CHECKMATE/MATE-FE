@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Top, Post, BottomCTA } from "@toss/tds-mobile";
+import { Top, Post, FixedBottomCTA } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { GuideAccordionItem } from "./GuideAccordionItem";
 
@@ -9,72 +9,81 @@ interface TestGuidePageProps {
 }
 
 export function TestGuidePage({ onClose }: TestGuidePageProps) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const accordionProps = (index: number) => ({
+    isOpened: openIndex === index,
+    onOpen: () => setOpenIndex(index),
+    onClose: () => setOpenIndex(null),
+  });
+
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-white"
+      className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
+      style={
+        {
+          "--adaptiveHairlineBorder": "transparent",
+          "--tHairlineBackground": "transparent",
+        } as React.CSSProperties
+      }
     >
-      <Top
-        title={
-          <Top.TitleParagraph size={22} color={adaptive.grey900}>
-            테스트는{"\n"}이렇게 진행돼요
-          </Top.TitleParagraph>
-        }
-        subtitleBottom={
-          <Top.SubtitleParagraph size={15}>
-            총 8가지의 테스트 방식이 있어요
-          </Top.SubtitleParagraph>
-        }
-        right={
-          <Top.RightAssetContent
-            content={
-              <img
-                src="https://static.toss.im/ml-product/tosst-inapp_huc9tza798q5gg3g1ln3snfr.png"
-                aria-hidden={true}
-                style={{ width: 60, height: 60, objectFit: "contain" }}
-              />
-            }
-          />
-        }
-      />
-      <div
-        className="flex-1 overflow-y-auto pb-24"
-        style={{ "--adaptiveHairlineBorder": "transparent", "--tHairlineBackground": "transparent" } as React.CSSProperties}
-      >
-        <GuideAccordionItem title="1. 객관식">
+        <Top
+          title={
+            <Top.TitleParagraph size={22} color={adaptive.grey900}>
+              테스트는{"\n"}이렇게 진행돼요
+            </Top.TitleParagraph>
+          }
+          subtitleBottom={
+            <Top.SubtitleParagraph size={15}>총 8가지의 테스트 방식이 있어요</Top.SubtitleParagraph>
+          }
+          right={
+            <Top.RightAssetContent
+              content={
+                <img
+                  src="https://static.toss.im/ml-product/tosst-inapp_huc9tza798q5gg3g1ln3snfr.png"
+                  aria-hidden={true}
+                  style={{ width: 60, height: 60, objectFit: "contain" }}
+                />
+              }
+            />
+          }
+        />
+        <GuideAccordionItem title="1. 객관식" {...accordionProps(0)}>
           <Post.H4 paddingBottom={16}>객관식 테스트 방식</Post.H4>
           <Post.Paragraph paddingBottom={8} typography="t6">
             보기 중 하나를 고르는 질문이에요.
           </Post.Paragraph>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="2. 주관식">
+        <GuideAccordionItem title="2. 주관식" {...accordionProps(1)}>
           <Post.H4 paddingBottom={16}>주관식 테스트 방식</Post.H4>
           <Post.Paragraph paddingBottom={8} typography="t6">
             자유 텍스트 입력 생각을 글로 적어 답하는 질문이에요.
           </Post.Paragraph>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="3. 척도 질문">
+        <GuideAccordionItem title="3. 척도 질문" {...accordionProps(2)}>
           <Post.Paragraph paddingBottom={8} typography="t6">
             1~5점 척도로 평가하는 질문이에요.
           </Post.Paragraph>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="4. A/B 테스트">
+        <GuideAccordionItem title="4. A/B 테스트" {...accordionProps(3)}>
           <Post.H4 paddingBottom={16}>A/B 테스트 방식</Post.H4>
           <Post.Paragraph paddingBottom={8} typography="t6">
             두 디자인 중 하나를 고르는 테스트예요.
           </Post.Paragraph>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="5. 카드 소팅">
+        <GuideAccordionItem title="5. 카드 소팅" {...accordionProps(4)}>
           <Post.H4 paddingBottom={16}>카드 소팅이란?</Post.H4>
           <Post.Paragraph paddingBottom={16} typography="t6">
-            사용자가 정보를 어떻게 분류하고 그룹화하는지 파악하는 테스트예요. 카드에 적힌 항목들을 직접 묶어보게 하면서, 사용자의 멘탈 모델을 기반으로 정보 구조(IA)를 설계할 수 있어요.
+            사용자가 정보를 어떻게 분류하고 그룹화하는지 파악하는 테스트예요. 카드에 적힌 항목들을
+            직접 묶어보게 하면서, 사용자의 멘탈 모델을 기반으로 정보 구조(IA)를 설계할 수 있어요.
           </Post.Paragraph>
           <Post.H4 paddingBottom={16}>어떻게 진행되나요?</Post.H4>
           <Post.Ol paddingBottom={16}>
@@ -91,10 +100,11 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           </Post.Ul>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="6. 트리 테스트">
+        <GuideAccordionItem title="6. 트리 테스트" {...accordionProps(5)}>
           <Post.H4 paddingBottom={16}>트리 테스트란?</Post.H4>
           <Post.Paragraph paddingBottom={16} typography="t6">
-            웹사이트나 앱의 정보 구조(IA)가 사용자에게 직관적인지 검증하는 테스트예요. 실제 디자인 없이 메뉴 계층 구조만 텍스트로 보여주고, 사용자가 특정 항목을 찾아가는 과정을 관찰해요.
+            웹사이트나 앱의 정보 구조(IA)가 사용자에게 직관적인지 검증하는 테스트예요. 실제 디자인
+            없이 메뉴 계층 구조만 텍스트로 보여주고, 사용자가 특정 항목을 찾아가는 과정을 관찰해요.
           </Post.Paragraph>
           <Post.H4 paddingBottom={16}>어떻게 진행되나요?</Post.H4>
           <Post.Ol paddingBottom={16}>
@@ -111,21 +121,22 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           </Post.Ul>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="7. 5초 테스트">
+        <GuideAccordionItem title="7. 5초 테스트" {...accordionProps(6)}>
           <Post.H4 paddingBottom={16}>5초 테스트 방식</Post.H4>
           <Post.Paragraph paddingBottom={8} typography="t6">
             5초 후 기억나는 것을 답하는 테스트예요.
           </Post.Paragraph>
         </GuideAccordionItem>
 
-        <GuideAccordionItem title="8. 히트맵/도트맵">
+        <GuideAccordionItem title="8. 히트맵/도트맵" {...accordionProps(7)}>
           <Post.H4 paddingBottom={16}>히트맵/도트맵이란?</Post.H4>
           <Post.Paragraph paddingBottom={8} typography="t6">
             화면에서 눈길 가는 곳을 표시하는 테스트예요.
           </Post.Paragraph>
         </GuideAccordionItem>
-      </div>
-      <BottomCTA.Single fixed color="dark" variant="weak" onClick={onClose}>이전으로</BottomCTA.Single>
+      <FixedBottomCTA color="dark" variant="weak" onClick={onClose}>
+        이전으로
+      </FixedBottomCTA>
     </motion.div>
   );
 }
