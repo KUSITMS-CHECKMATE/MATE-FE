@@ -15,7 +15,7 @@ const MOCK_DATA = {
     reports: [
       {
         type: 'OBJECTIVE',
-        title: '단일선택 — 가장 자주 사용하는 기능은?',
+        title: '가장 자주 사용하는 기능은?',
         result: {
           isDuplicate: false,
           options: [
@@ -27,7 +27,7 @@ const MOCK_DATA = {
       },
       {
         type: 'OBJECTIVE',
-        title: '중복허용 — 불편한 기능을 모두 선택해주세요',
+        title: '불편한 기능을 모두 선택해주세요',
         result: {
           isDuplicate: true,
           options: [
@@ -39,7 +39,7 @@ const MOCK_DATA = {
       },
       {
         type: 'OBJECTIVE',
-        title: '기타 포함 — 개선이 필요한 부분은?',
+        title: '개선이 필요한 부분은?',
         result: {
           isDuplicate: false,
           options: [
@@ -54,7 +54,7 @@ const MOCK_DATA = {
       },
       {
         type: 'FIVE_SECOND',
-        title: '5초 후 기억에 남는 요소를 선택해주세요 (단일)',
+        title: '5초 후 기억에 남는 요소를 선택해주세요',
         result: {
           isDuplicate: false,
           options: [
@@ -66,7 +66,7 @@ const MOCK_DATA = {
       },
       {
         type: 'FIVE_SECOND',
-        title: '5초 후 기억에 남는 요소를 모두 선택해주세요 (중복허용)',
+        title: '5초 후 기억에 남는 요소를 모두 선택해주세요',
         result: {
           isDuplicate: true,
           options: [
@@ -93,7 +93,7 @@ const MOCK_DATA = {
       },
       {
         type: 'FIVE_SECOND',
-        title: '5초 동안 본 화면에서 가장 먼저 떠오르는 것은? (주관식)',
+        title: '5초 동안 본 화면에서 가장 먼저 떠오르는 것은?',
         result: {
           aiSummary: '응답자들은 주로 중앙의 큰 이미지와 파란색 버튼을 가장 먼저 인식했다고 답했습니다.',
           clusters: [

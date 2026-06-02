@@ -296,6 +296,7 @@ body {
 }
 .vtbl-header .vtbl-cell-main,
 .vtbl-header .vtbl-cell { font-weight: 600; }
+.vtbl-row:has(+ .tr-total) { border-bottom: none !important; }
 
 /* ════════════════════════════════
    Pie Chart
@@ -332,7 +333,6 @@ body {
 .tbl tr.tr-total td {
   font-weight: 600;
   color: #111827;
-  border-top: 1px solid #E5E7EB;
   border-bottom: none;
 }
 
@@ -903,8 +903,10 @@ body {
             직접 입력 답변은 다음장에 있어요
           </div>
         </div>` : '';
+      const isDuplicate = item.result.isDuplicate ?? false;
+      const mainTypeLabel = isDuplicate ? '객관식 (복수 선택)' : '객관식 (단일 선택)';
       const chartHtml = (opts.length <= 5 ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice;
-      pages.push({ typeLabel, title: item.title, bodyHtml: chartHtml });
+      pages.push({ typeLabel: mainTypeLabel, title: item.title, bodyHtml: chartHtml });
       if (hasOther) {
         const otherResult = {
           aiSummary: item.result.aiSummary,
@@ -928,8 +930,10 @@ body {
               직접 입력 답변은 다음장에 있어요
             </div>
           </div>` : '';
+        const isDuplicate5 = item.result.isDuplicate ?? false;
+        const mainTypeLabel5 = isDuplicate5 ? '5초 테스트 (복수 선택)' : '5초 테스트 (단일 선택)';
         const chartHtml5 = (opts.length <= 5 ? renderObjectivePie(opts) : renderHBar(opts)) + infoNotice5;
-        pages.push({ typeLabel, title: item.title, bodyHtml: chartHtml5 });
+        pages.push({ typeLabel: mainTypeLabel5, title: item.title, bodyHtml: chartHtml5 });
         if (hasOther5) {
           const otherResult5 = {
             aiSummary: item.result.aiSummary,
