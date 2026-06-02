@@ -1,9 +1,31 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Top, FixedBottomCTA, CTAButton, ListRow, IconButton, Asset, Text, ConfirmDialog } from "@toss/tds-mobile";
+import {
+  Top,
+  FixedBottomCTA,
+  CTAButton,
+  ListRow,
+  IconButton,
+  Asset,
+  Text,
+  ConfirmDialog,
+} from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors, closestCenter, type DragEndEvent } from "@dnd-kit/core";
-import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { QUESTION_TYPES, type PendingQuestion } from "../model/types";
 
@@ -21,7 +43,9 @@ interface SortableItemProps {
 }
 
 function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) {
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id: question.id });
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+    id: question.id,
+  });
   const type = QUESTION_TYPES.find((t) => t.id === question.typeId);
   if (!type) return null;
 
@@ -39,7 +63,14 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
       <ListRow
         left={
           <div className="flex items-center gap-2">
-            <Asset.Icon frameShape={{ width: 20, height: 20 }} backgroundColor="transparent" name="icon-navigation-menu-mono" color={adaptive.grey400} aria-hidden ratio="1/1" />
+            <Asset.Icon
+              frameShape={Asset.frameShape.CleanW20}
+              backgroundColor="transparent"
+              name="icon-dots-six-vertical-mono"
+              color={adaptive.grey400}
+              aria-hidden={true}
+              ratio="1/1"
+            />
             <ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />
           </div>
         }
@@ -56,7 +87,7 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
           <div onPointerDown={(e) => e.stopPropagation()}>
             <IconButton
               src="https://static.toss.im/icons/png/4x/icon-bin-mono.png"
-              iconSize={20}
+              iconSize={24}
               variant="clear"
               color={adaptive.grey400}
               aria-label="삭제"
@@ -70,7 +101,13 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
   );
 }
 
-export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, onCancel }: QuestionManageSheetProps) {
+export function QuestionManageSheet({
+  questions,
+  onDelete,
+  onReorder,
+  onSave,
+  onCancel,
+}: QuestionManageSheetProps) {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
@@ -101,7 +138,13 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
   };
 
   return (
-    <motion.div className="fixed inset-0 z-50 flex flex-col bg-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+    <motion.div
+      className="fixed inset-0 z-50 flex flex-col bg-white"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <Top
         title={
           <Top.TitleParagraph size={22} color={adaptive.grey900}>
@@ -118,28 +161,30 @@ export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, on
         </Text>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-28">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
+          <SortableContext
+            items={questions.map((q) => q.id)}
+            strategy={verticalListSortingStrategy}
+          >
             {questions.map((q) => (
               <SortableQuestionItem key={q.id} question={q} onDeleteRequest={setPendingDeleteId} />
             ))}
           </SortableContext>
         </DndContext>
+        <FixedBottomCTA.Double
+          leftButton={
+            <CTAButton className="w-full" color="dark" variant="weak" onClick={onCancel}>
+              취소
+            </CTAButton>
+          }
+          rightButton={
+            <CTAButton className="w-full" onClick={() => setIsSaveDialogOpen(true)}>
+              저장하기
+            </CTAButton>
+          }
+        />
       </div>
-
-      <FixedBottomCTA.Double
-        leftButton={
-          <CTAButton className="w-full" color="dark" variant="weak" onClick={onCancel}>
-            취소
-          </CTAButton>
-        }
-        rightButton={
-          <CTAButton className="w-full" onClick={() => setIsSaveDialogOpen(true)}>
-            저장하기
-          </CTAButton>
-        }
-      />
 
       <ConfirmDialog
         open={pendingDeleteId !== null}
