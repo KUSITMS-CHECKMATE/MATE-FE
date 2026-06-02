@@ -1,4 +1,4 @@
-import { ListHeader, ListRow, Paragraph, Text } from "@toss/tds-mobile";
+import { ListHeader, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
 interface Props {
@@ -24,7 +24,7 @@ export function TestDetailInfo({ reward, description, serviceName, serviceDescri
             type="2RowTypeF"
             top="보상 머니"
             topProps={{ color: adaptive.grey500 }}
-            bottom={<Paragraph.Text>{reward.toLocaleString()}원</Paragraph.Text>}
+            bottom={`${reward.toLocaleString()}원`}
             bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
           />
         }
@@ -46,7 +46,7 @@ export function TestDetailInfo({ reward, description, serviceName, serviceDescri
             top="테스트 한줄 소개"
             topProps={{ color: adaptive.grey500 }}
             bottom={description}
-            bottomProps={{ color: adaptive.grey700, fontWeight: "medium" }}
+            bottomProps={{ color: adaptive.grey700, fontWeight: "semibold" }}
           />
         }
         verticalPadding="small"
@@ -63,14 +63,14 @@ export function TestDetailInfo({ reward, description, serviceName, serviceDescri
         }
         contents={
           <ListRow.Texts
-            type="2RowTypeC"
+            type="2RowTypeF"
             top="서비스 소개"
-            topProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+            topProps={{ color: adaptive.grey500 }}
             bottom="진행될 테스트의 서비스를 소개할게요"
-            bottomProps={{ color: adaptive.grey500 }}
+            bottomProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
           />
         }
-        verticalPadding="small"
+        horizontalPadding="small"
       />
 
       <ListHeader

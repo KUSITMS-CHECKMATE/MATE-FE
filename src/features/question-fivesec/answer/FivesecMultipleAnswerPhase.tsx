@@ -14,6 +14,7 @@ interface Props {
   isFirst: boolean;
   isLast: boolean;
   prevLabel?: string;
+  onlyPrev?: boolean;
   otherText?: string;
   onSelect: (id: string) => void;
   onOtherTextChange?: (text: string) => void;
@@ -31,6 +32,7 @@ export function FivesecMultipleAnswerPhase({
   isFirst,
   isLast,
   prevLabel = "이전",
+  onlyPrev,
   otherText = "",
   onSelect,
   onOtherTextChange,
@@ -142,7 +144,9 @@ export function FivesecMultipleAnswerPhase({
           </>
         )}
       </div>
-      {isOtherFieldFocused ? (
+      {onlyPrev ? (
+        <FixedBottomCTA color="dark" variant="weak" onClick={onPrev}>{prevLabel}</FixedBottomCTA>
+      ) : isOtherFieldFocused ? (
         <FixedBottomCTA onClick={handleConfirm}>확인</FixedBottomCTA>
       ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>

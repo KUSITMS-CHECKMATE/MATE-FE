@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { openCamera, fetchAlbumPhotos, OpenCameraPermissionError, FetchAlbumPhotosPermissionError } from "@apps-in-toss/web-framework";
+import {
+  openCamera,
+  fetchAlbumPhotos,
+  OpenCameraPermissionError,
+  FetchAlbumPhotosPermissionError,
+} from "@apps-in-toss/web-framework";
 import { FixedBottomCTA, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
@@ -32,7 +37,10 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
   const [imageUrlB, setImageUrlB] = useState(existingAb?.imageUrlB ?? "");
   const [activeSlot, setActiveSlot] = useState<"a" | "b" | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "AB_TEST"; selected: "A" | "B" | null }>({ type: "AB_TEST", selected: null });
+  const [previewAnswer, setPreviewAnswer] = useState<{
+    type: "AB_TEST";
+    selected: "A" | "B" | null;
+  }>({ type: "AB_TEST", selected: null });
   const [ratio, setRatio] = useState<AbRatio>(existingAb?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
 
@@ -98,7 +106,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
       {isQuestionInputCompleted && (
         <>
           <TesterPreviewListRow onClick={() => setIsPreviewOpen(true)} />
-          
+
           <ListRow
             as="button"
             className="w-full text-left"
@@ -185,7 +193,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>

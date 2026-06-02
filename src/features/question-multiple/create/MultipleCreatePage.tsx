@@ -15,10 +15,7 @@ interface MultipleCreatePageProps {
   onClose: () => void;
 }
 
-export function MultipleCreatePage({
-  questionId,
-  onClose,
-}: MultipleCreatePageProps) {
+export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingMultiple = existing?.typeId === "OBJECTIVE" ? existing : null;
@@ -29,9 +26,7 @@ export function MultipleCreatePage({
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
     existingMultiple?.isMultiSelectEnabled ?? false,
   );
-  const [questionTitle, setQuestionTitle] = useState(
-    existingMultiple?.title ?? "",
-  );
+  const [questionTitle, setQuestionTitle] = useState(existingMultiple?.title ?? "");
   const [questionDescription, setQuestionDescription] = useState(
     existingMultiple?.description ?? "",
   );
@@ -39,18 +34,15 @@ export function MultipleCreatePage({
     (existingMultiple?.title ?? "").trim().length > 0,
   );
   const [isChoiceEditorOpen, setIsChoiceEditorOpen] = useState(false);
-  const [choices, setChoices] = useState<MultipleChoiceItem[]>(
-    existingMultiple?.choices ?? [],
-  );
-  const [minSelectCount, setMinSelectCount] = useState(
-    existingMultiple?.minSelectCount ?? 1,
-  );
-  const [maxSelectCount, setMaxSelectCount] = useState(
-    existingMultiple?.maxSelectCount ?? 2,
-  );
+  const [choices, setChoices] = useState<MultipleChoiceItem[]>(existingMultiple?.choices ?? []);
+  const [minSelectCount, setMinSelectCount] = useState(existingMultiple?.minSelectCount ?? 1);
+  const [maxSelectCount, setMaxSelectCount] = useState(existingMultiple?.maxSelectCount ?? 2);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "OBJECTIVE"; selectedIds: string[] }>({ type: "OBJECTIVE", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{ type: "OBJECTIVE"; selectedIds: string[] }>({
+    type: "OBJECTIVE",
+    selectedIds: [],
+  });
 
   const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length < 2;
@@ -97,9 +89,7 @@ export function MultipleCreatePage({
               setIsMultiSelectEnabled(checked);
               if (!checked) {
                 setMinSelectCount(1);
-                setMaxSelectCount(
-                  Math.max(Math.min(2, Math.max(choices.length, 1)), 1),
-                );
+                setMaxSelectCount(Math.max(Math.min(2, Math.max(choices.length, 1)), 1));
               }
             }}
             onChangeMinSelectCount={(value) => {
@@ -153,9 +143,7 @@ export function MultipleCreatePage({
               if (editingChoice) {
                 setChoices((prev) =>
                   prev.map((c) =>
-                    c.id === editingChoice.id
-                      ? { ...c, name: choiceName, imageUrl }
-                      : c,
+                    c.id === editingChoice.id ? { ...c, name: choiceName, imageUrl } : c,
                   ),
                 );
               } else {
@@ -206,7 +194,7 @@ export function MultipleCreatePage({
             answer={previewAnswer}
             onChange={setPreviewAnswer}
           />
-          <FixedBottomCTA onClick={() => setIsPreviewOpen(false)}>
+          <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
             돌아가기
           </FixedBottomCTA>
         </motion.div>
