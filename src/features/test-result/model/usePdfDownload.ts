@@ -1,6 +1,7 @@
 import { saveBase64Data } from '@apps-in-toss/web-framework';
 import { useState } from 'react';
-import { downloadPdfReport } from '@/shared/api/generated/report';
+import { client } from '@/shared/api/client';
+import { getDownloadPdfReportUrl } from '@/shared/api/generated/report';
 
 export function usePdfDownload(testId: string, title: string) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -8,15 +9,15 @@ export function usePdfDownload(testId: string, title: string) {
   async function generate() {
     setIsGenerating(true);
     try {
-      const res = await downloadPdfReport(Number(testId));
-      const downloadUrl = (res as { data: { data: string } }).data.data;
+      const url = getDownloadPdfReportUrl(Number(testId)).replace(/^\//, '');
+      const blob = await client(url).blob();
 
-      const buffer = await fetch(downloadUrl).then((r) => r.arrayBuffer());
-
-      const uint8 = new Uint8Array(buffer);
-      let binary = '';
-      uint8.forEach((b) => { binary += String.fromCharCode(b); });
-      const base64 = btoa(binary);
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
 
       const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const safeName = title.replace(/[\\/:*?"<>|]/g, '_');

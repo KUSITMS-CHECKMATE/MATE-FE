@@ -1,6 +1,7 @@
 import { saveBase64Data } from '@apps-in-toss/web-framework';
 import { useState } from 'react';
-import { downloadExcelReport } from '@/shared/api/generated/report';
+import { client } from '@/shared/api/client';
+import { getDownloadExcelReportUrl } from '@/shared/api/generated/report';
 
 export function useCsvDownload(testId: string, title: string) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -8,10 +9,8 @@ export function useCsvDownload(testId: string, title: string) {
   async function generate() {
     setIsGenerating(true);
     try {
-      const res = await downloadExcelReport(Number(testId));
-      const downloadUrl = (res as { data: { data: string } }).data.data;
-
-      const blob = await fetch(downloadUrl).then((r) => r.blob());
+      const url = getDownloadExcelReportUrl(Number(testId)).replace(/^\//, '');
+      const blob = await client(url).blob();
 
       const base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
