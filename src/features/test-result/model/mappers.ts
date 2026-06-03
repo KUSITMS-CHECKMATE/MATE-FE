@@ -25,7 +25,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
       return {
         type: "SUBJECTIVE",
         title: item.title,
-        answers: item.result.texts,
+        answers: item.result.texts ?? [],
       };
 
     case "OBJECTIVE": {
@@ -48,7 +48,7 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
           type: "FIVE_SECOND",
           title: item.title,
           imageUrl: undefined,
-          answers: item.result.texts.map((text) => ({
+          answers: (item.result.texts ?? []).map((text) => ({
             label: text,
             count: 0,
             percentage: 0,

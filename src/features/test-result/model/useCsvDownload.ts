@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { client } from '@/shared/api/client';
 import { getDownloadExcelReportUrl } from '@/shared/api/generated/report';
 
-export function useCsvDownload(testId: string) {
+export function useCsvDownload(testId: string, title: string) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   async function generate() {
@@ -19,9 +19,12 @@ export function useCsvDownload(testId: string) {
         reader.readAsDataURL(blob);
       });
 
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const safeName = title.replace(/[\\/:*?"<>|]/g, '_');
+
       await saveBase64Data({
         data: base64,
-        fileName: `MATE_통계보고서_${testId}.xlsx`,
+        fileName: `${date}_${safeName}.xlsx`,
         mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
     } catch (e) {
