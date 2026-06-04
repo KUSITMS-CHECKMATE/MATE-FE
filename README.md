@@ -1,82 +1,134 @@
-@# React + TypeScript + Vite
+# MATE FE
 
-## MATE FE · 환경 변수 (Doppler)
+![mate](public/images/readme-banner.png)
 
-로컬/CI에서 시크릿은 **Doppler**로 주입합니다. `pnpm dev` 등은 실행할 때마다 최신 값을 가져옵니다.
+세상에 막 발을 내딛는 신규 서비스 **MAKER**와, 새로운 서비스를 가장 먼저 경험하고 싶은 **TESTER**를 이어주는 앱인토스 기반 테스트 리워드 플랫폼입니다.
 
-- **팀원 온보딩(처음 세팅):** [`docs/TEAM_ONBOARDING.md`](docs/TEAM_ONBOARDING.md)
-- **Doppler 상세:** [`docs/DOPPLER.md`](docs/DOPPLER.md)
+메이커는 진짜 유저로부터 유의미한 피드백을 얻고, 테스터는 자신의 피드백 가치를 토스 포인트로 돌려받는 선순환 구조를 지향합니다.
 
 ---
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 주요 기능
 
-Currently, two official plugins are available:
+|                           탐색                           |                      생성                      |
+| :------------------------------------------------------: | :--------------------------------------------: |
+|       ![탐색](public/images/readme-discovery.png)        |    ![생성](public/images/readme-create.png)    |
+| 참여 가능한 테스트를 탐색하고<br/>상세 정보를 확인합니다 | 7가지 질문 유형으로<br/>테스트를 직접 만듭니다 |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+|                        참여                         |                            보고서                            |
+| :-------------------------------------------------: | :----------------------------------------------------------: |
+|    ![참여](public/images/readme-participate.png)    |          ![보고서](public/images/readme-report.png)          |
+| 테스트에 응답하고<br/>토스 포인트 리워드를 받습니다 | 응답 결과를 차트로 확인하고<br/>PDF와 Excel로 다운로드합니다 |
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 기술 스택
 
-## Expanding the ESLint configuration
+### 개발
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+|                |                                                  |
+| -------------- | ------------------------------------------------ |
+| 패키지 매니저  | pnpm                                             |
+| 빌드           | Vite + React 18 + TypeScript                     |
+| 플랫폼         | 앱인토스 Granite Web Framework                   |
+| 라우팅         | TanStack Router                                  |
+| HTTP           | ky                                               |
+| 서버 상태      | TanStack Query v5                                |
+| API 코드 생성  | orval (Swagger → TanStack Query hooks 자동 생성) |
+| 전역 상태      | Zustand v5                                       |
+| 스타일         | Tailwind CSS v4 + TDS (`@toss/tds-mobile`)       |
+| 애니메이션     | Framer Motion                                    |
+| 드래그 앤 드롭 | dnd-kit                                          |
+| 차트           | Chart.js + react-chartjs-2                       |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 인프라
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+|            |                                                   |
+| ---------- | ------------------------------------------------- |
+| 환경변수   | Doppler                                           |
+| E2E 테스트 | Playwright                                        |
+| PDF 생성   | Node.js + Playwright Chromium (서버사이드 렌더링) |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 프로젝트 구조
+
+```
+src/
+├── routes/          # 페이지 라우트 (TanStack Router)
+├── features/        # 도메인별 기능
+│   ├── test-create/         # 테스트 생성 퍼널
+│   ├── test-participate/    # 테스트 참여 퍼널
+│   ├── test-result/         # 통계보고서
+│   ├── question-multiple/   # 객관식
+│   ├── question-subjective/ # 주관식
+│   ├── question-fivesec/    # 5초 테스트
+│   ├── question-scale/      # 척도
+│   ├── question-ab/         # A/B 테스트
+│   ├── question-cardsort/   # 카드 소팅
+│   └── question-tree/       # 트리 테스트
+└── shared/
+    ├── api/         # ky 인스턴스, orval 생성 코드
+    ├── ui/          # 공용 컴포넌트
+    ├── hooks/       # 공용 훅
+    └── lib/         # 유틸
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 시작하기
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> 자세한 온보딩은 [`docs/TEAM_ONBOARDING.md`](docs/TEAM_ONBOARDING.md) 를 참고하세요.
+
+### 1. 의존성 설치
+
+```bash
+pnpm install
 ```
+
+### 2. Doppler 연결 (최초 1회)
+
+```bash
+doppler login
+pnpm doppler:setup
+```
+
+### 3. 개발 서버 실행
+
+```bash
+pnpm dev          # Doppler 환경변수 포함
+pnpm dev:plain    # Doppler 없이 실행
+```
+
+---
+
+## 주요 명령어
+
+```bash
+pnpm dev             # 개발 서버
+pnpm build           # 앱인토스 빌드
+pnpm lint            # ESLint
+pnpm orval           # API 코드 재생성 (Swagger 스펙 변경 시)
+pnpm test:e2e        # E2E 테스트 (헤드리스)
+pnpm test:e2e:ui     # E2E 테스트 (UI 모드)
+pnpm pdf:server      # PDF 생성 서버 실행 (port 3001)
+```
+
+---
+
+## Git 규칙
+
+|         |                                                           |
+| ------- | --------------------------------------------------------- |
+| 브랜치  | `type/#이슈번호` (예: `feat/#12`)                         |
+| 커밋    | Conventional Commits (`feat`, `fix`, `refactor`, `chore`) |
+| PR 제목 | `[TYPE] 한 줄 요약`                                       |
+| 머지    | Squash Merge                                              |
+
+---
+
+## 문서
+
+- [`docs/TEAM_ONBOARDING.md`](docs/TEAM_ONBOARDING.md) — 로컬 환경 세팅
+- [`docs/DOPPLER.md`](docs/DOPPLER.md) — 환경변수 상세
+- [`CLAUDE.md`](CLAUDE.md) — AI 작업 규칙
