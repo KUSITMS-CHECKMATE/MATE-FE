@@ -1,6 +1,6 @@
 # MATE FE
 
-![mate](image-1.png)
+![mate](public/images/readme-banner.png)
 
 세상에 막 발을 내딛는 신규 서비스 **MAKER**와, 새로운 서비스를 가장 먼저 경험하고 싶은 **TESTER**를 이어주는 앱인토스 기반 테스트 리워드 플랫폼입니다.
 
@@ -12,12 +12,12 @@
 
 |                           탐색                           |                      생성                      |
 | :------------------------------------------------------: | :--------------------------------------------: |
-|                  ![alt text](image.png)                  |            ![alt text](image-6.png)            |
+|                  ![탐색](public/images/readme-discovery.png)                  |            ![생성](public/images/readme-create.png)            |
 | 참여 가능한 테스트를 탐색하고<br/>상세 정보를 확인합니다 | 7가지 질문 유형으로<br/>테스트를 직접 만듭니다 |
 
 |                        참여                         |                            보고서                            |
 | :-------------------------------------------------: | :----------------------------------------------------------: |
-|              ![alt text](image-3.png)               |                   ![alt text](image-2.png)                   |
+|              ![참여](public/images/readme-participate.png)               |                   ![보고서](public/images/readme-report.png)                   |
 | 테스트에 응답하고<br/>토스 포인트 리워드를 받습니다 | 응답 결과를 차트로 확인하고<br/>PDF와 Excel로 다운로드합니다 |
 
 ---
