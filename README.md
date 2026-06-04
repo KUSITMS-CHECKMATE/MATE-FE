@@ -12,12 +12,12 @@
 
 |                           탐색                           |                      생성                      |
 | :------------------------------------------------------: | :--------------------------------------------: |
-|                  ![탐색](public/images/readme-discovery.png)                  |            ![생성](public/images/readme-create.png)            |
+|       ![탐색](public/images/readme-discovery.png)        |    ![생성](public/images/readme-create.png)    |
 | 참여 가능한 테스트를 탐색하고<br/>상세 정보를 확인합니다 | 7가지 질문 유형으로<br/>테스트를 직접 만듭니다 |
 
 |                        참여                         |                            보고서                            |
 | :-------------------------------------------------: | :----------------------------------------------------------: |
-|              ![참여](public/images/readme-participate.png)               |                   ![보고서](public/images/readme-report.png)                   |
+|    ![참여](public/images/readme-participate.png)    |          ![보고서](public/images/readme-report.png)          |
 | 테스트에 응답하고<br/>토스 포인트 리워드를 받습니다 | 응답 결과를 차트로 확인하고<br/>PDF와 Excel로 다운로드합니다 |
 
 ---
