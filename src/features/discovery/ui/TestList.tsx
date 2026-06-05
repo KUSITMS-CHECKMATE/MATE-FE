@@ -7,6 +7,7 @@ import { TestCard } from "./TestCard";
 interface Props {
   tests: DiscoveryTest[];
   isLoading?: boolean;
+  isError?: boolean;
   onRetry?: () => void;
 }
 
@@ -25,11 +26,34 @@ function TestListSkeleton() {
   );
 }
 
-export function TestList({ tests, isLoading = false, onRetry }: Props) {
+export function TestList({ tests, isLoading = false, isError = false, onRetry }: Props) {
   const navigate = useNavigate();
 
   if (isLoading) {
     return <TestListSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center px-6">
+        <Result
+          title="테스트 목록을 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요"
+          figure={
+            <Asset.Lottie
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/lotties-common/error-spot.json"
+              aria-hidden={true}
+            />
+          }
+          button={
+            <Result.Button color="dark" variant="weak" onClick={onRetry}>
+              다시 시도하기
+            </Result.Button>
+          }
+        />
+      </div>
+    );
   }
 
   return (

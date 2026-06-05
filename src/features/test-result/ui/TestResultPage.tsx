@@ -9,6 +9,7 @@ import {
   Tab,
   Text,
   Top,
+  useToast,
 } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { ResultTabContent } from "./ResultTabContent";
@@ -63,6 +64,7 @@ export function TestResultPage({ testId }: Props) {
   });
   const testTitle = (testDetailData?.data?.data as { title?: string } | undefined)?.title ?? testId;
 
+  const { openToast } = useToast();
   const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId, testTitle);
   const { generate: generateCsv, isGenerating: isCsvGenerating } = useCsvDownload(testId, testTitle);
   const isGenerating = isPdfGenerating || isCsvGenerating;
@@ -94,7 +96,7 @@ export function TestResultPage({ testId }: Props) {
     };
   }, []);
 
-  const { data: reportData, isLoading } = useGetReportQuery(Number(testId));
+  const { data: reportData, isLoading, isError, refetch } = useGetReportQuery(Number(testId));
   const report = reportData?.data;
 
   const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
@@ -110,12 +112,35 @@ export function TestResultPage({ testId }: Props) {
     return <TestResultSkeleton />;
   }
 
+  if (isError) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center px-6">
+        <Result
+          title="통계를 불러오지 못했어요"
+          description="잠시 후 다시 시도해 주세요"
+          figure={
+            <Asset.Lottie
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/lotties-common/error-spot.json"
+              aria-hidden={true}
+            />
+          }
+          button={
+            <Result.Button color="dark" variant="weak" onClick={() => refetch()}>
+              다시 시도하기
+            </Result.Button>
+          }
+        />
+      </div>
+    );
+  }
+
   async function handleDownload(format: "pdf" | "csv") {
     try {
       if (format === "pdf") await generatePdf();
       if (format === "csv") await generateCsv();
     } catch {
-      alert("다운로드에 실패했습니다. 다시 시도해주세요.");
+      openToast("다운로드에 실패했습니다. 다시 시도해주세요.", { type: "bottom" });
     }
     setIsDownloadSheetOpen(false);
   }

@@ -241,8 +241,6 @@ export function useGetQuestionSummaryQuery(testId: number) {
       })) as QuestionSummaryListItem[];
     },
     enabled: !!testId,
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 30,
   });
 }
 
