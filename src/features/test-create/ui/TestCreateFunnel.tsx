@@ -102,23 +102,22 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     navigate({ to: ROUTES.TEST });
   };
 
+  const isAllComplete =
+    form.name.trim().length > 0 &&
+    form.summary.trim().length > 0 &&
+    form.categories.length > 0;
+
   const isConfirmDisabled = (() => {
     switch (funnel.step) {
       case "basic":
-        if (basicSubStep === "name") return form.name.trim().length === 0;
-        if (basicSubStep === "summary") return form.summary.trim().length === 0;
-        return false;
+        if (isFocused) return false;
+        return !isAllComplete;
       case "service":
         return !showServiceDescription && form.serviceName.trim().length === 0;
       default:
         return false;
     }
   })();
-
-  const isAllComplete =
-    form.name.trim().length > 0 &&
-    form.summary.trim().length > 0 &&
-    form.categories.length > 0;
 
   const ctaMode: CTAMode = (() => {
     if (editPhase) return "hidden";
@@ -127,12 +126,11 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     if (funnel.step === "register")
       return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
+    if (funnel.step === "basic") return "confirm";
     if (isFocused) return "confirm";
     if (funnel.step === "service" && showServiceDescription) return "double";
     if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
-    if (funnel.step === "basic" && basicSubStep === "category" && isAllComplete)
-      return "double";
     return "hidden";
   })();
 
@@ -154,6 +152,13 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
         form.serviceName.trim().length > 0
       ) {
         setShowServiceDescription(true);
+      }
+      if (funnel.step === "basic") {
+        if (basicSubStep === "name" && form.name.trim().length > 0) {
+          setBasicSubStep("summary");
+        } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
+          setBasicSubStep("category");
+        }
       }
       blurTimerRef.current = null;
     }, 100);
@@ -181,14 +186,15 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
               setShowServiceDescription(true);
             }
           } else if (funnel.step === "basic") {
-            dismissKeyboard();
-            if (basicSubStep === "name" && form.name.trim().length > 0) {
-              setBasicSubStep("summary");
-            } else if (
-              basicSubStep === "summary" &&
-              form.summary.trim().length > 0
-            ) {
-              setBasicSubStep("category");
+            if (isFocused) {
+              dismissKeyboard();
+              if (basicSubStep === "name" && form.name.trim().length > 0) {
+                setBasicSubStep("summary");
+              } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
+                setBasicSubStep("category");
+              }
+            } else {
+              funnel.next();
             }
           } else {
             funnel.next();
@@ -216,6 +222,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
         onSubmit={() => submitTest()}
         currentStep={funnel.step}
         ctaMode={ctaMode}
+        confirmLabel={funnel.step === "basic" && !isFocused ? "다음으로" : "확인"}
+        confirmFixedAboveKeyboard={funnel.step !== "basic" || isFocused}
         isConfirmDisabled={isConfirmDisabled}
         isNextDisabled={
           funnel.step === "service"
