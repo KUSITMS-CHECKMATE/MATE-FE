@@ -10,7 +10,7 @@ export const Route = createFileRoute("/discovery/")({
 });
 
 function HomePage() {
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [getListTestsUrl()],
     queryFn: listTests,
   });
@@ -29,7 +29,7 @@ function HomePage() {
   return (
     <div className="flex flex-col pb-19">
       <ServiceBanner />
-      <TestList tests={tests} isLoading={isLoading} isError={isError} onRetry={refetch} />
+      <TestList tests={tests} isLoading={isLoading} onRetry={refetch} />
       <BottomTabBar activeTab="discover" />
     </div>
   );
