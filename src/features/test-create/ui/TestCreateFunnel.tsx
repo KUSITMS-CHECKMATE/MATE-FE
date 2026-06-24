@@ -120,15 +120,11 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   })();
 
   const ctaMode: CTAMode = (() => {
-    if (editPhase) return "hidden";
-    if (activeQuestion) return "hidden";
-    if (isCategorySheetOpen) return "hidden";
-    if (funnel.step === "register")
-      return registerTab === "info" ? "submit-double" : "submit";
+    if (editPhase || activeQuestion || isCategorySheetOpen) return "hidden";
+    if (funnel.step === "register") return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
     if (funnel.step === "basic") return "confirm";
     if (isFocused) return "confirm";
-    if (funnel.step === "service" && showServiceDescription) return "double";
     if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
     return "hidden";
@@ -176,6 +172,16 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     setHasTestImages(hasImages);
   }, []);
 
+  const handleBasicConfirm = () => {
+    if (isFocused) {
+      dismissKeyboard();
+      if (basicSubStep === "name" && form.name.trim().length > 0) setBasicSubStep("summary");
+      else if (basicSubStep === "summary" && form.summary.trim().length > 0) setBasicSubStep("category");
+    } else {
+      funnel.next();
+    }
+  };
+
   return (
     <>
       <FunnelLayout
@@ -186,16 +192,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
               setShowServiceDescription(true);
             }
           } else if (funnel.step === "basic") {
-            if (isFocused) {
-              dismissKeyboard();
-              if (basicSubStep === "name" && form.name.trim().length > 0) {
-                setBasicSubStep("summary");
-              } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
-                setBasicSubStep("category");
-              }
-            } else {
-              funnel.next();
-            }
+            handleBasicConfirm();
           } else {
             funnel.next();
           }
