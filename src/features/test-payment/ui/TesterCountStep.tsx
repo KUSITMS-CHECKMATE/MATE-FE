@@ -31,7 +31,7 @@ export function TesterCountStep({ draft, onSelect, onConfirm, onClose }: Props) 
               topProps={{ color: adaptive.grey700 }}
             />
           }
-          right={<Checkbox.Line size={24} checked={draft === count} />}
+          right={<Checkbox.Circle size={24} checked={draft === count} />}
           verticalPadding="large"
           onClick={() => onSelect(count)}
         />
@@ -44,7 +44,7 @@ export function TesterCountStep({ draft, onSelect, onConfirm, onClose }: Props) 
         }
         rightButton={
           <CTAButton disabled={draft === null} onClick={onConfirm}>
-            선택하기
+            확인하기
           </CTAButton>
         }
       />
