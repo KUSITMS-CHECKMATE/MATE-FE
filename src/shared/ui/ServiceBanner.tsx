@@ -1,17 +1,9 @@
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import { useNavigate } from "@tanstack/react-router";
-import { ROUTES } from "@/shared/constants/routes";
 
 export function ServiceBanner() {
-  const navigate = useNavigate();
-
   return (
-    <button
-      type="button"
-      onClick={() => navigate({ to: ROUTES.DISCOVERY_GUIDE })}
-      className="w-full h-30 bg-[#4365cc] p-5 flex flex-row gap-6 justify-between items-start text-left"
-    >
+    <div className="w-full h-30 bg-[#4365cc] p-5 flex flex-row gap-6 justify-between items-start">
       <div className="w-39 h-20 flex flex-col gap-1 justify-start items-start">
         <div className="w-full flex flex-col gap-1 justify-start items-start">
           <Text display="block" color={adaptive.background} typography="st8" fontWeight="bold">
@@ -39,6 +31,6 @@ export function ServiceBanner() {
           backgroundImage: "url(/images/banner.png)",
         }}
       />
-    </button>
+    </div>
   );
 }
