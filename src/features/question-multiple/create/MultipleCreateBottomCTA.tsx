@@ -6,15 +6,23 @@ interface MultipleCreateBottomCTAProps {
   onComplete: () => void;
 }
 
-export function MultipleCreateBottomCTA({ isCompleteDisabled, onCancel, onComplete }: MultipleCreateBottomCTAProps) {
+export function MultipleCreateBottomCTA({
+  isCompleteDisabled,
+  onCancel,
+  onComplete,
+}: MultipleCreateBottomCTAProps) {
   return (
     <FixedBottomCTA.Double
       leftButton={
         <CTAButton color="dark" variant="weak" onClick={onCancel}>
-          취소
+          닫기
         </CTAButton>
       }
-      rightButton={<CTAButton disabled={isCompleteDisabled} onClick={onComplete}>완료하기</CTAButton>}
+      rightButton={
+        <CTAButton disabled={isCompleteDisabled} onClick={onComplete}>
+          완료하기
+        </CTAButton>
+      }
     />
   );
 }

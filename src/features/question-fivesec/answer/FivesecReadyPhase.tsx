@@ -1,11 +1,5 @@
 import { adaptive } from "@toss/tds-colors";
-import {
-  Asset,
-  CTAButton,
-  FixedBottomCTA,
-  Tooltip,
-  Top,
-} from "@toss/tds-mobile";
+import { Asset, CTAButton, FixedBottomCTA, Tooltip, Top } from "@toss/tds-mobile";
 
 interface Props {
   isFirst: boolean;
@@ -73,7 +67,7 @@ export function FivesecReadyPhase({ isFirst, prevLabel = "이전", onPrev, onSta
               {prevLabel}
             </CTAButton>
           }
-          rightButton={<CTAButton onClick={onStart}>다음</CTAButton>}
+          rightButton={<CTAButton onClick={onStart}>다음으로</CTAButton>}
         />
       )}
     </div>

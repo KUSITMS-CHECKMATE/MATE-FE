@@ -93,7 +93,7 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
       <FixedBottomCTA.Double
         leftButton={
           <CTAButton color="dark" variant="weak" onClick={handleCancel}>
-            취소
+            닫기
           </CTAButton>
         }
         rightButton={

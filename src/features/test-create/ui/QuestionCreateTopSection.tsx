@@ -1,6 +1,16 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Spacing, TextField } from "@toss/tds-mobile";
+import {
+  Asset,
+  Border,
+  CTAButton,
+  FixedBottomCTA,
+  List,
+  ListHeader,
+  ListRow,
+  Spacing,
+  TextField,
+} from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { QuestionEditSheet } from "./QuestionEditSheet";
 import { useFocusState, useEditSheet } from "./useQuestionCreateTopSectionHooks";
@@ -57,13 +67,25 @@ function PhaseBottomCTA({
   return (
     <AnimatePresence mode="wait">
       {isFocused ? (
-        <motion.div key={focusConfirmKey} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+        <motion.div
+          key={focusConfirmKey}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
           <FixedBottomCTA fixedAboveKeyboard onClick={onFocusConfirm}>
             확인
           </FixedBottomCTA>
         </motion.div>
       ) : (
-        <motion.div key="input-complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+        <motion.div
+          key="input-complete"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
           <FixedBottomCTA.Double
             leftButton={
               <CTAButton color="dark" variant="weak" onClick={onClose}>
@@ -72,7 +94,7 @@ function PhaseBottomCTA({
             }
             rightButton={
               <CTAButton disabled={isInputCompleteDisabled} onClick={onInputComplete}>
-                입력 완료
+                확인하기
               </CTAButton>
             }
           />
@@ -113,7 +135,9 @@ export function QuestionCreateTopSection({
 }: QuestionCreateTopSectionProps) {
   const placeholder = titlePlaceholder ?? `${questionType} 질문을 입력해주세요`;
 
-  const [phase, setPhase] = useState<"title" | "detail">(questionTitle.trim().length > 0 ? "detail" : "title");
+  const [phase, setPhase] = useState<"title" | "detail">(
+    questionTitle.trim().length > 0 ? "detail" : "title",
+  );
   const [isEditing, setIsEditing] = useState(false);
 
   const titleFocus = useFocusState();
@@ -121,7 +145,12 @@ export function QuestionCreateTopSection({
   const sheet = useEditSheet(questionType, placeholder);
 
   useEffect(() => {
-    if (!isInputCompleted && phase === "title" && !titleFocus.isFocused && questionTitle.trim().length > 0) {
+    if (
+      !isInputCompleted &&
+      phase === "title" &&
+      !titleFocus.isFocused &&
+      questionTitle.trim().length > 0
+    ) {
       const timer = setTimeout(() => setPhase("detail"), 150);
       return () => clearTimeout(timer);
     }
@@ -157,8 +186,18 @@ export function QuestionCreateTopSection({
     if (isEditing) {
       return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-white pb-28">
-          <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
-          <ClickableTopRow label="(선택) 추가 설명" text={questionDescription} placeholder="추가 설명을 입력해주세요" onClick={() => sheet.open("description", questionDescription)} />
+          <ClickableTopRow
+            label={`${questionType} 질문`}
+            text={questionTitle}
+            placeholder={placeholder}
+            onClick={() => sheet.open("title", questionTitle)}
+          />
+          <ClickableTopRow
+            label="(선택) 추가 설명"
+            text={questionDescription}
+            placeholder="추가 설명을 입력해주세요"
+            onClick={() => sheet.open("description", questionDescription)}
+          />
           {imageUploadSection}
           <FixedBottomCTA.Double
             leftButton={
@@ -166,7 +205,7 @@ export function QuestionCreateTopSection({
                 닫기
               </CTAButton>
             }
-            rightButton={<CTAButton onClick={() => setIsEditing(false)}>입력 완료</CTAButton>}
+            rightButton={<CTAButton onClick={() => setIsEditing(false)}>완료하기</CTAButton>}
           />
           {editSheet}
         </div>
@@ -182,7 +221,11 @@ export function QuestionCreateTopSection({
             rightAlignment="center"
             titleWidthRatio={0.6}
             title={
-              <ListHeader.TitleParagraph typography="t5" fontWeight="medium" color={adaptive.grey600}>
+              <ListHeader.TitleParagraph
+                typography="t5"
+                fontWeight="medium"
+                color={adaptive.grey600}
+              >
                 {questionType}
               </ListHeader.TitleParagraph>
             }
@@ -191,9 +234,19 @@ export function QuestionCreateTopSection({
             style={{ paddingBottom: 16 }}
             contents={
               hasDescription ? (
-                <ListRow.Texts type="2RowTypeC" top={questionTitle} topProps={{ color: adaptive.grey800, fontWeight: "bold" }} bottom={questionDescription} bottomProps={{ color: adaptive.grey500 }} />
+                <ListRow.Texts
+                  type="2RowTypeC"
+                  top={questionTitle}
+                  topProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+                  bottom={questionDescription}
+                  bottomProps={{ color: adaptive.grey500 }}
+                />
               ) : (
-                <ListRow.Texts type="1RowTypeA" top={questionTitle} topProps={{ color: adaptive.grey800, fontWeight: "bold" }} />
+                <ListRow.Texts
+                  type="1RowTypeA"
+                  top={questionTitle}
+                  topProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+                />
               )
             }
             right={
@@ -216,7 +269,11 @@ export function QuestionCreateTopSection({
       {phase === "title" ? (
         <>
           <Spacing size={12} />
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
             <TextField.Clearable
               variant="line"
               label="어떻게 질문할까요?"
@@ -242,11 +299,25 @@ export function QuestionCreateTopSection({
         </>
       ) : (
         <>
-          <ClickableTopRow label={`${questionType} 질문`} text={questionTitle} placeholder={placeholder} onClick={() => sheet.open("title", questionTitle)} />
+          <ClickableTopRow
+            label={`${questionType} 질문`}
+            text={questionTitle}
+            placeholder={placeholder}
+            onClick={() => sheet.open("title", questionTitle)}
+          />
           {questionDescription.trim().length > 0 && !descFocus.isFocused ? (
-            <ClickableTopRow label="(선택) 추가 설명" text={questionDescription} placeholder="추가 설명을 입력해주세요" onClick={() => sheet.open("description", questionDescription)} />
+            <ClickableTopRow
+              label="(선택) 추가 설명"
+              text={questionDescription}
+              placeholder="추가 설명을 입력해주세요"
+              onClick={() => sheet.open("description", questionDescription)}
+            />
           ) : (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
               <TextField.Clearable
                 variant="line"
                 label="(선택) 추가 설명을 할까요?"

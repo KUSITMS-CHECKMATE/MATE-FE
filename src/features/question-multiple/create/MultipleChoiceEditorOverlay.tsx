@@ -1,12 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  CTAButton,
-  FixedBottomCTA,
-  TextField,
-  Top,
-} from "@toss/tds-mobile";
-import { adaptive } from "@toss/tds-colors";
+import { CTAButton, FixedBottomCTA, TextField } from "@toss/tds-mobile";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
@@ -59,21 +53,13 @@ export function MultipleChoiceEditorOverlay({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Top
-        title={
-          <Top.TitleParagraph size={22} color={adaptive.grey900}>
-            선택지 추가하기
-          </Top.TitleParagraph>
-        }
-      />
-
       <main className="flex flex-1 flex-col bg-white">
         <TextField.Clearable
           variant="line"
-          label="선택지명"
+          label="어떤 선택지를 추가할까요?"
           labelOption="sustain"
           value={choiceName}
-          placeholder="선택지명"
+          placeholder="선택지명을 입력해주세요"
           maxLength={17}
           autoFocus
           onChange={(e) => setChoiceName(e.target.value)}
@@ -113,15 +99,13 @@ export function MultipleChoiceEditorOverlay({
             <FixedBottomCTA.Double
               leftButton={
                 <CTAButton color="dark" variant="weak" onClick={onClose}>
-                  취소
+                  닫기
                 </CTAButton>
               }
               rightButton={
                 <CTAButton
                   disabled={isCreateDisabled}
-                  onClick={() =>
-                    onCreate({ choiceName: choiceName.trim(), imageUrl })
-                  }
+                  onClick={() => onCreate({ choiceName: choiceName.trim(), imageUrl })}
                 >
                   {submitLabel}
                 </CTAButton>
