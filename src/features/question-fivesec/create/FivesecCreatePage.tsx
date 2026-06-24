@@ -34,10 +34,7 @@ interface FivesecCreatePageProps {
   onClose: () => void;
 }
 
-export function FivesecCreatePage({
-  questionId,
-  onClose,
-}: FivesecCreatePageProps) {
+export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingFivesec = existing?.typeId === "FIVE_SECOND" ? existing : null;
@@ -52,7 +49,6 @@ export function FivesecCreatePage({
     existingFivesec?.answerType ?? "subjective",
   );
 
-
   const [isAnswerTypeSheetOpen, setIsAnswerTypeSheetOpen] = useState(false);
   const [isOtherInputEnabled, setIsOtherInputEnabled] = useState(
     existingFivesec?.isOtherInputEnabled ?? false,
@@ -60,30 +56,25 @@ export function FivesecCreatePage({
   const [isMultiSelectEnabled, setIsMultiSelectEnabled] = useState(
     existingFivesec?.isMultiSelectEnabled ?? false,
   );
-  const [choices, setChoices] = useState<MultipleChoiceItem[]>(
-    existingFivesec?.choices ?? [],
-  );
-  const [minSelectCount, setMinSelectCount] = useState(
-    existingFivesec?.minSelectCount ?? 1,
-  );
-  const [maxSelectCount, setMaxSelectCount] = useState(
-    existingFivesec?.maxSelectCount ?? 1,
-  );
+  const [choices, setChoices] = useState<MultipleChoiceItem[]>(existingFivesec?.choices ?? []);
+  const [minSelectCount, setMinSelectCount] = useState(existingFivesec?.minSelectCount ?? 1);
+  const [maxSelectCount, setMaxSelectCount] = useState(existingFivesec?.maxSelectCount ?? 1);
   const [isChoiceSheetOpen, setIsChoiceSheetOpen] = useState(false);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [choiceNameDraft, setChoiceNameDraft] = useState("");
-  const [pendingPhotoAction, setPendingPhotoAction] = useState<
-    "camera" | "album" | null
-  >(null);
+  const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
   const [ratio, setRatio] = useState<AbRatio>(existingFivesec?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewAnswer, setPreviewAnswer] = useState<{ type: "FIVE_SECOND"; selectedIds: string[]; text?: string }>({ type: "FIVE_SECOND", selectedIds: [] });
+  const [previewAnswer, setPreviewAnswer] = useState<{
+    type: "FIVE_SECOND";
+    selectedIds: string[];
+    text?: string;
+  }>({ type: "FIVE_SECOND", selectedIds: [] });
 
   const hasTitle = title.trim().length > 0;
-  const editingChoice =
-    choices.find((choice) => choice.id === editingChoiceId) ?? null;
+  const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled =
     !hasTitle || !imageUrl || (answerType === "multiple" && choices.length < 2);
 
@@ -113,9 +104,7 @@ export function FivesecCreatePage({
     if (editingChoice) {
       setChoices((prev) =>
         prev.map((choice) =>
-          choice.id === editingChoice.id
-            ? { ...choice, name: trimmedChoiceName }
-            : choice,
+          choice.id === editingChoice.id ? { ...choice, name: trimmedChoiceName } : choice,
         ),
       );
       closeChoiceSheet();
@@ -217,12 +206,7 @@ export function FivesecCreatePage({
           />
           {imageUrl ? (
             <div className="flex items-start justify-between gap-4 bg-white px-4 pb-4">
-              <Text
-                display="block"
-                color={adaptive.grey700}
-                typography="t5"
-                fontWeight="medium"
-              >
+              <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
                 이미지
               </Text>
               <div
@@ -326,9 +310,7 @@ export function FivesecCreatePage({
                   setMaxSelectCount(1);
                 } else {
                   const maxChoiceCount = Math.max(choices.length, 1);
-                  setMaxSelectCount((current) =>
-                    Math.min(Math.max(current, 2), maxChoiceCount),
-                  );
+                  setMaxSelectCount((current) => Math.min(Math.max(current, 2), maxChoiceCount));
                 }
               }}
               onChangeMinSelectCount={(value) => {
@@ -345,7 +327,7 @@ export function FivesecCreatePage({
           <FixedBottomCTA.Double
             leftButton={
               <CTAButton color="dark" variant="weak" onClick={onClose}>
-                취소
+                닫기
               </CTAButton>
             }
             rightButton={
@@ -415,7 +397,7 @@ export function FivesecCreatePage({
             onGoNext={() => setIsPreviewOpen(false)}
             isFirst={false}
             isLast={true}
-            prevLabel="돌아가기"
+            prevLabel="닫기"
             isPreview={true}
           />
         </motion.div>
