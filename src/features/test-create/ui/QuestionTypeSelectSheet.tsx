@@ -133,7 +133,7 @@ export function QuestionTypeSelectSheet({
         }
         rightButton={
           <CTAButton className="w-full" disabled={totalSelected === 0} onClick={onConfirm}>
-            {`${totalSelected}개 추가하기`}
+            {totalSelected > 0 ? `${totalSelected}개 추가하기` : "추가하기"}
           </CTAButton>
         }
       />
