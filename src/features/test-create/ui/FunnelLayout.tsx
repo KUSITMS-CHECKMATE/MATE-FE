@@ -19,6 +19,8 @@ interface FunnelLayoutProps {
   isSubmitDisabled?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
+  confirmLabel?: string;
+  confirmFixedAboveKeyboard?: boolean;
 }
 
 export function FunnelLayout({
@@ -34,6 +36,8 @@ export function FunnelLayout({
   isSubmitDisabled = false,
   submitLabel,
   cancelLabel = "취소",
+  confirmLabel = "확인",
+  confirmFixedAboveKeyboard = true,
 }: FunnelLayoutProps) {
   const currentPhase = STEP_PHASE[currentStep];
   const phaseIndex = PHASES.indexOf(currentPhase);
@@ -55,11 +59,11 @@ export function FunnelLayout({
         {ctaMode === "confirm" && (
           <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA
-              fixedAboveKeyboard
+              {...(confirmFixedAboveKeyboard ? { fixedAboveKeyboard: true } : {})}
               disabled={isConfirmDisabled}
               onClick={onConfirm}
             >
-              확인
+              {confirmLabel}
             </FixedBottomCTA>
           </motion.div>
         )}
