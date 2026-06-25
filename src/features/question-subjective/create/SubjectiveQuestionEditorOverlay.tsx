@@ -26,7 +26,11 @@ interface SubjectiveQuestionEditorOverlayProps {
   initialDescription: string;
   initialImageUrl: string;
   onClose: () => void;
-  onSave: (values: { title: string; description: string; imageUrl: string }) => void;
+  onSave: (values: {
+    title: string;
+    description: string;
+    imageUrl: string;
+  }) => void;
 }
 
 export function SubjectiveQuestionEditorOverlay({
@@ -137,7 +141,12 @@ export function SubjectiveQuestionEditorOverlay({
 
         {imageUrl ? (
           <div className="flex items-start justify-between gap-4 bg-white px-4 py-4">
-            <Text display="block" color={adaptive.grey700} typography="t5" fontWeight="medium">
+            <Text
+              display="block"
+              color={adaptive.grey700}
+              typography="t5"
+              fontWeight="medium"
+            >
               이미지
             </Text>
             <div
@@ -200,25 +209,13 @@ export function SubjectiveQuestionEditorOverlay({
 
       <AnimatePresence mode="wait">
         {isFocused ? (
-          <motion.div
-            key="confirm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA fixedAboveKeyboard onClick={dismissKeyboard}>
               확인하기
             </FixedBottomCTA>
           </motion.div>
         ) : (
-          <motion.div
-            key="double"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
+          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA.Double
               leftButton={
                 <CTAButton color="dark" variant="weak" onClick={onClose}>
@@ -228,9 +225,7 @@ export function SubjectiveQuestionEditorOverlay({
               rightButton={
                 <CTAButton
                   disabled={title.trim().length === 0}
-                  onClick={() =>
-                    onSave({ title: title.trim(), description: description.trim(), imageUrl })
-                  }
+                  onClick={() => onSave({ title: title.trim(), description: description.trim(), imageUrl })}
                 >
                   저장하기
                 </CTAButton>

@@ -181,7 +181,7 @@ export function QuestionManageSheet({
         <FixedBottomCTA.Double
           leftButton={
             <CTAButton className="w-full" color="dark" variant="weak" onClick={onCancel}>
-              닫기
+              취소
             </CTAButton>
           }
           rightButton={

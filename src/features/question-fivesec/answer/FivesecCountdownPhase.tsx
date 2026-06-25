@@ -20,7 +20,7 @@ export function FivesecCountdownPhase({ imageUrl, ratio, onPrev, prevLabel = "�
     >
       <QuestionHeader
         categoryLabel="5초 테스트"
-        title={`5초간\n아래 사진에 집중해주세요`}
+        title="5초간 아래 사진에 집중해주세요"
       />
       <div className="flex-1 px-5 pt-4 flex justify-center">
         <div

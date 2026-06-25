@@ -92,7 +92,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     return () => {
       if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExitConfirm = () => {
@@ -102,14 +102,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     navigate({ to: ROUTES.TEST });
   };
 
-  const isAllComplete =
-    form.name.trim().length > 0 && form.summary.trim().length > 0 && form.categories.length > 0;
-
   const isConfirmDisabled = (() => {
     switch (funnel.step) {
       case "basic":
-        if (isFocused) return false;
-        return !isAllComplete;
+        if (basicSubStep === "name") return form.name.trim().length === 0;
+        if (basicSubStep === "summary") return form.summary.trim().length === 0;
+        return false;
       case "service":
         return !showServiceDescription && form.serviceName.trim().length === 0;
       default:
@@ -117,14 +115,24 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     }
   })();
 
+  const isAllComplete =
+    form.name.trim().length > 0 &&
+    form.summary.trim().length > 0 &&
+    form.categories.length > 0;
+
   const ctaMode: CTAMode = (() => {
-    if (editPhase || activeQuestion || isCategorySheetOpen) return "hidden";
-    if (funnel.step === "register") return registerTab === "info" ? "submit-double" : "submit";
+    if (editPhase) return "hidden";
+    if (activeQuestion) return "hidden";
+    if (isCategorySheetOpen) return "hidden";
+    if (funnel.step === "register")
+      return registerTab === "info" ? "submit-double" : "submit";
     if (funnel.step === "image") return "double";
-    if (funnel.step === "basic") return "confirm";
     if (isFocused) return "confirm";
+    if (funnel.step === "service" && showServiceDescription) return "double";
     if (funnel.step === "service") return "double";
     if (!hasInteracted) return "double";
+    if (funnel.step === "basic" && basicSubStep === "category" && isAllComplete)
+      return "double";
     return "hidden";
   })();
 
@@ -147,13 +155,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
       ) {
         setShowServiceDescription(true);
       }
-      if (funnel.step === "basic") {
-        if (basicSubStep === "name" && form.name.trim().length > 0) {
-          setBasicSubStep("summary");
-        } else if (basicSubStep === "summary" && form.summary.trim().length > 0) {
-          setBasicSubStep("category");
-        }
-      }
       blurTimerRef.current = null;
     }, 100);
   };
@@ -170,14 +171,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
     setHasTestImages(hasImages);
   }, []);
 
-  const handleBasicConfirm = () => {
-    if (isFocused) {
-      dismissKeyboard();
-    } else {
-      funnel.next();
-    }
-  };
-
   return (
     <>
       <FunnelLayout
@@ -188,13 +181,28 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
               setShowServiceDescription(true);
             }
           } else if (funnel.step === "basic") {
-            handleBasicConfirm();
+            dismissKeyboard();
+            if (basicSubStep === "name" && form.name.trim().length > 0) {
+              setBasicSubStep("summary");
+            } else if (
+              basicSubStep === "summary" &&
+              form.summary.trim().length > 0
+            ) {
+              setBasicSubStep("category");
+            }
           } else {
             funnel.next();
           }
         }}
         onNext={() => {
-          funnel.next();
+          if (
+            funnel.step === "service" &&
+            form.serviceName.trim().length === 0
+          ) {
+            setIsServiceIntroSheetOpen(true);
+          } else {
+            funnel.next();
+          }
         }}
         onCancel={() => {
           if (funnel.step === "register") {
@@ -208,8 +216,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
         onSubmit={() => submitTest()}
         currentStep={funnel.step}
         ctaMode={ctaMode}
-        confirmLabel={funnel.step === "basic" && !isFocused ? "다음으로" : "확인"}
-        confirmFixedAboveKeyboard={funnel.step !== "basic" || isFocused}
         isConfirmDisabled={isConfirmDisabled}
         isNextDisabled={
           funnel.step === "service"
@@ -227,17 +233,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
         }
         isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSubmitting}
         submitLabel="테스트 만들기"
-        doubleBottomAccessory={
-          funnel.step === "service" ? (
-            <button
-              type="button"
-              onClick={() => setIsServiceIntroSheetOpen(true)}
-              className="bg-transparent border-0 cursor-pointer underline text-sm text-[#4e5968]"
-            >
-              서비스 소개란?
-            </button>
-          ) : undefined
-        }
       >
         {funnel.step === "register" ? (
           <TestRegisterStep
@@ -267,7 +262,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
               onFocus={handleFocus}
               onBlur={handleBlur}
               onServiceNameConfirm={() => {
-                if (!showServiceDescription && form.serviceName.trim().length > 0) {
+                if (
+                  !showServiceDescription &&
+                  form.serviceName.trim().length > 0
+                ) {
                   setShowServiceDescription(true);
                 }
               }}
@@ -300,6 +298,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
       <ServiceDescriptionNudgeSheet
         open={isServiceIntroSheetOpen}
         onClose={() => setIsServiceIntroSheetOpen(false)}
+        onSkip={() => {
+          setIsServiceIntroSheetOpen(false);
+          funnel.next();
+        }}
       />
 
       <EditPhaseSheet
@@ -312,15 +314,26 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
 
       <AnimatePresence>
         {editPhase === "basic" && (
-          <BasicInfoEditPage key="edit-basic" onClose={() => setEditPhase(null)} />
+          <BasicInfoEditPage
+            key="edit-basic"
+            onClose={() => setEditPhase(null)}
+          />
         )}
         {editPhase === "service" && (
-          <ServiceDescriptionEditPage key="edit-service" onClose={() => setEditPhase(null)} />
+          <ServiceDescriptionEditPage
+            key="edit-service"
+            onClose={() => setEditPhase(null)}
+          />
         )}
         {editPhase === "image" && (
-          <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />
+          <TestImageEditPage
+            key="edit-image"
+            onClose={() => setEditPhase(null)}
+          />
         )}
-        {showGuide && <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />}
+        {showGuide && (
+          <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />
+        )}
         {activeQuestion?.typeId === "OBJECTIVE" && (
           <MultipleCreatePage
             key="question-multiple"
@@ -378,12 +391,19 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
         description="삭제하면 복구할 수 없어요"
         onClose={() => setIsExitDialogOpen(false)}
         cancelButton={
-          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
+          <ConfirmDialog.CancelButton
+            size="xlarge"
+            onClick={() => setIsExitDialogOpen(false)}
+          >
             닫기
           </ConfirmDialog.CancelButton>
         }
         confirmButton={
-          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={handleExitConfirm}>
+          <ConfirmDialog.ConfirmButton
+            color="danger"
+            size="xlarge"
+            onClick={handleExitConfirm}
+          >
             나가기
           </ConfirmDialog.ConfirmButton>
         }

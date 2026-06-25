@@ -194,7 +194,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
             onChange={setPreviewAnswer}
           />
           <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
-            닫기
+            돌아가기
           </FixedBottomCTA>
         </motion.div>
       )}

@@ -15,7 +15,7 @@ export function TreeCreateBottomCTA({
     <FixedBottomCTA.Double
       leftButton={
         <CTAButton color="dark" variant="weak" onClick={onCancel}>
-          닫기
+          취소
         </CTAButton>
       }
       rightButton={

@@ -7,13 +7,8 @@ const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
   { label: string; placeholder: string; maxLength?: number; help?: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름" },
-  summary: {
-    label: "테스트 한줄 소개",
-    placeholder: "테스트 한줄 소개",
-    maxLength: 60,
-    help: "최대 60자",
-  },
+  name: { label: "테스트 제목", placeholder: "테스트 제목" },
+  summary: { label: "테스트 한줄 소개", placeholder: "테스트 한줄 소개", maxLength: 60, help: "최대 60자" },
 };
 
 function getSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore): string {
@@ -45,12 +40,7 @@ interface TestBasicInfoStepProps {
   onBlur: () => void;
 }
 
-export function TestBasicInfoStep({
-  subStep,
-  onOpenCategorySheet,
-  onFocus,
-  onBlur,
-}: TestBasicInfoStepProps) {
+export function TestBasicInfoStep({ subStep, onOpenCategorySheet, onFocus, onBlur }: TestBasicInfoStepProps) {
   const form = useTestCreateForm();
 
   const categoryDisplayValue = form.categories
@@ -65,28 +55,11 @@ export function TestBasicInfoStep({
     <div className="pt-6">
       {/* 현재 활성 입력 */}
       {subStep === "category" ? (
-        <motion.div
-          key="category"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          <TextField.Button
-            variant="line"
-            hasError={false}
-            label="카테고리"
-            value={categoryDisplayValue}
-            placeholder="카테고리"
-            onClick={onOpenCategorySheet}
-          />
+        <motion.div key="category" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <TextField.Button variant="line" hasError={false} label="카테고리" value={categoryDisplayValue} placeholder="카테고리" onClick={onOpenCategorySheet} />
         </motion.div>
       ) : (
-        <motion.div
-          key={subStep}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
+        <motion.div key={subStep} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Clearable
             variant="line"
             hasError={false}
@@ -110,16 +83,7 @@ export function TestBasicInfoStep({
       {/* 완료된 항목들 (최신순으로 위에) */}
       {[...completedSubSteps].reverse().map((s) => {
         if (s === "category") {
-          return (
-            <TextField.Button
-              key={s}
-              variant="line"
-              label="카테고리"
-              value={categoryDisplayValue}
-              placeholder="카테고리"
-              onClick={onOpenCategorySheet}
-            />
-          );
+          return <TextField.Button key={s} variant="line" label="카테고리" value={categoryDisplayValue} placeholder="카테고리" onClick={onOpenCategorySheet} />;
         }
         return (
           <TextField.Clearable

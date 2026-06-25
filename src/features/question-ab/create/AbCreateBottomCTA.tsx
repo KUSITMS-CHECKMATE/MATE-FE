@@ -6,16 +6,12 @@ interface AbCreateBottomCTAProps {
   onComplete: () => void;
 }
 
-export function AbCreateBottomCTA({
-  isCompleteDisabled,
-  onCancel,
-  onComplete,
-}: AbCreateBottomCTAProps) {
+export function AbCreateBottomCTA({ isCompleteDisabled, onCancel, onComplete }: AbCreateBottomCTAProps) {
   return (
     <FixedBottomCTA.Double
       leftButton={
         <CTAButton color="dark" variant="weak" onClick={onCancel}>
-          닫기
+          취소
         </CTAButton>
       }
       rightButton={

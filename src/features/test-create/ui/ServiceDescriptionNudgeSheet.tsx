@@ -1,24 +1,28 @@
-import { BottomSheet, ListRow } from "@toss/tds-mobile";
+import { BottomSheet, Button, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
 interface ServiceDescriptionNudgeSheetProps {
   open: boolean;
   onClose: () => void;
+  onSkip: () => void;
 }
 
-export function ServiceDescriptionNudgeSheet({ open, onClose }: ServiceDescriptionNudgeSheetProps) {
+export function ServiceDescriptionNudgeSheet({ open, onClose, onSkip }: ServiceDescriptionNudgeSheetProps) {
   return (
     <BottomSheet
       header={<BottomSheet.Header>서비스 소개를 하면 이런 혜택이 있어요</BottomSheet.Header>}
-      headerDescription={
-        <BottomSheet.HeaderDescription>서비스 소개는 선택사항이에요</BottomSheet.HeaderDescription>
-      }
+      headerDescription={<BottomSheet.HeaderDescription>서비스 소개는 선택사항이에요</BottomSheet.HeaderDescription>}
       open={open}
       onClose={onClose}
       cta={
-        <BottomSheet.CTA color="primary" variant="fill" disabled={false} onClick={onClose}>
-          확인
-        </BottomSheet.CTA>
+        <BottomSheet.DoubleCTA
+          leftButton={
+            <Button color="dark" variant="weak" onClick={onSkip}>
+              다음에
+            </Button>
+          }
+          rightButton={<Button onClick={onClose}>소개하기</Button>}
+        />
       }
     >
       <ListRow
@@ -35,13 +39,7 @@ export function ServiceDescriptionNudgeSheet({ open, onClose }: ServiceDescripti
         verticalPadding="large"
       />
       <ListRow
-        left={
-          <ListRow.AssetIcon
-            size="xsmall"
-            shape="original"
-            url="https://static.toss.im/2d-emojis/png/4x/u1F913.png"
-          />
-        }
+        left={<ListRow.AssetIcon size="xsmall" shape="original" url="https://static.toss.im/2d-emojis/png/4x/u1F913.png" />}
         contents={
           <ListRow.Texts
             type="2RowTypeF"

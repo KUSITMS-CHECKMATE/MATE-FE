@@ -1,12 +1,6 @@
 import type { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FixedBottomCTA,
-  CTAButton,
-  BottomCTA,
-  ProgressStepper,
-  ProgressStep,
-} from "@toss/tds-mobile";
+import { FixedBottomCTA, CTAButton, ProgressStepper, ProgressStep } from "@toss/tds-mobile";
 import { PHASES, PHASE_LABELS, STEP_PHASE } from "../model/types";
 import type { Step } from "../model/types";
 
@@ -25,9 +19,6 @@ interface FunnelLayoutProps {
   isSubmitDisabled?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
-  confirmLabel?: string;
-  confirmFixedAboveKeyboard?: boolean;
-  doubleBottomAccessory?: ReactNode;
 }
 
 export function FunnelLayout({
@@ -43,9 +34,6 @@ export function FunnelLayout({
   isSubmitDisabled = false,
   submitLabel,
   cancelLabel = "취소",
-  confirmLabel = "확인",
-  confirmFixedAboveKeyboard = true,
-  doubleBottomAccessory,
 }: FunnelLayoutProps) {
   const currentPhase = STEP_PHASE[currentStep];
   const phaseIndex = PHASES.indexOf(currentPhase);
@@ -65,32 +53,19 @@ export function FunnelLayout({
       {/* 하단 CTA */}
       <AnimatePresence mode="wait">
         {ctaMode === "confirm" && (
-          <motion.div
-            key="confirm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA
-              fixedAboveKeyboard={confirmFixedAboveKeyboard}
+              fixedAboveKeyboard
               disabled={isConfirmDisabled}
               onClick={onConfirm}
             >
-              {confirmLabel}
+              확인
             </FixedBottomCTA>
           </motion.div>
         )}
         {ctaMode === "double" && (
-          <motion.div
-            key="double"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
-            <BottomCTA.Double
-              fixed
+          <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+            <FixedBottomCTA.Double
               leftButton={
                 <CTAButton color="dark" variant="weak" onClick={onCancel}>
                   {cancelLabel}
@@ -101,31 +76,18 @@ export function FunnelLayout({
                   다음으로
                 </CTAButton>
               }
-              bottomAccessory={doubleBottomAccessory}
             />
           </motion.div>
         )}
         {ctaMode === "submit" && (
-          <motion.div
-            key="submit"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
+          <motion.div key="submit" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA disabled={isSubmitDisabled} onClick={onSubmit}>
               {submitLabel}
             </FixedBottomCTA>
           </motion.div>
         )}
         {ctaMode === "submit-double" && (
-          <motion.div
-            key="submit-double"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-          >
+          <motion.div key="submit-double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
             <FixedBottomCTA.Double
               leftButton={
                 <CTAButton color="dark" variant="weak" onClick={onCancel}>

@@ -12,11 +12,15 @@ export const clearRefreshToken = () => { _refreshToken = null; };
 
 const REISSUE_PATH = "api/v1/auth/reissue";
 
+const API_BASE_URL = import.meta.env.DEV
+  ? `${window.location.origin}/`
+  : import.meta.env.VITE_API_BASE_URL;
+
 async function refreshAccessToken(): Promise<string> {
   if (_refreshPromise) return _refreshPromise;
 
   _refreshPromise = (async () => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+    const baseUrl = API_BASE_URL.replace(/\/$/, "");
     const res = await ky
       .post(`${baseUrl}/${REISSUE_PATH}`, {
         json: { refreshToken: _refreshToken },
@@ -38,7 +42,7 @@ async function refreshAccessToken(): Promise<string> {
 }
 
 export const client = ky.create({
-  prefixUrl: import.meta.env.VITE_API_BASE_URL,
+  prefixUrl: API_BASE_URL,
   credentials: "include",
   hooks: {
     beforeRequest: [
