@@ -39,7 +39,7 @@ export function DownloadSheet({ open, onClose, onDownload, isGenerating = false 
               disabled={selected === null || isGenerating}
               onClick={handleDownload}
             >
-              {isGenerating ? "생성 중..." : "다운받기"}
+              {isGenerating ? "생성 중..." : "다운로드"}
             </Button>
           }
         />
