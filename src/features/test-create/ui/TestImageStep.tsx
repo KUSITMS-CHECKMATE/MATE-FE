@@ -93,7 +93,7 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
           {index === 0 && (
             <div
               className="absolute inset-0 rounded-[16px] pointer-events-none"
-              style={{ background: "linear-gradient(180deg, #ffffff00 35%, #ffffff 130%)" }}
+              style={{ background: "linear-gradient(180deg, transparent 35%, var(--adaptiveBackground, #ffffff) 130%)" }}
             />
           )}
           <div
