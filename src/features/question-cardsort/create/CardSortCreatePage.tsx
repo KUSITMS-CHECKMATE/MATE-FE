@@ -190,7 +190,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
             onChange={setPreviewAnswer}
           />
           <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
-            돌아가기
+            닫기
           </FixedBottomCTA>
         </motion.div>
       )}

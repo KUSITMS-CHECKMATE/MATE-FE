@@ -138,7 +138,7 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
             initialChoiceName={editingChoice?.name ?? ""}
             initialImageUrl={editingChoice?.imageUrl ?? ""}
             onClose={() => setIsChoiceEditorOpen(false)}
-            submitLabel={editingChoice ? "수정하기" : "만들기"}
+            submitLabel={editingChoice ? "수정하기" : "추가하기"}
             onCreate={({ choiceName, imageUrl }) => {
               if (editingChoice) {
                 setChoices((prev) =>
@@ -195,7 +195,7 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
             onChange={setPreviewAnswer}
           />
           <FixedBottomCTA color="dark" variant="weak" onClick={() => setIsPreviewOpen(false)}>
-            돌아가기
+            닫기
           </FixedBottomCTA>
         </motion.div>
       )}

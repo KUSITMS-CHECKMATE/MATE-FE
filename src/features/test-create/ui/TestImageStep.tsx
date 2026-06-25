@@ -89,52 +89,60 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
         </div>
       </button>
       {!isDragging && (
-        <div
-          style={{
-            position: "absolute",
-            top: 6,
-            left: 6,
-            right: 6,
-            bottom: 6,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "flex-start",
-            pointerEvents: "none",
-          }}
-        >
+        <>
           {index === 0 && (
-            <div style={{ position: "absolute", bottom: 0, left: 0 }}>
-              <Badge size="small" variant="fill" color="elephant">
-                대표
-              </Badge>
-            </div>
-          )}
-          <button
-            type="button"
-            onTouchStart={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove(index);
-            }}
-            style={{
-              display: "flex",
-              background: "none",
-              border: "none",
-              padding: 0,
-              cursor: "pointer",
-              pointerEvents: "auto",
-            }}
-            aria-label={`이미지 ${index + 1} 삭제`}
-          >
-            <Asset.Icon
-              frameShape={Asset.frameShape.CircleXSmall}
-              backgroundColor={adaptive.greyOpacity600}
-              name="icon-sweetshop-x-white"
-              scale={0.66}
-              aria-hidden={true}
+            <div
+              className="absolute inset-0 rounded-[16px] pointer-events-none"
+              style={{ background: "linear-gradient(180deg, transparent 35%, var(--adaptiveBackground, #ffffff) 130%)" }}
             />
-          </button>
-        </div>
+          )}
+          <div
+            style={{
+              position: "absolute",
+              top: 6,
+              left: 6,
+              right: 6,
+              bottom: 6,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "flex-start",
+              pointerEvents: "none",
+            }}
+          >
+            {index === 0 && (
+              <div className="absolute bottom-1 left-0">
+                <Badge size="small" variant="fill" color="elephant">
+                  대표
+                </Badge>
+              </div>
+            )}
+            <button
+              type="button"
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(index);
+              }}
+              style={{
+                display: "flex",
+                background: "none",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                pointerEvents: "auto",
+              }}
+              aria-label={`이미지 ${index + 1} 삭제`}
+            >
+              <Asset.Icon
+                frameShape={Asset.frameShape.CircleXSmall}
+                backgroundColor={adaptive.greyOpacity600}
+                name="icon-sweetshop-x-white"
+                scale={0.66}
+                aria-hidden={true}
+              />
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
