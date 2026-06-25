@@ -63,7 +63,7 @@ export function FivesecSubjectiveAnswerPhase({
         <FixedBottomCTA onClick={onPrev}>{prevLabel}</FixedBottomCTA>
       ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
-          {isLast ? "완료하기" : "다음"}
+          {isLast ? "완료하기" : "다음으로"}
         </FixedBottomCTA>
       ) : (
         <FixedBottomCTA.Double
@@ -74,7 +74,7 @@ export function FivesecSubjectiveAnswerPhase({
           }
           rightButton={
             <CTAButton disabled={!canGoNext} onClick={onGoNext}>
-              {isLast ? "완료하기" : "다음"}
+              {isLast ? "완료하기" : "다음으로"}
             </CTAButton>
           }
         />

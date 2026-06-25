@@ -150,7 +150,7 @@ export function FivesecMultipleAnswerPhase({
         <FixedBottomCTA onClick={handleConfirm}>확인</FixedBottomCTA>
       ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
-          {isLast ? "완료하기" : "다음"}
+          {isLast ? "완료하기" : "다음으로"}
         </FixedBottomCTA>
       ) : (
         <FixedBottomCTA.Double
@@ -161,7 +161,7 @@ export function FivesecMultipleAnswerPhase({
           }
           rightButton={
             <CTAButton disabled={!canGoNext} onClick={onGoNext}>
-              {isLast ? "완료하기" : "다음"}
+              {isLast ? "완료하기" : "다음으로"}
             </CTAButton>
           }
         />
