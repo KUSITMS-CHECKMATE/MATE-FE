@@ -73,7 +73,7 @@ export function FunnelLayout({
             transition={{ duration: 0.1 }}
           >
             <FixedBottomCTA
-              {...(confirmFixedAboveKeyboard ? { fixedAboveKeyboard: true } : {})}
+              fixedAboveKeyboard={confirmFixedAboveKeyboard}
               disabled={isConfirmDisabled}
               onClick={onConfirm}
             >
