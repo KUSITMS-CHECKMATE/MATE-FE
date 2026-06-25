@@ -6,12 +6,16 @@ interface CardSortCreateBottomCTAProps {
   onComplete: () => void;
 }
 
-export function CardSortCreateBottomCTA({ isCompleteDisabled, onCancel, onComplete }: CardSortCreateBottomCTAProps) {
+export function CardSortCreateBottomCTA({
+  isCompleteDisabled,
+  onCancel,
+  onComplete,
+}: CardSortCreateBottomCTAProps) {
   return (
     <FixedBottomCTA.Double
       leftButton={
         <CTAButton color="dark" variant="weak" onClick={onCancel}>
-          취소
+          닫기
         </CTAButton>
       }
       rightButton={

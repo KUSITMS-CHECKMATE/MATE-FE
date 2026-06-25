@@ -11,7 +11,14 @@ interface Props {
   onClose: () => void;
 }
 
-export function ResponsePeriodSheet({ open, sheetKey, draft, onSelect, onConfirm, onClose }: Props) {
+export function ResponsePeriodSheet({
+  open,
+  sheetKey,
+  draft,
+  onSelect,
+  onConfirm,
+  onClose,
+}: Props) {
   const initialIndex = Math.max(0, PERIOD_OPTIONS.indexOf(draft));
 
   return (
@@ -21,7 +28,7 @@ export function ResponsePeriodSheet({ open, sheetKey, draft, onSelect, onConfirm
       header={<BottomSheet.Header>테스트 응답 기간</BottomSheet.Header>}
       cta={
         <BottomSheet.CTA color="primary" variant="fill" onClick={onConfirm}>
-          선택하기
+          확인하기
         </BottomSheet.CTA>
       }
     >

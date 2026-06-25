@@ -9,21 +9,39 @@ interface ScaleCreateBottomCTAProps {
   onDismissKeyboard: () => void;
 }
 
-export function ScaleCreateBottomCTA({ isCompleteDisabled, isFocused, onCancel, onComplete, onDismissKeyboard }: ScaleCreateBottomCTAProps) {
+export function ScaleCreateBottomCTA({
+  isCompleteDisabled,
+  isFocused,
+  onCancel,
+  onComplete,
+  onDismissKeyboard,
+}: ScaleCreateBottomCTAProps) {
   return (
     <AnimatePresence mode="wait">
       {isFocused ? (
-        <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+        <motion.div
+          key="confirm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
           <FixedBottomCTA fixedAboveKeyboard onClick={onDismissKeyboard}>
             확인
           </FixedBottomCTA>
         </motion.div>
       ) : (
-        <motion.div key="double" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.1 }}>
+        <motion.div
+          key="double"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+        >
           <FixedBottomCTA.Double
             leftButton={
               <CTAButton color="dark" variant="weak" onClick={onCancel}>
-                취소
+                닫기
               </CTAButton>
             }
             rightButton={

@@ -1,11 +1,5 @@
 import { adaptive } from "@toss/tds-colors";
-import {
-  Asset,
-  CTAButton,
-  FixedBottomCTA,
-  Tooltip,
-  Top,
-} from "@toss/tds-mobile";
+import { Asset, CTAButton, FixedBottomCTA, Tooltip, Top } from "@toss/tds-mobile";
 
 interface Props {
   isFirst: boolean;

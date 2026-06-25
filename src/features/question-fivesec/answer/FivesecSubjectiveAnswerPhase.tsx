@@ -60,7 +60,7 @@ export function FivesecSubjectiveAnswerPhase({
         />
       </div>
       {onlyPrev ? (
-        <FixedBottomCTA onClick={onPrev}>{prevLabel}</FixedBottomCTA>
+        <FixedBottomCTA color="dark" variant="weak" onClick={onPrev}>{prevLabel}</FixedBottomCTA>
       ) : isFirst ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={onGoNext}>
           {isLast ? "완료하기" : "다음으로"}
