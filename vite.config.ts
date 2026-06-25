@@ -19,5 +19,14 @@ export default defineConfig({
   server: {
     host: true,
     hmr: true,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_BASE_URL,
+        changeOrigin: true,
+        headers: {
+          origin: "http://localhost:5173",
+        },
+      },
+    },
   },
 });
