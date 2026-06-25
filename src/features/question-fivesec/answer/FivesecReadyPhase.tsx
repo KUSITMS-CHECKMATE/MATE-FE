@@ -65,7 +65,7 @@ export function FivesecReadyPhase({ isFirst, prevLabel = "이전", onPrev, onSta
       </div>
 
       {isFirst ? (
-        <FixedBottomCTA onClick={onStart}>다음</FixedBottomCTA>
+        <FixedBottomCTA onClick={onStart}>다음으로</FixedBottomCTA>
       ) : (
         <FixedBottomCTA.Double
           leftButton={
@@ -73,7 +73,7 @@ export function FivesecReadyPhase({ isFirst, prevLabel = "이전", onPrev, onSta
               {prevLabel}
             </CTAButton>
           }
-          rightButton={<CTAButton onClick={onStart}>다음</CTAButton>}
+          rightButton={<CTAButton onClick={onStart}>다음으로</CTAButton>}
         />
       )}
     </div>
