@@ -173,9 +173,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   const handleBasicConfirm = () => {
     if (isFocused) {
       dismissKeyboard();
-      if (basicSubStep === "name" && form.name.trim().length > 0) setBasicSubStep("summary");
-      else if (basicSubStep === "summary" && form.summary.trim().length > 0)
-        setBasicSubStep("category");
     } else {
       funnel.next();
     }
