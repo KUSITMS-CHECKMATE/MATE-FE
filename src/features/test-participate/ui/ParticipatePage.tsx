@@ -160,7 +160,7 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
 
       {isFivesecQuestion ? null : isFirst && !isLast ? (
         <FixedBottomCTA disabled={!canGoNext} onClick={goNext}>
-          {"다음"}
+          {"다음으로"}
         </FixedBottomCTA>
       ) : isFirst && isLast ? (
         <FixedBottomCTA disabled={!canGoNext || isSubmitting} onClick={goNext}>
@@ -175,7 +175,7 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
           }
           rightButton={
             <CTAButton disabled={!canGoNext || isSubmitting} onClick={goNext}>
-              {isLast ? (isSubmitting ? "제출 중" : "완료하기") : "다음"}
+              {isLast ? (isSubmitting ? "제출 중" : "완료하기") : "다음으로"}
             </CTAButton>
           }
         />
