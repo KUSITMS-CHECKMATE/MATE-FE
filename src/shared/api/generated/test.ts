@@ -269,7 +269,7 @@ export const getLikeTestUrl = (testId: number,) => {
 
 /**
  * 테스트를 찜하고 해당 테스트의 찜 개수를 1 증가시킵니다. HM_01 화면에 해당하는 api 입니다. 이미 찜한 테스트면 현재 상태를 반환합니다.
- * @summary ✔️ 테스트 찜하기
+ * @summary 테스트 찜하기
  */
 export const likeTest = async (testId: number, options?: RequestInit): Promise<likeTestResponse> => {
 
@@ -340,7 +340,7 @@ export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 테스트 찜하기
+ * @summary 테스트 찜하기
  */
 
 export function useLikeTest<TData = Awaited<ReturnType<typeof likeTest>>, TError = ErrorType<unknown>>(
@@ -383,7 +383,7 @@ export const getUnlikeTestUrl = (testId: number,) => {
 
 /**
  * 테스트 찜을 취소하고 해당 테스트의 찜 개수를 1 감소시킵니다. HM_01에 해당하는 api 입니다. 찜하지 않은 테스트면 현재 상태를 반환합니다.
- * @summary ✔️ 테스트 찜 취소
+ * @summary 테스트 찜 취소
  */
 export const unlikeTest = async (testId: number, options?: RequestInit): Promise<unlikeTestResponse> => {
 
@@ -454,7 +454,7 @@ export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 테스트 찜 취소
+ * @summary 테스트 찜 취소
  */
 
 export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TError = ErrorType<unknown>>(
@@ -502,7 +502,7 @@ export const getUpdateTestStatusUrl = (testId: number,) => {
 - `REJECTED`: 관리자만 가능 (테스트 반려), 현재 상태가 `WAITING`일 때만 허용
 - `COMPLETED`: 마감일(closedAt) 경과 시 스케줄러가 자동 처리 (매일 00:00 KST)
 
- * @summary ✔️ 테스트 상태 변경
+ * @summary 테스트 상태 변경
  */
 export const updateTestStatus = async (testId: number,
     testStatusUpdateRequest: TestStatusUpdateRequest, options?: RequestInit): Promise<updateTestStatusResponse> => {
@@ -579,7 +579,7 @@ export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTest
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 테스트 상태 변경
+ * @summary 테스트 상태 변경
  */
 
 export function useUpdateTestStatus<TData = Awaited<ReturnType<typeof updateTestStatus>>, TError = ErrorType<unknown>>(
@@ -631,7 +631,7 @@ export const getListTestsUrl = () => {
 - **reward**: 보상 금액(머니)
 - ui상 사용하지 않는 필드: likeCount, categories
 
- * @summary ✔️ 테스트 목록 조회
+ * @summary 테스트 목록 조회
  */
 export const listTests = async ( options?: RequestInit): Promise<listTestsResponse> => {
 
@@ -679,7 +679,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListTestsMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 테스트 목록 조회
+ * @summary 테스트 목록 조회
  */
 export const useListTests = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -719,7 +719,7 @@ export const getGetTestUrl = (testId: number,) => {
 - **testStatus**: `WAITING`(검수 중), `IN_PROGRESS`(진행 중), `COMPLETED`(종료), `REJECTED`(반려). 종료(`COMPLETED`) 시 참여 버튼 비활성화
 - **hasResponded**: 현재 로그인한 사용자가 이미 응답했으면 true. true면 참여 버튼 비활성화
 
- * @summary ✔️ 테스트 상세 조회
+ * @summary 테스트 상세 조회
  */
 export const getTest = async (testId: number, options?: RequestInit): Promise<getTestResponse> => {
 
@@ -767,7 +767,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetTestMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 테스트 상세 조회
+ * @summary 테스트 상세 조회
  */
 export const useGetTest = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getTest>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -821,7 +821,7 @@ export const getDeleteTestUrl = (testId: number,
       `five_second`, `five_second_option`, `tree_test`
   - 또한, 테스트/질문에 사용된 이미지 파일도 blob storage에서 함께 영구 삭제됩니다.
 
- * @summary 🔐️ 테스트 삭제
+ * @summary 🔒 테스트 삭제
  */
 export const deleteTest = async (testId: number,
     params: DeleteTestParams, options?: RequestInit): Promise<deleteTestResponse> => {
@@ -898,7 +898,7 @@ export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 🔐️ 테스트 삭제
+ * @summary 🔒 테스트 삭제
  */
 
 export function useDeleteTest<TData = Awaited<ReturnType<typeof deleteTest>>, TError = ErrorType<unknown>>(
@@ -950,7 +950,7 @@ export const getListMyTestsUrl = () => {
 - **pplCount**: 현재 참여 인원
 - **goalPpl**: 테스트 가능 최대 인원수
 
- * @summary ️✔️ 내 테스트 목록 조회
+ * @summary ️내 테스트 목록 조회
  */
 export const listMyTests = async ( options?: RequestInit): Promise<listMyTestsResponse> => {
 
@@ -998,7 +998,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListMyTestsMutationError = ErrorType<unknown>
 
     /**
- * @summary ️✔️ 내 테스트 목록 조회
+ * @summary ️내 테스트 목록 조회
  */
 export const useListMyTests = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -1042,7 +1042,7 @@ export const getListLikedTestsUrl = () => {
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
 
- * @summary ✔️ 찜한 테스트 목록 조회
+ * @summary 찜한 테스트 목록 조회
  */
 export const listLikedTests = async ( options?: RequestInit): Promise<listLikedTestsResponse> => {
 
@@ -1090,7 +1090,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListLikedTestsMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 찜한 테스트 목록 조회
+ * @summary 찜한 테스트 목록 조회
  */
 export const useListLikedTests = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLikedTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}

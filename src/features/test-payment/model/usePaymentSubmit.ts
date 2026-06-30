@@ -2,10 +2,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
+import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { createPayment, executePayment } from "@/shared/api/generated/payment";
 import { ROUTES } from "@/shared/constants/routes";
 import type { TesterCount, RewardAmount } from "./types";
+import { IAP_SKU_MAP } from "./types";
 
 async function stepError(label: string, e: unknown): Promise<Error> {
   let detail = e instanceof Error ? e.message : String(e);
@@ -60,6 +62,33 @@ export function usePaymentSubmit() {
         throw await stepError("초안 업데이트 실패", e);
       }
 
+      // IAP 결제 (리워드 200원이고 토스 앱 환경일 때)
+      if (rewardAmount === 200 && IAP != null) {
+        const sku = IAP_SKU_MAP[testerCount];
+        await new Promise<void>((resolve, reject) => {
+          const cleanup = IAP.createOneTimePurchaseOrder({
+            options: {
+              sku,
+              processProductGrant: async ({ orderId: _orderId }) => {
+                // TODO: 백엔드 주문 내역 API 연동 예정
+                return true;
+              },
+            },
+            onEvent: (event) => {
+              if (event.type === "success") {
+                cleanup();
+                resolve();
+              }
+            },
+            onError: (error) => {
+              cleanup();
+              reject(error);
+            },
+          });
+        });
+        return null;
+      }
+
       let paymentId: number;
       try {
         const payRes = await createPayment({ draftId, isTestPayment: true });
@@ -80,7 +109,12 @@ export function usePaymentSubmit() {
       }
     },
     onSuccess: (testId) => {
-      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
+      if (testId != null) {
+        navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
+      } else {
+        // IAP 결제 완료 (백엔드 연동 전 임시)
+        navigate({ to: ROUTES.DISCOVERY, replace: true });
+      }
     },
     onError: (error) => {
       openToast(error instanceof Error ? error.message : "결제 중 오류가 발생했어요", {
