@@ -205,7 +205,7 @@ export const getCreateDraftUrl = () => {
 /**
  * 빈 테스트 초안을 등록하고 draftId를 반환합니다. MKTT_01 화면에 해당하는 api 입니다. +버튼을 눌렀을 때 요청해주세요.
 
- * @summary ✔️ 테스트 초안 등록
+ * @summary 테스트 초안 등록
  */
 export const createDraft = async ( options?: RequestInit): Promise<createDraftResponse> => {
 
@@ -276,7 +276,7 @@ export function useCreateDraft<TData = Awaited<ReturnType<typeof createDraft>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 테스트 초안 등록
+ * @summary 테스트 초안 등록
  */
 
 export function useCreateDraft<TData = Awaited<ReturnType<typeof createDraft>>, TError = ErrorType<unknown>>(
@@ -519,7 +519,7 @@ export const getUpdateDraftUrl = (draftId: number,) => {
  * 테스트 초안의 기본 정보, 질문 payload, 목표 인원, 리워드, 마감 기한을 수정합니다. MKTT_02, MKTT_03, 결제하기 화면에 해당하는 api 입니다.<br>
 - **closedAt**: yyyy-MM-dd 형식으로 요청해주세요.
 
- * @summary ✔️ 테스트 초안 수정
+ * @summary 테스트 초안 수정
  */
 export const updateDraft = async (draftId: number,
     testDraftUpdateRequest: TestDraftUpdateRequest, options?: RequestInit): Promise<updateDraftResponse> => {
@@ -596,7 +596,7 @@ export function useUpdateDraft<TData = Awaited<ReturnType<typeof updateDraft>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 테스트 초안 수정
+ * @summary 테스트 초안 수정
  */
 
 export function useUpdateDraft<TData = Awaited<ReturnType<typeof updateDraft>>, TError = ErrorType<unknown>>(

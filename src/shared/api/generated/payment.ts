@@ -196,7 +196,7 @@ export const getCreatePaymentUrl = () => {
 /**
  * 테스트 초안을 기준으로 mock 결제를 등록하고 payToken을 반환합니다.
 
- * @summary ✔️ 결제 등록
+ * @summary 결제 등록
  */
 export const createPayment = async (paymentCreateRequest: PaymentCreateRequest, options?: RequestInit): Promise<createPaymentResponse> => {
 
@@ -267,7 +267,7 @@ export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 결제 등록
+ * @summary 결제 등록
  */
 
 export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(
@@ -432,7 +432,7 @@ export const getExecutePaymentUrl = (paymentId: number,) => {
 /**
  * mock 결제를 실행하고 승인 결과를 반환합니다.
 
- * @summary ✔️ 결제 실행
+ * @summary 결제 실행
  */
 export const executePayment = async (paymentId: number, options?: RequestInit): Promise<executePaymentResponse> => {
 
@@ -503,7 +503,7 @@ export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayme
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ✔️ 결제 실행
+ * @summary 결제 실행
  */
 
 export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
