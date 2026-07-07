@@ -27,6 +27,11 @@ export default defineConfig({
           origin: "http://localhost:5173",
         },
       },
+      "/azure-blob": {
+        target: "https://matestoragedev.blob.core.windows.net",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/azure-blob/, ""),
+      },
     },
   },
 });
