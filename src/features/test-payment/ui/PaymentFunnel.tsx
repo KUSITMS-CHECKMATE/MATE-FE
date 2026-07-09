@@ -8,6 +8,7 @@ import { calcPayment, toKRW } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
+import { PaymentCompleteStep } from "./PaymentCompleteStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
@@ -34,7 +35,9 @@ export function PaymentFunnel() {
     try {
       unsubscribe = graniteEvent.addEventListener("backEvent", {
         onEvent: () => {
-          if (stepRef.current === "main") {
+          if (stepRef.current === "complete") {
+            navigate({ to: ROUTES.TEST, replace: true });
+          } else if (stepRef.current === "main") {
             handleGoBack();
           } else {
             setStep("main");
@@ -62,6 +65,7 @@ export function PaymentFunnel() {
   const [draftTesterCount, setDraftTesterCount] = useState<TesterCount | null>(null);
   const [rewardAmount, setRewardAmount] = useState<RewardAmount | null>(null);
   const [draftRewardAmount, setDraftRewardAmount] = useState<RewardAmount | null>(null);
+  const [completedTestId, setCompletedTestId] = useState<number | null>(null);
 
   if (step === "tester-count") {
     return (
@@ -87,6 +91,17 @@ export function PaymentFunnel() {
           setStep("main");
         }}
         onClose={() => setStep("main")}
+      />
+    );
+  }
+
+  if (step === "complete" && completedTestId != null) {
+    return (
+      <PaymentCompleteStep
+        onViewTest={() =>
+          navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(completedTestId) }, replace: true })
+        }
+        onClose={() => navigate({ to: ROUTES.TEST, replace: true })}
       />
     );
   }
@@ -195,12 +210,20 @@ export function PaymentFunnel() {
             rightButton={
               <CTAButton
                 onClick={() =>
-                  submitPayment({
-                    draftId,
-                    testerCount: testerCount!,
-                    rewardAmount: rewardAmount!,
-                    responsePeriod,
-                  })
+                  submitPayment(
+                    {
+                      draftId,
+                      testerCount: testerCount!,
+                      rewardAmount: rewardAmount!,
+                      responsePeriod,
+                    },
+                    {
+                      onSuccess: (testId) => {
+                        setCompletedTestId(testId);
+                        setStep("complete");
+                      },
+                    },
+                  )
                 }
                 disabled={isPending}
               >

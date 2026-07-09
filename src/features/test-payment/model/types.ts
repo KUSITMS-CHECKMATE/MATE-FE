@@ -1,4 +1,4 @@
-export type PaymentStep = "main" | "tester-count" | "reward-amount";
+export type PaymentStep = "main" | "tester-count" | "reward-amount" | "complete";
 
 export const TESTER_COUNT_OPTIONS = [30, 50, 100, 200, 300] as const;
 export type TesterCount = (typeof TESTER_COUNT_OPTIONS)[number];
