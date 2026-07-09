@@ -62,9 +62,9 @@ export function usePaymentSubmit() {
         throw await stepError("초안 업데이트 실패", e);
       }
 
-      // IAP 결제 (리워드 200원이고 토스 앱 환경일 때)
-      if (rewardAmount === 200 && IAP != null) {
-        const sku = IAP_SKU_MAP[testerCount];
+      // IAP 결제 (리워드/테스터 수 조합의 상품이 등록돼 있고 토스 앱 환경일 때)
+      const sku = IAP_SKU_MAP[rewardAmount]?.[testerCount];
+      if (sku != null && IAP != null) {
         await new Promise<void>((resolve, reject) => {
           const cleanup = IAP.createOneTimePurchaseOrder({
             options: {
