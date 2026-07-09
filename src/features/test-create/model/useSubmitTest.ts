@@ -100,7 +100,11 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
   const { presignedUrl, fileKey } = uploadResponse.data.data ?? {};
   if (!presignedUrl || !fileKey) throw new Error("업로드 URL 발급 실패");
 
-  await ky.put(presignedUrl, {
+  const uploadUrl = import.meta.env.DEV
+    ? (() => { const u = new URL(presignedUrl); return `/azure-blob${u.pathname}${u.search}`; })()
+    : presignedUrl;
+
+  await ky.put(uploadUrl, {
     body: blob,
     headers: { "x-ms-blob-type": "BlockBlob" },
   });
