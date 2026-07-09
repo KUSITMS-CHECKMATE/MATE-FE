@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { createPayment, executePayment } from "@/shared/api/generated/payment";
-import { ROUTES } from "@/shared/constants/routes";
 import type { TesterCount, RewardAmount } from "./types";
 import { IAP_SKU_MAP } from "./types";
 
@@ -28,7 +26,6 @@ interface PaymentSubmitInput {
 }
 
 export function usePaymentSubmit() {
-  const navigate = useNavigate();
   const { openToast } = useToast();
 
   return useMutation({
@@ -65,28 +62,32 @@ export function usePaymentSubmit() {
       // IAP 결제 (리워드/테스터 수 조합의 상품이 등록돼 있고 토스 앱 환경일 때)
       const sku = IAP_SKU_MAP[rewardAmount]?.[testerCount];
       if (sku != null && IAP != null) {
-        await new Promise<void>((resolve, reject) => {
-          const cleanup = IAP.createOneTimePurchaseOrder({
-            options: {
-              sku,
-              processProductGrant: async ({ orderId: _orderId }) => {
-                // TODO: 백엔드 주문 내역 API 연동 예정
-                return true;
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const cleanup = IAP.createOneTimePurchaseOrder({
+              options: {
+                sku,
+                processProductGrant: async ({ orderId: _orderId }) => {
+                  // TODO: 백엔드 주문 내역 API 연동 예정 (orderId 전달)
+                  return true;
+                },
               },
-            },
-            onEvent: (event) => {
-              if (event.type === "success") {
+              onEvent: (event) => {
+                if (event.type === "success") {
+                  cleanup();
+                  resolve();
+                }
+              },
+              onError: (error) => {
                 cleanup();
-                resolve();
-              }
-            },
-            onError: (error) => {
-              cleanup();
-              reject(error);
-            },
+                reject(error);
+              },
+            });
           });
-        });
-        return null;
+        } catch (e) {
+          throw await stepError("IAP 결제 실패", e);
+        }
+        // IAP 결제 후에도 draft를 발행 처리해 testId를 받아야 하므로 아래 mock 결제 플로우로 이어짐
       }
 
       let paymentId: number;
@@ -106,14 +107,6 @@ export function usePaymentSubmit() {
         return testId;
       } catch (e) {
         throw await stepError("결제 실행 실패", e);
-      }
-    },
-    onSuccess: (testId) => {
-      if (testId != null) {
-        navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
-      } else {
-        // IAP 결제 완료 (백엔드 연동 전 임시)
-        navigate({ to: ROUTES.DISCOVERY, replace: true });
       }
     },
     onError: (error) => {
