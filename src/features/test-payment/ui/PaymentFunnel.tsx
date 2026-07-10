@@ -3,9 +3,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
 import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Spacing, Text, TextField, Top } from "@toss/tds-mobile";
-import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
+import { type PaymentStep, type TesterCount, type RewardAmount, IAP_SKU_MAP } from "../model/types";
 import { calcPayment, toKRW } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
+import { useIapProducts } from "../model/useIapProducts";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { PaymentCompleteStep } from "./PaymentCompleteStep";
@@ -19,6 +20,7 @@ export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
   const { mutate: submitPayment, isPending } = usePaymentSubmit();
+  const { data: iapProducts } = useIapProducts();
 
   const handleGoBack = () => {
     navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true } });
@@ -108,6 +110,10 @@ export function PaymentFunnel() {
 
   const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount) : null;
 
+  const iapSku = testerCount != null && rewardAmount != null ? IAP_SKU_MAP[rewardAmount]?.[testerCount] : undefined;
+  const iapProduct = iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
+  const displayTotal = iapProduct?.displayAmount ?? (payment != null ? toKRW(payment.total) : null);
+
   return (
     <>
       <div className="flex flex-col h-full bg-white">
@@ -176,7 +182,7 @@ export function PaymentFunnel() {
                 right={
                   <div className="pr-5">
                     <Text color={adaptive.red600} typography="st8" fontWeight="bold">
-                      {toKRW(payment.total)}
+                      {displayTotal}
                     </Text>
                   </div>
                 }
@@ -227,7 +233,7 @@ export function PaymentFunnel() {
                 }
                 disabled={isPending}
               >
-                {toKRW(payment.total)} 결제하기
+                {displayTotal} 결제하기
               </CTAButton>
             }
           />
