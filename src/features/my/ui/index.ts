@@ -1,8 +1,5 @@
 export { MyHelpSection } from './MyHelpSection';
 export { MyServiceSection } from './MyServiceSection';
 export { MyParticipateHistory } from './MyParticipateHistory';
+export { MyTestDetail } from './MyTestDetail';
 export { MyNotice } from './MyNotice';
-export { NoticeDetail } from './NoticeDetail';
-export { PolicyDetail } from './PolicyDetail';
-export { PrivacyPolicyDetail } from './PrivacyPolicyDetail';
-export { BusinessInfoDetail } from './BusinessInfoDetail';

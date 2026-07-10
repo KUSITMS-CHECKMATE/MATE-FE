@@ -2,11 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Text, List, ListRow, Spacing } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
 
-interface Props {
-  onGuideClick?: () => void;
-}
-
-export function MyHelpSection({ onGuideClick }: Props) {
+export function MyHelpSection() {
   const navigate = useNavigate();
 
   return (
@@ -66,22 +62,19 @@ export function MyHelpSection({ onGuideClick }: Props) {
               topProps={{ color: adaptive.grey700 }}
             />
           }
-          onClick={onGuideClick}
         />
         <ListRow
           left={
-            <ListRow.AssetImage
-              src="https://static.toss.im/2d-icons/emoji/png/4x/u1F4B0.png"
-              shape="squircle"
-              scale={0.66}
+            <ListRow.AssetIcon
+              name="icon-headphone-slim-mono"
+              color={adaptive.teal500}
               backgroundColor={adaptive.greyOpacity100}
-              size="small"
             />
           }
           contents={
             <ListRow.Texts
               type="1RowTypeA"
-              top="결제 내역"
+              top="문의하기"
               topProps={{ color: adaptive.grey700 }}
             />
           }

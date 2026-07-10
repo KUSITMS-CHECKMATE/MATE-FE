@@ -14,7 +14,6 @@ export interface Notice {
   id: number;
   title: string;
   publishedAt: string;
-  content: string;
 }
 
 export interface TestDetail {

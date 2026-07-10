@@ -6,46 +6,20 @@ import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
 import { QuestionManageSheet } from "./QuestionManageSheet";
 import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId, type PendingQuestion } from "../model/types";
 import { useTestCreateForm } from "../model/useTestCreateForm";
-import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 export type RegisterTab = "info" | "questions";
-
-function RegisterImageSlide({ uri }: { uri: string }) {
-  const src = useResolvedImageSrc(uri);
-  return (
-    <img
-      src={src}
-      aria-hidden={true}
-      style={{
-        width: "100%",
-        height: "100%",
-        borderRadius: 16,
-        objectFit: "cover",
-      }}
-    />
-  );
-}
 
 interface TestRegisterStepProps {
   activeTab: RegisterTab;
   onTabChange: (tab: RegisterTab) => void;
   onEnterQuestion: (question: { id: string; typeId: QuestionTypeId }) => void;
   onGuideView?: () => void;
-  isQuestionTypeSheetOpen: boolean;
-  onOpenQuestionTypeSheet: () => void;
-  onCloseQuestionTypeSheet: () => void;
 }
 
-export function TestRegisterStep({
-  activeTab,
-  onTabChange,
-  onEnterQuestion,
-  onGuideView,
-  isQuestionTypeSheetOpen,
-  onOpenQuestionTypeSheet,
-  onCloseQuestionTypeSheet,
-}: TestRegisterStepProps) {
+export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGuideView }: TestRegisterStepProps) {
   const form = useTestCreateForm();
+  const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
+  const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -61,10 +35,22 @@ export function TestRegisterStep({
       .filter(Boolean);
   }, [form.categories]);
 
-  const handleConfirmQuestionTypes = (selectedCounts: Partial<Record<QuestionTypeId, number>>) => {
-    const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) => Array.from({ length: count ?? 0 }, () => id as QuestionTypeId));
+  const handleChangeCount = (id: QuestionTypeId, count: number) => {
+    setSelectedCounts((prev) => ({ ...prev, [id]: count }));
+  };
+
+  const closeQuestionTypeSheet = () => {
+    setSelectedCounts({});
+    setIsQuestionTypeSheetOpen(false);
+  };
+
+  const handleConfirmQuestionTypes = () => {
+    const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) =>
+      Array.from({ length: count ?? 0 }, () => id as QuestionTypeId)
+    );
     form.addQuestions(typeIds);
-    onCloseQuestionTypeSheet();
+    setSelectedCounts({});
+    setIsQuestionTypeSheetOpen(false);
   };
 
   const openEditSheet = () => {
@@ -119,7 +105,7 @@ export function TestRegisterStep({
                 contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
                 verticalPadding="large"
                 horizontalPadding="small"
-                onClick={onOpenQuestionTypeSheet}
+                onClick={() => setIsQuestionTypeSheetOpen(true)}
               />
             </div>
 
@@ -185,18 +171,6 @@ export function TestRegisterStep({
         ) : (
           <div className="flex flex-col flex-1 pb-4">
             <Spacing size={16} />
-            <ListRow
-              style={{
-                backgroundColor: "var(--adaptiveCardBgGrey)",
-                backdropFilter: "blur(0px)",
-                borderRadius: "999px",
-                opacity: 1,
-                margin: "0 20px",
-              }}
-              left={<ListRow.AssetIcon name="icon-phone" backgroundColor={adaptive.greyOpacity100} />}
-              contents={<ListRow.Texts type="1RowTypeB" top="실제 테스터에게 보이는 화면이에요" topProps={{ color: adaptive.grey700 }} />}
-              horizontalPadding="small"
-            />
             <Top
               title={
                 <Top.TitleParagraph size={22} color={adaptive.grey900}>
@@ -219,6 +193,13 @@ export function TestRegisterStep({
                   }
                 />
               }
+              lower={
+                !form.serviceName ? (
+                  <Top.LowerButton color="primary" size="small" variant="weak" display="inline">
+                    어떤 서비스인가요?
+                  </Top.LowerButton>
+                ) : undefined
+              }
             />
             <div
               className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory"
@@ -229,9 +210,18 @@ export function TestRegisterStep({
                 setActiveImageIndex(index);
               }}
             >
-              {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((uri, i) => (
+              {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((src, i) => (
                 <div key={i} className="snap-start shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
-                  <RegisterImageSlide uri={uri} />
+                  <img
+                    src={src}
+                    aria-hidden={true}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: 16,
+                      objectFit: "cover",
+                    }}
+                  />
                 </div>
               ))}
             </div>
@@ -326,12 +316,7 @@ export function TestRegisterStep({
 
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
-          <QuestionTypeSelectSheet
-            existingCount={form.questions.length}
-            onConfirm={handleConfirmQuestionTypes}
-            onCancel={onCloseQuestionTypeSheet}
-            onShowGuide={onGuideView}
-          />
+          <QuestionTypeSelectSheet selectedCounts={selectedCounts} onChangeCount={handleChangeCount} existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} onShowGuide={onGuideView} />
         )}
         {isManageSheetOpen && (
           <QuestionManageSheet
