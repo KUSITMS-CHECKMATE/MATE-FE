@@ -225,7 +225,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
               ? "이전"
               : "취소"
         }
-        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSubmitting}
+        isSubmitDisabled={
+          !isAllComplete ||
+          form.questions.length === 0 ||
+          !form.questions.every((q) => !!q.data) ||
+          isSubmitting
+        }
         submitLabel="테스트 만들기"
         doubleBottomAccessory={
           funnel.step === "service" ? (
