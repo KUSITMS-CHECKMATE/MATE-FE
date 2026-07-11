@@ -99,12 +99,7 @@ export function PaymentFunnel() {
 
   if (step === "complete" && completedTestId != null) {
     return (
-      <PaymentCompleteStep
-        onViewTest={() =>
-          navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(completedTestId) }, replace: true })
-        }
-        onClose={() => navigate({ to: ROUTES.TEST, replace: true })}
-      />
+      <PaymentCompleteStep onClose={() => navigate({ to: ROUTES.TEST, replace: true })} />
     );
   }
 
