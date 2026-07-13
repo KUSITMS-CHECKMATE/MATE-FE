@@ -1,32 +1,36 @@
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { FixedBottomCTA, List, ListRow, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useNavigate } from "@tanstack/react-router";
-import { appLogin } from "@apps-in-toss/web-framework";
-import { loginWithToss } from "@/shared/api/generated/auth";
-import { setToken, setRefreshToken } from "@/shared/api/client";
+import { hasSession } from "@/shared/api/client";
+import { runTossLogin } from "@/features/login/model/login";
 import { ROUTES } from "@/shared/constants/routes";
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
 
+  // 부팅 시 AuthGuard가 자동 로그인을 마친 뒤 이 화면이 렌더된다.
+  // 이미 세션이 있으면(재방문·연결됨) 인트로를 건너뛰고 바로 홈으로 보낸다.
+  const authenticated = hasSession();
+  useEffect(() => {
+    if (authenticated) {
+      navigate({ to: ROUTES.DISCOVERY, replace: true });
+    }
+  }, [authenticated, navigate]);
+
   const loginMutation = useMutation({
-    mutationFn: async () => {
-      const { authorizationCode, referrer } = await appLogin();
-      const { data: body } = await loginWithToss({ authorizationCode, referrer });
-      const token = body.data?.accessToken;
-      const refreshToken = body.data?.refreshToken;
-      if (!token) throw new Error("토큰을 받지 못했습니다.");
-      setToken(token);
-      if (refreshToken) setRefreshToken(refreshToken);
-    },
+    mutationFn: runTossLogin,
     onSuccess: () => {
       navigate({ to: ROUTES.DISCOVERY });
     },
-    onError: () => {
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    onError: (error) => {
+      // 원인 진단용: 실제 에러 메시지를 그대로 노출한다. (원인 확인 후 일반 문구로 복구 예정)
+      alert(`로그인 실패\n${error instanceof Error ? error.message : String(error)}`);
     },
   });
+
+  if (authenticated) return null;
 
   return (
     <div className="flex flex-col min-h-dvh bg-white">
