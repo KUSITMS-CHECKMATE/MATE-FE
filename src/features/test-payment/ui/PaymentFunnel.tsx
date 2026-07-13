@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
-import { Asset, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Spacing, Text, TextField, Top } from "@toss/tds-mobile";
+import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top } from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
@@ -182,7 +182,58 @@ export function PaymentFunnel() {
                   />
                 }
               />
+              <ListRow
+                contents={
+                  <ListRow.Texts
+                    type="1RowTypeA"
+                    top="수수료"
+                    topProps={{ color: adaptive.grey700 }}
+                  />
+                }
+                right={
+                  <ListRow.Texts
+                    type="Right1RowTypeA"
+                    top={toKRW(payment.fee)}
+                    topProps={{ color: adaptive.grey700 }}
+                  />
+                }
+              />
+              <ListRow
+                contents={
+                  <ListRow.Texts
+                    type="1RowTypeA"
+                    top="부가세"
+                    topProps={{ color: adaptive.grey700 }}
+                  />
+                }
+                right={
+                  <ListRow.Texts
+                    type="Right1RowTypeA"
+                    top={toKRW(payment.vat)}
+                    topProps={{ color: adaptive.grey700 }}
+                  />
+                }
+              />
+              <ListRow
+                contents={
+                  <ListRow.Texts
+                    type="1RowTypeA"
+                    top="결제 합계"
+                    topProps={{ color: adaptive.grey900, fontWeight: "bold" }}
+                  />
+                }
+                right={
+                  <ListRow.Texts
+                    type="Right1RowTypeA"
+                    top={toKRW(payment.total)}
+                    topProps={{ color: adaptive.grey900, fontWeight: "bold" }}
+                  />
+                }
+              />
             </List>
+            <BottomInfo>
+              <Post.H4 paddingBottom={16}>환불 정책</Post.H4>
+            </BottomInfo>
           </>
         )}
         {payment != null ? (
