@@ -62,12 +62,22 @@ export function TestCreateFunnel({ draftId, fromPayment = false }: Props) {
   useScrollLock(isOverlayOpen);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
+  const funnelIsFirstRef = useRef(funnel.isFirst);
+  const funnelPrevRef = useRef(funnel.prev);
+  useEffect(() => {
+    funnelIsFirstRef.current = funnel.isFirst;
+    funnelPrevRef.current = funnel.prev;
+  }, [funnel.isFirst, funnel.prev]);
 
   useEffect(() => {
     try {
       const unsubscribe = graniteEvent.addEventListener("backEvent", {
         onEvent: () => {
-          setIsExitDialogOpen(true);
+          if (funnelIsFirstRef.current) {
+            setIsExitDialogOpen(true);
+          } else {
+            funnelPrevRef.current();
+          }
         },
         onError: (error) => {
           console.error("backEvent error", error);
