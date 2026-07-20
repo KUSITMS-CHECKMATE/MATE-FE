@@ -33,13 +33,25 @@ export type TestDraftResponseStatus = typeof TestDraftResponseStatus[keyof typeo
 
 export const TestDraftResponseStatus = {
   DRAFT: 'DRAFT',
-  PAYMENT_CREATED: 'PAYMENT_CREATED',
-  PAYMENT_FAILED: 'PAYMENT_FAILED',
   PUBLISHING: 'PUBLISHING',
   PUBLISHED: 'PUBLISHED',
   PUBLISH_FAILED: 'PUBLISH_FAILED',
   EXPIRED: 'EXPIRED',
 } as const;
+
+/**
+ * 결제 금액 내역
+ */
+export interface PaymentAmountResponse {
+  /** 테스터 리워드 총액 */
+  testerRewardAmount?: number;
+  /** 수수료 */
+  feeAmount?: number;
+  /** 부가세 */
+  vatAmount?: number;
+  /** 최종 결제 금액 */
+  totalAmount?: number;
+}
 
 export interface TestDraftResponse {
   draftId?: number;
@@ -56,11 +68,9 @@ export interface TestDraftResponse {
   questionsPayload?: JsonNode;
   status?: TestDraftResponseStatus;
   publishedTestId?: number;
-  orderNo?: string;
-  expectedAmount?: number;
-  payToken?: string;
   createdAt?: string;
   updatedAt?: string;
+  amountBreakdown?: PaymentAmountResponse;
 }
 
 export interface ApiResponseTestDraftResponse {
@@ -148,8 +158,6 @@ export type MyTestDraftItemStatus = typeof MyTestDraftItemStatus[keyof typeof My
 
 export const MyTestDraftItemStatus = {
   DRAFT: 'DRAFT',
-  PAYMENT_CREATED: 'PAYMENT_CREATED',
-  PAYMENT_FAILED: 'PAYMENT_FAILED',
   PUBLISHING: 'PUBLISHING',
   PUBLISHED: 'PUBLISHED',
   PUBLISH_FAILED: 'PUBLISH_FAILED',

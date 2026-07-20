@@ -26,6 +26,15 @@ import type {
 
 import { kyMutator } from '../mutator';
 import type { ErrorType } from '../mutator';
+export type ApiResponseVoidData = { [key: string]: unknown };
+
+export interface ApiResponseVoid {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: ApiResponseVoidData;
+}
+
 export interface TestLikeResponse {
   testId?: number;
   isLiked?: boolean;
@@ -143,15 +152,6 @@ export interface ApiResponseTestDetailResponse {
   data?: TestDetailResponse;
 }
 
-export type ApiResponseVoidData = { [key: string]: unknown };
-
-export interface ApiResponseVoid {
-  success?: boolean;
-  code?: string;
-  message?: string;
-  data?: ApiResponseVoidData;
-}
-
 /**
  * 진행 상태
  */
@@ -244,6 +244,122 @@ export const DeleteTestMode = {
 } as const;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
+
+export type waiveRefundResponse200 = {
+  data: ApiResponseVoid
+  status: 200
+}
+
+export type waiveRefundResponseSuccess = (waiveRefundResponse200) & {
+  headers: Headers;
+};
+;
+
+export type waiveRefundResponse = (waiveRefundResponseSuccess)
+
+export const getWaiveRefundUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/waive-refund`
+}
+
+/**
+ * 메이커가 목표 미달 상태에서도 테스트 진행 의사를 표시합니다.<br>
+이 선택 이후에는 달성률 20% 미만으로 자동 종료되더라도 환불이 불가능합니다.
+
+ * @summary 환불 포기 (현재 인원으로 진행)
+ */
+export const waiveRefund = async (testId: number, options?: RequestInit): Promise<waiveRefundResponse> => {
+
+  return kyMutator<waiveRefundResponse>(getWaiveRefundUrl(testId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getWaiveRefundQueryKey = (testId: number,) => {
+    return [
+    'POST', `/api/v1/tests/${testId}/waive-refund`
+    ] as const;
+    }
+
+
+export const getWaiveRefundQueryOptions = <TData = Awaited<ReturnType<typeof waiveRefund>>, TError = ErrorType<unknown>>(testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWaiveRefundQueryKey(testId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof waiveRefund>>> = ({ signal }) => waiveRefund(testId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type WaiveRefundQueryResult = NonNullable<Awaited<ReturnType<typeof waiveRefund>>>
+export type WaiveRefundQueryError = ErrorType<unknown>
+
+
+export function useWaiveRefund<TData = Awaited<ReturnType<typeof waiveRefund>>, TError = ErrorType<unknown>>(
+ testId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof waiveRefund>>,
+          TError,
+          Awaited<ReturnType<typeof waiveRefund>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useWaiveRefund<TData = Awaited<ReturnType<typeof waiveRefund>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof waiveRefund>>,
+          TError,
+          Awaited<ReturnType<typeof waiveRefund>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useWaiveRefund<TData = Awaited<ReturnType<typeof waiveRefund>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 환불 포기 (현재 인원으로 진행)
+ */
+
+export function useWaiveRefund<TData = Awaited<ReturnType<typeof waiveRefund>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waiveRefund>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getWaiveRefundQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
 
 
 
@@ -463,6 +579,123 @@ export function useUnlikeTest<TData = Awaited<ReturnType<typeof unlikeTest>>, TE
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getUnlikeTestQueryOptions(testId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export type closeTestResponse200 = {
+  data: ApiResponseVoid
+  status: 200
+}
+
+export type closeTestResponseSuccess = (closeTestResponse200) & {
+  headers: Headers;
+};
+;
+
+export type closeTestResponse = (closeTestResponseSuccess)
+
+export const getCloseTestUrl = (testId: number,) => {
+
+
+
+
+  return `/api/v1/tests/${testId}/close`
+}
+
+/**
+ * 메이커가 진행 중인 테스트를 직접 종료합니다.<br>
+수동 종료 시 달성률과 관계없이 환불이 불가능합니다.<br>
+달성률 20% 이상이면 리포트 집계가 시작됩니다.
+
+ * @summary 테스트 수동 종료
+ */
+export const closeTest = async (testId: number, options?: RequestInit): Promise<closeTestResponse> => {
+
+  return kyMutator<closeTestResponse>(getCloseTestUrl(testId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCloseTestQueryKey = (testId: number,) => {
+    return [
+    'POST', `/api/v1/tests/${testId}/close`
+    ] as const;
+    }
+
+
+export const getCloseTestQueryOptions = <TData = Awaited<ReturnType<typeof closeTest>>, TError = ErrorType<unknown>>(testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCloseTestQueryKey(testId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof closeTest>>> = ({ signal }) => closeTest(testId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: testId !== null && testId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CloseTestQueryResult = NonNullable<Awaited<ReturnType<typeof closeTest>>>
+export type CloseTestQueryError = ErrorType<unknown>
+
+
+export function useCloseTest<TData = Awaited<ReturnType<typeof closeTest>>, TError = ErrorType<unknown>>(
+ testId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof closeTest>>,
+          TError,
+          Awaited<ReturnType<typeof closeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCloseTest<TData = Awaited<ReturnType<typeof closeTest>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof closeTest>>,
+          TError,
+          Awaited<ReturnType<typeof closeTest>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCloseTest<TData = Awaited<ReturnType<typeof closeTest>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary 테스트 수동 종료
+ */
+
+export function useCloseTest<TData = Awaited<ReturnType<typeof closeTest>>, TError = ErrorType<unknown>>(
+ testId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeTest>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCloseTestQueryOptions(testId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

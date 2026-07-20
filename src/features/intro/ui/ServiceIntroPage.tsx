@@ -6,6 +6,7 @@ import { appLogin } from "@apps-in-toss/web-framework";
 import { loginWithToss } from "@/shared/api/generated/auth";
 import { setToken, setRefreshToken } from "@/shared/api/client";
 import { ROUTES } from "@/shared/constants/routes";
+import { recoverPendingOrders } from "@/features/test-payment/model/pendingOrderRecovery";
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export function ServiceIntroPage() {
       if (refreshToken) setRefreshToken(refreshToken);
     },
     onSuccess: () => {
+      recoverPendingOrders();
       navigate({ to: ROUTES.DISCOVERY });
     },
     onError: () => {
