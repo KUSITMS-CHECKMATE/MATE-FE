@@ -67,8 +67,6 @@ export function PaymentFunnel() {
   const [draftTesterCount, setDraftTesterCount] = useState<TesterCount | null>(null);
   const [rewardAmount, setRewardAmount] = useState<RewardAmount | null>(null);
   const [draftRewardAmount, setDraftRewardAmount] = useState<RewardAmount | null>(null);
-  const [completedTestId, setCompletedTestId] = useState<number | null>(null);
-
   if (step === "tester-count") {
     return (
       <TesterCountStep
@@ -97,7 +95,7 @@ export function PaymentFunnel() {
     );
   }
 
-  if (step === "complete" && completedTestId != null) {
+  if (step === "complete") {
     return (
       <PaymentCompleteStep onClose={() => navigate({ to: ROUTES.TEST, replace: true })} />
     );
@@ -219,10 +217,7 @@ export function PaymentFunnel() {
                       responsePeriod,
                     },
                     {
-                      onSuccess: (testId) => {
-                        setCompletedTestId(testId);
-                        setStep("complete");
-                      },
+                      onSuccess: () => setStep("complete"),
                     },
                   )
                 }

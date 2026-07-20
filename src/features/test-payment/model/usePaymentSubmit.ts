@@ -3,7 +3,7 @@ import { useToast } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
-import { createPayment, executePayment } from "@/shared/api/generated/payment";
+import { grantPayment } from "./paymentGrant";
 import type { TesterCount, RewardAmount } from "./types";
 import { IAP_SKU_MAP } from "./types";
 
@@ -38,8 +38,6 @@ export function usePaymentSubmit() {
         const draftRes = await getDraft(draftId);
         const status = draftRes.data.data?.status;
         const BLOCKED: Record<string, string> = {
-          PAYMENT_CREATED: "이미 결제가 진행 중인 테스트입니다.",
-          PAYMENT_FAILED: "이전 결제가 실패했습니다. 새 테스트를 만들어 주세요.",
           PUBLISHING: "발행 처리 중인 테스트입니다.",
           PUBLISHED: "이미 발행된 테스트입니다.",
           PUBLISH_FAILED: "발행에 실패한 테스트입니다. 새 테스트를 만들어 주세요.",
@@ -59,54 +57,39 @@ export function usePaymentSubmit() {
         throw await stepError("초안 업데이트 실패", e);
       }
 
-      // IAP 결제 (리워드/테스터 수 조합의 상품이 등록돼 있고 토스 앱 환경일 때)
+      // IAP 결제 (mock 결제는 사용하지 않음 — 리워드/테스터 수 조합 상품이 등록돼 있고 토스 앱 환경이어야 함)
       const sku = IAP_SKU_MAP[rewardAmount]?.[testerCount];
-      if (sku != null && IAP != null) {
-        try {
-          await new Promise<void>((resolve, reject) => {
-            const cleanup = IAP.createOneTimePurchaseOrder({
-              options: {
-                sku,
-                processProductGrant: async ({ orderId: _orderId }) => {
-                  // TODO: 백엔드 주문 내역 API 연동 예정 (orderId 전달)
-                  return true;
-                },
-              },
-              onEvent: (event) => {
-                if (event.type === "success") {
-                  cleanup();
-                  resolve();
+      if (sku == null || IAP == null) {
+        throw new Error("결제를 진행할 수 없는 환경이거나 지원하지 않는 상품 조합입니다.");
+      }
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const cleanup = IAP.createOneTimePurchaseOrder({
+            options: {
+              sku,
+              processProductGrant: async ({ orderId }) => {
+                try {
+                  return await grantPayment({ orderId, draftId });
+                } catch {
+                  return false;
                 }
               },
-              onError: (error) => {
+            },
+            onEvent: (event) => {
+              if (event.type === "success") {
                 cleanup();
-                reject(error);
-              },
-            });
+                resolve();
+              }
+            },
+            onError: (error) => {
+              cleanup();
+              reject(error);
+            },
           });
-        } catch (e) {
-          throw await stepError("IAP 결제 실패", e);
-        }
-        // IAP 결제 후에도 draft를 발행 처리해 testId를 받아야 하므로 아래 mock 결제 플로우로 이어짐
-      }
-
-      let paymentId: number;
-      try {
-        const payRes = await createPayment({ draftId, isTestPayment: true });
-        const id = payRes.data.data?.paymentId;
-        if (!id) throw new Error("paymentId를 받지 못했습니다.");
-        paymentId = id;
+        });
       } catch (e) {
-        throw await stepError("결제 등록 실패", e);
-      }
-
-      try {
-        const execRes = await executePayment(paymentId);
-        const testId = execRes.data.data?.testId;
-        if (!testId) throw new Error("testId를 받지 못했습니다.");
-        return testId;
-      } catch (e) {
-        throw await stepError("결제 실행 실패", e);
+        throw await stepError("IAP 결제 실패", e);
       }
     },
     onError: (error) => {
