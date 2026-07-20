@@ -19,7 +19,7 @@ const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} b
 export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
-  const { mutate: submitPayment, isPending } = usePaymentSubmit();
+  const { mutate: submitPayment, isPending, dialog: iapErrorDialog } = usePaymentSubmit();
   const { data: iapProducts } = useIapProducts();
 
   const handleGoBack = () => {
@@ -247,6 +247,7 @@ export function PaymentFunnel() {
           setIsResponsePeriodOpen(false);
         }}
       />
+      {iapErrorDialog}
     </>
   );
 }

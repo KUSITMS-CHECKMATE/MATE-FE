@@ -1,9 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@toss/tds-mobile";
+import { useDialog } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { grantPayment } from "./paymentGrant";
+import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
+import { useIapErrorDialog } from "./useIapErrorDialog";
 import type { TesterCount, RewardAmount } from "./types";
 import { IAP_SKU_MAP } from "./types";
 
@@ -26,9 +28,10 @@ interface PaymentSubmitInput {
 }
 
 export function usePaymentSubmit() {
-  const { openToast } = useToast();
+  const { openAlert } = useDialog();
+  const { showIapErrorDialog, dialog } = useIapErrorDialog();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
       const closedAt = new Date(Date.now() + responsePeriod * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -89,13 +92,22 @@ export function usePaymentSubmit() {
           });
         });
       } catch (e) {
-        throw await stepError("IAP 결제 실패", e);
+        const code = extractIapErrorCode(e);
+        const detail = e instanceof Error ? e.message : String(e);
+        throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code);
       }
     },
-    onError: (error) => {
-      openToast(error instanceof Error ? error.message : "결제 중 오류가 발생했어요", {
-        type: "bottom",
+    onError: async (error) => {
+      const code = error instanceof IapPaymentError ? error.code : undefined;
+      if (code && (await showIapErrorDialog(code))) return;
+
+      await openAlert({
+        title: "결제 중 문제가 발생했어요",
+        description: error instanceof Error ? error.message : "잠시 후 다시 시도해주세요.",
+        alertButton: "확인",
       });
     },
   });
+
+  return { ...mutation, dialog };
 }
