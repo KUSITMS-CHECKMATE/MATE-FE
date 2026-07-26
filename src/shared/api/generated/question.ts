@@ -112,7 +112,7 @@ export const getGetQuestionsDetailsUrl = (testId: number,) => {
 - 모든 로그인한 사용자가 조회할 수 있습니다.
 - 각 질문은 공통 필드와 유형별 상세 필드를 모두 포함합니다.
 
- * @summary ➰ 질문 전체 조회
+ * @summary 질문 전체 조회
  */
 export const getQuestionsDetails = async (testId: number, options?: RequestInit): Promise<getQuestionsDetailsResponse> => {
 
@@ -160,7 +160,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionsDetailsMutationError = ErrorType<unknown>
 
     /**
- * @summary ➰ 질문 전체 조회
+ * @summary 질문 전체 조회
  */
 export const useGetQuestionsDetails = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionsDetails>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -201,7 +201,7 @@ export const getGetQuestionDetailUrl = (testId: number,
 - 별도로 조회 요청한 유저가 해당 테스트 메이커인지 검증하지 않습니다.
 - 테스트 종료 여부를 검증하지 않습니다.
 
- * @summary ➰ 질문 상세 조회
+ * @summary 질문 상세 조회
  */
 export const getQuestionDetail = async (testId: number,
     questionId: number, options?: RequestInit): Promise<getQuestionDetailResponse> => {
@@ -250,7 +250,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionDetailMutationError = ErrorType<unknown>
 
     /**
- * @summary ➰ 질문 상세 조회
+ * @summary 질문 상세 조회
  */
 export const useGetQuestionDetail = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionDetail>>, TError,{testId: number;questionId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -289,7 +289,7 @@ export const getGetQuestionSummaryUrl = (testId: number,) => {
 - 테스트 종료 여부와 관계없이 조회할 수 있습니다.
 - 테스트 상태, 질문 개수, 테스트 참여자 수, 질문 목록을 반환합니다.
 
- * @summary ✔️ 질문 목록 조회
+ * @summary 질문 목록 조회
  */
 export const getQuestionSummary = async (testId: number, options?: RequestInit): Promise<getQuestionSummaryResponse> => {
 
@@ -337,7 +337,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetQuestionSummaryMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 질문 목록 조회
+ * @summary 질문 목록 조회
  */
 export const useGetQuestionSummary = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getQuestionSummary>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
