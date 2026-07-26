@@ -72,12 +72,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
   const funnelIsFirstRef = useRef(funnel.isFirst);
   const funnelPrevRef = useRef(funnel.prev);
-  const funnelStepRef = useRef(funnel.step);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
     funnelPrevRef.current = funnel.prev;
-    funnelStepRef.current = funnel.step;
-  }, [funnel.isFirst, funnel.prev, funnel.step]);
+  }, [funnel.isFirst, funnel.prev]);
 
   // 액세서리 "임시저장" 버튼 핸들러 — 리스너 재구독 없이 항상 최신 로직을 참조하도록 ref에 보관
   const handleTempSaveRef = useRef<() => void>(() => {});
@@ -119,10 +117,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     try {
       const unsubscribe = graniteEvent.addEventListener("backEvent", {
         onEvent: () => {
-          // 테스트 등록 단계에서 뒤로가기(X): 임시저장 여부를 묻는 바텀시트를 띄운다
-          if (funnelStepRef.current === "register") {
-            setTempSaveMode("exit");
-          } else if (funnelIsFirstRef.current) {
+          if (funnelIsFirstRef.current) {
             setIsExitDialogOpen(true);
           } else {
             funnelPrevRef.current();
