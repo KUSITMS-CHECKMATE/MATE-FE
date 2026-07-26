@@ -4,6 +4,7 @@ import { useToast } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { createPayment, executePayment } from "@/shared/api/generated/payment";
+import { clearSavedDraftId } from "@/features/test-create/model/draftStorage";
 import { ROUTES } from "@/shared/constants/routes";
 import type { TesterCount, RewardAmount } from "./types";
 
@@ -80,6 +81,8 @@ export function usePaymentSubmit() {
       }
     },
     onSuccess: (testId) => {
+      // 발행 완료된 초안은 이어쓰기 대상에서 제거
+      clearSavedDraftId();
       navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
     },
     onError: (error) => {
