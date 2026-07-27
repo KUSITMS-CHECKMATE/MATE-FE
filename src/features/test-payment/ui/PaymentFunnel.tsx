@@ -10,7 +10,8 @@ import { useIapProducts } from "../model/useIapProducts";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { PaymentCompleteStep } from "./PaymentCompleteStep";
-import { AppMarketVerificationFailedStep } from "./AppMarketVerificationFailedStep";
+import { PaymentSystemErrorStep } from "./PaymentSystemErrorStep";
+import { PaymentGiveUpStep } from "./PaymentGiveUpStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
@@ -20,7 +21,14 @@ const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} b
 export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
-  const { mutate: submitPayment, isPending, dialog: iapErrorDialog, refundInfo } = usePaymentSubmit();
+  const {
+    mutate: submitPayment,
+    isPending,
+    dialog: iapErrorDialog,
+    appMarketVerificationFailed,
+    serverVerificationFailed,
+    verificationFailureCount,
+  } = usePaymentSubmit();
   const { data: iapProducts } = useIapProducts();
 
   const handleGoBack = () => {
@@ -31,8 +39,11 @@ export function PaymentFunnel() {
   const stepRef = useRef(step);
 
   useEffect(() => {
-    if (refundInfo) setStep("app-market-verification-failed");
-  }, [refundInfo]);
+    if (appMarketVerificationFailed) setStep("app-market-verification-failed");
+  }, [appMarketVerificationFailed]);
+  useEffect(() => {
+    if (serverVerificationFailed) setStep("toss-server-verification-failed");
+  }, [serverVerificationFailed]);
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
@@ -106,8 +117,38 @@ export function PaymentFunnel() {
     );
   }
 
-  if (step === "app-market-verification-failed" && refundInfo) {
-    return <AppMarketVerificationFailedStep orderId={refundInfo.orderId} />;
+  if (step === "app-market-verification-failed" || step === "toss-server-verification-failed") {
+    if (verificationFailureCount >= 4) {
+      return (
+        <PaymentGiveUpStep
+          onContact={() => {
+            // TODO: 문의하기 연결 — 프로젝트에 CS 채널/문의 라우트가 아직 없음 (MyHelpSection의 "문의하기"도 onClick 미구현)
+          }}
+        />
+      );
+    }
+    return (
+      <PaymentSystemErrorStep
+        subject={step === "app-market-verification-failed" ? "스토어" : "메이트"}
+        isRetrying={isPending}
+        onRetry={() =>
+          submitPayment(
+            {
+              draftId,
+              testerCount: testerCount!,
+              rewardAmount: rewardAmount!,
+              responsePeriod,
+            },
+            {
+              onSuccess: () => setStep("complete"),
+            },
+          )
+        }
+        onContact={() => {
+          // TODO: 문의하기 연결 — 프로젝트에 CS 채널/문의 라우트가 아직 없음 (MyHelpSection의 "문의하기"도 onClick 미구현)
+        }}
+      />
+    );
   }
 
   const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount) : null;
