@@ -10,10 +10,27 @@ function isDirectlyLoadable(value: string): boolean {
   );
 }
 
+// presigned URL을 받아온 직후 <img>를 그리면 브라우저가 아직 다운로드를 못 끝내
+// 스켈레톤 -> 흰 화면 -> 이미지 순으로 깜빡인다. 브라우저 캐시에 미리 채워 넣어
+// isLoading이 꺼지는 시점에는 항상 즉시 페인트되도록 한다.
+function preloadImage(url: string): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+    img.src = url;
+  });
+}
+
 function useImageDownloadUrl(fileKey: string | undefined) {
   return useQuery({
     queryKey: ["fileDownloadUrl", fileKey],
-    queryFn: () => generateDownloadUrl({ fileKey: fileKey! }),
+    queryFn: async () => {
+      const res = await generateDownloadUrl({ fileKey: fileKey! });
+      const presignedUrl = res.data.data?.presignedUrl;
+      if (presignedUrl) await preloadImage(presignedUrl);
+      return res;
+    },
     select: (res) => res.data.data?.presignedUrl,
     enabled: !!fileKey,
     staleTime: 25 * 60 * 1000,
