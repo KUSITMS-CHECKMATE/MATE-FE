@@ -10,6 +10,17 @@ function isDirectlyLoadable(value: string): boolean {
   );
 }
 
+function useImageDownloadUrl(fileKey: string | undefined) {
+  return useQuery({
+    queryKey: ["fileDownloadUrl", fileKey],
+    queryFn: () => generateDownloadUrl({ fileKey: fileKey! }),
+    select: (res) => res.data.data?.presignedUrl,
+    enabled: !!fileKey,
+    staleTime: 25 * 60 * 1000,
+    gcTime: 25 * 60 * 1000,
+  });
+}
+
 /**
  * 폼에 저장된 이미지 값을 <img src>로 그릴 수 있는 값으로 변환한다.
  * data URI/URL은 그대로 통과시키고, 그 외(업로드 fileKey, 예: 임시저장 초안을
@@ -18,17 +29,24 @@ function isDirectlyLoadable(value: string): boolean {
  */
 export function useResolvedImageSrc(value: string | undefined): string | undefined {
   const fileKey = value && !isDirectlyLoadable(value) ? value : undefined;
-
-  const { data: presignedUrl } = useQuery({
-    queryKey: ["fileDownloadUrl", fileKey],
-    queryFn: () => generateDownloadUrl({ fileKey: fileKey! }),
-    select: (res) => res.data.data?.presignedUrl,
-    enabled: !!fileKey,
-    staleTime: 25 * 60 * 1000,
-    gcTime: 25 * 60 * 1000,
-  });
+  const { data: presignedUrl } = useImageDownloadUrl(fileKey);
 
   if (!value) return undefined;
   if (isDirectlyLoadable(value)) return value;
   return presignedUrl;
+}
+
+/**
+ * useResolvedImageSrc와 동일하지만, fileKey를 presigned URL로 바꾸는 동안의
+ * 로딩 상태도 함께 반환한다(로딩 스켈레톤 표시용).
+ */
+export function useResolvedImageSrcState(
+  value: string | undefined,
+): { src: string | undefined; isLoading: boolean } {
+  const fileKey = value && !isDirectlyLoadable(value) ? value : undefined;
+  const { data: presignedUrl, isError } = useImageDownloadUrl(fileKey);
+
+  if (!value) return { src: undefined, isLoading: false };
+  if (isDirectlyLoadable(value)) return { src: value, isLoading: false };
+  return { src: presignedUrl, isLoading: !presignedUrl && !isError };
 }

@@ -27,7 +27,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
-import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
+import { useResolvedImageSrc, useResolvedImageSrcState } from "@/shared/hooks/useResolvedImageSrc";
 
 const MAX_IMAGES = 10;
 
@@ -54,7 +54,7 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id,
   });
-  const src = useResolvedImageSrc(uri);
+  const { src, isLoading } = useResolvedImageSrcState(uri);
 
   return (
     <div
@@ -81,13 +81,24 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
         aria-label={`이미지 ${index + 1} 미리보기`}
       >
         <div style={{ width: "100%", height: "100%", borderRadius: 16, overflow: "hidden" }}>
-          <img
-            src={src}
-            alt={`선택된 이미지 ${index + 1}`}
-            draggable={false}
-            onDragStart={(e) => e.preventDefault()}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+          {isLoading ? (
+            <div
+              className="animate-pulse"
+              style={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "var(--token-tds-color-grey-100, var(--adaptiveGrey100, #f2f4f6))",
+              }}
+            />
+          ) : (
+            <img
+              src={src}
+              alt={`선택된 이미지 ${index + 1}`}
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          )}
         </div>
       </button>
       {!isDragging && (
@@ -207,7 +218,7 @@ export function TestImageStep({
   };
 
   const previewUri = previewIndex !== null ? imageUris[previewIndex] : null;
-  const previewSrc = useResolvedImageSrc(previewUri ?? undefined);
+  const { src: previewSrc, isLoading: isPreviewLoading } = useResolvedImageSrcState(previewUri ?? undefined);
   const isPreviewRepresentative = previewIndex !== null && previewIndex === 0;
 
   const setPreviewedImageAsRepresentative = () => {
@@ -446,17 +457,24 @@ export function TestImageStep({
                     backgroundColor: adaptive.grey100,
                   }}
                 >
-                  <img
-                    src={previewSrc}
-                    alt=""
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {isPreviewLoading ? (
+                    <div
+                      className="animate-pulse"
+                      style={{ position: "absolute", inset: 0, backgroundColor: adaptive.grey100 }}
+                    />
+                  ) : (
+                    <img
+                      src={previewSrc}
+                      alt=""
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>

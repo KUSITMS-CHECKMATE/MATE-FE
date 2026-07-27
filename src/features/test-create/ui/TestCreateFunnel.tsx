@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent, partner, tdsEvent } from "@apps-in-toss/web-framework";
-import { ConfirmDialog, useToast } from "@toss/tds-mobile";
+import { ConfirmDialog, Skeleton, useToast } from "@toss/tds-mobile";
 import { FunnelLayout, type CTAMode } from "./FunnelLayout";
 import { TempSaveSheet } from "./TempSaveSheet";
 import { CategorySelectSheet } from "./CategorySelectSheet";
@@ -39,6 +39,27 @@ interface Props {
   resume?: boolean;
 }
 
+function TestCreateResumeSkeleton() {
+  return (
+    <div className="flex flex-col gap-1 px-5 pt-6">
+      <Skeleton custom={["title"]} repeatLastItemCount={0} background="greyOpacity100" />
+      <div className="pt-4">
+        <Skeleton custom={["card"]} repeatLastItemCount={0} background="greyOpacity100" />
+      </div>
+      <div className="flex flex-col gap-3 pt-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            custom={["title", "subtitle"]}
+            repeatLastItemCount={0}
+            background="greyOpacity100"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function TestCreateFunnel({ draftId, fromPayment = false, resume = false }: Props) {
   const navigate = useNavigate();
   const funnel = useFunnel(fromPayment ? "register" : "basic");
@@ -64,6 +85,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const saveDraft = useSaveDraft(draftId);
   const isSaving = saveDraft.isPending;
   const [showGuide, setShowGuide] = useState(false);
+  const [isResuming, setIsResuming] = useState(resume && !!draftId);
 
   const isOverlayOpen = isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide;
   useScrollLock(isOverlayOpen);
@@ -153,6 +175,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         .catch(() => {
           // 조회 실패 시 빈 폼으로 시작
           useTestCreateForm.getState().reset();
+        })
+        .finally(() => {
+          setIsResuming(false);
         });
     } else {
       useTestCreateForm.getState().reset();
@@ -307,6 +332,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       funnel.next();
     }
   };
+
+  if (isResuming) {
+    return <TestCreateResumeSkeleton />;
+  }
 
   return (
     <>
