@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDialog, ConfirmDialog } from "@toss/tds-mobile";
+import { useDialog, useToast, ConfirmDialog } from "@toss/tds-mobile";
 
 interface ConfirmDialogState {
   title: string;
@@ -17,11 +17,18 @@ interface ConfirmDialogState {
 // 트리 안 어딘가에 렌더링해야 실제로 화면에 뜬다.
 export function useIapErrorDialog() {
   const { openAlert } = useDialog();
+  const { openToast } = useToast();
   const [confirmState, setConfirmState] = useState<ConfirmDialogState | null>(null);
 
   const showIapErrorDialog = async (code: string | undefined): Promise<boolean> => {
     // 코드 표기가 SCREAMING_SNAKE_CASE로 통일돼 있지 않은 경우가 있어 대문자로 정규화해서 매칭한다.
     switch (code?.toUpperCase()) {
+      case "NETWORK_ERROR":
+        openToast("결제하지 못했어요.\n잠시 후 다시 시도해주세요.", {
+          type: "top",
+          lottie: "https://static.toss.im/lotties-common/error-yellow-spot.json",
+        });
+        return true;
       case "KOREAN_ACCOUNT_ONLY":
         await openAlert({
           title: "한국 App Store 계정이 필요해요",
