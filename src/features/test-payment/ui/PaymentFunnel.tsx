@@ -10,6 +10,7 @@ import { useIapProducts } from "../model/useIapProducts";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { PaymentCompleteStep } from "./PaymentCompleteStep";
+import { AppMarketVerificationFailedStep } from "./AppMarketVerificationFailedStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
@@ -19,7 +20,7 @@ const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} b
 export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
-  const { mutate: submitPayment, isPending, dialog: iapErrorDialog } = usePaymentSubmit();
+  const { mutate: submitPayment, isPending, dialog: iapErrorDialog, refundInfo } = usePaymentSubmit();
   const { data: iapProducts } = useIapProducts();
 
   const handleGoBack = () => {
@@ -28,6 +29,10 @@ export function PaymentFunnel() {
 
   const [step, setStep] = useState<PaymentStep>("main");
   const stepRef = useRef(step);
+
+  useEffect(() => {
+    if (refundInfo) setStep("app-market-verification-failed");
+  }, [refundInfo]);
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
@@ -99,6 +104,10 @@ export function PaymentFunnel() {
     return (
       <PaymentCompleteStep onClose={() => navigate({ to: ROUTES.TEST, replace: true })} />
     );
+  }
+
+  if (step === "app-market-verification-failed" && refundInfo) {
+    return <AppMarketVerificationFailedStep orderId={refundInfo.orderId} />;
   }
 
   const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount) : null;

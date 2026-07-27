@@ -1,13 +1,16 @@
+import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useDialog } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { grantPayment } from "./paymentGrant";
-import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
+import { extractIapErrorCode, extractIapErrorOrderId, IapPaymentError } from "./iapPaymentError";
 import { useIapErrorDialog } from "./useIapErrorDialog";
 import type { TesterCount, RewardAmount } from "./types";
 import { IAP_SKU_MAP } from "./types";
+
+const APP_MARKET_VERIFICATION_FAILED = "APP_MARKET_VERIFICATION_FAILED";
 
 async function stepError(label: string, e: unknown): Promise<Error> {
   let detail = e instanceof Error ? e.message : String(e);
@@ -30,6 +33,8 @@ interface PaymentSubmitInput {
 export function usePaymentSubmit() {
   const { openAlert } = useDialog();
   const { showIapErrorDialog, dialog } = useIapErrorDialog();
+  const [refundInfo, setRefundInfo] = useState<{ orderId: string } | null>(null);
+  const lastOrderIdRef = useRef<string | undefined>(undefined);
 
   const mutation = useMutation({
     mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
@@ -72,6 +77,7 @@ export function usePaymentSubmit() {
             options: {
               sku,
               processProductGrant: async ({ orderId }) => {
+                lastOrderIdRef.current = orderId;
                 try {
                   return await grantPayment({ orderId, draftId });
                 } catch {
@@ -93,12 +99,22 @@ export function usePaymentSubmit() {
         });
       } catch (e) {
         const code = extractIapErrorCode(e);
+        // APP_MARKET_VERIFICATION_FAILED는 processProductGrant 전에 발생해 orderId가 없는 게 정상이다
+        // (SDK 공식 문서: "사용자가 앱스토어에 문의해서 환불을 요청해야해요").
+        const orderId = extractIapErrorOrderId(e) ?? lastOrderIdRef.current;
         const detail = e instanceof Error ? e.message : String(e);
-        throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code);
+        throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code, orderId);
       }
     },
     onError: async (error) => {
       const code = error instanceof IapPaymentError ? error.code : undefined;
+
+      if (code?.toUpperCase() === APP_MARKET_VERIFICATION_FAILED) {
+        const orderId = error instanceof IapPaymentError ? error.orderId : undefined;
+        setRefundInfo({ orderId: orderId ?? "" });
+        return;
+      }
+
       if (code && (await showIapErrorDialog(code))) return;
 
       await openAlert({
@@ -109,5 +125,5 @@ export function usePaymentSubmit() {
     },
   });
 
-  return { ...mutation, dialog };
+  return { ...mutation, dialog, refundInfo };
 }
