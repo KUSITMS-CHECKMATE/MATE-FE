@@ -166,7 +166,7 @@ export function loadDraftIntoForm(draft: TestDraftResponse): void {
       if (!data) return null;
       return { id: genId("q"), typeId: data.typeId, data } satisfies PendingQuestion;
     })
-    .filter((q): q is PendingQuestion => q !== null);
+    .filter((q): q is NonNullable<typeof q> => q !== null);
 
   useTestCreateForm.setState({
     name: draft.title ?? "",

@@ -19,7 +19,6 @@ import { TestImageEditPage } from "./TestImageEditPage";
 import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 import { useSaveDraft } from "../model/useSaveDraft";
-import { clearSavedDraftId } from "../model/draftStorage";
 import { loadDraftIntoForm } from "../model/draftMapper";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { getDraft } from "@/shared/api/generated/testDraft";
@@ -147,11 +146,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       getDraft(draftId)
         .then((res) => {
           const draft = res.data.data;
-          if (!draft) return;
-          if (draft.status && draft.status !== "DRAFT") {
-            // 이미 결제/발행된 초안은 이어쓰기 대상이 아님 → 저장 포인터 정리
-            clearSavedDraftId();
-          }
+          // 이미 결제/발행된 초안은 이어쓰기 대상이 아님(목록 조회 이후 상태가 바뀐 경우 대비)
+          if (!draft || (draft.status && draft.status !== "DRAFT")) return;
           loadDraftIntoForm(draft);
         })
         .catch(() => {
