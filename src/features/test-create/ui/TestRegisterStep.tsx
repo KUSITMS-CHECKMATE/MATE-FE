@@ -6,8 +6,25 @@ import { QuestionTypeSelectSheet } from "./QuestionTypeSelectSheet";
 import { QuestionManageSheet } from "./QuestionManageSheet";
 import { QUESTION_TYPES, CATEGORIES, type QuestionTypeId, type PendingQuestion } from "../model/types";
 import { useTestCreateForm } from "../model/useTestCreateForm";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 export type RegisterTab = "info" | "questions";
+
+function RegisterImageSlide({ uri }: { uri: string }) {
+  const src = useResolvedImageSrc(uri);
+  return (
+    <img
+      src={src}
+      aria-hidden={true}
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: 16,
+        objectFit: "cover",
+      }}
+    />
+  );
+}
 
 interface TestRegisterStepProps {
   activeTab: RegisterTab;
@@ -210,18 +227,9 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                 setActiveImageIndex(index);
               }}
             >
-              {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((src, i) => (
+              {(form.images.length > 0 ? form.images : ["https://static.toss.im/appsintoss/33213/ac1b1d5e-c6d7-4943-9236-fcbd2bc825c0.png"]).map((uri, i) => (
                 <div key={i} className="snap-start shrink-0 w-full" style={{ aspectRatio: "16/9" }}>
-                  <img
-                    src={src}
-                    aria-hidden={true}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: 16,
-                      objectFit: "cover",
-                    }}
-                  />
+                  <RegisterImageSlide uri={uri} />
                 </div>
               ))}
             </div>
