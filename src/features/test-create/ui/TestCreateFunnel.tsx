@@ -88,10 +88,22 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
   const funnelIsFirstRef = useRef(funnel.isFirst);
   const funnelPrevRef = useRef(funnel.prev);
+  const showGuideRef = useRef(showGuide);
+  const editPhaseRef = useRef(editPhase);
+  const activeQuestionRef = useRef(activeQuestion);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
     funnelPrevRef.current = funnel.prev;
   }, [funnel.isFirst, funnel.prev]);
+  useEffect(() => {
+    showGuideRef.current = showGuide;
+  }, [showGuide]);
+  useEffect(() => {
+    editPhaseRef.current = editPhase;
+  }, [editPhase]);
+  useEffect(() => {
+    activeQuestionRef.current = activeQuestion;
+  }, [activeQuestion]);
 
   // 액세서리 "임시저장" 버튼 핸들러 — 리스너 재구독 없이 항상 최신 로직을 참조하도록 ref에 보관
   const handleTempSaveRef = useRef<() => void>(() => {});
@@ -133,7 +145,13 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     try {
       const unsubscribe = graniteEvent.addEventListener("backEvent", {
         onEvent: () => {
-          if (funnelIsFirstRef.current) {
+          if (activeQuestionRef.current) {
+            setActiveQuestion(null);
+          } else if (editPhaseRef.current) {
+            setEditPhase(null);
+          } else if (showGuideRef.current) {
+            setShowGuide(false);
+          } else if (funnelIsFirstRef.current) {
             setIsExitDialogOpen(true);
           } else {
             funnelPrevRef.current();
