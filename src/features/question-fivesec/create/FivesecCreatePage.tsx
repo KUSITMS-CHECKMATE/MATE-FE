@@ -28,6 +28,7 @@ import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
 import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
 import { RATIO_TO_CSS, type AbRatio } from "@/shared/constants/imageRatio";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 interface FivesecCreatePageProps {
   questionId: string;
@@ -45,6 +46,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
     (existingFivesec?.title ?? "").trim().length > 0,
   );
   const [imageUrl, setImageUrl] = useState(existingFivesec?.imageUrl ?? "");
+  const resolvedImageSrc = useResolvedImageSrc(imageUrl || undefined);
   const [answerType, setAnswerType] = useState<"multiple" | "subjective">(
     existingFivesec?.answerType ?? "subjective",
   );
@@ -218,7 +220,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
                 }}
               >
                 <img
-                  src={imageUrl}
+                  src={resolvedImageSrc}
                   alt="질문 이미지 미리보기"
                   className="h-full w-full object-cover"
                 />

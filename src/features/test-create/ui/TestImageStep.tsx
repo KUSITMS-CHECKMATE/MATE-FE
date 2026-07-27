@@ -27,6 +27,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { PhotoSelectSheet } from "./PhotoSelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 const MAX_IMAGES = 10;
 
@@ -53,6 +54,7 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id,
   });
+  const src = useResolvedImageSrc(uri);
 
   return (
     <div
@@ -80,7 +82,7 @@ function SortableImageItem({ id, uri, index, onPreview, onRemove }: SortableImag
       >
         <div style={{ width: "100%", height: "100%", borderRadius: 16, overflow: "hidden" }}>
           <img
-            src={uri}
+            src={src}
             alt={`선택된 이미지 ${index + 1}`}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
@@ -205,6 +207,7 @@ export function TestImageStep({
   };
 
   const previewUri = previewIndex !== null ? imageUris[previewIndex] : null;
+  const previewSrc = useResolvedImageSrc(previewUri ?? undefined);
   const isPreviewRepresentative = previewIndex !== null && previewIndex === 0;
 
   const setPreviewedImageAsRepresentative = () => {
@@ -251,6 +254,7 @@ export function TestImageStep({
   const ids = getImageSortableIds(imageUris);
   const activeIndex = activeId !== null ? ids.indexOf(activeId) : -1;
   const activeUri = activeIndex !== -1 ? imageUris[activeIndex] : null;
+  const activeSrc = useResolvedImageSrc(activeUri ?? undefined);
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(String(active.id));
@@ -381,7 +385,7 @@ export function TestImageStep({
                 }}
               >
                 <img
-                  src={activeUri}
+                  src={activeSrc}
                   alt=""
                   draggable={false}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -443,7 +447,7 @@ export function TestImageStep({
                   }}
                 >
                   <img
-                    src={previewUri}
+                    src={previewSrc}
                     alt=""
                     style={{
                       position: "absolute",

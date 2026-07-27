@@ -1,5 +1,6 @@
 import { Asset, ListHeader, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 interface QuestionImageUploadSectionProps {
   imageUrl: string;
@@ -9,6 +10,7 @@ interface QuestionImageUploadSectionProps {
 
 export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }: QuestionImageUploadSectionProps) {
   const imageCount = imageUrl ? 1 : 0;
+  const resolvedSrc = useResolvedImageSrc(imageUrl || undefined);
 
   return (
     <>
@@ -54,7 +56,7 @@ export function QuestionImageUploadSection({ imageUrl, onCameraClick, onRemove }
         </div>
         {imageUrl && (
           <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-2xl">
-            <img src={imageUrl} alt="질문 이미지" className="h-full w-full object-cover" />
+            <img src={resolvedSrc} alt="질문 이미지" className="h-full w-full object-cover" />
             <div className="absolute inset-[6px] flex items-start justify-end pointer-events-none">
               <button
                 type="button"

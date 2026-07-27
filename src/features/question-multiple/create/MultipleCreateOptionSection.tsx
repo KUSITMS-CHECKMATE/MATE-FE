@@ -24,6 +24,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 interface ChoiceRowProps {
   choice: MultipleChoiceItem;
@@ -34,6 +35,7 @@ interface ChoiceRowProps {
 
 function ChoiceRow({ choice, onEditChoice, onDeleteChoice, onRemoveChoiceImage }: ChoiceRowProps) {
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({ id: choice.id });
+  const resolvedImageSrc = useResolvedImageSrc(choice.imageUrl || undefined);
 
   return (
     <div
@@ -103,7 +105,7 @@ function ChoiceRow({ choice, onEditChoice, onDeleteChoice, onRemoveChoiceImage }
             style={{ boxShadow: `inset 0 0 0 1px ${adaptive.greyOpacity100}` }}
           >
             <img
-              src={choice.imageUrl}
+              src={resolvedImageSrc}
               alt={`${choice.name} 이미지`}
               className="h-full w-full rounded-2xl object-cover"
             />
