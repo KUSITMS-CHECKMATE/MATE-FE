@@ -6,8 +6,7 @@ import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
-import { createDraft } from "@/shared/api/generated/testDraft";
-import { getSavedDraftId } from "@/features/test-create/model/draftStorage";
+import { createDraft, listMyDrafts } from "@/shared/api/generated/testDraft";
 
 const STATUS_MAP: Record<string, UserTest["status"]> = {
   IN_PROGRESS: "active",
@@ -23,11 +22,13 @@ export const Route = createFileRoute("/test/")({
 function MakerHomePage() {
   const navigate = useNavigate();
   const { mutate: initDraft, isPending } = useMutation({
-    // 임시저장한 초안이 있으면 이어서 작성, 없으면 새 초안 생성
+    // 서버에 임시저장된(DRAFT 상태) 초안 중 가장 최근 것이 있으면 이어서 작성, 없으면 새 초안 생성
     mutationFn: async () => {
-      const savedDraftId = await getSavedDraftId();
-      if (savedDraftId != null) {
-        return { draftId: savedDraftId, resume: true };
+      const listRes = await listMyDrafts();
+      const drafts = listRes.data.data?.drafts ?? [];
+      const latestDraft = drafts.find((draft) => draft.status === "DRAFT");
+      if (latestDraft?.draftId != null) {
+        return { draftId: latestDraft.draftId, resume: true };
       }
       const res = await createDraft();
       return { draftId: res.data.data?.draftId, resume: false };

@@ -20,7 +20,7 @@ export function PaymentFunnel() {
   const { mutate: submitPayment, isPending } = usePaymentSubmit();
 
   const handleGoBack = () => {
-    navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true } });
+    navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true, resume: false } });
   };
 
   const [step, setStep] = useState<PaymentStep>("main");
