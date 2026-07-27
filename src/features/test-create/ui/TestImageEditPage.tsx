@@ -19,20 +19,14 @@ export function TestImageEditPage({ onClose }: TestImageEditPageProps) {
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-white"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
+    <motion.div className="fixed inset-0 z-50 flex flex-col bg-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
       <main className="flex flex-col flex-1 pb-4">
         <TestImageStep title="테스트 이미지 수정하기" onHasImagesChange={setHasImages} />
       </main>
       <FixedBottomCTA.Double
         leftButton={
           <CTAButton color="dark" variant="weak" onClick={handleCancel}>
-            취소
+            닫기
           </CTAButton>
         }
         rightButton={

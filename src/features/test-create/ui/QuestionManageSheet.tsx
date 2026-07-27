@@ -1,31 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Top,
-  FixedBottomCTA,
-  CTAButton,
-  ListRow,
-  ListHeader,
-  IconButton,
-  Asset,
-  ConfirmDialog,
-} from "@toss/tds-mobile";
+import { Top, FixedBottomCTA, CTAButton, ListRow, ListHeader, IconButton, Asset, ConfirmDialog } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import {
-  DndContext,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  closestCenter,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { QUESTION_TYPES, type PendingQuestion } from "../model/types";
 
@@ -63,14 +41,7 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
       <ListRow
         left={
           <div className="flex items-center gap-2">
-            <Asset.Icon
-              frameShape={Asset.frameShape.CleanW20}
-              backgroundColor="transparent"
-              name="icon-dots-six-vertical-mono"
-              color={adaptive.grey400}
-              aria-hidden={true}
-              ratio="1/1"
-            />
+            <Asset.Icon frameShape={Asset.frameShape.CleanW20} backgroundColor="transparent" name="icon-dots-six-vertical-mono" color={adaptive.grey400} aria-hidden={true} ratio="1/1" />
             <ListRow.AssetIcon size="xsmall" shape="original" name={type.iconName} />
           </div>
         }
@@ -101,13 +72,7 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
   );
 }
 
-export function QuestionManageSheet({
-  questions,
-  onDelete,
-  onReorder,
-  onSave,
-  onCancel,
-}: QuestionManageSheetProps) {
+export function QuestionManageSheet({ questions, onDelete, onReorder, onSave, onCancel }: QuestionManageSheetProps) {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
@@ -123,10 +88,7 @@ export function QuestionManageSheet({
     onSave();
   };
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
-  );
+  const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }), useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -138,13 +100,7 @@ export function QuestionManageSheet({
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-white"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
+    <motion.div className="fixed inset-0 z-50 flex flex-col bg-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
       <Top
         lowerGap={0}
         title={
@@ -169,10 +125,7 @@ export function QuestionManageSheet({
 
       <div className="flex-1 overflow-y-auto pb-28">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext
-            items={questions.map((q) => q.id)}
-            strategy={verticalListSortingStrategy}
-          >
+          <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
             {questions.map((q) => (
               <SortableQuestionItem key={q.id} question={q} onDeleteRequest={setPendingDeleteId} />
             ))}
@@ -215,7 +168,7 @@ export function QuestionManageSheet({
         onClose={closeSaveDialog}
         cancelButton={
           <ConfirmDialog.CancelButton size="xlarge" onClick={closeSaveDialog}>
-            아니요
+            닫기
           </ConfirmDialog.CancelButton>
         }
         confirmButton={

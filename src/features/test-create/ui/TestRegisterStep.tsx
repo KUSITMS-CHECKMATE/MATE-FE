@@ -62,9 +62,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
   };
 
   const handleConfirmQuestionTypes = () => {
-    const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) =>
-      Array.from({ length: count ?? 0 }, () => id as QuestionTypeId)
-    );
+    const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) => Array.from({ length: count ?? 0 }, () => id as QuestionTypeId));
     form.addQuestions(typeIds);
     setSelectedCounts({});
     setIsQuestionTypeSheetOpen(false);
@@ -188,6 +186,18 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
         ) : (
           <div className="flex flex-col flex-1 pb-4">
             <Spacing size={16} />
+            <ListRow
+              style={{
+                backgroundColor: "var(--adaptiveCardBgGrey)",
+                backdropFilter: "blur(0px)",
+                borderRadius: "999px",
+                opacity: 1,
+                margin: "0 20px",
+              }}
+              left={<ListRow.AssetIcon name="icon-phone" backgroundColor={adaptive.greyOpacity100} />}
+              contents={<ListRow.Texts type="1RowTypeB" top="실제 테스터에게 보이는 화면이에요" topProps={{ color: adaptive.grey700 }} />}
+              horizontalPadding="small"
+            />
             <Top
               title={
                 <Top.TitleParagraph size={22} color={adaptive.grey900}>
@@ -209,13 +219,6 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                         ]
                   }
                 />
-              }
-              lower={
-                !form.serviceName ? (
-                  <Top.LowerButton color="primary" size="small" variant="weak" display="inline">
-                    어떤 서비스인가요?
-                  </Top.LowerButton>
-                ) : undefined
               }
             />
             <div
@@ -324,7 +327,14 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
 
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
-          <QuestionTypeSelectSheet selectedCounts={selectedCounts} onChangeCount={handleChangeCount} existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={closeQuestionTypeSheet} onShowGuide={onGuideView} />
+          <QuestionTypeSelectSheet
+            selectedCounts={selectedCounts}
+            onChangeCount={handleChangeCount}
+            existingCount={form.questions.length}
+            onConfirm={handleConfirmQuestionTypes}
+            onCancel={closeQuestionTypeSheet}
+            onShowGuide={onGuideView}
+          />
         )}
         {isManageSheetOpen && (
           <QuestionManageSheet

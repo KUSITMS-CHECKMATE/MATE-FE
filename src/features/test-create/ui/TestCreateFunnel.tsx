@@ -48,12 +48,7 @@ function TestCreateResumeSkeleton() {
       </div>
       <div className="flex flex-col gap-3 pt-6">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton
-            key={i}
-            custom={["title", "subtitle"]}
-            repeatLastItemCount={0}
-            background="greyOpacity100"
-          />
+          <Skeleton key={i} custom={["title", "subtitle"]} repeatLastItemCount={0} background="greyOpacity100" />
         ))}
       </div>
     </div>
@@ -371,7 +366,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         confirmFixedAboveKeyboard={funnel.step !== "basic" || isFocused}
         isConfirmDisabled={isConfirmDisabled}
         isNextDisabled={funnel.step === "service" ? false : funnel.step === "image" ? !hasTestImages : !isAllComplete}
-        cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "취소"}
+        cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "닫기"}
         isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSaving}
         submitLabel="테스트 만들기"
         doubleBottomAccessory={
