@@ -1,4 +1,4 @@
-import { Asset, Text, Result, Spacing, ListRow, List, Top, Border, Paragraph, Skeleton } from '@toss/tds-mobile';
+import { Asset, Result, Spacing, ListHeader, ListRow, List, Top, Border, Paragraph, Skeleton } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
 import type { ParticipateRecord } from '../model';
 
@@ -47,6 +47,25 @@ export function MyParticipateHistory({ records, totalPoints, isLoading = false, 
     );
   }
 
+  if (records.length === 0) {
+    return (
+      <>
+        <Spacing size={48} />
+        <Result
+          title="참여 기록이 없어요"
+          description="발견 탭에서 테스트를 둘러볼까요?"
+          figure={
+            <Asset.Lottie
+              frameShape={Asset.frameShape.CleanW60}
+              src="https://static.toss.im/lotties-common/empty-spot.json"
+              aria-hidden={true}
+            />
+          }
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <Top
@@ -60,61 +79,45 @@ export function MyParticipateHistory({ records, totalPoints, isLoading = false, 
         }
       />
       <Border variant="height16" />
-    <div className="flex flex-col">
-      <div className="px-4 pt-6 pb-3">
-        <Text color={adaptive.grey800} typography="t4" fontWeight="bold">
-          참여 기록
-        </Text>
-      </div>
-
-      {records.length === 0 ? (
-        <>
-          <Spacing size={24} />
-          <Result
-            title="참여 기록이 없어요"
-            description="발견 탭에서 테스트를 둘러볼까요?"
-            figure={
-              <Asset.Lottie
-                frameShape={Asset.frameShape.CleanW60}
-                src="https://static.toss.im/lotties-common/empty-spot.json"
-                aria-hidden={true}
+      <List>
+        <ListHeader
+          size="small"
+          horizontalPadding="medium"
+          verticalPadding="small"
+          descriptionPosition="bottom"
+          rightAlignment="center"
+          a11yRightReflow={false}
+          titleWidthRatio={0.6}
+          title={
+            <ListHeader.TitleParagraph color={adaptive.grey800}>
+              참여 기록
+            </ListHeader.TitleParagraph>
+          }
+        />
+        {records.map((record) => (
+          <ListRow
+            key={record.id}
+            contents={
+              <ListRow.Texts
+                type="2RowTypeA"
+                top={record.title}
+                topProps={{ color: adaptive.grey800, fontWeight: 'semibold' }}
+                bottom={record.participatedAt}
+                bottomProps={{ color: adaptive.grey600 }}
               />
             }
-            button={
-              <Result.Button color="dark" variant="weak">
-                다시 시도하기
-              </Result.Button>
+            right={
+              <ListRow.Texts
+                type="Right1RowTypeA"
+                top={<Paragraph.Text>{record.earnedAmount}</Paragraph.Text>}
+                topProps={{ color: adaptive.grey700 }}
+              />
             }
+            verticalPadding="large"
+            onClick={() => onRecordClick?.(record.id)}
           />
-        </>
-      ) : (
-        <List>
-          {records.map((record) => (
-            <ListRow
-              key={record.id}
-              contents={
-                <ListRow.Texts
-                  type="2RowTypeA"
-                  top={record.title}
-                  topProps={{ color: adaptive.grey800, fontWeight: 'semibold' }}
-                  bottom={record.participatedAt}
-                  bottomProps={{ color: adaptive.grey600 }}
-                />
-              }
-              right={
-                <ListRow.Texts
-                  type="Right1RowTypeA"
-                  top={<Paragraph.Text>{record.earnedAmount}</Paragraph.Text>}
-                  topProps={{ color: adaptive.grey700 }}
-                />
-              }
-              verticalPadding="large"
-              onClick={() => onRecordClick?.(record.id)}
-            />
-          ))}
-        </List>
-      )}
-    </div>
+        ))}
+      </List>
     </>
   );
 }

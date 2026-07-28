@@ -26,91 +26,186 @@ import type {
 
 import { kyMutator } from '../mutator';
 import type { ErrorType } from '../mutator';
-export interface PaymentRestoreRequest {
-  /** @minLength 1 */
-  orderId?: string;
-  draftId?: number;
+export interface PaymentCreateRequest {
+  draftId: number;
+  isTestPayment?: boolean;
 }
 
-export interface ApiResponseBoolean {
+export interface PaymentCreateResponse {
+  paymentId?: number;
+  draftId?: number;
+  orderNo?: string;
+  amount?: number;
+  payToken?: string;
+  isTestPayment?: boolean;
+}
+
+export interface ApiResponsePaymentCreateResponse {
   success?: boolean;
   code?: string;
   message?: string;
-  data?: boolean;
+  data?: PaymentCreateResponse;
 }
 
-export interface PaymentGrantRequest {
-  /** @minLength 1 */
-  orderId?: string;
-  draftId: number;
+export interface PaymentRefundRequest {
+  /**
+     * @minLength 0
+     * @maxLength 100
+     */
+  reason?: string;
 }
 
-export type PaymentOrderStatusResponseStatus = typeof PaymentOrderStatusResponseStatus[keyof typeof PaymentOrderStatusResponseStatus];
+export type PaymentRefundResponsePayStatus = typeof PaymentRefundResponsePayStatus[keyof typeof PaymentRefundResponsePayStatus];
 
 
-export const PaymentOrderStatusResponseStatus = {
-  PURCHASED: 'PURCHASED',
-  PAYMENT_COMPLETED: 'PAYMENT_COMPLETED',
-  FAILED: 'FAILED',
+export const PaymentRefundResponsePayStatus = {
+  PAY_STANDBY: 'PAY_STANDBY',
+  PAY_CREATED: 'PAY_CREATED',
+  PAY_SUCCEEDED: 'PAY_SUCCEEDED',
+  PAY_FAILED: 'PAY_FAILED',
+  REFUND_PENDING: 'REFUND_PENDING',
   REFUNDED: 'REFUNDED',
-  ORDER_IN_PROGRESS: 'ORDER_IN_PROGRESS',
-  NOT_FOUND: 'NOT_FOUND',
-  MINIAPP_MISMATCH: 'MINIAPP_MISMATCH',
-  ERROR: 'ERROR',
+  REFUND_FAILED: 'REFUND_FAILED',
 } as const;
 
-export interface PaymentOrderStatusResponse {
-  status?: PaymentOrderStatusResponseStatus;
-  reason?: string;
-  statusDeterminedAt?: string;
+export interface PaymentRefundResponse {
+  paymentId?: number;
+  refundNo?: string;
+  refundedAmount?: number;
+  transactionId?: string;
+  payToken?: string;
+  payStatus?: PaymentRefundResponsePayStatus;
+  approvedAt?: string;
 }
 
-export interface ApiResponsePaymentOrderStatusResponse {
+export interface ApiResponsePaymentRefundResponse {
   success?: boolean;
   code?: string;
   message?: string;
-  data?: PaymentOrderStatusResponse;
+  data?: PaymentRefundResponse;
+}
+
+export type PaymentExecuteResponsePayStatus = typeof PaymentExecuteResponsePayStatus[keyof typeof PaymentExecuteResponsePayStatus];
+
+
+export const PaymentExecuteResponsePayStatus = {
+  PAY_STANDBY: 'PAY_STANDBY',
+  PAY_CREATED: 'PAY_CREATED',
+  PAY_SUCCEEDED: 'PAY_SUCCEEDED',
+  PAY_FAILED: 'PAY_FAILED',
+  REFUND_PENDING: 'REFUND_PENDING',
+  REFUNDED: 'REFUNDED',
+  REFUND_FAILED: 'REFUND_FAILED',
+} as const;
+
+export type PaymentExecuteResponsePayMethod = typeof PaymentExecuteResponsePayMethod[keyof typeof PaymentExecuteResponsePayMethod];
+
+
+export const PaymentExecuteResponsePayMethod = {
+  TOSS_MONEY: 'TOSS_MONEY',
+  CARD: 'CARD',
+} as const;
+
+export interface PaymentExecuteResponse {
+  paymentId?: number;
+  draftId?: number;
+  testId?: number;
+  payStatus?: PaymentExecuteResponsePayStatus;
+  orderNo?: string;
+  amount?: number;
+  paidAmount?: number;
+  payToken?: string;
+  transactionId?: string;
+  payMethod?: PaymentExecuteResponsePayMethod;
+  approvedAt?: string;
+}
+
+export interface ApiResponsePaymentExecuteResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: PaymentExecuteResponse;
+}
+
+export type PaymentStatusResponsePayStatus = typeof PaymentStatusResponsePayStatus[keyof typeof PaymentStatusResponsePayStatus];
+
+
+export const PaymentStatusResponsePayStatus = {
+  PAY_STANDBY: 'PAY_STANDBY',
+  PAY_CREATED: 'PAY_CREATED',
+  PAY_SUCCEEDED: 'PAY_SUCCEEDED',
+  PAY_FAILED: 'PAY_FAILED',
+  REFUND_PENDING: 'REFUND_PENDING',
+  REFUNDED: 'REFUNDED',
+  REFUND_FAILED: 'REFUND_FAILED',
+} as const;
+
+export type PaymentStatusResponsePayMethod = typeof PaymentStatusResponsePayMethod[keyof typeof PaymentStatusResponsePayMethod];
+
+
+export const PaymentStatusResponsePayMethod = {
+  TOSS_MONEY: 'TOSS_MONEY',
+  CARD: 'CARD',
+} as const;
+
+export interface PaymentStatusResponse {
+  paymentId?: number;
+  draftId?: number;
+  testId?: number;
+  orderNo?: string;
+  payToken?: string;
+  payStatus?: PaymentStatusResponsePayStatus;
+  payMethod?: PaymentStatusResponsePayMethod;
+  amount?: number;
+  paidAmount?: number;
+  transactionId?: string;
+  approvedAt?: string;
+}
+
+export interface ApiResponsePaymentStatusResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: PaymentStatusResponse;
 }
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type restoreResponse200 = {
-  data: ApiResponseBoolean
+export type createPaymentResponse200 = {
+  data: ApiResponsePaymentCreateResponse
   status: 200
 }
 
-export type restoreResponseSuccess = (restoreResponse200) & {
+export type createPaymentResponseSuccess = (createPaymentResponse200) & {
   headers: Headers;
 };
 ;
 
-export type restoreResponse = (restoreResponseSuccess)
+export type createPaymentResponse = (createPaymentResponseSuccess)
 
-export const getRestoreUrl = () => {
-
-
+export const getCreatePaymentUrl = () => {
 
 
-  return `/api/v1/payments/restore`
+
+
+  return `/api/v1/mock/payments`
 }
 
 /**
- * getPendingOrders로 조회된 미결 주문의 상품 지급을 재시도합니다.<br>
-이전 grant 호출에서 Payment가 저장됐으면 orderId만으로 publish를 재시도합니다.<br>
-Payment가 없으면 draftId를 함께 전달해야 합니다.
+ * 테스트 초안을 기준으로 mock 결제를 등록하고 payToken을 반환합니다.
 
- * @summary 미결 주문 복원 (상품 지급 재시도)
+ * @summary ✔️ 결제 등록
  */
-export const restore = async (paymentRestoreRequest: PaymentRestoreRequest, options?: RequestInit): Promise<restoreResponse> => {
+export const createPayment = async (paymentCreateRequest: PaymentCreateRequest, options?: RequestInit): Promise<createPaymentResponse> => {
 
-  return kyMutator<restoreResponse>(getRestoreUrl(),
+  return kyMutator<createPaymentResponse>(getCreatePaymentUrl(),
   {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(paymentRestoreRequest)
+    body: JSON.stringify(paymentCreateRequest)
   }
 );}
 
@@ -118,69 +213,69 @@ export const restore = async (paymentRestoreRequest: PaymentRestoreRequest, opti
 
 
 
-export const getRestoreQueryKey = (paymentRestoreRequest?: PaymentRestoreRequest,) => {
+export const getCreatePaymentQueryKey = (paymentCreateRequest?: PaymentCreateRequest,) => {
     return [
-    'POST', `/api/v1/payments/restore`, paymentRestoreRequest
+    'POST', `/api/v1/mock/payments`, paymentCreateRequest
     ] as const;
     }
 
 
-export const getRestoreQueryOptions = <TData = Awaited<ReturnType<typeof restore>>, TError = ErrorType<unknown>>(paymentRestoreRequest: PaymentRestoreRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export const getCreatePaymentQueryOptions = <TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(paymentCreateRequest: PaymentCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getRestoreQueryKey(paymentRestoreRequest);
+  const queryKey =  queryOptions?.queryKey ?? getCreatePaymentQueryKey(paymentCreateRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof restore>>> = ({ signal }) => restore(paymentRestoreRequest, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createPayment>>> = ({ signal }) => createPayment(paymentCreateRequest, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type RestoreQueryResult = NonNullable<Awaited<ReturnType<typeof restore>>>
-export type RestoreQueryError = ErrorType<unknown>
+export type CreatePaymentQueryResult = NonNullable<Awaited<ReturnType<typeof createPayment>>>
+export type CreatePaymentQueryError = ErrorType<unknown>
 
 
-export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError = ErrorType<unknown>>(
- paymentRestoreRequest: PaymentRestoreRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData>> & Pick<
+export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(
+ paymentCreateRequest: PaymentCreateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof restore>>,
+          Awaited<ReturnType<typeof createPayment>>,
           TError,
-          Awaited<ReturnType<typeof restore>>
+          Awaited<ReturnType<typeof createPayment>>
         > , 'initialData'
       >, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError = ErrorType<unknown>>(
- paymentRestoreRequest: PaymentRestoreRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData>> & Pick<
+export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(
+ paymentCreateRequest: PaymentCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof restore>>,
+          Awaited<ReturnType<typeof createPayment>>,
           TError,
-          Awaited<ReturnType<typeof restore>>
+          Awaited<ReturnType<typeof createPayment>>
         > , 'initialData'
       >, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError = ErrorType<unknown>>(
- paymentRestoreRequest: PaymentRestoreRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(
+ paymentCreateRequest: PaymentCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 미결 주문 복원 (상품 지급 재시도)
+ * @summary ✔️ 결제 등록
  */
 
-export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError = ErrorType<unknown>>(
- paymentRestoreRequest: PaymentRestoreRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restore>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export function useCreatePayment<TData = Awaited<ReturnType<typeof createPayment>>, TError = ErrorType<unknown>>(
+ paymentCreateRequest: PaymentCreateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getRestoreQueryOptions(paymentRestoreRequest,options)
+  const queryOptions = getCreatePaymentQueryOptions(paymentCreateRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -193,41 +288,39 @@ export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError =
 
 
 
-export type grantResponse200 = {
-  data: ApiResponseBoolean
+export type refundPaymentResponse200 = {
+  data: ApiResponsePaymentRefundResponse
   status: 200
 }
 
-export type grantResponseSuccess = (grantResponse200) & {
+export type refundPaymentResponseSuccess = (refundPaymentResponse200) & {
   headers: Headers;
 };
 ;
 
-export type grantResponse = (grantResponseSuccess)
+export type refundPaymentResponse = (refundPaymentResponseSuccess)
 
-export const getGrantUrl = () => {
-
-
+export const getRefundPaymentUrl = (paymentId: number,) => {
 
 
-  return `/api/v1/payments/grant`
+
+
+  return `/api/v1/mock/payments/${paymentId}/refund`
 }
 
 /**
- * Toss 인앱결제 SDK의 processProductGrant 콜백에서 호출하는 엔드포인트입니다.<br>
-orderId로 Toss 결제 상태를 검증(PURCHASED 또는 PAYMENT_COMPLETED)한 뒤, 테스트를 게시하고 결제 내역을 저장합니다.<br>
-지급 성공 시 true, 실패 시 false를 반환합니다.
-
- * @summary 인앱결제 상품 지급 처리
+ * mock 결제를 환불합니다.
+ * @summary 결제 환불
  */
-export const grant = async (paymentGrantRequest: PaymentGrantRequest, options?: RequestInit): Promise<grantResponse> => {
+export const refundPayment = async (paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options?: RequestInit): Promise<refundPaymentResponse> => {
 
-  return kyMutator<grantResponse>(getGrantUrl(),
+  return kyMutator<refundPaymentResponse>(getRefundPaymentUrl(paymentId),
   {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(paymentGrantRequest)
+    body: JSON.stringify(paymentRefundRequest)
   }
 );}
 
@@ -235,69 +328,75 @@ export const grant = async (paymentGrantRequest: PaymentGrantRequest, options?: 
 
 
 
-export const getGrantQueryKey = (paymentGrantRequest?: PaymentGrantRequest,) => {
+export const getRefundPaymentQueryKey = (paymentId: number,
+    paymentRefundRequest?: PaymentRefundRequest,) => {
     return [
-    'POST', `/api/v1/payments/grant`, paymentGrantRequest
+    'POST', `/api/v1/mock/payments/${paymentId}/refund`, paymentRefundRequest
     ] as const;
     }
 
 
-export const getGrantQueryOptions = <TData = Awaited<ReturnType<typeof grant>>, TError = ErrorType<unknown>>(paymentGrantRequest: PaymentGrantRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export const getRefundPaymentQueryOptions = <TData = Awaited<ReturnType<typeof refundPayment>>, TError = ErrorType<unknown>>(paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGrantQueryKey(paymentGrantRequest);
+  const queryKey =  queryOptions?.queryKey ?? getRefundPaymentQueryKey(paymentId,paymentRefundRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof grant>>> = ({ signal }) => grant(paymentGrantRequest, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof refundPayment>>> = ({ signal }) => refundPayment(paymentId,paymentRefundRequest, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: paymentId !== null && paymentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GrantQueryResult = NonNullable<Awaited<ReturnType<typeof grant>>>
-export type GrantQueryError = ErrorType<unknown>
+export type RefundPaymentQueryResult = NonNullable<Awaited<ReturnType<typeof refundPayment>>>
+export type RefundPaymentQueryError = ErrorType<unknown>
 
 
-export function useGrant<TData = Awaited<ReturnType<typeof grant>>, TError = ErrorType<unknown>>(
- paymentGrantRequest: PaymentGrantRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData>> & Pick<
+export function useRefundPayment<TData = Awaited<ReturnType<typeof refundPayment>>, TError = ErrorType<unknown>>(
+ paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof grant>>,
+          Awaited<ReturnType<typeof refundPayment>>,
           TError,
-          Awaited<ReturnType<typeof grant>>
+          Awaited<ReturnType<typeof refundPayment>>
         > , 'initialData'
       >, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGrant<TData = Awaited<ReturnType<typeof grant>>, TError = ErrorType<unknown>>(
- paymentGrantRequest: PaymentGrantRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData>> & Pick<
+export function useRefundPayment<TData = Awaited<ReturnType<typeof refundPayment>>, TError = ErrorType<unknown>>(
+ paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof grant>>,
+          Awaited<ReturnType<typeof refundPayment>>,
           TError,
-          Awaited<ReturnType<typeof grant>>
+          Awaited<ReturnType<typeof refundPayment>>
         > , 'initialData'
       >, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGrant<TData = Awaited<ReturnType<typeof grant>>, TError = ErrorType<unknown>>(
- paymentGrantRequest: PaymentGrantRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export function useRefundPayment<TData = Awaited<ReturnType<typeof refundPayment>>, TError = ErrorType<unknown>>(
+ paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 인앱결제 상품 지급 처리
+ * @summary 결제 환불
  */
 
-export function useGrant<TData = Awaited<ReturnType<typeof grant>>, TError = ErrorType<unknown>>(
- paymentGrantRequest: PaymentGrantRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof grant>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+export function useRefundPayment<TData = Awaited<ReturnType<typeof refundPayment>>, TError = ErrorType<unknown>>(
+ paymentId: number,
+    paymentRefundRequest: PaymentRefundRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refundPayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGrantQueryOptions(paymentGrantRequest,options)
+  const queryOptions = getRefundPaymentQueryOptions(paymentId,paymentRefundRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -310,36 +409,148 @@ export function useGrant<TData = Awaited<ReturnType<typeof grant>>, TError = Err
 
 
 
-export type getOrderStatusResponse200 = {
-  data: ApiResponsePaymentOrderStatusResponse
+export type executePaymentResponse200 = {
+  data: ApiResponsePaymentExecuteResponse
   status: 200
 }
 
-export type getOrderStatusResponseSuccess = (getOrderStatusResponse200) & {
+export type executePaymentResponseSuccess = (executePaymentResponse200) & {
   headers: Headers;
 };
 ;
 
-export type getOrderStatusResponse = (getOrderStatusResponseSuccess)
+export type executePaymentResponse = (executePaymentResponseSuccess)
 
-export const getGetOrderStatusUrl = (orderId: string,) => {
-
-
+export const getExecutePaymentUrl = (paymentId: number,) => {
 
 
-  return `/api/v1/payments/${orderId}`
+
+
+  return `/api/v1/mock/payments/${paymentId}/execute`
 }
 
 /**
- * Toss IAP 주문 상태를 직접 조회합니다.<br>
-네트워크 오류, 콜백 미수신 등 예외 상황에서 결제 상태를 확인할 때 사용합니다.<br>
-응답: status, reason, statusDeterminedAt
+ * mock 결제를 실행하고 승인 결과를 반환합니다.
 
- * @summary 인앱결제 주문 상태 조회
+ * @summary ✔️ 결제 실행
  */
-export const getOrderStatus = async (orderId: string, options?: RequestInit): Promise<getOrderStatusResponse> => {
+export const executePayment = async (paymentId: number, options?: RequestInit): Promise<executePaymentResponse> => {
 
-  return kyMutator<getOrderStatusResponse>(getGetOrderStatusUrl(orderId),
+  return kyMutator<executePaymentResponse>(getExecutePaymentUrl(paymentId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getExecutePaymentQueryKey = (paymentId: number,) => {
+    return [
+    'POST', `/api/v1/mock/payments/${paymentId}/execute`
+    ] as const;
+    }
+
+
+export const getExecutePaymentQueryOptions = <TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(paymentId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getExecutePaymentQueryKey(paymentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof executePayment>>> = ({ signal }) => executePayment(paymentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: paymentId !== null && paymentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ExecutePaymentQueryResult = NonNullable<Awaited<ReturnType<typeof executePayment>>>
+export type ExecutePaymentQueryError = ErrorType<unknown>
+
+
+export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
+ paymentId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof executePayment>>,
+          TError,
+          Awaited<ReturnType<typeof executePayment>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
+ paymentId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof executePayment>>,
+          TError,
+          Awaited<ReturnType<typeof executePayment>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
+ paymentId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary ✔️ 결제 실행
+ */
+
+export function useExecutePayment<TData = Awaited<ReturnType<typeof executePayment>>, TError = ErrorType<unknown>>(
+ paymentId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof executePayment>>, TError, TData>>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getExecutePaymentQueryOptions(paymentId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export type getPaymentStatusResponse200 = {
+  data: ApiResponsePaymentStatusResponse
+  status: 200
+}
+
+export type getPaymentStatusResponseSuccess = (getPaymentStatusResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getPaymentStatusResponse = (getPaymentStatusResponseSuccess)
+
+export const getGetPaymentStatusUrl = (paymentId: number,) => {
+
+
+
+
+  return `/api/v1/mock/payments/${paymentId}`
+}
+
+/**
+ * mock 결제 상태를 조회합니다.
+ * @summary 결제 상태 조회
+ */
+export const getPaymentStatus = async (paymentId: number, options?: RequestInit): Promise<getPaymentStatusResponse> => {
+
+  return kyMutator<getPaymentStatusResponse>(getGetPaymentStatusUrl(paymentId),
   {
     ...options,
     method: 'GET'
@@ -351,11 +562,11 @@ export const getOrderStatus = async (orderId: string, options?: RequestInit): Pr
 
 
 
-export const getGetOrderStatusMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getOrderStatus>>, TError,{orderId: string}, TContext>, request?: SecondParameter<typeof kyMutator>}
-): UseMutationOptions<Awaited<ReturnType<typeof getOrderStatus>>, TError,{orderId: string}, TContext> => {
+export const getGetPaymentStatusMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPaymentStatus>>, TError,{paymentId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getPaymentStatus>>, TError,{paymentId: number}, TContext> => {
 
-const mutationKey = ['getOrderStatus'];
+const mutationKey = ['getPaymentStatus'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -365,10 +576,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getOrderStatus>>, {orderId: string}> = (props) => {
-          const {orderId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getPaymentStatus>>, {paymentId: number}> = (props) => {
+          const {paymentId} = props ?? {};
 
-          return  getOrderStatus(orderId,requestOptions)
+          return  getPaymentStatus(paymentId,requestOptions)
         }
 
 
@@ -378,20 +589,20 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type GetOrderStatusMutationResult = NonNullable<Awaited<ReturnType<typeof getOrderStatus>>>
+    export type GetPaymentStatusMutationResult = NonNullable<Awaited<ReturnType<typeof getPaymentStatus>>>
 
-    export type GetOrderStatusMutationError = ErrorType<unknown>
+    export type GetPaymentStatusMutationError = ErrorType<unknown>
 
     /**
- * @summary 인앱결제 주문 상태 조회
+ * @summary 결제 상태 조회
  */
-export const useGetOrderStatus = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getOrderStatus>>, TError,{orderId: string}, TContext>, request?: SecondParameter<typeof kyMutator>}
+export const useGetPaymentStatus = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPaymentStatus>>, TError,{paymentId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof getOrderStatus>>,
+        Awaited<ReturnType<typeof getPaymentStatus>>,
         TError,
-        {orderId: string},
+        {paymentId: number},
         TContext
       > => {
-      return useMutation(getGetOrderStatusMutationOptions(options), queryClient);
+      return useMutation(getGetPaymentStatusMutationOptions(options), queryClient);
     }

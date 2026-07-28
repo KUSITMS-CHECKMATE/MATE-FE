@@ -142,7 +142,7 @@ export const getUnlinkTossUrl = () => {
 
 /**
  * 현재 사용자의 토스 로그인 연결을 해제합니다. 토스 앱에서 연결이 해제되면 서비스 세션도 종료되어 재로그인이 필요합니다.
- * @summary 토스 연결 해제
+ * @summary ➰ 토스 연결 해제
  */
 export const unlinkToss = async ( options?: RequestInit): Promise<unlinkTossResponse> => {
 
@@ -213,7 +213,7 @@ export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 토스 연결 해제
+ * @summary ➰ 토스 연결 해제
  */
 
 export function useUnlinkToss<TData = Awaited<ReturnType<typeof unlinkToss>>, TError = ErrorType<unknown>>(
@@ -370,7 +370,7 @@ export const getLoginWithTossUrl = () => {
 
 /**
  * 토스 authorization code를 사용해 Mate JWT를 발급합니다.
- * @summary 토스 로그인
+ * @summary ✔️ 토스 로그인
  */
 export const loginWithToss = async (tossLoginRequest: TossLoginRequest, options?: RequestInit): Promise<loginWithTossResponse> => {
 
@@ -441,7 +441,7 @@ export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 토스 로그인
+ * @summary ✔️ 토스 로그인
  */
 
 export function useLoginWithToss<TData = Awaited<ReturnType<typeof loginWithToss>>, TError = ErrorType<unknown>>(
@@ -688,7 +688,7 @@ export const getReissueUrl = () => {
 
 /**
  * refresh 토큰으로 요청하면 새 access 토큰과 refresh 토큰을 발급합니다.
- * @summary 토큰 재발급
+ * @summary ✔️ 토큰 재발급
  */
 export const reissue = async (authReissueRequest: AuthReissueRequest, options?: RequestInit): Promise<reissueResponse> => {
 
@@ -759,7 +759,7 @@ export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError =
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 토큰 재발급
+ * @summary ✔️ 토큰 재발급
  */
 
 export function useReissue<TData = Awaited<ReturnType<typeof reissue>>, TError = ErrorType<unknown>>(

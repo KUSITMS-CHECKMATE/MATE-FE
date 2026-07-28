@@ -1,15 +1,12 @@
 import { Asset, Result, Skeleton, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { DraftTest, UserTest } from "../model";
+import type { UserTest } from "../model";
 import { TestCard } from "./TestCard";
 
 interface Props {
   tests: UserTest[];
-  drafts?: DraftTest[];
   isLoading?: boolean;
   onCardClick?: (testId: number) => void;
-  onResumeDraft?: (draftId: number) => void;
-  onDeleteDraft?: (draftId: number) => void;
 }
 
 function TestListSkeleton() {
@@ -32,19 +29,10 @@ function TestListSkeleton() {
   );
 }
 
-export function TestList({
-  tests,
-  drafts = [],
-  isLoading = false,
-  onCardClick,
-  onResumeDraft,
-  onDeleteDraft,
-}: Props) {
+export function TestList({ tests, isLoading = false, onCardClick }: Props) {
   if (isLoading) {
     return <TestListSkeleton />;
   }
-
-  const totalCount = tests.length + drafts.length;
 
   return (
     <div className="flex flex-col">
@@ -53,22 +41,13 @@ export function TestList({
           내 테스트
         </Text>
         <Text color="#4365cc" typography="t4" fontWeight="bold">
-          {totalCount}
+          {tests.length}
         </Text>
       </div>
 
       <div>
-        {totalCount > 0 ? (
+        {tests.length > 0 ? (
           <div className="flex flex-col gap-3 px-4 pb-24">
-            {drafts.map((draft) => (
-              <TestCard
-                key={`draft-${draft.draftId}`}
-                title={draft.title}
-                status={draft.status}
-                onResume={() => onResumeDraft?.(draft.draftId)}
-                onDelete={() => onDeleteDraft?.(draft.draftId)}
-              />
-            ))}
             {tests.map((test) => (
               <TestCard
                 key={test.id}
