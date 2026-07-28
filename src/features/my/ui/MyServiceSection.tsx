@@ -45,6 +45,7 @@ export function MyServiceSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: '/my/privacy' })}
         />
         <ListRow
           left={
