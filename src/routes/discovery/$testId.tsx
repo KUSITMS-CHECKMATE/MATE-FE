@@ -22,21 +22,29 @@ function TestDetailPage() {
     queryFn: () => getTest(Number(testId)),
   });
 
-  const detail = data?.data?.data as ({ testStatus?: string; id?: number; title?: string; categories?: string[]; imageUrls?: string[]; reward?: number; description?: string; serviceName?: string; serviceDescription?: string }) | undefined;
+  const detail = data?.data?.data;
 
   if (isLoading || !detail) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
 
   const isWaiting = detail.testStatus === "WAITING";
+  const isCompleted = detail.testStatus === "COMPLETED";
+  const hasResponded = detail.hasResponded ?? false;
+  const isDisabled = isWaiting || isCompleted || hasResponded;
+
+  const ctaLabel = isWaiting
+    ? "검토중인 테스트예요"
+    : isCompleted
+      ? "종료된 설문이에요"
+      : hasResponded
+        ? "참여한 테스트예요"
+        : "테스트 참여하기";
 
   return (
     <div className="flex flex-col min-h-screen bg-white pb-17">
       <div className="flex-1 overflow-y-auto pb-22.5">
-        <TestDetailHeader
-          title={detail.title ?? ""}
-          tags={detail.categories ?? []}
-        />
+        <TestDetailHeader title={detail.title ?? ""} tags={detail.categories ?? []} />
         <TestDetailImageCarousel images={detail.imageUrls ?? []} />
         <TestDetailInfo
           reward={detail.reward ?? 0}
@@ -48,12 +56,16 @@ function TestDetailPage() {
 
       <div className="fixed bottom-0 left-0 w-full">
         <BottomCTA.Single
-          disabled={isWaiting}
+          disabled={isDisabled}
           onClick={() =>
-            navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } })
+            navigate({
+              to: ROUTES.TEST_PARTICIPATE,
+              params: { testId },
+              search: { reward: detail.reward },
+            })
           }
         >
-          {isWaiting ? "검토중인 테스트예요" : "테스트 참여하기"}
+          {ctaLabel}
         </BottomCTA.Single>
       </div>
     </div>

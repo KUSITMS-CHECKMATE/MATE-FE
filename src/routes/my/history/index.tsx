@@ -18,7 +18,7 @@ function HistoryPage() {
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}
-        onRecordClick={(id) => navigate({ to: '/my/history/$testId', params: { testId: String(id) } })}
+        onRecordClick={(id) => navigate({ to: '/discovery/$testId', params: { testId: String(id) } })}
       />
     </div>
   );

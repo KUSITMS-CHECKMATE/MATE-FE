@@ -24,7 +24,6 @@ import { Route as DiscoveryGuideRouteImport } from './routes/discovery/guide'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
 import { Route as MyHistoryIndexRouteImport } from './routes/my/history/index'
 import { Route as TestParticipateTestIdRouteImport } from './routes/test/participate.$testId'
-import { Route as MyHistoryTestIdRouteImport } from './routes/my/history/$testId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -101,11 +100,6 @@ const TestParticipateTestIdRoute = TestParticipateTestIdRouteImport.update({
   path: '/test/participate/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyHistoryTestIdRoute = MyHistoryTestIdRouteImport.update({
-  id: '/$testId',
-  path: '/$testId',
-  getParentRoute: () => MyHistoryRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -121,7 +115,6 @@ export interface FileRoutesByFullPath {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
 }
@@ -138,7 +131,6 @@ export interface FileRoutesByTo {
   '/interest': typeof InterestIndexRoute
   '/my': typeof MyIndexRoute
   '/test': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history': typeof MyHistoryIndexRoute
 }
@@ -157,7 +149,6 @@ export interface FileRoutesById {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
 }
@@ -177,7 +168,6 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
-    | '/my/history/$testId'
     | '/test/participate/$testId'
     | '/my/history/'
   fileRoutesByTo: FileRoutesByTo
@@ -194,7 +184,6 @@ export interface FileRouteTypes {
     | '/interest'
     | '/my'
     | '/test'
-    | '/my/history/$testId'
     | '/test/participate/$testId'
     | '/my/history'
   id:
@@ -212,7 +201,6 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
-    | '/my/history/$testId'
     | '/test/participate/$testId'
     | '/my/history/'
   fileRoutesById: FileRoutesById
@@ -341,23 +329,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestParticipateTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my/history/$testId': {
-      id: '/my/history/$testId'
-      path: '/$testId'
-      fullPath: '/my/history/$testId'
-      preLoaderRoute: typeof MyHistoryTestIdRouteImport
-      parentRoute: typeof MyHistoryRoute
-    }
   }
 }
 
 interface MyHistoryRouteChildren {
-  MyHistoryTestIdRoute: typeof MyHistoryTestIdRoute
   MyHistoryIndexRoute: typeof MyHistoryIndexRoute
 }
 
 const MyHistoryRouteChildren: MyHistoryRouteChildren = {
-  MyHistoryTestIdRoute: MyHistoryTestIdRoute,
   MyHistoryIndexRoute: MyHistoryIndexRoute,
 }
 
