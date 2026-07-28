@@ -1,1 +1,1 @@
-export type { TestStatus, UserTest } from "./types";
+export type { TestStatus, UserTest, DraftTestStatus, DraftTest } from "./types";
