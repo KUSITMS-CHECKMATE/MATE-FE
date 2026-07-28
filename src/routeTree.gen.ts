@@ -21,6 +21,7 @@ import { Route as MyPrivacyRouteImport } from './routes/my/privacy'
 import { Route as MyPolicyRouteImport } from './routes/my/policy'
 import { Route as MyNoticeRouteImport } from './routes/my/notice'
 import { Route as MyHistoryRouteImport } from './routes/my/history'
+import { Route as MyBusinessRouteImport } from './routes/my/business'
 import { Route as InterestTestIdRouteImport } from './routes/interest/$testId'
 import { Route as DiscoveryGuideRouteImport } from './routes/discovery/guide'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
@@ -89,6 +90,11 @@ const MyHistoryRoute = MyHistoryRouteImport.update({
   path: '/my/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyBusinessRoute = MyBusinessRouteImport.update({
+  id: '/my/business',
+  path: '/my/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterestTestIdRoute = InterestTestIdRouteImport.update({
   id: '/interest/$testId',
   path: '/interest/$testId',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/business': typeof MyBusinessRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRouteWithChildren
   '/my/policy': typeof MyPolicyRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/business': typeof MyBusinessRoute
   '/my/policy': typeof MyPolicyRoute
   '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/business': typeof MyBusinessRoute
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRouteWithChildren
   '/my/policy': typeof MyPolicyRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
+    | '/my/business'
     | '/my/history'
     | '/my/notice'
     | '/my/policy'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
+    | '/my/business'
     | '/my/policy'
     | '/my/privacy'
     | '/test/$testId'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
+    | '/my/business'
     | '/my/history'
     | '/my/notice'
     | '/my/policy'
@@ -256,6 +268,7 @@ export interface RootRouteChildren {
   DiscoveryTestIdRoute: typeof DiscoveryTestIdRoute
   DiscoveryGuideRoute: typeof DiscoveryGuideRoute
   InterestTestIdRoute: typeof InterestTestIdRoute
+  MyBusinessRoute: typeof MyBusinessRoute
   MyHistoryRoute: typeof MyHistoryRouteWithChildren
   MyNoticeRoute: typeof MyNoticeRouteWithChildren
   MyPolicyRoute: typeof MyPolicyRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my/business': {
+      id: '/my/business'
+      path: '/my/business'
+      fullPath: '/my/business'
+      preLoaderRoute: typeof MyBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interest/$testId': {
       id: '/interest/$testId'
       path: '/interest/$testId'
@@ -439,6 +459,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoveryTestIdRoute: DiscoveryTestIdRoute,
   DiscoveryGuideRoute: DiscoveryGuideRoute,
   InterestTestIdRoute: InterestTestIdRoute,
+  MyBusinessRoute: MyBusinessRoute,
   MyHistoryRoute: MyHistoryRouteWithChildren,
   MyNoticeRoute: MyNoticeRouteWithChildren,
   MyPolicyRoute: MyPolicyRoute,

@@ -61,6 +61,7 @@ export function MyServiceSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: '/my/business' })}
         />
       </List>
       <Spacing size={19} />
