@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { graniteEvent } from "@apps-in-toss/web-framework";
 import { BottomCTA } from "@toss/tds-mobile";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 import {
@@ -16,6 +18,25 @@ export const Route = createFileRoute("/discovery/$testId")({
 function TestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+    try {
+      unsubscribe = graniteEvent.addEventListener("backEvent", {
+        onEvent: () => {
+          window.history.back();
+        },
+        onError: (error) => {
+          console.error("backEvent error", error);
+        },
+      });
+    } catch {
+      console.warn("backEvent listener not supported in browser");
+    }
+    return () => {
+      unsubscribe?.();
+    };
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],

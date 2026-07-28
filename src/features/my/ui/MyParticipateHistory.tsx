@@ -81,15 +81,11 @@ export function MyParticipateHistory({ records, totalPoints, isLoading = false, 
       <Border variant="height16" />
       <List>
         <ListHeader
-          size="small"
-          horizontalPadding="medium"
-          verticalPadding="small"
           descriptionPosition="bottom"
           rightAlignment="center"
-          a11yRightReflow={false}
           titleWidthRatio={0.6}
           title={
-            <ListHeader.TitleParagraph color={adaptive.grey800}>
+            <ListHeader.TitleParagraph color={adaptive.grey800} fontWeight="bold" typography="t4">
               참여 기록
             </ListHeader.TitleParagraph>
           }
