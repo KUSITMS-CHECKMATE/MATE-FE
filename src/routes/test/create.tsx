@@ -5,9 +5,10 @@ export const Route = createFileRoute('/test/create')({
   validateSearch: (search: Record<string, unknown>) => ({
     draftId: search.draftId != null ? Number(search.draftId) : undefined as number | undefined,
     payment: search.payment === true || search.payment === 'true',
+    resume: search.resume === true || search.resume === 'true',
   }),
   component: function TestCreateRoute() {
-    const { draftId, payment: fromPayment } = Route.useSearch()
-    return <TestCreateFunnel draftId={draftId} fromPayment={fromPayment} />
+    const { draftId, payment: fromPayment, resume } = Route.useSearch()
+    return <TestCreateFunnel draftId={draftId} fromPayment={fromPayment} resume={resume} />
   },
 })

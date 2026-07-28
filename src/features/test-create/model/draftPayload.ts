@@ -1,13 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useToast } from "@toss/tds-mobile";
-import ky, { HTTPError } from "ky";
-import { updateDraft } from "@/shared/api/generated/testDraft";
+import ky from "ky";
 import { generateUploadUrl } from "@/shared/api/generated/file";
-import { useTestCreateForm } from "./useTestCreateForm";
-import type { PendingQuestion } from "./types";
+import type { TestDraftUpdateRequest } from "@/shared/api/generated/testDraft";
+import type { PendingQuestion, TestCreateFormData } from "./types";
 import type { TreeNodeItem } from "@/features/question-tree/model/types";
-import { ROUTES } from "@/shared/constants/routes";
 
 interface ObjectiveCreateRequest {
   type: "OBJECTIVE";
@@ -73,7 +68,14 @@ interface FiveSecondCreateRequest {
   options?: { content?: string }[];
 }
 
-type QuestionRequestItem = ObjectiveCreateRequest | SubjectiveCreateRequest | ScaleCreateRequest | AbTestCreateRequest | CardSortingCreateRequest | TreeTestCreateRequest | FiveSecondCreateRequest;
+export type QuestionRequestItem =
+  | ObjectiveCreateRequest
+  | SubjectiveCreateRequest
+  | ScaleCreateRequest
+  | AbTestCreateRequest
+  | CardSortingCreateRequest
+  | TreeTestCreateRequest
+  | FiveSecondCreateRequest;
 
 function dataUriToBlob(dataUri: string): Blob {
   const [header, base64] = dataUri.split(",");
@@ -88,9 +90,7 @@ function dataUriToBlob(dataUri: string): Blob {
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
-async function uploadBase64(dataUri: string | undefined): Promise<string | undefined> {
-  if (!dataUri?.startsWith("data:")) return undefined;
-
+async function uploadBase64(dataUri: string): Promise<string | undefined> {
   const blob = dataUriToBlob(dataUri);
   if (blob.size > MAX_IMAGE_BYTES) {
     throw new Error(`이미지 크기가 10MB를 초과해요 (${(blob.size / 1024 / 1024).toFixed(1)}MB)`);
@@ -101,7 +101,10 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
   if (!presignedUrl || !fileKey) throw new Error("업로드 URL 발급 실패");
 
   const uploadUrl = import.meta.env.DEV
-    ? (() => { const u = new URL(presignedUrl); return `/azure-blob${u.pathname}${u.search}`; })()
+    ? (() => {
+        const u = new URL(presignedUrl);
+        return `/azure-blob${u.pathname}${u.search}`;
+      })()
     : presignedUrl;
 
   await ky.put(uploadUrl, {
@@ -110,6 +113,18 @@ async function uploadBase64(dataUri: string | undefined): Promise<string | undef
   });
 
   return fileKey;
+}
+
+/**
+ * 폼의 이미지 값을 업로드 키로 변환한다.
+ * - `data:` URI: 새로 선택한 이미지 → 업로드 후 fileKey 반환
+ * - 그 외 비어있지 않은 문자열: 임시저장된 초안에서 불러온 기존 imageKey → 그대로 통과
+ *   (재저장 시 이미 업로드된 이미지가 유실되지 않도록 보존한다)
+ */
+async function resolveImageKey(value: string | undefined): Promise<string | undefined> {
+  if (!value) return undefined;
+  if (value.startsWith("data:")) return uploadBase64(value);
+  return value;
 }
 
 async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestItem | null> {
@@ -121,7 +136,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
       const options = await Promise.all(
         data.choices.map(async (c) => ({
           content: c.name,
-          imageKey: await uploadBase64(c.imageUrl || undefined),
+          imageKey: await resolveImageKey(c.imageUrl || undefined),
         })),
       );
       return {
@@ -137,7 +152,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
     }
 
     case "SUBJECTIVE": {
-      const imageKey = await uploadBase64(data.imageUrl || undefined);
+      const imageKey = await resolveImageKey(data.imageUrl || undefined);
       return {
         type: "SUBJECTIVE",
         title: data.title,
@@ -147,7 +162,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
     }
 
     case "SCALE": {
-      const imageKey = await uploadBase64(data.imageUrl || undefined);
+      const imageKey = await resolveImageKey(data.imageUrl || undefined);
       return {
         type: "SCALE",
         title: data.title,
@@ -160,7 +175,10 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
     }
 
     case "AB_TEST": {
-      const [aImageKey, bImageKey] = await Promise.all([uploadBase64(data.imageUrlA || undefined), uploadBase64(data.imageUrlB || undefined)]);
+      const [aImageKey, bImageKey] = await Promise.all([
+        resolveImageKey(data.imageUrlA || undefined),
+        resolveImageKey(data.imageUrlB || undefined),
+      ]);
       return {
         type: "AB_TEST",
         title: data.title,
@@ -195,7 +213,7 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
     }
 
     case "FIVE_SECOND": {
-      const imageKey = await uploadBase64(data.imageUrl || undefined);
+      const imageKey = await resolveImageKey(data.imageUrl || undefined);
       const isObjective = data.answerType === "multiple";
       return {
         type: "FIVE_SECOND",
@@ -217,59 +235,39 @@ async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestIt
   }
 }
 
-export function useSubmitTest(draftId: number | undefined) {
-  const navigate = useNavigate();
-  const form = useTestCreateForm();
-  const { openToast } = useToast();
+type DraftFormState = TestCreateFormData & { questions: PendingQuestion[] };
 
-  return useMutation({
-    mutationFn: async () => {
-      if (!draftId) throw new Error("드래프트 ID가 없습니다. 처음부터 다시 시도해주세요.");
+/**
+ * 폼 상태를 테스트 초안 수정 요청 payload로 변환한다.
+ * 이미지(테스트/질문)는 업로드하여 imageKey로 치환한다.
+ * 결제 관련 필드(goalPpl/reward/closedAt)는 결제 화면에서 별도로 저장한다.
+ */
+export async function buildDraftPayload(form: DraftFormState): Promise<TestDraftUpdateRequest> {
+  let imageKeys: string[] = [];
+  try {
+    imageKeys = (await Promise.all(form.images.map((img) => resolveImageKey(img)))).filter(
+      (k): k is string => !!k,
+    );
+  } catch (e) {
+    throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
+  }
 
-      let imageKeys: string[] = [];
-      try {
-        imageKeys = (await Promise.all(form.images.map((img) => uploadBase64(img)))).filter((k): k is string => !!k);
-      } catch (e) {
-        throw new Error(`[테스트 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
-      }
+  let mappedQuestions: QuestionRequestItem[] = [];
+  try {
+    mappedQuestions = (await Promise.all(form.questions.map(mapQuestion))).filter(
+      (q): q is QuestionRequestItem => q !== null,
+    );
+  } catch (e) {
+    throw new Error(`[질문 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
+  }
 
-      let mappedQuestions: QuestionRequestItem[] = [];
-      try {
-        mappedQuestions = (await Promise.all(form.questions.map(mapQuestion))).filter((q): q is QuestionRequestItem => q !== null);
-      } catch (e) {
-        throw new Error(`[질문 이미지 업로드 실패] ${e instanceof Error ? e.message : String(e)}`);
-      }
-
-      try {
-        await updateDraft(draftId, {
-          title: form.name,
-          description: form.summary,
-          categories: form.categories,
-          serviceName: form.serviceName || undefined,
-          serviceDescription: form.description || undefined,
-          imageKeys,
-          questionsPayload: { questions: mappedQuestions },
-        });
-      } catch (e) {
-        throw new Error(`[테스트 초안 업데이트 실패] ${e instanceof Error ? e.message : String(e)}`);
-      }
-
-      return draftId;
-    },
-    onSuccess: (draftId) => {
-      navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId }, replace: true });
-    },
-    onError: async (error) => {
-      let message = `실패: ${String(error)}`;
-      if (error instanceof HTTPError) {
-        try {
-          const body = await error.response.json();
-          message = `${error.response.status} ${body?.code ?? ""} ${body?.message ?? ""}`.trim();
-        } catch {
-          message = `HTTP ${error.response.status}`;
-        }
-      }
-      openToast(message, { type: "bottom" });
-    },
-  });
+  return {
+    title: form.name,
+    description: form.summary,
+    categories: form.categories,
+    serviceName: form.serviceName || undefined,
+    serviceDescription: form.description || undefined,
+    imageKeys,
+    questionsPayload: { questions: mappedQuestions },
+  };
 }

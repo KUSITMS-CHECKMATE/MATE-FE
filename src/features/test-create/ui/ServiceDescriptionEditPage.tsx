@@ -61,24 +61,14 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
   };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-white"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
+    <motion.div className="fixed inset-0 z-50 flex flex-col bg-white" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
       <Top
         title={
           <Top.TitleParagraph size={22} color={adaptive.grey900}>
             서비스 소개 수정하기
           </Top.TitleParagraph>
         }
-        subtitleTop={
-          <Top.SubtitleBadges
-            badges={[{ text: "선택", color: "yellow", variant: "weak" }]}
-          />
-        }
+        subtitleTop={<Top.SubtitleBadges badges={[{ text: "선택", color: "yellow", variant: "weak" }]} />}
       />
       <main className="flex flex-col flex-1">
         <TextField.Clearable
@@ -90,19 +80,12 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
           onClear={() => form.setServiceName("")}
           enterKeyHint="done"
         />
-        <TextArea
-          variant="line"
-          label="서비스 소개"
-          value={form.description}
-          placeholder="서비스 소개"
-          onChange={handleDescriptionChange}
-          enterKeyHint="done"
-        />
+        <TextArea variant="line" label="서비스 소개" value={form.description} placeholder="서비스 소개" onChange={handleDescriptionChange} enterKeyHint="done" />
       </main>
       <FixedBottomCTA.Double
         leftButton={
           <CTAButton color="dark" variant="weak" onClick={handleCancel}>
-            취소
+            닫기
           </CTAButton>
         }
         rightButton={<CTAButton onClick={handleSubmit}>수정완료</CTAButton>}
