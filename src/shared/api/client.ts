@@ -1,5 +1,8 @@
 import ky from "ky";
 
+// 토큰은 메모리에만 보관한다. (앱인토스 QA: 토스 연결 해제 시 잔존 데이터가 없어야 하고,
+// 연결 상태의 단일 진실 소스는 appLogin이므로 로컬 영구 저장은 하지 않는다.)
+// 한 세션 안에서 액세스 토큰이 만료되면 리프레시 토큰으로 재발급해 요청이 실패하지 않게 한다.
 let _accessToken: string | null = null;
 let _refreshToken: string | null = null;
 let _refreshPromise: Promise<string> | null = null;
@@ -9,6 +12,9 @@ export const clearToken = () => { _accessToken = null; };
 export const getToken = () => _accessToken;
 export const setRefreshToken = (token: string) => { _refreshToken = token; };
 export const clearRefreshToken = () => { _refreshToken = null; };
+
+// 리프레시 토큰 보유 여부 = 현재 세션의 로그인 여부.
+export const hasSession = () => _refreshToken != null;
 
 const REISSUE_PATH = "api/v1/auth/reissue";
 
