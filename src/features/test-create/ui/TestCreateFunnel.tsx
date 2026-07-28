@@ -71,6 +71,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const [hasTestImages, setHasTestImages] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
+  const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<{
     id: string;
     typeId: QuestionTypeId;
@@ -83,7 +84,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const [showGuide, setShowGuide] = useState(false);
   const [isResuming, setIsResuming] = useState(resume && !!draftId);
 
-  const isOverlayOpen = isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide;
+  const isOverlayOpen =
+    isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide || isQuestionTypeSheetOpen;
   useScrollLock(isOverlayOpen);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -92,6 +94,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const showGuideRef = useRef(showGuide);
   const editPhaseRef = useRef(editPhase);
   const activeQuestionRef = useRef(activeQuestion);
+  const isQuestionTypeSheetOpenRef = useRef(isQuestionTypeSheetOpen);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
     funnelPrevRef.current = funnel.prev;
@@ -105,6 +108,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   useEffect(() => {
     activeQuestionRef.current = activeQuestion;
   }, [activeQuestion]);
+  useEffect(() => {
+    isQuestionTypeSheetOpenRef.current = isQuestionTypeSheetOpen;
+  }, [isQuestionTypeSheetOpen]);
 
   useEffect(() => {
     try {
@@ -116,6 +122,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
             setEditPhase(null);
           } else if (showGuideRef.current) {
             setShowGuide(false);
+          } else if (isQuestionTypeSheetOpenRef.current) {
+            setIsQuestionTypeSheetOpen(false);
           } else if (funnelIsFirstRef.current) {
             setIsExitDialogOpen(true);
           } else {
@@ -345,7 +353,15 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         }
       >
         {funnel.step === "register" ? (
-          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} onEnterQuestion={setActiveQuestion} onGuideView={() => setShowGuide(true)} />
+          <TestRegisterStep
+            activeTab={registerTab}
+            onTabChange={setRegisterTab}
+            onEnterQuestion={setActiveQuestion}
+            onGuideView={() => setShowGuide(true)}
+            isQuestionTypeSheetOpen={isQuestionTypeSheetOpen}
+            onOpenQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(true)}
+            onCloseQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(false)}
+          />
         ) : funnel.step === "image" ? (
           <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <TestImageStep onHasImagesChange={handleHasImagesChange} />

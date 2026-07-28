@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List, ListHeader } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
@@ -31,11 +31,21 @@ interface TestRegisterStepProps {
   onTabChange: (tab: RegisterTab) => void;
   onEnterQuestion: (question: { id: string; typeId: QuestionTypeId }) => void;
   onGuideView?: () => void;
+  isQuestionTypeSheetOpen: boolean;
+  onOpenQuestionTypeSheet: () => void;
+  onCloseQuestionTypeSheet: () => void;
 }
 
-export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGuideView }: TestRegisterStepProps) {
+export function TestRegisterStep({
+  activeTab,
+  onTabChange,
+  onEnterQuestion,
+  onGuideView,
+  isQuestionTypeSheetOpen,
+  onOpenQuestionTypeSheet,
+  onCloseQuestionTypeSheet,
+}: TestRegisterStepProps) {
   const form = useTestCreateForm();
-  const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
   const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
@@ -56,16 +66,15 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
     setSelectedCounts((prev) => ({ ...prev, [id]: count }));
   };
 
-  const closeQuestionTypeSheet = () => {
-    setSelectedCounts({});
-    setIsQuestionTypeSheetOpen(false);
-  };
+  // 팝업이 어떤 경로로 닫히든(헤더 뒤로가기 포함) 선택 개수를 초기화한다
+  useEffect(() => {
+    if (!isQuestionTypeSheetOpen) setSelectedCounts({});
+  }, [isQuestionTypeSheetOpen]);
 
   const handleConfirmQuestionTypes = () => {
     const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) => Array.from({ length: count ?? 0 }, () => id as QuestionTypeId));
     form.addQuestions(typeIds);
-    setSelectedCounts({});
-    setIsQuestionTypeSheetOpen(false);
+    onCloseQuestionTypeSheet();
   };
 
   const openEditSheet = () => {
@@ -120,7 +129,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                 contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
                 verticalPadding="large"
                 horizontalPadding="small"
-                onClick={() => setIsQuestionTypeSheetOpen(true)}
+                onClick={onOpenQuestionTypeSheet}
               />
             </div>
 
@@ -332,7 +341,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
             onChangeCount={handleChangeCount}
             existingCount={form.questions.length}
             onConfirm={handleConfirmQuestionTypes}
-            onCancel={closeQuestionTypeSheet}
+            onCancel={onCloseQuestionTypeSheet}
             onShowGuide={onGuideView}
           />
         )}
