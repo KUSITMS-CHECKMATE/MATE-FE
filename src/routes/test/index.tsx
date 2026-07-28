@@ -7,7 +7,7 @@ import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
-import { createDraft, deleteDraft, listMyDrafts } from "@/shared/api/generated/testDraft";
+import { deleteDraft, listMyDrafts } from "@/shared/api/generated/testDraft";
 
 const STATUS_MAP: Record<string, UserTest["status"]> = {
   IN_PROGRESS: "active",
@@ -29,16 +29,6 @@ function MakerHomePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { openToast } = useToast();
-  const { mutate: initDraft, isPending } = useMutation({
-    mutationFn: async () => {
-      const res = await createDraft();
-      return res.data.data?.draftId;
-    },
-    onSuccess: (draftId) => {
-      if (!draftId) return;
-      navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: false, resume: false } });
-    },
-  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["listMyTests"],
@@ -121,7 +111,11 @@ function MakerHomePage() {
         }
         onDeleteDraft={(draftId) => removeDraft(draftId)}
       />
-      <TestCreateButton onClick={() => initDraft(undefined)} disabled={isPending} />
+      <TestCreateButton
+        onClick={() =>
+          navigate({ to: ROUTES.TEST_CREATE, search: { draftId: undefined, payment: false, resume: false } })
+        }
+      />
 
       <BottomTabBar activeTab="test" />
     </div>
