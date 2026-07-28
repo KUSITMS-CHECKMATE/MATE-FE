@@ -10,9 +10,7 @@ export function ServiceDescriptionNudgeSheet({ open, onClose }: ServiceDescripti
   return (
     <BottomSheet
       header={<BottomSheet.Header>서비스 소개를 하면 이런 혜택이 있어요</BottomSheet.Header>}
-      headerDescription={
-        <BottomSheet.HeaderDescription>서비스 소개는 선택사항이에요</BottomSheet.HeaderDescription>
-      }
+      headerDescription={<BottomSheet.HeaderDescription>서비스 소개는 선택사항이에요</BottomSheet.HeaderDescription>}
       open={open}
       onClose={onClose}
       cta={
@@ -28,20 +26,14 @@ export function ServiceDescriptionNudgeSheet({ open, onClose }: ServiceDescripti
             type="2RowTypeF"
             top="테스트를 진행하며"
             topProps={{ color: adaptive.grey500 }}
-            bottom="서비스 홍보도 같이할 수 있어요"
+            bottom="서비스 홍보도 같이 할 수 있어요"
             bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
           />
         }
         verticalPadding="large"
       />
       <ListRow
-        left={
-          <ListRow.AssetIcon
-            size="xsmall"
-            shape="original"
-            url="https://static.toss.im/2d-emojis/png/4x/u1F913.png"
-          />
-        }
+        left={<ListRow.AssetIcon size="xsmall" shape="original" url="https://static.toss.im/2d-emojis/png/4x/u1F913.png" />}
         contents={
           <ListRow.Texts
             type="2RowTypeF"
