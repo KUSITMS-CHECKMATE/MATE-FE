@@ -17,6 +17,7 @@ import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
 import { Route as TestPaymentRouteImport } from './routes/test/payment'
 import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as TestTestIdRouteImport } from './routes/test/$testId'
+import { Route as MyPrivacyRouteImport } from './routes/my/privacy'
 import { Route as MyPolicyRouteImport } from './routes/my/policy'
 import { Route as MyNoticeRouteImport } from './routes/my/notice'
 import { Route as MyHistoryRouteImport } from './routes/my/history'
@@ -66,6 +67,11 @@ const TestCreateRoute = TestCreateRouteImport.update({
 const TestTestIdRoute = TestTestIdRouteImport.update({
   id: '/test/$testId',
   path: '/test/$testId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyPrivacyRoute = MyPrivacyRouteImport.update({
+  id: '/my/privacy',
+  path: '/my/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyPolicyRoute = MyPolicyRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRouteWithChildren
   '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
   '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/my/history': typeof MyHistoryRouteWithChildren
   '/my/notice': typeof MyNoticeRouteWithChildren
   '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/my/history'
     | '/my/notice'
     | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/discovery/guide'
     | '/interest/$testId'
     | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/my/history'
     | '/my/notice'
     | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   MyHistoryRoute: typeof MyHistoryRouteWithChildren
   MyNoticeRoute: typeof MyNoticeRouteWithChildren
   MyPolicyRoute: typeof MyPolicyRoute
+  MyPrivacyRoute: typeof MyPrivacyRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
   TestPaymentRoute: typeof TestPaymentRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/test/$testId'
       fullPath: '/test/$testId'
       preLoaderRoute: typeof TestTestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my/privacy': {
+      id: '/my/privacy'
+      path: '/my/privacy'
+      fullPath: '/my/privacy'
+      preLoaderRoute: typeof MyPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my/policy': {
@@ -422,6 +442,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyHistoryRoute: MyHistoryRouteWithChildren,
   MyNoticeRoute: MyNoticeRouteWithChildren,
   MyPolicyRoute: MyPolicyRoute,
+  MyPrivacyRoute: MyPrivacyRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestCreateRoute: TestCreateRoute,
   TestPaymentRoute: TestPaymentRoute,
