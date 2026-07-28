@@ -3,3 +3,4 @@ export { MyServiceSection } from './MyServiceSection';
 export { MyParticipateHistory } from './MyParticipateHistory';
 export { MyNotice } from './MyNotice';
 export { NoticeDetail } from './NoticeDetail';
+export { PolicyDetail } from './PolicyDetail';
