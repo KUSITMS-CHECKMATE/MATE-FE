@@ -39,20 +39,6 @@ export const TestDraftResponseStatus = {
   EXPIRED: 'EXPIRED',
 } as const;
 
-/**
- * 결제 금액 내역
- */
-export interface PaymentAmountResponse {
-  /** 테스터 리워드 총액 */
-  testerRewardAmount?: number;
-  /** 수수료 */
-  feeAmount?: number;
-  /** 부가세 */
-  vatAmount?: number;
-  /** 최종 결제 금액 */
-  totalAmount?: number;
-}
-
 export interface TestDraftResponse {
   draftId?: number;
   makerId?: number;
@@ -70,7 +56,6 @@ export interface TestDraftResponse {
   publishedTestId?: number;
   createdAt?: string;
   updatedAt?: string;
-  amountBreakdown?: PaymentAmountResponse;
 }
 
 export interface ApiResponseTestDraftResponse {
@@ -625,6 +610,92 @@ export function useUpdateDraft<TData = Awaited<ReturnType<typeof updateDraft>>, 
 
 
 
+
+export type publishCheckResponse200 = {
+  data: ApiResponseVoid
+  status: 200
+}
+
+export type publishCheckResponseSuccess = (publishCheckResponse200) & {
+  headers: Headers;
+};
+;
+
+export type publishCheckResponse = (publishCheckResponseSuccess)
+
+export const getPublishCheckUrl = (draftId: number,) => {
+
+
+
+
+  return `/api/v1/test-drafts/${draftId}/publish-check`
+}
+
+/**
+ * Toss 인앱결제 실행 직전에 호출하는 API입니다. 이 draft가 결제 후 정상적으로 발행 가능한 상태인지 확인합니다.<br>
+통과하면 200 OK를 반환하고, 실패하면 사유에 맞는 에러 코드(DRAFT_002/004/005/006/007)로 400을 반환합니다.<br>
+200을 받았을 때만 프론트에서 Toss IAP.createOneTimePurchaseOrder를 호출해주세요.
+
+ * @summary 테스트 초안 발행 가능 여부 사전 검증
+ */
+export const publishCheck = async (draftId: number, options?: RequestInit): Promise<publishCheckResponse> => {
+
+  return kyMutator<publishCheckResponse>(getPublishCheckUrl(draftId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getPublishCheckMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishCheck>>, TError,{draftId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof publishCheck>>, TError,{draftId: number}, TContext> => {
+
+const mutationKey = ['publishCheck'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof publishCheck>>, {draftId: number}> = (props) => {
+          const {draftId} = props ?? {};
+
+          return  publishCheck(draftId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PublishCheckMutationResult = NonNullable<Awaited<ReturnType<typeof publishCheck>>>
+
+    export type PublishCheckMutationError = ErrorType<unknown>
+
+    /**
+ * @summary 테스트 초안 발행 가능 여부 사전 검증
+ */
+export const usePublishCheck = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publishCheck>>, TError,{draftId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof publishCheck>>,
+        TError,
+        {draftId: number},
+        TContext
+      > => {
+      return useMutation(getPublishCheckMutationOptions(options), queryClient);
+    }
 
 export type listMyDraftsResponse200 = {
   data: ApiResponseMyTestDraftResponse
