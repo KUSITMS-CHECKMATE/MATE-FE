@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
-import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top } from "@toss/tds-mobile";
+import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount, IAP_SKU_MAP } from "../model/types";
 import { calcPayment, toKRW } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
@@ -21,6 +21,7 @@ const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} b
 export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
+  const { openToast } = useToast();
   const {
     mutate: submitPayment,
     isPending,
@@ -47,6 +48,16 @@ export function PaymentFunnel() {
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
+
+  // 결제 화면 진입 시점 = 여기까지 작성한 내용이 이미 임시저장된 시점이므로, 진입 즉시 안내 토스트를 보여준다.
+  useEffect(() => {
+    openToast("지금까지 만든 테스트를\n임시 저장했어요", {
+      type: "bottom",
+      lottie: "https://static.toss.im/lotties-common/check-green-spot.json",
+      higherThanCTA: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
