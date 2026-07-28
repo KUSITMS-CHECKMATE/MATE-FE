@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
-import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top } from "@toss/tds-mobile";
+import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
@@ -11,6 +11,8 @@ import { RewardAmountStep } from "./RewardAmountStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
+import { useSaveDraft } from "@/features/test-create/model/useSaveDraft";
+import { useTempSaveAccessoryButton } from "@/shared/hooks/useTempSaveAccessoryButton";
 
 const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} backgroundColor="transparent" name="icon-arrow-down-mono" color={adaptive.grey400} aria-hidden={true} ratio="1/1" />;
 
@@ -18,6 +20,23 @@ export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
   const { mutate: submitPayment, isPending } = usePaymentSubmit();
+  const { openToast } = useToast();
+  const saveDraft = useSaveDraft(draftId);
+
+  const handleTempSave = async () => {
+    if (saveDraft.isPending) return;
+    try {
+      await saveDraft.mutateAsync();
+      openToast("임시 저장을 완료했어요.", {
+        type: "bottom",
+        lottie: "https://static.toss.im/lotties-common/check-green-spot.json",
+        higherThanCTA: true,
+      });
+    } catch {
+      // 실패 토스트는 useSaveDraft.onError에서 처리
+    }
+  };
+  useTempSaveAccessoryButton(handleTempSave);
 
   const handleGoBack = () => {
     navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true, resume: false } });

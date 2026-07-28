@@ -1,10 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { graniteEvent, partner, tdsEvent } from "@apps-in-toss/web-framework";
+import { graniteEvent } from "@apps-in-toss/web-framework";
 import { ConfirmDialog, Skeleton, useToast } from "@toss/tds-mobile";
 import { FunnelLayout, type CTAMode } from "./FunnelLayout";
-import { TempSaveSheet } from "./TempSaveSheet";
 import { CategorySelectSheet } from "./CategorySelectSheet";
 import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
 import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
@@ -24,6 +23,7 @@ import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { getDraft } from "@/shared/api/generated/testDraft";
 import { ROUTES } from "@/shared/constants/routes";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
+import { useTempSaveAccessoryButton } from "@/shared/hooks/useTempSaveAccessoryButton";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
 import { ScaleCreatePage } from "@/features/question-scale/create";
 import { AbCreatePage } from "@/features/question-ab/create";
@@ -76,7 +76,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     typeId: QuestionTypeId;
   } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
-  const [tempSaveMode, setTempSaveMode] = useState<"exit" | "cta" | null>(null);
   // 첫 임시저장 전까지는 draftId가 없다(서버에 초안 미생성). 첫 저장 성공 시 useSaveDraft가 채워준다.
   const [currentDraftId, setCurrentDraftId] = useState(draftId);
   const saveDraft = useSaveDraft(currentDraftId, setCurrentDraftId);
@@ -106,42 +105,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   useEffect(() => {
     activeQuestionRef.current = activeQuestion;
   }, [activeQuestion]);
-
-  // 액세서리 "임시저장" 버튼 핸들러 — 리스너 재구독 없이 항상 최신 로직을 참조하도록 ref에 보관
-  const handleTempSaveRef = useRef<() => void>(() => {});
-
-  useEffect(() => {
-    if (funnel.step !== "register") {
-      partner.removeAccessoryButton().catch(() => {});
-      return;
-    }
-
-    try {
-      partner.addAccessoryButton({
-        id: "temp-save",
-        title: "임시저장",
-        icon: { name: "icon-cloud-download" },
-      });
-    } catch {
-      // 브라우저 환경에서는 무시
-    }
-
-    const cleanup = tdsEvent.addEventListener("navigationAccessoryEvent", {
-      onEvent: ({ id }: { id: string }) => {
-        if (id === "temp-save") {
-          handleTempSaveRef.current();
-        }
-      },
-      onError: (error: unknown) => {
-        console.error("navigationAccessoryEvent error", error);
-      },
-    });
-
-    return () => {
-      cleanup();
-      partner.removeAccessoryButton().catch(() => {});
-    };
-  }, [funnel.step]);
 
   useEffect(() => {
     try {
@@ -186,6 +149,18 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           // 이미 결제/발행된 초안은 이어쓰기 대상이 아님(목록 조회 이후 상태가 바뀐 경우 대비)
           if (!draft || (draft.status && draft.status !== "DRAFT")) return;
           loadDraftIntoForm(draft);
+
+          // 이미 입력된 항목은 재입력 없이 바로 보이도록 서브스텝을 현재 위치까지 앞당긴다
+          const name = draft.title ?? "";
+          const summary = draft.description ?? "";
+          if (name.trim().length > 0 && summary.trim().length > 0) {
+            setBasicSubStep("category");
+          } else if (name.trim().length > 0) {
+            setBasicSubStep("summary");
+          }
+          if ((draft.serviceName ?? "").trim().length > 0) {
+            setShowServiceDescription(true);
+          }
         })
         .catch(() => {
           // 조회 실패 시 빈 폼으로 시작
@@ -219,10 +194,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     });
   };
 
-  const goToTest = () => {
-    exitUnsubscribeRef.current?.();
-    exitUnsubscribeRef.current = null;
-    navigate({ to: ROUTES.TEST });
+  const showCreateSavedToast = () => {
+    openToast("지금까지 만든 테스트를\n임시 저장했어요", {
+      type: "bottom",
+      lottie: "https://static.toss.im/lotties-common/check-green-spot.json",
+      higherThanCTA: true,
+    });
   };
 
   const goToPayment = (id: number) => {
@@ -241,40 +218,18 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       // 실패 토스트는 useSaveDraft.onError에서 처리
     }
   };
-  handleTempSaveRef.current = handleTempSave;
+  useTempSaveAccessoryButton(handleTempSave);
 
-  // 바텀시트 "저장하기": 내용 저장 + 완료 토스트 후 이동(exit→테스트, cta→결제)
-  const handleSheetSave = async () => {
-    const mode = tempSaveMode;
+  // "테스트 만들기" CTA: 별도 확인 다이얼로그 없이 항상 임시저장 후 결제로 이동
+  const handleSubmitCreate = async () => {
+    if (isSaving) return;
     let id: number;
     try {
       id = await saveDraft.mutateAsync();
     } catch {
-      return; // 저장 실패 시 시트 유지, 에러 토스트 표시
+      return; // 실패 토스트는 useSaveDraft.onError에서 처리
     }
-    showSavedToast();
-    setTempSaveMode(null);
-    if (mode === "exit") goToTest();
-    else goToPayment(id);
-  };
-
-  // 바텀시트 "안할게요"
-  // - exit: 저장 없이 테스트 페이지로 이동
-  // - cta: 내용은 저장(결제가 정상 동작하도록)하되 성공 토스트는 생략 후 결제로 이동
-  const handleSheetSkip = async () => {
-    const mode = tempSaveMode;
-    if (mode === "exit") {
-      setTempSaveMode(null);
-      goToTest();
-      return;
-    }
-    let id: number;
-    try {
-      id = await saveDraft.mutateAsync();
-    } catch {
-      return; // 저장 실패 시 시트 유지, 에러 토스트 표시
-    }
-    setTempSaveMode(null);
+    showCreateSavedToast();
     goToPayment(id);
   };
 
@@ -380,7 +335,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
             funnel.prev();
           }
         }}
-        onSubmit={() => setTempSaveMode("cta")}
+        onSubmit={handleSubmitCreate}
         currentStep={funnel.step}
         ctaMode={ctaMode}
         confirmLabel={funnel.step === "basic" && !isFocused ? "다음으로" : "확인"}
@@ -459,8 +414,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         {activeQuestion?.typeId === "TREE_TEST" && <TreeCreatePage key="question-tree" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
         {activeQuestion?.typeId === "FIVE_SECOND" && <FivesecCreatePage key="question-fivesec" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
       </AnimatePresence>
-
-      <TempSaveSheet open={tempSaveMode !== null} onClose={() => setTempSaveMode(null)} onSave={handleSheetSave} onSkip={handleSheetSkip} isSaving={isSaving} />
 
       <ConfirmDialog
         open={isExitDialogOpen}

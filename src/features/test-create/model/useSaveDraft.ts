@@ -25,8 +25,7 @@ async function toMessage(error: unknown): Promise<string> {
  * - draftId는 서버에 저장되므로, 다음 "테스트 등록" 진입 시 listMyDrafts로 이어서 작성 가능
  * - 실패 시 에러 토스트 표시
  *
- * 성공 토스트는 호출 측에서 상황에 맞게 표시한다(옵션 A: 결제 흐름의
- * "안할게요"는 저장은 하되 성공 토스트는 생략).
+ * 성공 토스트는 호출 측에서 상황에 맞게 표시한다(액세서리 버튼 vs "테스트 만들기" CTA).
  */
 export function useSaveDraft(draftId: number | undefined, onDraftCreated?: (draftId: number) => void) {
   const form = useTestCreateForm();
