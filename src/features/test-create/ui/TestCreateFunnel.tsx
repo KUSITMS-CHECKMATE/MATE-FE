@@ -77,7 +77,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   } | null>(null);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [tempSaveMode, setTempSaveMode] = useState<"exit" | "cta" | null>(null);
-  const saveDraft = useSaveDraft(draftId);
+  // 첫 임시저장 전까지는 draftId가 없다(서버에 초안 미생성). 첫 저장 성공 시 useSaveDraft가 채워준다.
+  const [currentDraftId, setCurrentDraftId] = useState(draftId);
+  const saveDraft = useSaveDraft(currentDraftId, setCurrentDraftId);
   const isSaving = saveDraft.isPending;
   const [showGuide, setShowGuide] = useState(false);
   const [isResuming, setIsResuming] = useState(resume && !!draftId);
@@ -223,11 +225,10 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     navigate({ to: ROUTES.TEST });
   };
 
-  const goToPayment = () => {
-    if (!draftId) return;
+  const goToPayment = (id: number) => {
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
-    navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId }, replace: true });
+    navigate({ to: ROUTES.TEST_PAYMENT, search: { draftId: id }, replace: true });
   };
 
   // 액세서리 "임시저장" 버튼: 내용을 저장하고 완료 토스트 표시(화면 이동 없음)
@@ -245,15 +246,16 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   // 바텀시트 "저장하기": 내용 저장 + 완료 토스트 후 이동(exit→테스트, cta→결제)
   const handleSheetSave = async () => {
     const mode = tempSaveMode;
+    let id: number;
     try {
-      await saveDraft.mutateAsync();
+      id = await saveDraft.mutateAsync();
     } catch {
       return; // 저장 실패 시 시트 유지, 에러 토스트 표시
     }
     showSavedToast();
     setTempSaveMode(null);
     if (mode === "exit") goToTest();
-    else goToPayment();
+    else goToPayment(id);
   };
 
   // 바텀시트 "안할게요"
@@ -266,13 +268,14 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       goToTest();
       return;
     }
+    let id: number;
     try {
-      await saveDraft.mutateAsync();
+      id = await saveDraft.mutateAsync();
     } catch {
       return; // 저장 실패 시 시트 유지, 에러 토스트 표시
     }
     setTempSaveMode(null);
-    goToPayment();
+    goToPayment(id);
   };
 
   const isAllComplete = form.name.trim().length > 0 && form.summary.trim().length > 0 && form.categories.length > 0;
