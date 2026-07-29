@@ -1,24 +1,10 @@
-import { useState } from "react";
-import { useDialog, useToast, ConfirmDialog } from "@toss/tds-mobile";
-
-interface ConfirmDialogState {
-  title: string;
-  description: string;
-  cancelLabel: string;
-  confirmLabel: string;
-  onConfirm: () => void;
-}
+import { useDialog, useToast } from "@toss/tds-mobile";
 
 // IAP onError의 error.code별 안내 다이얼로그. 처리한 코드면 true, 아직 대응 안 한 코드면 false —
 // 호출부는 false일 때 기존 토스트로 폴백한다. 코드 하나씩 추가해 나간다.
-//
-// 버튼 2개짜리(ConfirmDialog)는 useDialog().openConfirm에 커스텀 버튼을 넘기면 렌더링이 깨져서,
-// 직접 상태를 들고 <ConfirmDialog> 컴포넌트를 그려주는 방식으로 처리한다. 반환된 dialog를
-// 트리 안 어딘가에 렌더링해야 실제로 화면에 뜬다.
 export function useIapErrorDialog() {
   const { openAlert } = useDialog();
   const { openToast } = useToast();
-  const [confirmState, setConfirmState] = useState<ConfirmDialogState | null>(null);
 
   const showIapErrorDialog = async (code: string | undefined): Promise<boolean> => {
     // 코드 표기가 SCREAMING_SNAKE_CASE로 통일돼 있지 않은 경우가 있어 대문자로 정규화해서 매칭한다.
@@ -51,14 +37,10 @@ export function useIapErrorDialog() {
         });
         return true;
       case "INVALID_USER_ENVIRONMENT":
-        setConfirmState({
+        await openAlert({
           title: "이 기기에서는 결제할 수 없어요",
           description: "지금 기기나 계정 환경에서는 지원되지 않는 상품이에요. 다른 기기에서 시도하거나 고객센터로 문의해주세요.",
-          cancelLabel: "닫기",
-          confirmLabel: "문의하기",
-          onConfirm: () => {
-            // TODO: 문의하기 연결 — 프로젝트에 CS 채널/문의 라우트가 아직 없음 (MyHelpSection의 "문의하기"도 onClick 미구현)
-          },
+          alertButton: "확인",
         });
         return true;
       default:
@@ -67,30 +49,5 @@ export function useIapErrorDialog() {
     }
   };
 
-  const dialog = confirmState ? (
-    <ConfirmDialog
-      open
-      title={confirmState.title}
-      description={confirmState.description}
-      cancelButton={
-        <ConfirmDialog.CancelButton size="large" onClick={() => setConfirmState(null)}>
-          {confirmState.cancelLabel}
-        </ConfirmDialog.CancelButton>
-      }
-      confirmButton={
-        <ConfirmDialog.ConfirmButton
-          size="large"
-          onClick={() => {
-            confirmState.onConfirm();
-            setConfirmState(null);
-          }}
-        >
-          {confirmState.confirmLabel}
-        </ConfirmDialog.ConfirmButton>
-      }
-      onClose={() => setConfirmState(null)}
-    />
-  ) : null;
-
-  return { showIapErrorDialog, dialog };
+  return { showIapErrorDialog };
 }
