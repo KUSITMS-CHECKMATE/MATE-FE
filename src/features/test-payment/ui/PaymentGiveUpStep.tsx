@@ -2,12 +2,12 @@ import { Asset, FixedBottomCTA, Spacing, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 
 interface Props {
-  onContact: () => void;
+  onConfirm: () => void;
 }
 
-// PaymentSystemErrorStep에서 "다시 시도"가 4번 이상 계속 실패하면 더 이상 재시도를 주지 않고
-// 문의하기로만 유도하는 최종 화면. (재시도 횟수 집계는 usePaymentSubmit의 failureCount 참고)
-export function PaymentGiveUpStep({ onContact }: Props) {
+// PaymentSystemErrorStep에서 "다시 시도"가 4번 이상 계속 실패하면 더 이상 재시도를 주지 않는 최종 화면.
+// (재시도 횟수 집계는 usePaymentSubmit의 failureCount 참고)
+export function PaymentGiveUpStep({ onConfirm }: Props) {
   return (
     <div className="flex flex-col h-dvh">
       <Spacing size={12} />
@@ -36,8 +36,8 @@ export function PaymentGiveUpStep({ onContact }: Props) {
           </Top.SubtitleParagraph>
         }
       />
-      <FixedBottomCTA color="dark" variant="weak" onClick={onContact}>
-        문의하기
+      <FixedBottomCTA color="dark" variant="weak" onClick={onConfirm}>
+        확인했어요
       </FixedBottomCTA>
     </div>
   );

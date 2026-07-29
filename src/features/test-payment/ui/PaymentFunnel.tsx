@@ -25,7 +25,6 @@ export function PaymentFunnel() {
   const {
     mutate: submitPayment,
     isPending,
-    dialog: iapErrorDialog,
     appMarketVerificationFailed,
     serverVerificationFailed,
     verificationFailureCount,
@@ -131,11 +130,7 @@ export function PaymentFunnel() {
   if (step === "app-market-verification-failed" || step === "toss-server-verification-failed") {
     if (verificationFailureCount >= 4) {
       return (
-        <PaymentGiveUpStep
-          onContact={() => {
-            // TODO: 문의하기 연결 — 프로젝트에 CS 채널/문의 라우트가 아직 없음 (MyHelpSection의 "문의하기"도 onClick 미구현)
-          }}
-        />
+        <PaymentGiveUpStep onConfirm={() => navigate({ to: ROUTES.TEST, replace: true })} />
       );
     }
     return (
@@ -155,9 +150,6 @@ export function PaymentFunnel() {
             },
           )
         }
-        onContact={() => {
-          // TODO: 문의하기 연결 — 프로젝트에 CS 채널/문의 라우트가 아직 없음 (MyHelpSection의 "문의하기"도 onClick 미구현)
-        }}
       />
     );
   }
@@ -359,7 +351,6 @@ export function PaymentFunnel() {
           setIsResponsePeriodOpen(false);
         }}
       />
-      {iapErrorDialog}
     </>
   );
 }

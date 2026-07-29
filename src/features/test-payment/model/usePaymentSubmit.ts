@@ -33,7 +33,7 @@ interface PaymentSubmitInput {
 
 export function usePaymentSubmit() {
   const { openAlert } = useDialog();
-  const { showIapErrorDialog, dialog } = useIapErrorDialog();
+  const { showIapErrorDialog } = useIapErrorDialog();
   const [appMarketVerificationFailed, setAppMarketVerificationFailed] = useState(false);
   const [serverVerificationFailed, setServerVerificationFailed] = useState(false);
   // APP_MARKET_VERIFICATION_FAILED / TOSS_SERVER_VERIFICATION_FAILED로 인한 실패 횟수.
@@ -134,5 +134,5 @@ export function usePaymentSubmit() {
     },
   });
 
-  return { ...mutation, dialog, appMarketVerificationFailed, serverVerificationFailed, verificationFailureCount };
+  return { ...mutation, appMarketVerificationFailed, serverVerificationFailed, verificationFailureCount };
 }
