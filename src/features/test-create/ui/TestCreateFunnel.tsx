@@ -194,14 +194,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     });
   };
 
-  const showCreateSavedToast = () => {
-    openToast("지금까지 만든 테스트를\n임시 저장했어요", {
-      type: "bottom",
-      lottie: "https://static.toss.im/lotties-common/check-green-spot.json",
-      higherThanCTA: true,
-    });
-  };
-
   const goToPayment = (id: number) => {
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
@@ -229,7 +221,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     } catch {
       return; // 실패 토스트는 useSaveDraft.onError에서 처리
     }
-    showCreateSavedToast();
     goToPayment(id);
   };
 
