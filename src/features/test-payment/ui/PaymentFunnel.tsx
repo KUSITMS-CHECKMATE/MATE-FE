@@ -4,7 +4,7 @@ import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
 import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount, IAP_SKU_MAP } from "../model/types";
-import { calcPayment, toKRW } from "../model/calcPayment";
+import { calcPayment, toKRW, parseWonAmount } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { useIapProducts } from "../model/useIapProducts";
 import { TesterCountStep } from "./TesterCountStep";
@@ -154,10 +154,11 @@ export function PaymentFunnel() {
     );
   }
 
-  const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount) : null;
-
   const iapSku = testerCount != null && rewardAmount != null ? IAP_SKU_MAP[rewardAmount]?.[testerCount] : undefined;
   const iapProduct = iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
+  const actualTotal = iapProduct?.displayAmount != null ? parseWonAmount(iapProduct.displayAmount) : undefined;
+
+  const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount, actualTotal) : null;
   const displayTotal = iapProduct?.displayAmount ?? (payment != null ? toKRW(payment.total) : null);
 
   return (
