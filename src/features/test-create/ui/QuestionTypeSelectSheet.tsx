@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { FixedBottomCTA, CTAButton, ListRow, Top, NumericSpinner, IconButton, useToast } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
@@ -7,15 +6,16 @@ import { QUESTION_TYPES, type QuestionTypeId } from "../model/types";
 const MAX_QUESTIONS = 20;
 
 interface QuestionTypeSelectSheetProps {
+  selectedCounts: Partial<Record<QuestionTypeId, number>>;
+  onChangeCount: (id: QuestionTypeId, count: number) => void;
   existingCount: number;
-  onConfirm: (selectedCounts: Partial<Record<QuestionTypeId, number>>) => void;
+  onConfirm: () => void;
   onCancel: () => void;
   onShowGuide?: () => void;
 }
 
-export function QuestionTypeSelectSheet({ existingCount, onConfirm, onCancel, onShowGuide }: QuestionTypeSelectSheetProps) {
+export function QuestionTypeSelectSheet({ selectedCounts, onChangeCount, existingCount, onConfirm, onCancel, onShowGuide }: QuestionTypeSelectSheetProps) {
   const { openToast } = useToast();
-  const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const totalSelected = Object.values(selectedCounts).reduce((sum, c) => sum + (c ?? 0), 0);
   const remaining = MAX_QUESTIONS - existingCount;
 
@@ -31,7 +31,7 @@ export function QuestionTypeSelectSheet({ existingCount, onConfirm, onCancel, on
       });
       return;
     }
-    setSelectedCounts((prev) => ({ ...prev, [id]: newCount }));
+    onChangeCount(id, newCount);
   };
 
   return (
@@ -90,7 +90,7 @@ export function QuestionTypeSelectSheet({ existingCount, onConfirm, onCancel, on
           </CTAButton>
         }
         rightButton={
-          <CTAButton className="w-full" disabled={totalSelected === 0} onClick={() => onConfirm(selectedCounts)}>
+          <CTAButton className="w-full" disabled={totalSelected === 0} onClick={onConfirm}>
             {totalSelected > 0 ? `${totalSelected}개 추가하기` : "추가하기"}
           </CTAButton>
         }
