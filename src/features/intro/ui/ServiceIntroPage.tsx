@@ -6,6 +6,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { hasSession } from "@/shared/api/client";
 import { runTossLogin } from "@/features/login/model/login";
 import { ROUTES } from "@/shared/constants/routes";
+import { recoverPendingOrders } from "@/features/test-payment/model/pendingOrderRecovery";
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export function ServiceIntroPage() {
   const loginMutation = useMutation({
     mutationFn: runTossLogin,
     onSuccess: () => {
+      recoverPendingOrders();
       navigate({ to: ROUTES.DISCOVERY });
     },
     onError: (error) => {

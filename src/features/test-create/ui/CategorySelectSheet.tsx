@@ -57,7 +57,7 @@ export function CategorySelectSheet({ selectedCategories, onToggle, onConfirm, o
       <FixedBottomCTA.Double
         leftButton={
           <CTAButton className="w-full" color="dark" variant="weak" onClick={onCancel}>
-            취소
+            닫기
           </CTAButton>
         }
         rightButton={
