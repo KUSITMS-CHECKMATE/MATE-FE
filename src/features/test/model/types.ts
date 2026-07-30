@@ -7,3 +7,11 @@ export interface UserTest {
   maxParticipantCount: number;
   status: TestStatus;
 }
+
+export type DraftTestStatus = "draft";
+
+export interface DraftTest {
+  draftId: number;
+  title: string;
+  status: DraftTestStatus;
+}

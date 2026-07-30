@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useToast } from "@toss/tds-mobile";
+import { useDialog } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
+import { IAP } from "@apps-in-toss/web-framework";
 import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
-import { createPayment, executePayment } from "@/shared/api/generated/payment";
-import { ROUTES } from "@/shared/constants/routes";
+import { grantPayment } from "./paymentGrant";
+import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
+import { useIapErrorDialog } from "./useIapErrorDialog";
 import type { TesterCount, RewardAmount } from "./types";
+import { IAP_SKU_MAP } from "./types";
+
+const APP_MARKET_VERIFICATION_FAILED = "APP_MARKET_VERIFICATION_FAILED";
+const TOSS_SERVER_VERIFICATION_FAILED = "TOSS_SERVER_VERIFICATION_FAILED";
 
 async function stepError(label: string, e: unknown): Promise<Error> {
   let detail = e instanceof Error ? e.message : String(e);
@@ -26,10 +32,15 @@ interface PaymentSubmitInput {
 }
 
 export function usePaymentSubmit() {
-  const navigate = useNavigate();
-  const { openToast } = useToast();
+  const { openAlert } = useDialog();
+  const { showIapErrorDialog } = useIapErrorDialog();
+  const [appMarketVerificationFailed, setAppMarketVerificationFailed] = useState(false);
+  const [serverVerificationFailed, setServerVerificationFailed] = useState(false);
+  // APP_MARKET_VERIFICATION_FAILED / TOSS_SERVER_VERIFICATION_FAILED로 인한 실패 횟수.
+  // 4번 이상 쌓이면 재시도 대신 문의하기로만 유도한다 (PaymentGiveUpStep).
+  const [verificationFailureCount, setVerificationFailureCount] = useState(0);
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
       const closedAt = new Date(Date.now() + responsePeriod * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -39,8 +50,6 @@ export function usePaymentSubmit() {
         const draftRes = await getDraft(draftId);
         const status = draftRes.data.data?.status;
         const BLOCKED: Record<string, string> = {
-          PAYMENT_CREATED: "이미 결제가 진행 중인 테스트입니다.",
-          PAYMENT_FAILED: "이전 결제가 실패했습니다. 새 테스트를 만들어 주세요.",
           PUBLISHING: "발행 처리 중인 테스트입니다.",
           PUBLISHED: "이미 발행된 테스트입니다.",
           PUBLISH_FAILED: "발행에 실패한 테스트입니다. 새 테스트를 만들어 주세요.",
@@ -60,32 +69,70 @@ export function usePaymentSubmit() {
         throw await stepError("초안 업데이트 실패", e);
       }
 
-      let paymentId: number;
-      try {
-        const payRes = await createPayment({ draftId, isTestPayment: true });
-        const id = payRes.data.data?.paymentId;
-        if (!id) throw new Error("paymentId를 받지 못했습니다.");
-        paymentId = id;
-      } catch (e) {
-        throw await stepError("결제 등록 실패", e);
+      // IAP 결제 (mock 결제는 사용하지 않음 — 리워드/테스터 수 조합 상품이 등록돼 있고 토스 앱 환경이어야 함)
+      const sku = IAP_SKU_MAP[rewardAmount]?.[testerCount];
+      if (sku == null || IAP == null) {
+        throw new Error("결제를 진행할 수 없는 환경이거나 지원하지 않는 상품 조합입니다.");
       }
 
       try {
-        const execRes = await executePayment(paymentId);
-        const testId = execRes.data.data?.testId;
-        if (!testId) throw new Error("testId를 받지 못했습니다.");
-        return testId;
+        await new Promise<void>((resolve, reject) => {
+          const cleanup = IAP.createOneTimePurchaseOrder({
+            options: {
+              sku,
+              processProductGrant: async ({ orderId }) => {
+                try {
+                  return await grantPayment({ orderId, draftId });
+                } catch {
+                  return false;
+                }
+              },
+            },
+            onEvent: (event) => {
+              if (event.type === "success") {
+                cleanup();
+                resolve();
+              }
+            },
+            onError: (error) => {
+              cleanup();
+              reject(error);
+            },
+          });
+        });
       } catch (e) {
-        throw await stepError("결제 실행 실패", e);
+        const code = extractIapErrorCode(e);
+        const detail = e instanceof Error ? e.message : String(e);
+        throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code);
       }
     },
-    onSuccess: (testId) => {
-      navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) }, replace: true });
-    },
-    onError: (error) => {
-      openToast(error instanceof Error ? error.message : "결제 중 오류가 발생했어요", {
-        type: "bottom",
+    onError: async (error) => {
+      const code = error instanceof IapPaymentError ? error.code : undefined;
+
+      if (code?.toUpperCase() === APP_MARKET_VERIFICATION_FAILED) {
+        setAppMarketVerificationFailed(true);
+        setVerificationFailureCount((count) => count + 1);
+        return;
+      }
+
+      if (code?.toUpperCase() === TOSS_SERVER_VERIFICATION_FAILED) {
+        setServerVerificationFailed(true);
+        setVerificationFailureCount((count) => count + 1);
+        return;
+      }
+
+      if (code && (await showIapErrorDialog(code))) return;
+
+      await openAlert({
+        title: "결제 중 문제가 발생했어요",
+        description: error instanceof Error ? error.message : "잠시 후 다시 시도해주세요.",
+        alertButton: "확인",
       });
     },
+    onSuccess: () => {
+      setVerificationFailureCount(0);
+    },
   });
+
+  return { ...mutation, appMarketVerificationFailed, serverVerificationFailed, verificationFailureCount };
 }

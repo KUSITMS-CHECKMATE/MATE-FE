@@ -17,14 +17,18 @@ import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
 import { Route as TestPaymentRouteImport } from './routes/test/payment'
 import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as TestTestIdRouteImport } from './routes/test/$testId'
+import { Route as MyPrivacyRouteImport } from './routes/my/privacy'
+import { Route as MyPolicyRouteImport } from './routes/my/policy'
 import { Route as MyNoticeRouteImport } from './routes/my/notice'
 import { Route as MyHistoryRouteImport } from './routes/my/history'
+import { Route as MyBusinessRouteImport } from './routes/my/business'
 import { Route as InterestTestIdRouteImport } from './routes/interest/$testId'
 import { Route as DiscoveryGuideRouteImport } from './routes/discovery/guide'
 import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
+import { Route as MyNoticeIndexRouteImport } from './routes/my/notice/index'
 import { Route as MyHistoryIndexRouteImport } from './routes/my/history/index'
 import { Route as TestParticipateTestIdRouteImport } from './routes/test/participate.$testId'
-import { Route as MyHistoryTestIdRouteImport } from './routes/my/history/$testId'
+import { Route as MyNoticeNoticeIdRouteImport } from './routes/my/notice/$noticeId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +70,16 @@ const TestTestIdRoute = TestTestIdRouteImport.update({
   path: '/test/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyPrivacyRoute = MyPrivacyRouteImport.update({
+  id: '/my/privacy',
+  path: '/my/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyPolicyRoute = MyPolicyRouteImport.update({
+  id: '/my/policy',
+  path: '/my/policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyNoticeRoute = MyNoticeRouteImport.update({
   id: '/my/notice',
   path: '/my/notice',
@@ -74,6 +88,11 @@ const MyNoticeRoute = MyNoticeRouteImport.update({
 const MyHistoryRoute = MyHistoryRouteImport.update({
   id: '/my/history',
   path: '/my/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyBusinessRoute = MyBusinessRouteImport.update({
+  id: '/my/business',
+  path: '/my/business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InterestTestIdRoute = InterestTestIdRouteImport.update({
@@ -91,6 +110,11 @@ const DiscoveryTestIdRoute = DiscoveryTestIdRouteImport.update({
   path: '/discovery/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyNoticeIndexRoute = MyNoticeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MyNoticeRoute,
+} as any)
 const MyHistoryIndexRoute = MyHistoryIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -101,10 +125,10 @@ const TestParticipateTestIdRoute = TestParticipateTestIdRouteImport.update({
   path: '/test/participate/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyHistoryTestIdRoute = MyHistoryTestIdRouteImport.update({
-  id: '/$testId',
-  path: '/$testId',
-  getParentRoute: () => MyHistoryRoute,
+const MyNoticeNoticeIdRoute = MyNoticeNoticeIdRouteImport.update({
+  id: '/$noticeId',
+  path: '/$noticeId',
+  getParentRoute: () => MyNoticeRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -112,8 +136,11 @@ export interface FileRoutesByFullPath {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/business': typeof MyBusinessRoute
   '/my/history': typeof MyHistoryRouteWithChildren
-  '/my/notice': typeof MyNoticeRoute
+  '/my/notice': typeof MyNoticeRouteWithChildren
+  '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -121,16 +148,19 @@ export interface FileRoutesByFullPath {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
+  '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
+  '/my/notice/': typeof MyNoticeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
-  '/my/notice': typeof MyNoticeRoute
+  '/my/business': typeof MyBusinessRoute
+  '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -138,9 +168,10 @@ export interface FileRoutesByTo {
   '/interest': typeof InterestIndexRoute
   '/my': typeof MyIndexRoute
   '/test': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
+  '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history': typeof MyHistoryIndexRoute
+  '/my/notice': typeof MyNoticeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,8 +179,11 @@ export interface FileRoutesById {
   '/discovery/$testId': typeof DiscoveryTestIdRoute
   '/discovery/guide': typeof DiscoveryGuideRoute
   '/interest/$testId': typeof InterestTestIdRoute
+  '/my/business': typeof MyBusinessRoute
   '/my/history': typeof MyHistoryRouteWithChildren
-  '/my/notice': typeof MyNoticeRoute
+  '/my/notice': typeof MyNoticeRouteWithChildren
+  '/my/policy': typeof MyPolicyRoute
+  '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
   '/test/payment': typeof TestPaymentRoute
@@ -157,9 +191,10 @@ export interface FileRoutesById {
   '/interest/': typeof InterestIndexRoute
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
-  '/my/history/$testId': typeof MyHistoryTestIdRoute
+  '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
+  '/my/notice/': typeof MyNoticeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,8 +203,11 @@ export interface FileRouteTypes {
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
+    | '/my/business'
     | '/my/history'
     | '/my/notice'
+    | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -177,16 +215,19 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
-    | '/my/history/$testId'
+    | '/my/notice/$noticeId'
     | '/test/participate/$testId'
     | '/my/history/'
+    | '/my/notice/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
-    | '/my/notice'
+    | '/my/business'
+    | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -194,17 +235,21 @@ export interface FileRouteTypes {
     | '/interest'
     | '/my'
     | '/test'
-    | '/my/history/$testId'
+    | '/my/notice/$noticeId'
     | '/test/participate/$testId'
     | '/my/history'
+    | '/my/notice'
   id:
     | '__root__'
     | '/'
     | '/discovery/$testId'
     | '/discovery/guide'
     | '/interest/$testId'
+    | '/my/business'
     | '/my/history'
     | '/my/notice'
+    | '/my/policy'
+    | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
     | '/test/payment'
@@ -212,9 +257,10 @@ export interface FileRouteTypes {
     | '/interest/'
     | '/my/'
     | '/test/'
-    | '/my/history/$testId'
+    | '/my/notice/$noticeId'
     | '/test/participate/$testId'
     | '/my/history/'
+    | '/my/notice/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,8 +268,11 @@ export interface RootRouteChildren {
   DiscoveryTestIdRoute: typeof DiscoveryTestIdRoute
   DiscoveryGuideRoute: typeof DiscoveryGuideRoute
   InterestTestIdRoute: typeof InterestTestIdRoute
+  MyBusinessRoute: typeof MyBusinessRoute
   MyHistoryRoute: typeof MyHistoryRouteWithChildren
-  MyNoticeRoute: typeof MyNoticeRoute
+  MyNoticeRoute: typeof MyNoticeRouteWithChildren
+  MyPolicyRoute: typeof MyPolicyRoute
+  MyPrivacyRoute: typeof MyPrivacyRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
   TestPaymentRoute: typeof TestPaymentRoute
@@ -292,6 +341,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my/privacy': {
+      id: '/my/privacy'
+      path: '/my/privacy'
+      fullPath: '/my/privacy'
+      preLoaderRoute: typeof MyPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my/policy': {
+      id: '/my/policy'
+      path: '/my/policy'
+      fullPath: '/my/policy'
+      preLoaderRoute: typeof MyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my/notice': {
       id: '/my/notice'
       path: '/my/notice'
@@ -304,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/my/history'
       fullPath: '/my/history'
       preLoaderRoute: typeof MyHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my/business': {
+      id: '/my/business'
+      path: '/my/business'
+      fullPath: '/my/business'
+      preLoaderRoute: typeof MyBusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/interest/$testId': {
@@ -327,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoveryTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my/notice/': {
+      id: '/my/notice/'
+      path: '/'
+      fullPath: '/my/notice/'
+      preLoaderRoute: typeof MyNoticeIndexRouteImport
+      parentRoute: typeof MyNoticeRoute
+    }
     '/my/history/': {
       id: '/my/history/'
       path: '/'
@@ -341,23 +418,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestParticipateTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my/history/$testId': {
-      id: '/my/history/$testId'
-      path: '/$testId'
-      fullPath: '/my/history/$testId'
-      preLoaderRoute: typeof MyHistoryTestIdRouteImport
-      parentRoute: typeof MyHistoryRoute
+    '/my/notice/$noticeId': {
+      id: '/my/notice/$noticeId'
+      path: '/$noticeId'
+      fullPath: '/my/notice/$noticeId'
+      preLoaderRoute: typeof MyNoticeNoticeIdRouteImport
+      parentRoute: typeof MyNoticeRoute
     }
   }
 }
 
 interface MyHistoryRouteChildren {
-  MyHistoryTestIdRoute: typeof MyHistoryTestIdRoute
   MyHistoryIndexRoute: typeof MyHistoryIndexRoute
 }
 
 const MyHistoryRouteChildren: MyHistoryRouteChildren = {
-  MyHistoryTestIdRoute: MyHistoryTestIdRoute,
   MyHistoryIndexRoute: MyHistoryIndexRoute,
 }
 
@@ -365,13 +440,30 @@ const MyHistoryRouteWithChildren = MyHistoryRoute._addFileChildren(
   MyHistoryRouteChildren,
 )
 
+interface MyNoticeRouteChildren {
+  MyNoticeNoticeIdRoute: typeof MyNoticeNoticeIdRoute
+  MyNoticeIndexRoute: typeof MyNoticeIndexRoute
+}
+
+const MyNoticeRouteChildren: MyNoticeRouteChildren = {
+  MyNoticeNoticeIdRoute: MyNoticeNoticeIdRoute,
+  MyNoticeIndexRoute: MyNoticeIndexRoute,
+}
+
+const MyNoticeRouteWithChildren = MyNoticeRoute._addFileChildren(
+  MyNoticeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscoveryTestIdRoute: DiscoveryTestIdRoute,
   DiscoveryGuideRoute: DiscoveryGuideRoute,
   InterestTestIdRoute: InterestTestIdRoute,
+  MyBusinessRoute: MyBusinessRoute,
   MyHistoryRoute: MyHistoryRouteWithChildren,
-  MyNoticeRoute: MyNoticeRoute,
+  MyNoticeRoute: MyNoticeRouteWithChildren,
+  MyPolicyRoute: MyPolicyRoute,
+  MyPrivacyRoute: MyPrivacyRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestCreateRoute: TestCreateRoute,
   TestPaymentRoute: TestPaymentRoute,
