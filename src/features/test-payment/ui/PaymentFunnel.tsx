@@ -3,10 +3,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
 import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
-import { type PaymentStep, type TesterCount, type RewardAmount, IAP_SKU_MAP } from "../model/types";
+import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW, parseWonAmount } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { useIapProducts } from "../model/useIapProducts";
+import { useIapSkuMap } from "../model/useIapSkuMap";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { PaymentCompleteStep } from "./PaymentCompleteStep";
@@ -30,6 +31,7 @@ export function PaymentFunnel() {
     verificationFailureCount,
   } = usePaymentSubmit();
   const { data: iapProducts } = useIapProducts();
+  const skuMap = useIapSkuMap();
 
   const handleGoBack = () => {
     navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true, resume: false } });
@@ -154,7 +156,7 @@ export function PaymentFunnel() {
     );
   }
 
-  const iapSku = testerCount != null && rewardAmount != null ? IAP_SKU_MAP[rewardAmount]?.[testerCount] : undefined;
+  const iapSku = testerCount != null && rewardAmount != null ? skuMap[rewardAmount]?.[testerCount] : undefined;
   const iapProduct = iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
   const actualTotal = iapProduct?.displayAmount != null ? parseWonAmount(iapProduct.displayAmount) : undefined;
 
