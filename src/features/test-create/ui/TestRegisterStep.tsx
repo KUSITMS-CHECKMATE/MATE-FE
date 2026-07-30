@@ -31,12 +31,21 @@ interface TestRegisterStepProps {
   onTabChange: (tab: RegisterTab) => void;
   onEnterQuestion: (question: { id: string; typeId: QuestionTypeId }) => void;
   onGuideView?: () => void;
+  isQuestionTypeSheetOpen: boolean;
+  onOpenQuestionTypeSheet: () => void;
+  onCloseQuestionTypeSheet: () => void;
 }
 
-export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGuideView }: TestRegisterStepProps) {
+export function TestRegisterStep({
+  activeTab,
+  onTabChange,
+  onEnterQuestion,
+  onGuideView,
+  isQuestionTypeSheetOpen,
+  onOpenQuestionTypeSheet,
+  onCloseQuestionTypeSheet,
+}: TestRegisterStepProps) {
   const form = useTestCreateForm();
-  const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
-  const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -52,20 +61,10 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
       .filter(Boolean);
   }, [form.categories]);
 
-  const handleChangeCount = (id: QuestionTypeId, count: number) => {
-    setSelectedCounts((prev) => ({ ...prev, [id]: count }));
-  };
-
-  const closeQuestionTypeSheet = () => {
-    setSelectedCounts({});
-    setIsQuestionTypeSheetOpen(false);
-  };
-
-  const handleConfirmQuestionTypes = () => {
+  const handleConfirmQuestionTypes = (selectedCounts: Partial<Record<QuestionTypeId, number>>) => {
     const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) => Array.from({ length: count ?? 0 }, () => id as QuestionTypeId));
     form.addQuestions(typeIds);
-    setSelectedCounts({});
-    setIsQuestionTypeSheetOpen(false);
+    onCloseQuestionTypeSheet();
   };
 
   const openEditSheet = () => {
@@ -120,7 +119,7 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
                 contents={<ListRow.Texts type="1RowTypeA" top="추가하기" topProps={{ color: adaptive.grey700 }} />}
                 verticalPadding="large"
                 horizontalPadding="small"
-                onClick={() => setIsQuestionTypeSheetOpen(true)}
+                onClick={onOpenQuestionTypeSheet}
               />
             </div>
 
@@ -328,11 +327,9 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
           <QuestionTypeSelectSheet
-            selectedCounts={selectedCounts}
-            onChangeCount={handleChangeCount}
             existingCount={form.questions.length}
             onConfirm={handleConfirmQuestionTypes}
-            onCancel={closeQuestionTypeSheet}
+            onCancel={onCloseQuestionTypeSheet}
             onShowGuide={onGuideView}
           />
         )}
