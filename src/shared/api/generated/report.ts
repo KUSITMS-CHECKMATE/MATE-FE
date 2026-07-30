@@ -60,7 +60,7 @@ export const getGetReportUrl = (testId: number,) => {
 
 각 클러스터 오브젝트: `{ "representative": string, "count": number, "responses": string[] }`
 
- * @summary ✔️ 리포트 전체 조회
+ * @summary 리포트 전체 조회
  */
 export const getReport = async (testId: number, options?: RequestInit): Promise<getReportResponse> => {
 
@@ -108,7 +108,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type GetReportMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 리포트 전체 조회
+ * @summary 리포트 전체 조회
  */
 export const useGetReport = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getReport>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -147,7 +147,7 @@ export const getDownloadPdfReportUrl = (testId: number,) => {
 - 테스트 종료 및 리포트 집계 완료(`report_status = COMPLETED`) 후 다운로드 가능합니다.
 - 최초 요청 시 PDF를 생성해 Blob Storage에 저장하고, 이후 요청은 저장된 파일을 binary로 반환합니다.
 
- * @summary ➰ 리포트 통계 PDF 파일 다운로드
+ * @summary 리포트 통계 PDF 파일 다운로드
  */
 export const downloadPdfReport = async (testId: number, options?: RequestInit): Promise<downloadPdfReportResponse> => {
 
@@ -195,7 +195,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DownloadPdfReportMutationError = ErrorType<unknown>
 
     /**
- * @summary ➰ 리포트 통계 PDF 파일 다운로드
+ * @summary 리포트 통계 PDF 파일 다운로드
  */
 export const useDownloadPdfReport = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof downloadPdfReport>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}
@@ -237,7 +237,7 @@ export const getDownloadExcelReportUrl = (testId: number,) => {
 - 5초 테스트는 객관/주관 설정에 따라 시트 내 템플릿이 달라집니다.
 - 최초 요청 시 엑셀을 생성해 Blob Storage에 저장하고, 이후 요청은 저장된 파일을 binary로 반환합니다.
 
- * @summary ➰ 리포트 통계 xlsx 파일 다운로드
+ * @summary 리포트 통계 xlsx 파일 다운로드
  */
 export const downloadExcelReport = async (testId: number, options?: RequestInit): Promise<downloadExcelReportResponse> => {
 
@@ -285,7 +285,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DownloadExcelReportMutationError = ErrorType<unknown>
 
     /**
- * @summary ➰ 리포트 통계 xlsx 파일 다운로드
+ * @summary 리포트 통계 xlsx 파일 다운로드
  */
 export const useDownloadExcelReport = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof downloadExcelReport>>, TError,{testId: number}, TContext>, request?: SecondParameter<typeof kyMutator>}

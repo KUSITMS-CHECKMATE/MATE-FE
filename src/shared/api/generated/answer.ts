@@ -153,7 +153,7 @@ export const getCreateAnswersUrl = (testId: number,) => {
 - **CARD_SORTING**: groups 필수
 - **TREE_TEST**: nodeId 필수, path 필수 (루트부터 최종 노드까지 클릭 순서), 최종 선택은 leaf node여야 함
 
- * @summary ➰ 응답 전체 등록
+ * @summary 응답 전체 등록
  */
 export const createAnswers = async (testId: number,
     answerCreateRequest: AnswerCreateRequest, options?: RequestInit): Promise<createAnswersResponse> => {
@@ -230,7 +230,7 @@ export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary ➰ 응답 전체 등록
+ * @summary 응답 전체 등록
  */
 
 export function useCreateAnswers<TData = Awaited<ReturnType<typeof createAnswers>>, TError = ErrorType<unknown>>(
@@ -277,7 +277,7 @@ export const getListMyAnswersUrl = () => {
 - createdAt은 yyyy.MM.dd 형식으로 반환합니다.
 - totalPromotionReward는 로그인한 사용자의 누적 프로모션 리워드 합계입니다.
 
- * @summary ✔️ 내 응답 목록 조회
+ * @summary 내 응답 목록 조회
  */
 export const listMyAnswers = async ( options?: RequestInit): Promise<listMyAnswersResponse> => {
 
@@ -325,7 +325,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ListMyAnswersMutationError = ErrorType<unknown>
 
     /**
- * @summary ✔️ 내 응답 목록 조회
+ * @summary 내 응답 목록 조회
  */
 export const useListMyAnswers = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listMyAnswers>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}

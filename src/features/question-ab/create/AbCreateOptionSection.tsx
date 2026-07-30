@@ -1,6 +1,7 @@
 import { Asset, Button, ListRow, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { RATIO_TO_CSS, type AbRatio } from "@/features/question-ab/model/types";
+import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 
 const IMAGE_SLOT_HORIZONTAL_PADDING = 22;
 const IMAGE_SLOT_LABEL_WIDTH = `calc(50vw - ${IMAGE_SLOT_HORIZONTAL_PADDING}px)`;
@@ -26,6 +27,7 @@ interface AbImageSlotProps {
 
 function AbImageSlot({ label, imageUrl, ratio, onUpload, onRemove }: AbImageSlotProps) {
   const hasImage = imageUrl.trim().length > 0;
+  const resolvedImageSrc = useResolvedImageSrc(imageUrl || undefined);
 
   if (hasImage) {
     return (
@@ -51,7 +53,7 @@ function AbImageSlot({ label, imageUrl, ratio, onUpload, onRemove }: AbImageSlot
           }}
         >
           <img
-            src={imageUrl}
+            src={resolvedImageSrc}
             alt={`${label} 이미지`}
             className="h-full w-full object-cover"
             draggable={false}

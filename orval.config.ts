@@ -58,7 +58,7 @@ export default defineConfig({
     output: makeOutput("report"),
   },
   payment: {
-    input: makeInput(["[MOCK PAYMENT] 결제 API"]),
+    input: makeInput(["[PAYMENT] 결제 API"]),
     output: makeOutput("payment"),
   },
 });
