@@ -27,7 +27,9 @@ export function BottomTabBar({ activeTab, disableExit = false }: Props) {
   const navigate = useNavigate();
   const [showExitDialog, setShowExitDialog] = useState(false);
   const disableExitRef = useRef(disableExit);
-  disableExitRef.current = disableExit;
+  useEffect(() => {
+    disableExitRef.current = disableExit;
+  }, [disableExit]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;

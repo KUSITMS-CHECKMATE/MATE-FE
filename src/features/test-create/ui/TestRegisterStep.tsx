@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SegmentedControl, ListRow, Button, Asset, Text, Spacing, Top, List, ListHeader } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
@@ -46,7 +46,6 @@ export function TestRegisterStep({
   onCloseQuestionTypeSheet,
 }: TestRegisterStepProps) {
   const form = useTestCreateForm();
-  const [selectedCounts, setSelectedCounts] = useState<Partial<Record<QuestionTypeId, number>>>({});
   const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -62,16 +61,7 @@ export function TestRegisterStep({
       .filter(Boolean);
   }, [form.categories]);
 
-  const handleChangeCount = (id: QuestionTypeId, count: number) => {
-    setSelectedCounts((prev) => ({ ...prev, [id]: count }));
-  };
-
-  // 팝업이 어떤 경로로 닫히든(헤더 뒤로가기 포함) 선택 개수를 초기화한다
-  useEffect(() => {
-    if (!isQuestionTypeSheetOpen) setSelectedCounts({});
-  }, [isQuestionTypeSheetOpen]);
-
-  const handleConfirmQuestionTypes = () => {
+  const handleConfirmQuestionTypes = (selectedCounts: Partial<Record<QuestionTypeId, number>>) => {
     const typeIds = Object.entries(selectedCounts).flatMap(([id, count]) => Array.from({ length: count ?? 0 }, () => id as QuestionTypeId));
     form.addQuestions(typeIds);
     onCloseQuestionTypeSheet();
@@ -337,8 +327,6 @@ export function TestRegisterStep({
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
           <QuestionTypeSelectSheet
-            selectedCounts={selectedCounts}
-            onChangeCount={handleChangeCount}
             existingCount={form.questions.length}
             onConfirm={handleConfirmQuestionTypes}
             onCancel={onCloseQuestionTypeSheet}
