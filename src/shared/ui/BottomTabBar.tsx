@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent, closeView } from "@apps-in-toss/web-framework";
 import { Asset, Text, ConfirmDialog } from "@toss/tds-mobile";
@@ -20,17 +20,22 @@ const TABS = [
 
 type Props = {
   activeTab: TabKey;
+  disableExit?: boolean;
 };
 
-export function BottomTabBar({ activeTab }: Props) {
+export function BottomTabBar({ activeTab, disableExit = false }: Props) {
   const navigate = useNavigate();
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const disableExitRef = useRef(disableExit);
+  disableExitRef.current = disableExit;
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
     try {
       unsubscribe = graniteEvent.addEventListener("backEvent", {
-        onEvent: () => setShowExitDialog(true),
+        onEvent: () => {
+          if (!disableExitRef.current) setShowExitDialog(true);
+        },
         onError: (error) => console.error("backEvent error:", error),
       });
     } catch {
