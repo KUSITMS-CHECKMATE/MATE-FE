@@ -1,7 +1,11 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Text, List, ListRow, Spacing } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
+import { ROUTES } from '@/shared/constants/routes';
 
 export function MyServiceSection() {
+  const navigate = useNavigate();
+
   return (
     <>
       <Spacing size={23} />
@@ -26,6 +30,7 @@ export function MyServiceSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: ROUTES.MY_POLICY })}
         />
         <ListRow
           left={
@@ -41,6 +46,7 @@ export function MyServiceSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: ROUTES.MY_PRIVACY })}
         />
         <ListRow
           left={
@@ -56,6 +62,7 @@ export function MyServiceSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: ROUTES.MY_BUSINESS })}
         />
       </List>
       <Spacing size={19} />
