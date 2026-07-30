@@ -2,7 +2,11 @@ import { useNavigate } from '@tanstack/react-router';
 import { Text, List, ListRow, Spacing } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
 
-export function MyHelpSection() {
+interface Props {
+  onGuideClick?: () => void;
+}
+
+export function MyHelpSection({ onGuideClick }: Props) {
   const navigate = useNavigate();
 
   return (
@@ -62,6 +66,7 @@ export function MyHelpSection() {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={onGuideClick}
         />
         <ListRow
           left={
