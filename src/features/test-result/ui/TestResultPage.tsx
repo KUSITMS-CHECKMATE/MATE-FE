@@ -26,6 +26,8 @@ import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
 import { useQuery } from "@tanstack/react-query";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
+import { QA_MOCK_TEST_RESULTS, QA_MOCK_QUESTION_SUMMARY, QA_MOCK_PREVIEW_QUESTIONS, QA_MOCK_TEST_TITLES } from "../model/qaMock";
 
 interface Props {
   testId: string;
@@ -58,11 +60,15 @@ export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
+  const qaMock = useQaMockMode((state) => state.enabled);
   const { data: testDetailData } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
+    enabled: !qaMock,
   });
-  const testTitle = (testDetailData?.data?.data as { title?: string } | undefined)?.title ?? testId;
+  const testTitle = qaMock
+    ? (QA_MOCK_TEST_TITLES[Number(testId)] ?? testId)
+    : ((testDetailData?.data?.data as { title?: string } | undefined)?.title ?? testId);
 
   const { openToast } = useToast();
   const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId, testTitle);
@@ -96,11 +102,22 @@ export function TestResultPage({ testId }: Props) {
     };
   }, []);
 
-  const { data: reportData, isLoading, isError, refetch } = useGetReportQuery(Number(testId));
-  const report = reportData?.data;
+  const { data: reportData, isLoading: isReportLoading, isError: isReportError, refetch } = useGetReportQuery(
+    Number(testId),
+    { enabled: !qaMock },
+  );
+  const report = qaMock ? QA_MOCK_TEST_RESULTS[Number(testId)] : reportData?.data;
+  const isLoading = qaMock ? false : isReportLoading;
+  const isError = qaMock ? false : isReportError;
 
-  const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
-  const { data: previewQuestion } = useGetQuestionDetailQuery(Number(testId), selectedQuestionId);
+  const { data: realQuestionSummary = [] } = useGetQuestionSummaryQuery(Number(testId), { enabled: !qaMock });
+  const questionSummary = qaMock ? QA_MOCK_QUESTION_SUMMARY : realQuestionSummary;
+  const { data: realPreviewQuestion } = useGetQuestionDetailQuery(Number(testId), selectedQuestionId, {
+    enabled: !qaMock,
+  });
+  const previewQuestion = qaMock
+    ? (selectedQuestionId != null ? QA_MOCK_PREVIEW_QUESTIONS[selectedQuestionId] : undefined)
+    : realPreviewQuestion;
 
   const testStatus: TestStatus = report?.testStatus ?? "IN_PROGRESS";
   const isEnded = testStatus === "COMPLETED";

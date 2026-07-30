@@ -227,7 +227,7 @@ export interface QuestionSummaryListItem {
   type: QuestionType;
 }
 
-export function useGetQuestionSummaryQuery(testId: number) {
+export function useGetQuestionSummaryQuery(testId: number, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["questionSummary", testId],
     queryFn: async () => {
@@ -240,11 +240,11 @@ export function useGetQuestionSummaryQuery(testId: number) {
         type: (q.type ?? "SUBJECTIVE") as QuestionType,
       })) as QuestionSummaryListItem[];
     },
-    enabled: !!testId,
+    enabled: !!testId && (options?.enabled ?? true),
   });
 }
 
-export function useGetQuestionDetailQuery(testId: number, questionId: number | null) {
+export function useGetQuestionDetailQuery(testId: number, questionId: number | null, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["questionDetail", testId, questionId],
     queryFn: async () => {
@@ -252,7 +252,7 @@ export function useGetQuestionDetailQuery(testId: number, questionId: number | n
       const body = (res.data as { data: QuestionDetailData });
       return mapQuestionRawToParticipate(body.data.question);
     },
-    enabled: questionId !== null,
+    enabled: questionId !== null && (options?.enabled ?? true),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
   });

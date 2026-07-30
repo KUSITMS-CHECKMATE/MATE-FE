@@ -8,6 +8,8 @@ import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
 import { deleteDraft, listMyDrafts } from "@/shared/api/generated/testDraft";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
+import { QA_MOCK_MY_TESTS, QA_MOCK_MY_DRAFTS } from "@/features/test/model/qaMock";
 
 const STATUS_MAP: Record<string, UserTest["status"]> = {
   IN_PROGRESS: "active",
@@ -30,14 +32,18 @@ function MakerHomePage() {
   const queryClient = useQueryClient();
   const { openToast } = useToast();
 
+  const qaMock = useQaMockMode((state) => state.enabled);
+
   const { data, isLoading } = useQuery({
     queryKey: ["listMyTests"],
     queryFn: () => listMyTests(),
+    enabled: !qaMock,
   });
 
   const { data: draftsData, isLoading: isDraftsLoading } = useQuery({
     queryKey: ["listMyDrafts"],
     queryFn: () => listMyDrafts(),
+    enabled: !qaMock,
   });
 
   const { mutate: removeDraft } = useMutation({
@@ -76,25 +82,29 @@ function MakerHomePage() {
     },
   });
 
-  const tests: UserTest[] = (data?.data?.data?.tests ?? []).map((item) => ({
-    id: item.id ?? 0,
-    title: item.title ?? "",
-    participantCount: item.pplCount ?? 0,
-    maxParticipantCount: item.goalPpl ?? 0,
-    status: STATUS_MAP[item.testStatus ?? ""] ?? "ended",
-  }));
+  const tests: UserTest[] = qaMock
+    ? QA_MOCK_MY_TESTS
+    : (data?.data?.data?.tests ?? []).map((item) => ({
+        id: item.id ?? 0,
+        title: item.title ?? "",
+        participantCount: item.pplCount ?? 0,
+        maxParticipantCount: item.goalPpl ?? 0,
+        status: STATUS_MAP[item.testStatus ?? ""] ?? "ended",
+      }));
 
-  const drafts: DraftTest[] = (draftsData?.data?.data?.drafts ?? [])
-    .map((item) => {
-      const status = DRAFT_STATUS_MAP[item.status ?? ""];
-      if (!status || item.draftId == null) return null;
-      return {
-        draftId: item.draftId,
-        title: item.title || "제목 없는 테스트",
-        status,
-      };
-    })
-    .filter((item): item is DraftTest => item !== null);
+  const drafts: DraftTest[] = qaMock
+    ? QA_MOCK_MY_DRAFTS
+    : (draftsData?.data?.data?.drafts ?? [])
+        .map((item) => {
+          const status = DRAFT_STATUS_MAP[item.status ?? ""];
+          if (!status || item.draftId == null) return null;
+          return {
+            draftId: item.draftId,
+            title: item.title || "제목 없는 테스트",
+            status,
+          };
+        })
+        .filter((item): item is DraftTest => item !== null);
 
   return (
     <div className="flex flex-col">
@@ -102,7 +112,7 @@ function MakerHomePage() {
       <TestList
         tests={tests}
         drafts={drafts}
-        isLoading={isLoading || isDraftsLoading}
+        isLoading={qaMock ? false : (isLoading || isDraftsLoading)}
         onCardClick={(testId) =>
           navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(testId) } })
         }

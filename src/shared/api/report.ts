@@ -107,13 +107,13 @@ export interface ReportResponse {
 
 // ─── useQuery 훅 ──────────────────────────────────────────────────────────────
 
-export const useGetReportQuery = (testId: number) => {
+export const useGetReportQuery = (testId: number, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["report", testId],
     queryFn: async () => {
       const res = await getReport(testId);
       return res.data as ReportResponse;
     },
-    enabled: !!testId,
+    enabled: !!testId && (options?.enabled ?? true),
   });
 };

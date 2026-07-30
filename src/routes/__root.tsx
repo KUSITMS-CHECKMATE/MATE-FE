@@ -3,6 +3,7 @@ import { Outlet, createRootRoute, useNavigate } from '@tanstack/react-router'
 import { graniteEvent } from '@apps-in-toss/web-framework'
 import { Providers } from '@/providers'
 import { ROUTES } from '@/shared/constants/routes'
+import { QaMockModeToggle } from '@/shared/ui/QaMockModeToggle'
 
 function RootComponent() {
   const navigate = useNavigate()
@@ -32,6 +33,7 @@ function RootComponent() {
       <div className="min-h-screen">
         <Outlet />
       </div>
+      <QaMockModeToggle />
     </Providers>
   )
 }

@@ -8,6 +8,8 @@ import {
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
+import { QA_MOCK_TEST_DETAILS } from "@/features/discovery/model/qaMock";
 
 // mock: 종료된 테스트 ID (API에 testStatus 필드 추가되면 대체)
 const CLOSED_TEST_IDS = new Set([2]);
@@ -19,20 +21,22 @@ export const Route = createFileRoute("/interest/$testId")({
 function InterestTestDetailPage() {
   const { testId } = Route.useParams();
   const navigate = useNavigate();
+  const qaMock = useQaMockMode((state) => state.enabled);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
+    enabled: !qaMock,
   });
 
-  const detail = data?.data?.data;
+  const detail = qaMock ? QA_MOCK_TEST_DETAILS[Number(testId)] : data?.data?.data;
   const isClosed = CLOSED_TEST_IDS.has(Number(testId));
 
-  if (isLoading) {
+  if (!qaMock && isLoading) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
 
-  if (isError || !detail) {
+  if (!detail || (!qaMock && isError)) {
     return (
       <div className="flex flex-col min-h-screen bg-white items-center justify-center px-6">
         <Result

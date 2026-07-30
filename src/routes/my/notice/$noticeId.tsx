@@ -3,6 +3,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { graniteEvent } from '@apps-in-toss/web-framework';
 import { NoticeDetail } from '@/features/my/ui';
 import { mockNotices } from '@/features/my/model';
+import { useQaMockMode } from '@/shared/model/qaMockMode';
+import { QA_MOCK_NOTICES } from '@/features/my/model/qaMock';
 
 export const Route = createFileRoute('/my/notice/$noticeId')({
   component: NoticeDetailPage,
@@ -10,6 +12,7 @@ export const Route = createFileRoute('/my/notice/$noticeId')({
 
 function NoticeDetailPage() {
   const { noticeId } = Route.useParams();
+  const qaMock = useQaMockMode((state) => state.enabled);
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -30,7 +33,7 @@ function NoticeDetailPage() {
     };
   }, []);
 
-  const notice = mockNotices.find((n) => n.id === Number(noticeId));
+  const notice = (qaMock ? QA_MOCK_NOTICES : mockNotices).find((n) => n.id === Number(noticeId));
 
   if (!notice) {
     return <div className="flex flex-col min-h-screen bg-white" />;

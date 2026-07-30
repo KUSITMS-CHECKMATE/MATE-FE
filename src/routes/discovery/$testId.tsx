@@ -10,6 +10,8 @@ import {
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
+import { QA_MOCK_TEST_DETAILS } from "@/features/discovery/model/qaMock";
 
 export const Route = createFileRoute("/discovery/$testId")({
   component: TestDetailPage,
@@ -38,14 +40,17 @@ function TestDetailPage() {
     };
   }, []);
 
+  const qaMock = useQaMockMode((state) => state.enabled);
+
   const { data, isLoading } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
+    enabled: !qaMock,
   });
 
-  const detail = data?.data?.data;
+  const detail = qaMock ? QA_MOCK_TEST_DETAILS[Number(testId)] : data?.data?.data;
 
-  if (isLoading || !detail) {
+  if ((!qaMock && isLoading) || !detail) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
 

@@ -5,20 +5,26 @@ import { useNavigate } from "@tanstack/react-router";
 import { listLikedTests, getListLikedTestsUrl } from "@/shared/api/generated/test";
 import { TestCard } from "@/shared/ui/TestCard";
 import { ROUTES } from "@/shared/constants/routes";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
+import { QA_MOCK_DISCOVERY_TESTS } from "@/features/discovery/model/qaMock";
 
 export function InterestList() {
   const navigate = useNavigate();
+  const qaMock = useQaMockMode((state) => state.enabled);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [getListLikedTestsUrl()],
     queryFn: () => listLikedTests(),
+    enabled: !qaMock,
   });
 
-  const tests = (data?.data?.data?.tests ?? []).filter(
-    (test): test is typeof test & { id: number } => test.id !== undefined
-  );
+  const tests = qaMock
+    ? QA_MOCK_DISCOVERY_TESTS
+    : (data?.data?.data?.tests ?? []).filter(
+        (test): test is typeof test & { id: number } => test.id !== undefined
+      );
 
-  if (isLoading) {
+  if (!qaMock && isLoading) {
     return (
       <div className="flex flex-col gap-3 px-4 pt-6">
         {Array.from({ length: 3 }).map((_, i) => (
@@ -28,7 +34,7 @@ export function InterestList() {
     );
   }
 
-  if (isError) {
+  if (!qaMock && isError) {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center px-6">
         <Result

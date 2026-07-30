@@ -19,10 +19,11 @@ interface AnswersMeResponse {
   };
 }
 
-export const useMyParticipateHistory = () =>
+export const useMyParticipateHistory = (options?: { enabled?: boolean }) =>
   useQuery({
     queryKey: ['answers', 'me'],
     queryFn: () => client('api/v1/answers/me').json<AnswersMeResponse>(),
+    enabled: options?.enabled,
     select: (res) => ({
       totalPoints: res.data.totalPromotionReward,
       records: res.data.answers.map((item): ParticipateRecord => ({
