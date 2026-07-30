@@ -9,7 +9,7 @@ import { ServiceDescriptionStep } from "./ServiceDescriptionStep";
 import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
-import { TestGuidePage } from "./TestGuidePage";
+import { TestGuidePage } from "@/shared/ui/TestGuidePage";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { EditPhaseSheet } from "./EditPhaseSheet";
 import { BasicInfoEditPage } from "./BasicInfoEditPage";
