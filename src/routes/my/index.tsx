@@ -13,7 +13,9 @@ export const Route = createFileRoute('/my/')({
 function MyPage() {
   const [showGuide, setShowGuide] = useState(false);
   const showGuideRef = useRef(showGuide);
-  showGuideRef.current = showGuide;
+  useEffect(() => {
+    showGuideRef.current = showGuide;
+  }, [showGuide]);
 
   useEffect(() => {
     try {
