@@ -342,7 +342,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         isConfirmDisabled={isConfirmDisabled}
         isNextDisabled={funnel.step === "service" ? false : funnel.step === "image" ? !hasTestImages : !isAllComplete}
         cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "닫기"}
-        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSaving}
+        isSubmitDisabled={
+          !isAllComplete ||
+          form.questions.length === 0 ||
+          !form.questions.every((q) => !!q.data) ||
+          isSaving
+        }
         submitLabel="테스트 만들기"
         doubleBottomAccessory={
           funnel.step === "service" ? (
