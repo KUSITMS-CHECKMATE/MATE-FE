@@ -10,6 +10,7 @@ import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
 import { TestGuidePage } from "@/shared/ui/TestGuidePage";
+import { TestCreateGuideBottomSheet } from "./TestCreateGuideBottomSheet";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { EditPhaseSheet } from "./EditPhaseSheet";
 import { BasicInfoEditPage } from "./BasicInfoEditPage";
@@ -83,6 +84,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const isSaving = saveDraft.isPending;
   const [showGuide, setShowGuide] = useState(false);
   const [isResuming, setIsResuming] = useState(resume && !!draftId);
+  // 처음 만드는 경우(결제에서 돌아온 것도, 이어쓰기도 아닌 경우)에만 임시저장 안내를 보여준다.
+  const [isCreateGuideOpen, setIsCreateGuideOpen] = useState(!fromPayment && !resume);
 
   const isOverlayOpen =
     isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide || isQuestionTypeSheetOpen;
@@ -443,6 +446,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           </ConfirmDialog.ConfirmButton>
         }
       />
+
+      <TestCreateGuideBottomSheet open={isCreateGuideOpen} onClose={() => setIsCreateGuideOpen(false)} />
     </>
   );
 }
