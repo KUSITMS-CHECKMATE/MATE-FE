@@ -1,11 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { MyNotice } from '@/features/my/ui';
-import { mockNotices } from '@/features/my/model';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/my/notice')({
-  component: NoticePage,
+  component: () => <Outlet />,
 });
-
-function NoticePage() {
-  return <MyNotice notices={mockNotices} />;
-}

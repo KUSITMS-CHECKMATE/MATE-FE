@@ -27,11 +27,18 @@ export function BottomTabBar({ activeTab }: Props) {
   const [showExitDialog, setShowExitDialog] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = graniteEvent.addEventListener("backEvent", {
-      onEvent: () => setShowExitDialog(true),
-      onError: (error) => console.error("backEvent error:", error),
-    });
-    return unsubscribe;
+    let unsubscribe: (() => void) | null = null;
+    try {
+      unsubscribe = graniteEvent.addEventListener("backEvent", {
+        onEvent: () => setShowExitDialog(true),
+        onError: (error) => console.error("backEvent error:", error),
+      });
+    } catch {
+      console.warn("backEvent listener not supported in browser");
+    }
+    return () => {
+      unsubscribe?.();
+    };
   }, []);
 
   return (
