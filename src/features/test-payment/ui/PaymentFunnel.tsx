@@ -3,10 +3,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
 import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
-import { type PaymentStep, type TesterCount, type RewardAmount, IAP_SKU_MAP } from "../model/types";
+import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW, parseWonAmount } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { useIapProducts } from "../model/useIapProducts";
+import { useIapSkuMap } from "../model/useIapSkuMap";
 import { TesterCountStep } from "./TesterCountStep";
 import { RewardAmountStep } from "./RewardAmountStep";
 import { PaymentCompleteStep } from "./PaymentCompleteStep";
@@ -30,6 +31,7 @@ export function PaymentFunnel() {
     verificationFailureCount,
   } = usePaymentSubmit();
   const { data: iapProducts } = useIapProducts();
+  const skuMap = useIapSkuMap();
 
   const handleGoBack = () => {
     navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: true, resume: false } });
@@ -154,7 +156,7 @@ export function PaymentFunnel() {
     );
   }
 
-  const iapSku = testerCount != null && rewardAmount != null ? IAP_SKU_MAP[rewardAmount]?.[testerCount] : undefined;
+  const iapSku = testerCount != null && rewardAmount != null ? skuMap[rewardAmount]?.[testerCount] : undefined;
   const iapProduct = iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
   const actualTotal = iapProduct?.displayAmount != null ? parseWonAmount(iapProduct.displayAmount) : undefined;
 
@@ -219,19 +221,22 @@ export function PaymentFunnel() {
             <Border variant="height16" />
             <List>
               <ListHeader
-                titleWidthRatio={0.6}
+                size="large"
+                horizontalPadding="medium"
+                verticalPadding="medium"
+                descriptionPosition="bottom"
                 rightAlignment="center"
+                a11yRightReflow={false}
+                titleWidthRatio={0.6}
                 title={
-                  <ListHeader.TitleParagraph typography="t4" fontWeight="bold" color={adaptive.grey800}>
+                  <ListHeader.TitleParagraph color={adaptive.grey800}>
                     결제 금액
                   </ListHeader.TitleParagraph>
                 }
                 right={
-                  <div className="pr-5">
-                    <Text color={adaptive.red600} typography="st8" fontWeight="bold">
-                      {displayTotal}
-                    </Text>
-                  </div>
+                  <Text color={adaptive.red600} typography="st8" fontWeight="bold">
+                    {displayTotal}
+                  </Text>
                 }
               />
               <ListRow
@@ -301,6 +306,22 @@ export function PaymentFunnel() {
             </List>
             <BottomInfo>
               <Post.H4 paddingBottom={16}>환불 정책</Post.H4>
+              <Post.Paragraph typography="t7" color={adaptive.grey500}>
+                {`1. 회사는 메이커를 대상으로 유료 서비스를 제공합니다.
+2. 목표 참여 인원 대비 실제 모집 인원의 달성률을 기준으로 환불을 처리합니다.
+   가. 목표 달성률이 20% 미만으로 종료된 경우 결제일로부터 1개월 이내 100% 환불합니다.
+   나. 목표 달성률이 20% 이상인 경우 테스트 종료 이후 환불이 불가능합니다.
+   다. 자동 종료, 수동 종료, 잔여 모집 기간과 관계없이 동일하게 적용됩니다.
+3. 다음의 경우에는 환불이 불가능합니다.
+   가. 목표 미달 상태에서 현재 인원으로 진행을 선택한 경우
+   나. 달성률 20% 이상 상태에서 수동 종료한 경우
+   다. 결과 데이터 또는 리포트를 열람하거나 다운로드한 경우
+   라. 허위 테스트 생성, 중복 생성, 시스템 악용 등 정책 위반이 확인된 경우
+4. 회사 귀책사유의 결제 오류는 전액 환불합니다.
+5. 환불은 최초 결제수단으로 처리됩니다.
+6. 부정 참여, 오지급, 조건 미충족 시 리워드를 회수할 수 있습니다.
+7. 회사는 관계 법령의 청약철회 및 환불 규정을 준수합니다.`}
+              </Post.Paragraph>
             </BottomInfo>
           </>
         )}
