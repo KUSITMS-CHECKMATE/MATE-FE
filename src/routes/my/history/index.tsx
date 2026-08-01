@@ -34,6 +34,25 @@ function HistoryPage() {
     };
   }, []);
 
+  useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+    try {
+      unsubscribe = graniteEvent.addEventListener('backEvent', {
+        onEvent: () => {
+          window.history.back();
+        },
+        onError: (error) => {
+          console.error('backEvent error', error);
+        },
+      });
+    } catch {
+      console.warn('backEvent listener not supported in browser');
+    }
+    return () => {
+      unsubscribe?.();
+    };
+  }, []);
+
   return (
     <div className="flex flex-col">
       <MyParticipateHistory

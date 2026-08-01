@@ -7,8 +7,8 @@ import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
 import { grantPayment } from "./paymentGrant";
 import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
 import { useIapErrorDialog } from "./useIapErrorDialog";
+import { useIapSkuMap } from "./useIapSkuMap";
 import type { TesterCount, RewardAmount } from "./types";
-import { IAP_SKU_MAP } from "./types";
 
 const APP_MARKET_VERIFICATION_FAILED = "APP_MARKET_VERIFICATION_FAILED";
 const TOSS_SERVER_VERIFICATION_FAILED = "TOSS_SERVER_VERIFICATION_FAILED";
@@ -34,6 +34,7 @@ interface PaymentSubmitInput {
 export function usePaymentSubmit() {
   const { openAlert } = useDialog();
   const { showIapErrorDialog } = useIapErrorDialog();
+  const skuMap = useIapSkuMap();
   const [appMarketVerificationFailed, setAppMarketVerificationFailed] = useState(false);
   const [serverVerificationFailed, setServerVerificationFailed] = useState(false);
   // APP_MARKET_VERIFICATION_FAILED / TOSS_SERVER_VERIFICATION_FAILED로 인한 실패 횟수.
@@ -70,10 +71,15 @@ export function usePaymentSubmit() {
       }
 
       // IAP 결제 (mock 결제는 사용하지 않음 — 리워드/테스터 수 조합 상품이 등록돼 있고 토스 앱 환경이어야 함)
-      const sku = IAP_SKU_MAP[rewardAmount]?.[testerCount];
+      const sku = skuMap[rewardAmount]?.[testerCount];
       if (sku == null || IAP == null) {
         throw new Error("결제를 진행할 수 없는 환경이거나 지원하지 않는 상품 조합입니다.");
       }
+
+      // SDK의 onError는 자기 나름의 범용 코드(예: PRODUCT_NOT_GRANTED_BY_PARTNER)만 돌려주기 때문에,
+      // 우리 서버가 실제로 준 사유(code/message)는 processProductGrant 콜백 안에서 미리 잡아둬야
+      // 바깥 catch에서 쓸 수 있다.
+      let grantFailureReason: { code?: string; message?: string } | undefined;
 
       try {
         await new Promise<void>((resolve, reject) => {
@@ -82,8 +88,11 @@ export function usePaymentSubmit() {
               sku,
               processProductGrant: async ({ orderId }) => {
                 try {
-                  return await grantPayment({ orderId, draftId });
-                } catch {
+                  const result = await grantPayment({ orderId, draftId });
+                  if (!result.success) grantFailureReason = { code: result.code, message: result.message };
+                  return result.success;
+                } catch (e) {
+                  grantFailureReason = { message: e instanceof Error ? e.message : String(e) };
                   return false;
                 }
               },
@@ -101,8 +110,10 @@ export function usePaymentSubmit() {
           });
         });
       } catch (e) {
-        const code = extractIapErrorCode(e);
-        const detail = e instanceof Error ? e.message : String(e);
+        // 서버가 준 사유가 있으면 그걸 우선한다 — SDK 코드는 "지급 실패"라는 사실만 알려줄 뿐,
+        // 왜 실패했는지는 서버 응답에만 있다.
+        const code = grantFailureReason?.code ?? extractIapErrorCode(e);
+        const detail = grantFailureReason?.message ?? (e instanceof Error ? e.message : String(e));
         throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code);
       }
     },

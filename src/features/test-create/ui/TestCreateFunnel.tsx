@@ -10,6 +10,7 @@ import { ServiceDescriptionNudgeSheet } from "./ServiceDescriptionNudgeSheet";
 import { TestImageStep } from "./TestImageStep";
 import { TestRegisterStep, type RegisterTab } from "./TestRegisterStep";
 import { TestGuidePage } from "@/shared/ui/TestGuidePage";
+import { TestCreateGuideBottomSheet } from "./TestCreateGuideBottomSheet";
 import { TestBasicInfoStep } from "./TestBasicInfoStep";
 import { EditPhaseSheet } from "./EditPhaseSheet";
 import { BasicInfoEditPage } from "./BasicInfoEditPage";
@@ -71,6 +72,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const [hasTestImages, setHasTestImages] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
+  const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<{
     id: string;
     typeId: QuestionTypeId;
@@ -82,8 +84,11 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const isSaving = saveDraft.isPending;
   const [showGuide, setShowGuide] = useState(false);
   const [isResuming, setIsResuming] = useState(resume && !!draftId);
+  // 처음 만드는 경우(결제에서 돌아온 것도, 이어쓰기도 아닌 경우)에만 임시저장 안내를 보여준다.
+  const [isCreateGuideOpen, setIsCreateGuideOpen] = useState(!fromPayment && !resume);
 
-  const isOverlayOpen = isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide;
+  const isOverlayOpen =
+    isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide || isQuestionTypeSheetOpen;
   useScrollLock(isOverlayOpen);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
@@ -92,6 +97,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const showGuideRef = useRef(showGuide);
   const editPhaseRef = useRef(editPhase);
   const activeQuestionRef = useRef(activeQuestion);
+  const isQuestionTypeSheetOpenRef = useRef(isQuestionTypeSheetOpen);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
     funnelPrevRef.current = funnel.prev;
@@ -105,6 +111,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   useEffect(() => {
     activeQuestionRef.current = activeQuestion;
   }, [activeQuestion]);
+  useEffect(() => {
+    isQuestionTypeSheetOpenRef.current = isQuestionTypeSheetOpen;
+  }, [isQuestionTypeSheetOpen]);
 
   useEffect(() => {
     try {
@@ -116,6 +125,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
             setEditPhase(null);
           } else if (showGuideRef.current) {
             setShowGuide(false);
+          } else if (isQuestionTypeSheetOpenRef.current) {
+            setIsQuestionTypeSheetOpen(false);
           } else if (funnelIsFirstRef.current) {
             setIsExitDialogOpen(true);
           } else {
@@ -334,7 +345,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         isConfirmDisabled={isConfirmDisabled}
         isNextDisabled={funnel.step === "service" ? false : funnel.step === "image" ? !hasTestImages : !isAllComplete}
         cancelLabel={funnel.step === "register" ? "수정하기" : funnel.step === "service" || funnel.step === "image" ? "이전" : "닫기"}
-        isSubmitDisabled={!isAllComplete || !form.questions.some((q) => !!q.data) || isSaving}
+        isSubmitDisabled={
+          !isAllComplete ||
+          form.questions.length === 0 ||
+          !form.questions.every((q) => !!q.data) ||
+          isSaving
+        }
         submitLabel="테스트 만들기"
         doubleBottomAccessory={
           funnel.step === "service" ? (
@@ -345,7 +361,15 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         }
       >
         {funnel.step === "register" ? (
-          <TestRegisterStep activeTab={registerTab} onTabChange={setRegisterTab} onEnterQuestion={setActiveQuestion} onGuideView={() => setShowGuide(true)} />
+          <TestRegisterStep
+            activeTab={registerTab}
+            onTabChange={setRegisterTab}
+            onEnterQuestion={setActiveQuestion}
+            onGuideView={() => setShowGuide(true)}
+            isQuestionTypeSheetOpen={isQuestionTypeSheetOpen}
+            onOpenQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(true)}
+            onCloseQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(false)}
+          />
         ) : funnel.step === "image" ? (
           <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <TestImageStep onHasImagesChange={handleHasImagesChange} />
@@ -422,6 +446,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           </ConfirmDialog.ConfirmButton>
         }
       />
+
+      <TestCreateGuideBottomSheet open={isCreateGuideOpen} onClose={() => setIsCreateGuideOpen(false)} />
     </>
   );
 }

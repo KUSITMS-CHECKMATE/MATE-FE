@@ -8,7 +8,7 @@ export interface UserTest {
   status: TestStatus;
 }
 
-export type DraftTestStatus = "draft";
+export type DraftTestStatus = "draft" | "failed";
 
 export interface DraftTest {
   draftId: number;

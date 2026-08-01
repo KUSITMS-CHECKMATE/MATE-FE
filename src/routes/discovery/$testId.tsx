@@ -39,15 +39,12 @@ function TestDetailPage() {
       unsubscribe?.();
     };
   }, []);
-
   const qaMock = useQaMockMode((state) => state.enabled);
-
   const { data, isLoading } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
     enabled: !qaMock,
   });
-
   const detail = qaMock ? QA_MOCK_TEST_DETAILS[Number(testId)] : data?.data?.data;
 
   if ((!qaMock && isLoading) || !detail) {
