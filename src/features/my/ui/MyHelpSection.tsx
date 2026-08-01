@@ -1,13 +1,15 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Text, List, ListRow, Spacing } from '@toss/tds-mobile';
+import { Text, List, ListRow, Spacing, Switch } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
 import { ROUTES } from '@/shared/constants/routes';
 
 interface Props {
   onGuideClick?: () => void;
+  qaMockEnabled?: boolean;
+  onToggleQaMock?: (enabled: boolean) => void;
 }
 
-export function MyHelpSection({ onGuideClick }: Props) {
+export function MyHelpSection({ onGuideClick, qaMockEnabled = false, onToggleQaMock }: Props) {
   const navigate = useNavigate();
 
   return (
@@ -87,6 +89,32 @@ export function MyHelpSection({ onGuideClick }: Props) {
             />
           }
           onClick={() => navigate({ to: ROUTES.MY_PAYMENT_HISTORY })}
+        />
+        <ListRow
+          role="switch"
+          aria-checked={qaMockEnabled}
+          left={
+            <ListRow.AssetIcon
+              name="icon-chemistry-mono"
+              backgroundColor={adaptive.greyOpacity100}
+            />
+          }
+          contents={
+            <ListRow.Texts
+              type="2RowTypeA"
+              top="QA Mock Data"
+              topProps={{ color: adaptive.grey700 }}
+              bottom={qaMockEnabled ? 'Mock data가 보여지고 있어요' : 'API 연동 상태로 보고 있어요'}
+              bottomProps={{ color: adaptive.grey500 }}
+            />
+          }
+          right={
+            <Switch
+              checked={qaMockEnabled}
+              onChange={(_, checked) => onToggleQaMock?.(checked)}
+            />
+          }
+          verticalPadding="large"
         />
       </List>
     </>

@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { graniteEvent } from '@apps-in-toss/web-framework';
 import { BottomTabBar } from '@/shared/ui/BottomTabBar';
 import { TestGuidePage } from '@/shared/ui/TestGuidePage';
+import { useQaMockMode } from '@/shared/model/qaMockMode';
 import { MyHelpSection, MyServiceSection } from '@/features/my/ui';
 
 export const Route = createFileRoute('/my/')({
@@ -12,6 +13,8 @@ export const Route = createFileRoute('/my/')({
 
 function MyPage() {
   const [showGuide, setShowGuide] = useState(false);
+  const qaMockEnabled = useQaMockMode((state) => state.enabled);
+  const setQaMockEnabled = useQaMockMode((state) => state.setEnabled);
   const showGuideRef = useRef(showGuide);
   useEffect(() => {
     showGuideRef.current = showGuide;
@@ -34,7 +37,11 @@ function MyPage() {
 
   return (
     <div className="flex flex-col pb-24">
-      <MyHelpSection onGuideClick={() => setShowGuide(true)} />
+      <MyHelpSection
+        onGuideClick={() => setShowGuide(true)}
+        qaMockEnabled={qaMockEnabled}
+        onToggleQaMock={setQaMockEnabled}
+      />
       <MyServiceSection />
       <BottomTabBar activeTab="my" disableExit={showGuide} />
       <AnimatePresence>

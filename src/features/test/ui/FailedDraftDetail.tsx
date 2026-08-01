@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Asset, BoardRow, Post, Result, Skeleton, Tab, Text, Top } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { getDraft, getGetDraftUrl } from "@/shared/api/generated/testDraft";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
 import { QuestionTabContent, QuestionPreviewOverlay } from "@/features/test-result/ui";
 import { extractDraftQuestions } from "../model";
+import { QA_MOCK_FAILED_DRAFT_DETAIL } from "../model/qaMock";
 
 interface Props {
   draftId: number;
@@ -24,16 +26,18 @@ function FailedDraftSkeleton() {
 }
 
 export function FailedDraftDetail({ draftId }: Props) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
+  const qaMock = useQaMockMode((state) => state.enabled);
 
   const { data, isLoading } = useQuery({
     queryKey: [getGetDraftUrl(draftId)],
     queryFn: () => getDraft(draftId),
+    enabled: !qaMock,
   });
 
-  const draft = data?.data?.data;
+  const draft = qaMock ? QA_MOCK_FAILED_DRAFT_DETAIL : data?.data?.data;
 
   if (isLoading || !draft) {
     return <FailedDraftSkeleton />;

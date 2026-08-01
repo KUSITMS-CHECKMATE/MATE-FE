@@ -21,9 +21,9 @@ const QA_REPORT_ITEMS: ReportItem[] = [
     type: 'OBJECTIVE',
     result: {
       options: [
-        { optionId: 1, content: '홈 화면', count: 32, ratio: 0.58 },
-        { optionId: 2, content: '검색', count: 15, ratio: 0.27 },
-        { optionId: 3, content: '마이페이지', count: 8, ratio: 0.15 },
+        { optionId: 1, content: '홈 화면', count: 21, ratio: 0.42 },
+        { optionId: 2, content: '검색', count: 21, ratio: 0.42 },
+        { optionId: 3, content: '마이페이지', count: 8, ratio: 0.16 },
       ],
       aiSummary: 'QA용 mock 요약이에요.',
       clusters: [],
@@ -80,8 +80,21 @@ const QA_REPORT_ITEMS: ReportItem[] = [
     result: {
       byCard: [],
       byCategory: [
-        { category: '자주 씀', cards: [{ rank: 1, cardName: '홈', count: 30, ratio: 0.6 }, { rank: 2, cardName: '검색', count: 15, ratio: 0.3 }] },
-        { category: '가끔 씀', cards: [{ rank: 1, cardName: '알림', count: 20, ratio: 0.5 }] },
+        {
+          category: '자주 씀',
+          cards: [
+            { rank: 1, cardName: '홈', count: 18, ratio: 0.36 },
+            { rank: 1, cardName: '검색', count: 18, ratio: 0.36 },
+            { rank: 3, cardName: '마이페이지', count: 8, ratio: 0.16 },
+          ],
+        },
+        {
+          category: '가끔 씀',
+          cards: [
+            { rank: 1, cardName: '알림', count: 12, ratio: 0.24 },
+            { rank: 1, cardName: '설정', count: 12, ratio: 0.24 },
+          ],
+        },
       ],
     },
   },
