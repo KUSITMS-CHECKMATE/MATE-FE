@@ -11,6 +11,7 @@ export const ROUTES = {
   MY_PAYMENT_HISTORY: "/my/payment-history",
   TEST: "/test",
   TEST_CREATE: "/test/create",
+  TEST_DRAFT_FAILED: "/test/draft/$draftId",
   TEST_DETAIL: "/test/$testId",
   TEST_PARTICIPATE: "/test/participate/$testId",
   TEST_PAYMENT: "/test/payment",

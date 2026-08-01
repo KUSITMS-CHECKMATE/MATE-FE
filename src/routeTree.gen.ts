@@ -29,6 +29,7 @@ import { Route as DiscoveryTestIdRouteImport } from './routes/discovery/$testId'
 import { Route as MyNoticeIndexRouteImport } from './routes/my/notice/index'
 import { Route as MyHistoryIndexRouteImport } from './routes/my/history/index'
 import { Route as TestParticipateTestIdRouteImport } from './routes/test/participate.$testId'
+import { Route as TestDraftDraftIdRouteImport } from './routes/test/draft.$draftId'
 import { Route as MyNoticeNoticeIdRouteImport } from './routes/my/notice/$noticeId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -131,6 +132,11 @@ const TestParticipateTestIdRoute = TestParticipateTestIdRouteImport.update({
   path: '/test/participate/$testId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestDraftDraftIdRoute = TestDraftDraftIdRouteImport.update({
+  id: '/test/draft/$draftId',
+  path: '/test/draft/$draftId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyNoticeNoticeIdRoute = MyNoticeNoticeIdRouteImport.update({
   id: '/$noticeId',
   path: '/$noticeId',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
   '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
+  '/test/draft/$draftId': typeof TestDraftDraftIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
   '/my/notice/': typeof MyNoticeIndexRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/my': typeof MyIndexRoute
   '/test': typeof TestIndexRoute
   '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
+  '/test/draft/$draftId': typeof TestDraftDraftIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history': typeof MyHistoryIndexRoute
   '/my/notice': typeof MyNoticeIndexRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/my/': typeof MyIndexRoute
   '/test/': typeof TestIndexRoute
   '/my/notice/$noticeId': typeof MyNoticeNoticeIdRoute
+  '/test/draft/$draftId': typeof TestDraftDraftIdRoute
   '/test/participate/$testId': typeof TestParticipateTestIdRoute
   '/my/history/': typeof MyHistoryIndexRoute
   '/my/notice/': typeof MyNoticeIndexRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/my/'
     | '/test/'
     | '/my/notice/$noticeId'
+    | '/test/draft/$draftId'
     | '/test/participate/$testId'
     | '/my/history/'
     | '/my/notice/'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/my'
     | '/test'
     | '/my/notice/$noticeId'
+    | '/test/draft/$draftId'
     | '/test/participate/$testId'
     | '/my/history'
     | '/my/notice'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/my/'
     | '/test/'
     | '/my/notice/$noticeId'
+    | '/test/draft/$draftId'
     | '/test/participate/$testId'
     | '/my/history/'
     | '/my/notice/'
@@ -293,6 +305,7 @@ export interface RootRouteChildren {
   InterestIndexRoute: typeof InterestIndexRoute
   MyIndexRoute: typeof MyIndexRoute
   TestIndexRoute: typeof TestIndexRoute
+  TestDraftDraftIdRoute: typeof TestDraftDraftIdRoute
   TestParticipateTestIdRoute: typeof TestParticipateTestIdRoute
 }
 
@@ -438,6 +451,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestParticipateTestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test/draft/$draftId': {
+      id: '/test/draft/$draftId'
+      path: '/test/draft/$draftId'
+      fullPath: '/test/draft/$draftId'
+      preLoaderRoute: typeof TestDraftDraftIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my/notice/$noticeId': {
       id: '/my/notice/$noticeId'
       path: '/$noticeId'
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   InterestIndexRoute: InterestIndexRoute,
   MyIndexRoute: MyIndexRoute,
   TestIndexRoute: TestIndexRoute,
+  TestDraftDraftIdRoute: TestDraftDraftIdRoute,
   TestParticipateTestIdRoute: TestParticipateTestIdRoute,
 }
 export const routeTree = rootRouteImport
