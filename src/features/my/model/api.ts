@@ -1,6 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
 import { client } from '@/shared/api/client';
-import type { ParticipateRecord } from './types';
+import { getHistory, getGetHistoryUrl } from '@/shared/api/generated/payment';
+import type { ParticipateRecord, PaymentHistoryEntry } from './types';
+
+const PAY_STATUS_LABEL: Record<string, PaymentHistoryEntry['status']> = {
+  PAY_SUCCEEDED: '결제완료',
+  PAY_CANCELLED: '결제취소',
+  PAY_FAILED: '결제실패',
+  REFUND_PENDING: '환불대기중',
+  REFUND_REJECTED: '환불거절',
+  REFUNDED: '환불완료',
+};
+
+const WEEKDAY_KR = ['일', '월', '화', '수', '목', '금', '토'];
+
+function formatPaymentDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}. ${m}. ${day} (${WEEKDAY_KR[d.getDay()]})`;
+}
 
 interface AnswerItem {
   testId: number;
@@ -32,4 +53,20 @@ export const useMyParticipateHistory = () =>
         earnedAmount: `+${item.reward.toLocaleString()}원`,
       })),
     }),
+  });
+
+// 결제내역 응답에는 testId가 없어서, 목록 항목을 클릭해 테스트로 이동하는 기능은 아직 연결하지 않는다.
+export const usePaymentHistory = () =>
+  useQuery({
+    queryKey: [getGetHistoryUrl()],
+    queryFn: () => getHistory(),
+    select: (res) =>
+      (res.data.data ?? []).map((item, index): PaymentHistoryEntry => ({
+        id: item.orderNo ?? String(index),
+        date: item.approvedAt ? formatPaymentDate(item.approvedAt) : '',
+        status: PAY_STATUS_LABEL[item.payStatus ?? ''] ?? '결제완료',
+        orderNo: item.orderNo ?? '',
+        testTitle: item.testTitle ?? '',
+        amount: item.amount ?? 0,
+      })),
   });
