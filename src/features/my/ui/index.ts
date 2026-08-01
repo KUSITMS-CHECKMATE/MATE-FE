@@ -6,3 +6,4 @@ export { NoticeDetail } from './NoticeDetail';
 export { PolicyDetail } from './PolicyDetail';
 export { PrivacyPolicyDetail } from './PrivacyPolicyDetail';
 export { BusinessInfoDetail } from './BusinessInfoDetail';
+export { PaymentHistoryDetail } from './PaymentHistoryDetail';

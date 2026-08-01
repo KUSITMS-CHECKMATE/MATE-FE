@@ -8,6 +8,7 @@ export const ROUTES = {
   MY_POLICY: "/my/policy",
   MY_PRIVACY: "/my/privacy",
   MY_BUSINESS: "/my/business",
+  MY_PAYMENT_HISTORY: "/my/payment-history",
   TEST: "/test",
   TEST_CREATE: "/test/create",
   TEST_DETAIL: "/test/$testId",
