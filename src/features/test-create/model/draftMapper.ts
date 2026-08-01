@@ -41,9 +41,9 @@ function toTreeNode(raw: RawTreeNode): TreeNodeItem {
   };
 }
 
-type RawQuestion = Record<string, unknown>;
+export type RawQuestion = Record<string, unknown>;
 
-function mapRawQuestion(raw: RawQuestion): QuestionData | null {
+export function mapRawQuestion(raw: RawQuestion): QuestionData | null {
   const type = raw.type as QuestionTypeId;
   const title = str(raw.title);
   const description = str(raw.description);
