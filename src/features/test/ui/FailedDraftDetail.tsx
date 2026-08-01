@@ -24,7 +24,7 @@ function FailedDraftSkeleton() {
 }
 
 export function FailedDraftDetail({ draftId }: Props) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
 
