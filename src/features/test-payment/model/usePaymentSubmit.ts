@@ -9,6 +9,7 @@ import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
 import { useIapErrorDialog } from "./useIapErrorDialog";
 import { useIapSkuMap } from "./useIapSkuMap";
 import type { TesterCount, RewardAmount } from "./types";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
 
 const APP_MARKET_VERIFICATION_FAILED = "APP_MARKET_VERIFICATION_FAILED";
 const TOSS_SERVER_VERIFICATION_FAILED = "TOSS_SERVER_VERIFICATION_FAILED";
@@ -35,6 +36,7 @@ export function usePaymentSubmit() {
   const { openAlert } = useDialog();
   const { showIapErrorDialog } = useIapErrorDialog();
   const skuMap = useIapSkuMap();
+  const qaMock = useQaMockMode((state) => state.enabled);
   const [appMarketVerificationFailed, setAppMarketVerificationFailed] = useState(false);
   const [serverVerificationFailed, setServerVerificationFailed] = useState(false);
   // APP_MARKET_VERIFICATION_FAILED / TOSS_SERVER_VERIFICATION_FAILED로 인한 실패 횟수.
@@ -43,6 +45,10 @@ export function usePaymentSubmit() {
 
   const mutation = useMutation({
     mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
+      if (qaMock) {
+        return;
+      }
+
       const closedAt = new Date(Date.now() + responsePeriod * 24 * 60 * 60 * 1000)
         .toISOString()
         .slice(0, 10);

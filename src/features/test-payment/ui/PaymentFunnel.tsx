@@ -14,15 +14,25 @@ import { PaymentCompleteStep } from "./PaymentCompleteStep";
 import { PaymentSystemErrorStep } from "./PaymentSystemErrorStep";
 import { PaymentGiveUpStep } from "./PaymentGiveUpStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
+import { QaPaymentResultSheet, type QaPaymentResult } from "./QaPaymentResultSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
+import { useQaMockMode } from "@/shared/model/qaMockMode";
 
 const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} backgroundColor="transparent" name="icon-arrow-down-mono" color={adaptive.grey400} aria-hidden={true} ratio="1/1" />;
+
+const QA_PAYMENT_RESULT_LABEL: Record<QaPaymentResult, string> = {
+  success: "결제 성공",
+  "app-market-verification-failed": "스토어 검증 실패",
+  "toss-server-verification-failed": "메이트 검증 실패",
+  "give-up": "문의 유도 화면",
+};
 
 export function PaymentFunnel() {
   const navigate = useNavigate();
   const { draftId } = Route.useSearch();
   const { openToast } = useToast();
+  const qaMock = useQaMockMode((state) => state.enabled);
   const {
     mutate: submitPayment,
     isPending,
@@ -39,6 +49,8 @@ export function PaymentFunnel() {
 
   const [step, setStep] = useState<PaymentStep>("main");
   const stepRef = useRef(step);
+  const [qaPaymentResult, setQaPaymentResult] = useState<QaPaymentResult>("success");
+  const [isQaPaymentResultOpen, setIsQaPaymentResultOpen] = useState(false);
 
   useEffect(() => {
     if (appMarketVerificationFailed) setStep("app-market-verification-failed");
@@ -129,8 +141,14 @@ export function PaymentFunnel() {
     );
   }
 
+  if (step === "give-up") {
+    return (
+      <PaymentGiveUpStep onConfirm={() => navigate({ to: ROUTES.TEST, replace: true })} />
+    );
+  }
+
   if (step === "app-market-verification-failed" || step === "toss-server-verification-failed") {
-    if (verificationFailureCount >= 4) {
+    if (!qaMock && verificationFailureCount >= 4) {
       return (
         <PaymentGiveUpStep onConfirm={() => navigate({ to: ROUTES.TEST, replace: true })} />
       );
@@ -139,7 +157,11 @@ export function PaymentFunnel() {
       <PaymentSystemErrorStep
         subject={step === "app-market-verification-failed" ? "스토어" : "메이트"}
         isRetrying={isPending}
-        onRetry={() =>
+        onRetry={() => {
+          if (qaMock) {
+            setStep(step === "app-market-verification-failed" ? "app-market-verification-failed" : "toss-server-verification-failed");
+            return;
+          }
           submitPayment(
             {
               draftId,
@@ -150,8 +172,8 @@ export function PaymentFunnel() {
             {
               onSuccess: () => setStep("complete"),
             },
-          )
-        }
+          );
+        }}
       />
     );
   }
@@ -162,6 +184,23 @@ export function PaymentFunnel() {
 
   const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount, actualTotal) : null;
   const displayTotal = iapProduct?.displayAmount ?? (payment != null ? toKRW(payment.total) : null);
+
+  const handleQaMockPayment = () => {
+    switch (qaPaymentResult) {
+      case "success":
+        setStep("complete");
+        return;
+      case "app-market-verification-failed":
+        setStep("app-market-verification-failed");
+        return;
+      case "toss-server-verification-failed":
+        setStep("toss-server-verification-failed");
+        return;
+      case "give-up":
+        setStep("give-up");
+        return;
+    }
+  };
 
   return (
     <>
@@ -215,6 +254,28 @@ export function PaymentFunnel() {
               setStep("reward-amount");
             }}
           />
+          {qaMock && (
+            <div className="mx-4 mt-2 rounded-2xl px-4 py-4" style={{ backgroundColor: "rgba(67, 101, 204, 0.08)" }}>
+              <div className="flex flex-col gap-2">
+                <Text color="#2f5bea" typography="t7" fontWeight="bold">
+                  QA Mock 결제 모드
+                </Text>
+                <Text color={adaptive.grey700} typography="t7" fontWeight="medium">
+                  실제 결제는 진행되지 않아요. 보고 싶은 결과 화면을 선택한 뒤 결제하기를 눌러주세요.
+                </Text>
+                <TextField.Button
+                  variant="line"
+                  hasError={false}
+                  label="QA 결제 결과"
+                  labelOption="sustain"
+                  value={QA_PAYMENT_RESULT_LABEL[qaPaymentResult]}
+                  placeholder="선택해주세요"
+                  right={<DownArrowIcon />}
+                  onClick={() => setIsQaPaymentResultOpen(true)}
+                />
+              </div>
+            </div>
+          )}
         </div>
         {payment != null && (
           <>
@@ -330,7 +391,11 @@ export function PaymentFunnel() {
             }
             rightButton={
               <CTAButton
-                onClick={() =>
+                onClick={() => {
+                  if (qaMock) {
+                    handleQaMockPayment();
+                    return;
+                  }
                   submitPayment(
                     {
                       draftId,
@@ -341,8 +406,8 @@ export function PaymentFunnel() {
                     {
                       onSuccess: () => setStep("complete"),
                     },
-                  )
-                }
+                  );
+                }}
                 disabled={isPending}
               >
                 {displayTotal} 결제하기
@@ -368,6 +433,12 @@ export function PaymentFunnel() {
           setDraftResponsePeriod(responsePeriod);
           setIsResponsePeriodOpen(false);
         }}
+      />
+      <QaPaymentResultSheet
+        open={isQaPaymentResultOpen}
+        selected={qaPaymentResult}
+        onSelect={setQaPaymentResult}
+        onClose={() => setIsQaPaymentResultOpen(false)}
       />
     </>
   );
