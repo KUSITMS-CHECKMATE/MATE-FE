@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { graniteEvent } from '@apps-in-toss/web-framework';
 import { PaymentHistoryDetail } from '@/features/my/ui';
 import { usePaymentHistory } from '@/features/my/model';
+import { ROUTES } from '@/shared/constants/routes';
 
 export const Route = createFileRoute('/my/payment-history')({
   component: PaymentHistoryPage,
 });
 
 function PaymentHistoryPage() {
+  const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = usePaymentHistory();
 
   useEffect(() => {
@@ -36,6 +38,10 @@ function PaymentHistoryPage() {
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
+      onEntryClick={(entry) => {
+        if (entry.testId == null || entry.testStatus == null) return;
+        navigate({ to: ROUTES.TEST_DETAIL, params: { testId: String(entry.testId) } });
+      }}
     />
   );
 }

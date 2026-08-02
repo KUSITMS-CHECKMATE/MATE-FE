@@ -18,6 +18,7 @@ export interface Notice {
 }
 
 export type PaymentHistoryStatus = '결제완료' | '결제취소' | '결제실패' | '환불대기중' | '환불거절' | '환불완료';
+export type PaymentHistoryTestStatus = 'active' | 'ended' | 'waiting' | 'rejected';
 
 export interface PaymentHistoryEntry {
   id: string;
@@ -26,6 +27,8 @@ export interface PaymentHistoryEntry {
   orderNo: string;
   testTitle: string;
   amount: number;
+  testId?: number;
+  testStatus?: PaymentHistoryTestStatus;
 }
 
 export interface TestDetail {
