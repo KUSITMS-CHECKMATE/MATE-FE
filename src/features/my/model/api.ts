@@ -12,6 +12,13 @@ const PAY_STATUS_LABEL: Record<string, PaymentHistoryEntry['status']> = {
   REFUNDED: '환불완료',
 };
 
+const TEST_STATUS_LABEL: Record<string, NonNullable<PaymentHistoryEntry['testStatus']>> = {
+  IN_PROGRESS: 'active',
+  COMPLETED: 'ended',
+  WAITING: 'waiting',
+  REJECTED: 'rejected',
+};
+
 const WEEKDAY_KR = ['일', '월', '화', '수', '목', '금', '토'];
 
 function formatPaymentDate(iso: string): string {
@@ -56,7 +63,6 @@ export const useMyParticipateHistory = (options?: { enabled?: boolean }) =>
     }),
   });
 
-// 결제내역 응답에는 testId가 없어서, 목록 항목을 클릭해 테스트로 이동하는 기능은 아직 연결하지 않는다.
 export const usePaymentHistory = () =>
   useQuery({
     queryKey: [getGetHistoryUrl()],
@@ -69,5 +75,7 @@ export const usePaymentHistory = () =>
         orderNo: item.orderNo ?? '',
         testTitle: item.testTitle ?? '',
         amount: item.amount ?? 0,
+        testId: item.testId,
+        testStatus: item.testStatus ? TEST_STATUS_LABEL[item.testStatus] : undefined,
       })),
   });

@@ -87,6 +87,16 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   // 처음 만드는 경우(결제에서 돌아온 것도, 이어쓰기도 아닌 경우)에만 임시저장 안내를 보여준다.
   const [isCreateGuideOpen, setIsCreateGuideOpen] = useState(!fromPayment && !resume);
 
+  const isPristineCreateState =
+    !currentDraftId &&
+    form.name.trim().length === 0 &&
+    form.summary.trim().length === 0 &&
+    form.serviceName.trim().length === 0 &&
+    form.description.trim().length === 0 &&
+    form.categories.length === 0 &&
+    form.images.length === 0 &&
+    form.questions.length === 0;
+
   const isOverlayOpen =
     isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide || isQuestionTypeSheetOpen;
   useScrollLock(isOverlayOpen);
@@ -98,6 +108,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const editPhaseRef = useRef(editPhase);
   const activeQuestionRef = useRef(activeQuestion);
   const isQuestionTypeSheetOpenRef = useRef(isQuestionTypeSheetOpen);
+  const isPristineCreateStateRef = useRef(isPristineCreateState);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
     funnelPrevRef.current = funnel.prev;
@@ -114,6 +125,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   useEffect(() => {
     isQuestionTypeSheetOpenRef.current = isQuestionTypeSheetOpen;
   }, [isQuestionTypeSheetOpen]);
+  useEffect(() => {
+    isPristineCreateStateRef.current = isPristineCreateState;
+  }, [isPristineCreateState]);
 
   useEffect(() => {
     try {
@@ -128,7 +142,13 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           } else if (isQuestionTypeSheetOpenRef.current) {
             setIsQuestionTypeSheetOpen(false);
           } else if (funnelIsFirstRef.current) {
-            setIsExitDialogOpen(true);
+            if (isPristineCreateStateRef.current) {
+              exitUnsubscribeRef.current?.();
+              exitUnsubscribeRef.current = null;
+              navigate({ to: ROUTES.TEST });
+            } else {
+              setIsExitDialogOpen(true);
+            }
           } else {
             funnelPrevRef.current();
           }
@@ -332,7 +352,11 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           if (funnel.step === "register") {
             setIsEditSheetOpen(true);
           } else if (funnel.step === "basic") {
-            setIsExitDialogOpen(true);
+            if (isPristineCreateState) {
+              handleExitConfirm();
+            } else {
+              setIsExitDialogOpen(true);
+            }
           } else {
             funnel.prev();
           }
@@ -433,7 +457,6 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       <ConfirmDialog
         open={isExitDialogOpen}
         title="테스트 등록을 그만할까요?"
-        description="삭제하면 복구할 수 없어요"
         onClose={() => setIsExitDialogOpen(false)}
         cancelButton={
           <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsExitDialogOpen(false)}>
