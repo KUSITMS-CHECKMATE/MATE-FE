@@ -73,6 +73,7 @@ export const usePaymentHistory = () =>
         status: PAY_STATUS_LABEL[item.payStatus ?? ''] ?? '결제완료',
         orderNo: item.orderNo ?? '',
         testTitle: item.testTitle ?? '',
+        thumbnailUrl: item.thumbnailUrl ?? undefined,
         amount: item.amount ?? 0,
         testId: item.testId,
         testStatus: item.testStatus ? TEST_STATUS_LABEL[item.testStatus] : undefined,

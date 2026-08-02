@@ -26,6 +26,7 @@ export interface PaymentHistoryEntry {
   status: PaymentHistoryStatus;
   orderNo: string;
   testTitle: string;
+  thumbnailUrl?: string;
   amount: number;
   testId?: number;
   testStatus?: PaymentHistoryTestStatus;
