@@ -107,7 +107,10 @@ export function PaymentHistoryDetail({
         // 결제완료 상태만 정상 진행중인 결제로 보고, 그 외(취소/실패/환불 등)는 흐리게 + 취소선 처리한다.
         const isCancelled = entry.status !== "결제완료";
         const textColor = isCancelled ? adaptive.grey500 : adaptive.grey800;
-        const canOpenTestDetail = entry.testId != null && entry.testStatus != null;
+        const canOpenTestDetail =
+          entry.status === '결제완료' &&
+          entry.testId != null &&
+          entry.testStatus != null;
 
         return (
           <div key={entry.id}>
