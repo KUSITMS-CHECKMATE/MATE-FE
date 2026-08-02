@@ -155,7 +155,20 @@ export function PaymentHistoryDetail({
                 }
               />
               <ListRow
-                left={<ListRow.ImageContainer type="square" border={false} />}
+                left={
+                  entry.thumbnailUrl ? (
+                    <div className="h-10 w-10 overflow-hidden rounded-[12px]">
+                      <img
+                        src={entry.thumbnailUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  ) : (
+                    <ListRow.ImageContainer type="square" border={false} />
+                  )
+                }
                 contents={
                   <ListRow.Texts
                     type="1RowTypeA"
