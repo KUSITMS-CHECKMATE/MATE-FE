@@ -1,5 +1,8 @@
 import type { Notice, ParticipateRecord, PaymentHistoryEntry } from './types';
 
+const QA_PAYMENT_HISTORY_THUMBNAIL =
+  'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNjAxMzFfMjgz%2FMDAxNzY5ODU4ODI4NDMx.SxpZoxjJEwyAhNsBCUj9K34pkHqxV2Jgg4q5YzU_87gg.S6gTSk7kLeIoQveaKcrlOCM2Q2fDb0g2c8Cr55fPgc4g.JPEG%2F900%25A3%25DF1769858827770.jpg&type=sc960_832';
+
 export const QA_MOCK_NOTICES: Notice[] = [
   {
     id: 90201,
@@ -30,6 +33,7 @@ export const QA_MOCK_PAYMENT_HISTORY: PaymentHistoryEntry[] = [
     status: '결제완료',
     orderNo: 'QA-ORDER-240730-01',
     testTitle: '[QA] 종료된 테스트',
+    thumbnailUrl: QA_PAYMENT_HISTORY_THUMBNAIL,
     amount: 15000,
     testId: 90002,
     testStatus: 'ended',
@@ -40,6 +44,7 @@ export const QA_MOCK_PAYMENT_HISTORY: PaymentHistoryEntry[] = [
     status: '결제취소',
     orderNo: 'QA-ORDER-240729-01',
     testTitle: '[QA] 검토중인 테스트',
+    thumbnailUrl: QA_PAYMENT_HISTORY_THUMBNAIL,
     amount: 12000,
     testId: 90003,
     testStatus: 'waiting',
@@ -50,6 +55,7 @@ export const QA_MOCK_PAYMENT_HISTORY: PaymentHistoryEntry[] = [
     status: '결제실패',
     orderNo: 'QA-ORDER-240728-01',
     testTitle: '[QA] 반려된 테스트',
+    thumbnailUrl: QA_PAYMENT_HISTORY_THUMBNAIL,
     amount: 8000,
     testId: 90004,
     testStatus: 'rejected',
@@ -60,6 +66,7 @@ export const QA_MOCK_PAYMENT_HISTORY: PaymentHistoryEntry[] = [
     status: '환불완료',
     orderNo: 'QA-ORDER-240727-01',
     testTitle: '[QA] 진행중인 테스트',
+    thumbnailUrl: QA_PAYMENT_HISTORY_THUMBNAIL,
     amount: 10000,
     testId: 90001,
     testStatus: 'active',
