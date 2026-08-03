@@ -110,6 +110,7 @@ async function uploadBase64(dataUri: string): Promise<string | undefined> {
   await ky.put(uploadUrl, {
     body: blob,
     headers: { "x-ms-blob-type": "BlockBlob" },
+    timeout: 30000,
   });
 
   return fileKey;
