@@ -1,3 +1,3 @@
-export type { MyUser, Notice, ParticipateRecord, TestDetail } from './types';
+export type { MyUser, Notice, ParticipateRecord, PaymentHistoryEntry, TestDetail } from './types';
 export { mockNotices } from './mock';
-export { useMyParticipateHistory } from './api';
+export { useMyParticipateHistory, usePaymentHistory } from './api';

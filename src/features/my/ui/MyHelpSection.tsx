@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Text, List, ListRow, Spacing } from '@toss/tds-mobile';
 import { adaptive } from '@toss/tds-colors';
+import { ROUTES } from '@/shared/constants/routes';
 
 interface Props {
   onGuideClick?: () => void;
@@ -85,6 +86,7 @@ export function MyHelpSection({ onGuideClick }: Props) {
               topProps={{ color: adaptive.grey700 }}
             />
           }
+          onClick={() => navigate({ to: ROUTES.MY_PAYMENT_HISTORY })}
         />
       </List>
     </>

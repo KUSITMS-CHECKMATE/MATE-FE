@@ -30,6 +30,7 @@ const STATUS_CONFIG: Record<
   waiting: { badgeColor: "yellow", badgeVariant: "weak", badgeLabel: "검토중", titleColor: adaptive.grey700 },
   rejected: { badgeColor: "red", badgeVariant: "weak", badgeLabel: "반려", titleColor: adaptive.grey800 },
   draft: { badgeColor: "elephant", badgeVariant: "fill", badgeLabel: "임시 저장", titleColor: adaptive.grey800 },
+  failed: { badgeColor: "red", badgeVariant: "fill", badgeLabel: "등록 실패", titleColor: adaptive.grey800 },
 };
 
 const PARTICIPANT_CONFIG = {
@@ -50,7 +51,7 @@ const PARTICIPANT_CONFIG = {
 export function TestCard({ title, status, participantCount, maxParticipantCount, onClick, onResume, onDelete, isDeleting = false }: Props) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const config = STATUS_CONFIG[status];
-  const hasDetailArrow = status === "active" || status === "ended" || status === "waiting" || status === "rejected";
+  const hasDetailArrow = status === "active" || status === "ended" || status === "waiting" || status === "rejected" || status === "failed";
 
   return (
     <div className="w-full rounded-2xl px-4 pt-6 pb-4 flex flex-col gap-6 overflow-visible" style={{ backgroundColor: "rgba(0, 23, 51, 0.02)" }}>
@@ -94,6 +95,18 @@ export function TestCard({ title, status, participantCount, maxParticipantCount,
           <Asset.Icon frameShape={Asset.frameShape.CleanW20} backgroundColor="transparent" name="icon-info-circle-mono" color={adaptive.grey600} aria-hidden={true} ratio="1/1" />
           <Text display="block" color={adaptive.grey700} typography="t7" fontWeight="semibold">
             검토가 끝날 때까지 최대 일주일 걸릴 수 있어요.
+          </Text>
+        </div>
+      )}
+
+      {status === "failed" && (
+        <div
+          className="w-full flex flex-row gap-2 items-center rounded-[10px] p-2.5"
+          style={{ backgroundColor: "var(--token-tds-color-grey-background, #f2f4f6)" }}
+        >
+          <Asset.Icon frameShape={Asset.frameShape.CleanW20} backgroundColor="transparent" name="icon-info-circle-mono" color={adaptive.grey600} aria-hidden={true} ratio="1/1" />
+          <Text display="block" color={adaptive.grey700} typography="t7" fontWeight="semibold">
+            등록 실패로 문의가 필요해요
           </Text>
         </div>
       )}
