@@ -64,6 +64,7 @@ export function ScaleLabelEditSheet({
         placeholder="라벨링을 입력해주세요"
         suffix=""
         prefix=""
+        maxLength={10}
         onChange={(e) => setValue(e.target.value)}
         onClear={() => setValue("")}
       />
