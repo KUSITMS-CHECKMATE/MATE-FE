@@ -10,6 +10,7 @@ interface Props {
   onCardClick?: (testId: number) => void;
   onResumeDraft?: (draftId: number) => void;
   onDeleteDraft?: (draftId: number) => void;
+  onFailedDraftClick?: (draftId: number) => void;
 }
 
 function TestListSkeleton() {
@@ -39,6 +40,7 @@ export function TestList({
   onCardClick,
   onResumeDraft,
   onDeleteDraft,
+  onFailedDraftClick,
 }: Props) {
   if (isLoading) {
     return <TestListSkeleton />;
@@ -67,6 +69,7 @@ export function TestList({
                 status={draft.status}
                 onResume={() => onResumeDraft?.(draft.draftId)}
                 onDelete={() => onDeleteDraft?.(draft.draftId)}
+                onClick={draft.status === "failed" ? () => onFailedDraftClick?.(draft.draftId) : undefined}
               />
             ))}
             {tests.map((test) => (

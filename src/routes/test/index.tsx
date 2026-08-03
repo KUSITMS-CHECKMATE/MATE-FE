@@ -16,9 +16,10 @@ const STATUS_MAP: Record<string, UserTest["status"]> = {
   REJECTED: "rejected",
 };
 
-// DRAFT 상태 초안만 노출한다 (그 외 상태는 결제/발행 처리 중이거나 이미 실제 테스트로 존재함)
+// PUBLISHING/PUBLISHED는 발행 처리 중이거나 이미 실제 테스트로 존재하므로 노출하지 않는다
 const DRAFT_STATUS_MAP: Record<string, DraftTest["status"] | undefined> = {
   DRAFT: "draft",
+  PUBLISH_FAILED: "failed",
 };
 
 export const Route = createFileRoute("/test/")({
@@ -110,6 +111,9 @@ function MakerHomePage() {
           navigate({ to: ROUTES.TEST_CREATE, search: { draftId, payment: false, resume: true } })
         }
         onDeleteDraft={(draftId) => removeDraft(draftId)}
+        onFailedDraftClick={(draftId) =>
+          navigate({ to: ROUTES.TEST_DRAFT_FAILED, params: { draftId: String(draftId) } })
+        }
       />
       <TestCreateButton
         onClick={() =>

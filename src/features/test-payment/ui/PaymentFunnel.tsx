@@ -221,15 +221,11 @@ export function PaymentFunnel() {
             <Border variant="height16" />
             <List>
               <ListHeader
-                size="large"
-                horizontalPadding="medium"
-                verticalPadding="medium"
                 descriptionPosition="bottom"
                 rightAlignment="center"
-                a11yRightReflow={false}
                 titleWidthRatio={0.6}
                 title={
-                  <ListHeader.TitleParagraph color={adaptive.grey800}>
+                  <ListHeader.TitleParagraph color={adaptive.grey800} fontWeight="bold" typography="t4">
                     결제 금액
                   </ListHeader.TitleParagraph>
                 }

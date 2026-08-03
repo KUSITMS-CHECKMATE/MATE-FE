@@ -72,6 +72,46 @@ export interface ApiResponsePaymentOrderStatusResponse {
   data?: PaymentOrderStatusResponse;
 }
 
+export type PaymentHistoryResponseTestStatus = typeof PaymentHistoryResponseTestStatus[keyof typeof PaymentHistoryResponseTestStatus];
+
+
+export const PaymentHistoryResponseTestStatus = {
+  WAITING: 'WAITING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED',
+} as const;
+
+export type PaymentHistoryResponsePayStatus = typeof PaymentHistoryResponsePayStatus[keyof typeof PaymentHistoryResponsePayStatus];
+
+
+export const PaymentHistoryResponsePayStatus = {
+  PAY_SUCCEEDED: 'PAY_SUCCEEDED',
+  PAY_CANCELLED: 'PAY_CANCELLED',
+  PAY_FAILED: 'PAY_FAILED',
+  REFUND_PENDING: 'REFUND_PENDING',
+  REFUND_REJECTED: 'REFUND_REJECTED',
+  REFUNDED: 'REFUNDED',
+} as const;
+
+export interface PaymentHistoryResponse {
+  approvedAt?: string;
+  testId?: number;
+  testTitle?: string;
+  testStatus?: PaymentHistoryResponseTestStatus;
+  thumbnailUrl?: string;
+  amount?: number;
+  payStatus?: PaymentHistoryResponsePayStatus;
+  orderNo?: string;
+}
+
+export interface ApiResponseListPaymentHistoryResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: PaymentHistoryResponse[];
+}
+
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
@@ -394,4 +434,90 @@ export const useGetOrderStatus = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getGetOrderStatusMutationOptions(options), queryClient);
+    }
+
+export type getHistoryResponse200 = {
+  data: ApiResponseListPaymentHistoryResponse
+  status: 200
+}
+
+export type getHistoryResponseSuccess = (getHistoryResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getHistoryResponse = (getHistoryResponseSuccess)
+
+export const getGetHistoryUrl = () => {
+
+
+
+
+  return `/api/v1/payments/me`
+}
+
+/**
+ * 로그인한 메이커의 결제 내역을 최신순으로 조회합니다.<br>
+응답: 결제일시, 테스트ID, 테스트명, 테스트 상태, 대표 이미지 URL, 결제금액, 결제상태, 주문번호<br>
+테스트가 아직 발행되지 않은 결제 건은 testId/testTitle/testStatus/thumbnailUrl가 null입니다.
+
+ * @summary 결제 내역 조회
+ */
+export const getHistory = async ( options?: RequestInit): Promise<getHistoryResponse> => {
+
+  return kyMutator<getHistoryResponse>(getGetHistoryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getGetHistoryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getHistory>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof getHistory>>, TError,void, TContext> => {
+
+const mutationKey = ['getHistory'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getHistory>>, void> = () => {
+
+
+          return  getHistory(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetHistoryMutationResult = NonNullable<Awaited<ReturnType<typeof getHistory>>>
+
+    export type GetHistoryMutationError = ErrorType<unknown>
+
+    /**
+ * @summary 결제 내역 조회
+ */
+export const useGetHistory = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getHistory>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getHistory>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getGetHistoryMutationOptions(options), queryClient);
     }

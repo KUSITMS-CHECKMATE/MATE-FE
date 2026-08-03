@@ -1,5 +1,8 @@
 export { TestResultPage } from "./TestResultPage";
 export { ResultTabContent } from "./ResultTabContent";
+export { QuestionTabContent } from "./QuestionTabContent";
+export type { QuestionSummaryItem } from "./QuestionTabContent";
+export { QuestionPreviewOverlay } from "./QuestionPreviewOverlay";
 export { MultipleResultCard } from "./MultipleResultCard";
 export { SubjectiveResultCard } from "./SubjectiveResultCard";
 export { ScaleResultCard } from "./ScaleResultCard";
