@@ -56,6 +56,7 @@ export function FivesecSubjectiveAnswerPhase({
           value={text}
           placeholder={placeholder}
           height={200}
+          maxLength={200}
           onChange={(e) => onChange(e.target.value)}
         />
       </div>
