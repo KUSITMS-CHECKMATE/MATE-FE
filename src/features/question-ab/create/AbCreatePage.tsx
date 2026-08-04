@@ -9,6 +9,7 @@ import {
 import { FixedBottomCTA, ListRow } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
@@ -21,9 +22,10 @@ import type { AbRatio } from "@/features/question-ab/model/types";
 interface AbCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
-export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
+export function AbCreatePage({ questionId, onClose, registerCommit }: AbCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingAb = existing?.typeId === "AB_TEST" ? existing : null;
@@ -48,6 +50,20 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
     questionTitle.trim().length === 0 ||
     imageUrlA.trim().length === 0 ||
     imageUrlB.trim().length === 0;
+
+  const buildQuestionData = () => ({
+    typeId: "AB_TEST" as const,
+    title: questionTitle,
+    description: questionDescription,
+    imageUrlA,
+    imageUrlB,
+    ratio,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    if (isCompleteDisabled) return;
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const handleCamera = async () => {
     try {
@@ -143,14 +159,7 @@ export function AbCreatePage({ questionId, onClose }: AbCreatePageProps) {
             isCompleteDisabled={isCompleteDisabled}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "AB_TEST",
-                title: questionTitle,
-                description: questionDescription,
-                imageUrlA,
-                imageUrlB,
-                ratio,
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />

@@ -28,7 +28,6 @@ async function toMessage(error: unknown): Promise<string> {
  * 성공 토스트는 호출 측에서 상황에 맞게 표시한다(액세서리 버튼 vs "테스트 만들기" CTA).
  */
 export function useSaveDraft(draftId: number | undefined, onDraftCreated?: (draftId: number) => void) {
-  const form = useTestCreateForm();
   const { openToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -42,7 +41,7 @@ export function useSaveDraft(draftId: number | undefined, onDraftCreated?: (draf
         onDraftCreated?.(id);
       }
 
-      const payload = await buildDraftPayload(form);
+      const payload = await buildDraftPayload(useTestCreateForm.getState());
       try {
         await updateDraft(id, payload);
       } catch (e) {
