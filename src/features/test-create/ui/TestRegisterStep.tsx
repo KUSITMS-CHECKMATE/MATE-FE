@@ -34,11 +34,24 @@ interface TestRegisterStepProps {
   isQuestionTypeSheetOpen: boolean;
   onOpenQuestionTypeSheet: () => void;
   onCloseQuestionTypeSheet: () => void;
+  isManageSheetOpen: boolean;
+  onOpenManageSheet: () => void;
+  onCloseManageSheet: () => void;
 }
 
-export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGuideView, isQuestionTypeSheetOpen, onOpenQuestionTypeSheet, onCloseQuestionTypeSheet }: TestRegisterStepProps) {
+export function TestRegisterStep({
+  activeTab,
+  onTabChange,
+  onEnterQuestion,
+  onGuideView,
+  isQuestionTypeSheetOpen,
+  onOpenQuestionTypeSheet,
+  onCloseQuestionTypeSheet,
+  isManageSheetOpen,
+  onOpenManageSheet,
+  onCloseManageSheet,
+}: TestRegisterStepProps) {
   const form = useTestCreateForm();
-  const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -61,12 +74,12 @@ export function TestRegisterStep({ activeTab, onTabChange, onEnterQuestion, onGu
 
   const openEditSheet = () => {
     setPendingQuestions([...form.questions]);
-    setIsManageSheetOpen(true);
+    onOpenManageSheet();
   };
 
   const closeManageSheet = () => {
     setPendingQuestions([]);
-    setIsManageSheetOpen(false);
+    onCloseManageSheet();
   };
 
   const handleSaveManage = () => {
