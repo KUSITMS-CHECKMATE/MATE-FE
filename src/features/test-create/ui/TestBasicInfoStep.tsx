@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { TextField } from "@toss/tds-mobile";
 import { useTestCreateForm, type TestCreateFormStore } from "../model/useTestCreateForm";
@@ -62,6 +63,7 @@ export function TestBasicInfoStep({
   onBlur,
 }: TestBasicInfoStepProps) {
   const form = useTestCreateForm();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const categoryDisplayValue = form.categories
     .map((id) => CATEGORIES.find((c) => c.id === id)?.label)
@@ -98,13 +100,14 @@ export function TestBasicInfoStep({
           transition={{ duration: 0.2 }}
         >
           <TextField.Clearable
+            ref={inputRef}
             variant="line"
             hasError={false}
             label={STEP_CONFIG[subStep].label}
             labelOption="appear"
             value={getSubStepValue(subStep, form)}
             onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
-            onClear={() => setSubStepValue(subStep, form, "")}
+            onClear={() => { setSubStepValue(subStep, form, ""); inputRef.current?.focus(); }}
             placeholder={STEP_CONFIG[subStep].placeholder}
             help={STEP_CONFIG[subStep].help}
             onFocus={onFocus}
