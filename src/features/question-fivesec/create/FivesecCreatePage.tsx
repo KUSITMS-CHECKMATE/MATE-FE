@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   openCamera,
@@ -67,6 +67,7 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [editingChoiceId, setEditingChoiceId] = useState<string | null>(null);
   const [choiceNameDraft, setChoiceNameDraft] = useState("");
+  const choiceNameInputRef = useRef<HTMLInputElement>(null);
   const [pendingPhotoAction, setPendingPhotoAction] = useState<"camera" | "album" | null>(null);
   const [ratio, setRatio] = useState<AbRatio>(existingFivesec?.ratio ?? "9:16");
   const [isRatioSheetOpen, setIsRatioSheetOpen] = useState(false);
@@ -435,6 +436,7 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
         ctaContentGap={0}
       >
         <TextField.Clearable
+          ref={choiceNameInputRef}
           variant="line"
           hasError={false}
           label="선택지명"
@@ -443,7 +445,7 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
           autoFocus
           maxLength={17}
           onChange={(e) => setChoiceNameDraft(e.target.value)}
-          onClear={() => setChoiceNameDraft("")}
+          onClear={() => { setChoiceNameDraft(""); choiceNameInputRef.current?.focus(); }}
         />
       </BottomSheet>
 
