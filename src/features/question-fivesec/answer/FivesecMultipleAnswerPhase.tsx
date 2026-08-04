@@ -136,7 +136,6 @@ export function FivesecMultipleAnswerPhase({
                 placeholder=""
                 suffix=""
                 prefix=":"
-                maxLength={50}
                 onFocus={handleOtherFocus}
                 onBlur={handleOtherBlur}
                 onChange={handleOtherTextChange}

@@ -150,7 +150,6 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
               placeholder=""
               suffix=""
               prefix=":"
-              maxLength={50}
               onFocus={handleOtherFocus}
               onBlur={handleOtherBlur}
               onChange={handleOtherTextChange}
