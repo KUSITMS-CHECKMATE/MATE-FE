@@ -75,6 +75,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editPhase, setEditPhase] = useState<EditPhase | null>(null);
   const [isQuestionTypeSheetOpen, setIsQuestionTypeSheetOpen] = useState(false);
+  const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<{
     id: string;
     typeId: QuestionTypeId;
@@ -115,6 +116,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   const editPhaseRef = useRef(editPhase);
   const activeQuestionRef = useRef(activeQuestion);
   const isQuestionTypeSheetOpenRef = useRef(isQuestionTypeSheetOpen);
+  const isManageSheetOpenRef = useRef(isManageSheetOpen);
   const isPristineCreateStateRef = useRef(isPristineCreateState);
   useEffect(() => {
     funnelIsFirstRef.current = funnel.isFirst;
@@ -134,6 +136,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     isQuestionTypeSheetOpenRef.current = isQuestionTypeSheetOpen;
   }, [isQuestionTypeSheetOpen]);
   useEffect(() => {
+    isManageSheetOpenRef.current = isManageSheetOpen;
+  }, [isManageSheetOpen]);
+  useEffect(() => {
     isPristineCreateStateRef.current = isPristineCreateState;
   }, [isPristineCreateState]);
 
@@ -149,6 +154,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
             setShowGuide(false);
           } else if (isQuestionTypeSheetOpenRef.current) {
             setIsQuestionTypeSheetOpen(false);
+          } else if (isManageSheetOpenRef.current) {
+            setIsManageSheetOpen(false);
           } else if (funnelIsFirstRef.current) {
             if (isPristineCreateStateRef.current) {
               exitUnsubscribeRef.current?.();
@@ -402,6 +409,9 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
             isQuestionTypeSheetOpen={isQuestionTypeSheetOpen}
             onOpenQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(true)}
             onCloseQuestionTypeSheet={() => setIsQuestionTypeSheetOpen(false)}
+            isManageSheetOpen={isManageSheetOpen}
+            onOpenManageSheet={() => setIsManageSheetOpen(true)}
+            onCloseManageSheet={() => setIsManageSheetOpen(false)}
           />
         ) : funnel.step === "image" ? (
           <motion.div key="image" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
