@@ -7,19 +7,21 @@ import { TreeCreateBottomCTA } from "./TreeCreateBottomCTA";
 import { TreeCreateOptionSection } from "./TreeCreateOptionSection";
 import { TreeNodeAddSheet } from "./TreeNodeAddSheet";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 
 interface TreeCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
 type NodeSheetMode =
   | { kind: "create-root" }
   | { kind: "rename"; nodeId: string; initialName: string };
 
-export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
+export function TreeCreatePage({ questionId, onClose, registerCommit }: TreeCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingTree = existing?.typeId === "TREE_TEST" ? existing : null;
@@ -43,6 +45,18 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
     questionTitle.trim().length === 0 ||
     nodes.length === 0 ||
     nodes.some((node) => node.children.length === 0);
+
+  const buildQuestionData = () => ({
+    typeId: "TREE_TEST" as const,
+    title: questionTitle,
+    description: questionDescription,
+    nodes,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    if (isCompleteDisabled) return;
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const findNode = (list: TreeNodeItem[], nodeId: string): TreeNodeItem | null => {
     for (const node of list) {
@@ -151,12 +165,7 @@ export function TreeCreatePage({ questionId, onClose }: TreeCreatePageProps) {
             isCompleteDisabled={isCompleteDisabled}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "TREE_TEST",
-                title: questionTitle,
-                description: questionDescription,
-                nodes,
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />

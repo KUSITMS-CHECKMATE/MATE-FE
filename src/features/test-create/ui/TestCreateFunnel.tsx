@@ -20,6 +20,7 @@ import { useFunnel } from "../model/useFunnel";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 import { useSaveDraft } from "../model/useSaveDraft";
 import { loadDraftIntoForm } from "../model/draftMapper";
+import type { RegisterQuestionCommit } from "../model/usePendingQuestionCommit";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { getDraft } from "@/shared/api/generated/testDraft";
 import { ROUTES } from "@/shared/constants/routes";
@@ -101,6 +102,11 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     isCategorySheetOpen || editPhase !== null || activeQuestion !== null || showGuide || isQuestionTypeSheetOpen;
   useScrollLock(isOverlayOpen);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 임시저장 시 현재 열려 있는 질문 편집 화면의 "완료하기 전" 입력을 함께 커밋하기 위한 참조
+  const pendingQuestionCommitRef = useRef<(() => void) | null>(null);
+  const registerQuestionCommit: RegisterQuestionCommit = useCallback((commit) => {
+    pendingQuestionCommitRef.current = commit;
+  }, []);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
   const funnelIsFirstRef = useRef(funnel.isFirst);
   const funnelPrevRef = useRef(funnel.prev);
@@ -121,6 +127,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   }, [editPhase]);
   useEffect(() => {
     activeQuestionRef.current = activeQuestion;
+    if (!activeQuestion) pendingQuestionCommitRef.current = null;
   }, [activeQuestion]);
   useEffect(() => {
     isQuestionTypeSheetOpenRef.current = isQuestionTypeSheetOpen;
@@ -234,6 +241,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   // 액세서리 "임시저장" 버튼: 내용을 저장하고 완료 토스트 표시(화면 이동 없음)
   const handleTempSave = async () => {
     if (isSaving) return;
+    pendingQuestionCommitRef.current?.();
     try {
       await saveDraft.mutateAsync();
       showSavedToast();
@@ -445,13 +453,13 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         {editPhase === "service" && <ServiceDescriptionEditPage key="edit-service" onClose={() => setEditPhase(null)} />}
         {editPhase === "image" && <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />}
         {showGuide && <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />}
-        {activeQuestion?.typeId === "OBJECTIVE" && <MultipleCreatePage key="question-multiple" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "SUBJECTIVE" && <SubjectiveCreatePage key="question-subjective" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "SCALE" && <ScaleCreatePage key="question-scale" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "AB_TEST" && <AbCreatePage key="question-ab" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "CARD_SORTING" && <CardSortCreatePage key="question-card" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "TREE_TEST" && <TreeCreatePage key="question-tree" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
-        {activeQuestion?.typeId === "FIVE_SECOND" && <FivesecCreatePage key="question-fivesec" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} />}
+        {activeQuestion?.typeId === "OBJECTIVE" && <MultipleCreatePage key="question-multiple" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "SUBJECTIVE" && <SubjectiveCreatePage key="question-subjective" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "SCALE" && <ScaleCreatePage key="question-scale" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "AB_TEST" && <AbCreatePage key="question-ab" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "CARD_SORTING" && <CardSortCreatePage key="question-card" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "TREE_TEST" && <TreeCreatePage key="question-tree" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
+        {activeQuestion?.typeId === "FIVE_SECOND" && <FivesecCreatePage key="question-fivesec" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
       </AnimatePresence>
 
       <ConfirmDialog

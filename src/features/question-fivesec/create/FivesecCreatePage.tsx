@@ -24,6 +24,7 @@ import { adaptive } from "@toss/tds-colors";
 import type { MultipleChoiceItem } from "@/features/question-multiple/model/types";
 import { FivesecAnswerPage } from "@/features/question-fivesec/answer/FivesecAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { FivesecMultipleChoiceSection } from "./FivesecMultipleChoiceSection";
 import { AbRatioSelectSheet } from "@/features/question-ab/create/AbRatioSelectSheet";
 import { FivesecAnswerTypeSheet } from "./FivesecAnswerTypeSheet";
@@ -33,9 +34,10 @@ import { useResolvedImageSrc } from "@/shared/hooks/useResolvedImageSrc";
 interface FivesecCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
-export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProps) {
+export function FivesecCreatePage({ questionId, onClose, registerCommit }: FivesecCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingFivesec = existing?.typeId === "FIVE_SECOND" ? existing : null;
@@ -79,6 +81,27 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
   const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled =
     !hasTitle || !imageUrl || (answerType === "multiple" && choices.length < 2);
+
+  const buildQuestionData = () => ({
+    typeId: "FIVE_SECOND" as const,
+    title,
+    description,
+    imageUrl,
+    answerExample: "",
+    answerType,
+    isMultipleAnswer: answerType === "multiple",
+    isOtherInputEnabled,
+    isMultiSelectEnabled,
+    choices,
+    minSelectCount,
+    maxSelectCount,
+    ratio,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    if (isCompleteDisabled) return;
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const openChoiceCreateSheet = () => {
     setEditingChoiceId(null);
@@ -336,21 +359,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
               <CTAButton
                 disabled={isCompleteDisabled}
                 onClick={() => {
-                  updateQuestion(questionId, {
-                    typeId: "FIVE_SECOND",
-                    title,
-                    description,
-                    imageUrl,
-                    answerExample: "",
-                    answerType,
-                    isMultipleAnswer: answerType === "multiple",
-                    isOtherInputEnabled,
-                    isMultiSelectEnabled,
-                    choices,
-                    minSelectCount,
-                    maxSelectCount,
-                    ratio,
-                  });
+                  updateQuestion(questionId, buildQuestionData());
                   onClose();
                 }}
               >
