@@ -50,7 +50,7 @@ export function TestCreateGuideBottomSheet({ open, onClose }: Props) {
         contents={
           <ListRow.Texts
             type="2RowTypeA"
-            top={<div className="whitespace-pre-line">{'임시 저장한 테스트는\n테스트 탭에서 확인할 수 있어요'}</div>}
+            top={<div className="whitespace-pre-line font-bold">{'임시 저장한 테스트는\n테스트 탭에서 확인할 수 있어요'}</div>}
             topProps={{ color: adaptive.grey800, fontWeight: 'bold' }}
             bottom="언제든 이어서 등록해요"
             bottomProps={{ color: adaptive.grey600 }}
