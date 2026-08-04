@@ -65,6 +65,7 @@ export function ScaleLabelEditSheet({
         suffix=""
         prefix=""
         maxLength={15}
+        autoFocus
         onChange={(e) => setValue(e.target.value)}
         onClear={() => setValue("")}
       />
