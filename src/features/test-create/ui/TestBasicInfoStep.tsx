@@ -38,6 +38,16 @@ function setSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore, value
   }
 }
 
+function handleSubStepChange(
+  subStep: Exclude<BasicSubStep, "category">,
+  form: TestCreateFormStore,
+  value: string,
+) {
+  const { maxLength } = STEP_CONFIG[subStep];
+  if (maxLength && value.length > maxLength) return;
+  setSubStepValue(subStep, form, value);
+}
+
 interface TestBasicInfoStepProps {
   subStep: BasicSubStep;
   onOpenCategorySheet: () => void;
@@ -93,11 +103,7 @@ export function TestBasicInfoStep({
             label={STEP_CONFIG[subStep].label}
             labelOption="appear"
             value={getSubStepValue(subStep, form)}
-            onChange={(e) => {
-              const config = STEP_CONFIG[subStep];
-              if (config.maxLength && e.target.value.length > config.maxLength) return;
-              setSubStepValue(subStep, form, e.target.value);
-            }}
+            onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
             onClear={() => setSubStepValue(subStep, form, "")}
             placeholder={STEP_CONFIG[subStep].placeholder}
             help={STEP_CONFIG[subStep].help}
@@ -128,7 +134,7 @@ export function TestBasicInfoStep({
             label={STEP_CONFIG[s].label}
             labelOption="sustain"
             value={getSubStepValue(s, form)}
-            onChange={(e) => setSubStepValue(s, form, e.target.value)}
+            onChange={(e) => handleSubStepChange(s, form, e.target.value)}
           />
         );
       })}
