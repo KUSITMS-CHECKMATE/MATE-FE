@@ -65,7 +65,6 @@ export function CardSortCreatePage({ questionId, onClose, registerCommit }: Card
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 

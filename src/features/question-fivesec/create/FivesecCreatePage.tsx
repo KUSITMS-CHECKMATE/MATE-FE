@@ -99,7 +99,6 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 

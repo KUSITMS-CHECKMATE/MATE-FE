@@ -54,7 +54,6 @@ export function TreeCreatePage({ questionId, onClose, registerCommit }: TreeCrea
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 

@@ -61,7 +61,6 @@ export function AbCreatePage({ questionId, onClose, registerCommit }: AbCreatePa
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 
