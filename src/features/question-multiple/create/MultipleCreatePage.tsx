@@ -61,7 +61,6 @@ export function MultipleCreatePage({ questionId, onClose, registerCommit }: Mult
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 

@@ -21,6 +21,7 @@ import { useTestCreateForm } from "../model/useTestCreateForm";
 import { useSaveDraft } from "../model/useSaveDraft";
 import { loadDraftIntoForm } from "../model/draftMapper";
 import type { RegisterQuestionCommit } from "../model/usePendingQuestionCommit";
+import { isQuestionDataComplete } from "../model/types";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { getDraft } from "@/shared/api/generated/testDraft";
 import { ROUTES } from "@/shared/constants/routes";
@@ -380,7 +381,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         isSubmitDisabled={
           !isAllComplete ||
           form.questions.length === 0 ||
-          !form.questions.every((q) => !!q.data) ||
+          !form.questions.every((q) => isQuestionDataComplete(q.data)) ||
           isSaving
         }
         submitLabel="테스트 만들기"

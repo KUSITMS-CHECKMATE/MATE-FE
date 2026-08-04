@@ -129,7 +129,7 @@ async function resolveImageKey(value: string | undefined): Promise<string | unde
 }
 
 async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestItem | null> {
-  if (!question.data) return null;
+  if (!question.data) return { type: question.typeId } as QuestionRequestItem;
   const data = question.data;
 
   switch (data.typeId) {

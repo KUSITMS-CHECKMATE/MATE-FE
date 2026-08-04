@@ -58,7 +58,6 @@ export function ScaleCreatePage({ questionId, onClose, registerCommit }: ScaleCr
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 

@@ -48,7 +48,6 @@ export function SubjectiveCreatePage({ questionId, onClose, registerCommit }: Su
   });
 
   usePendingQuestionCommit(registerCommit, () => {
-    if (isCompleteDisabled) return;
     updateQuestion(questionId, buildQuestionData());
   });
 
