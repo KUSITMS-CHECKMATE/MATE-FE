@@ -15,7 +15,6 @@ import { Route as MyIndexRouteImport } from './routes/my/index'
 import { Route as InterestIndexRouteImport } from './routes/interest/index'
 import { Route as DiscoveryIndexRouteImport } from './routes/discovery/index'
 import { Route as TestPaymentRouteImport } from './routes/test/payment'
-import { Route as TestMockResultRouteImport } from './routes/test/mock-result'
 import { Route as TestCreateRouteImport } from './routes/test/create'
 import { Route as TestTestIdRouteImport } from './routes/test/$testId'
 import { Route as MyPrivacyRouteImport } from './routes/my/privacy'
@@ -61,11 +60,6 @@ const DiscoveryIndexRoute = DiscoveryIndexRouteImport.update({
 const TestPaymentRoute = TestPaymentRouteImport.update({
   id: '/test/payment',
   path: '/test/payment',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestMockResultRoute = TestMockResultRouteImport.update({
-  id: '/test/mock-result',
-  path: '/test/mock-result',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestCreateRoute = TestCreateRouteImport.update({
@@ -162,7 +156,6 @@ export interface FileRoutesByFullPath {
   '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
-  '/test/mock-result': typeof TestMockResultRoute
   '/test/payment': typeof TestPaymentRoute
   '/discovery/': typeof DiscoveryIndexRoute
   '/interest/': typeof InterestIndexRoute
@@ -185,7 +178,6 @@ export interface FileRoutesByTo {
   '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
-  '/test/mock-result': typeof TestMockResultRoute
   '/test/payment': typeof TestPaymentRoute
   '/discovery': typeof DiscoveryIndexRoute
   '/interest': typeof InterestIndexRoute
@@ -211,7 +203,6 @@ export interface FileRoutesById {
   '/my/privacy': typeof MyPrivacyRoute
   '/test/$testId': typeof TestTestIdRoute
   '/test/create': typeof TestCreateRoute
-  '/test/mock-result': typeof TestMockResultRoute
   '/test/payment': typeof TestPaymentRoute
   '/discovery/': typeof DiscoveryIndexRoute
   '/interest/': typeof InterestIndexRoute
@@ -238,7 +229,6 @@ export interface FileRouteTypes {
     | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
-    | '/test/mock-result'
     | '/test/payment'
     | '/discovery/'
     | '/interest/'
@@ -261,7 +251,6 @@ export interface FileRouteTypes {
     | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
-    | '/test/mock-result'
     | '/test/payment'
     | '/discovery'
     | '/interest'
@@ -286,7 +275,6 @@ export interface FileRouteTypes {
     | '/my/privacy'
     | '/test/$testId'
     | '/test/create'
-    | '/test/mock-result'
     | '/test/payment'
     | '/discovery/'
     | '/interest/'
@@ -312,7 +300,6 @@ export interface RootRouteChildren {
   MyPrivacyRoute: typeof MyPrivacyRoute
   TestTestIdRoute: typeof TestTestIdRoute
   TestCreateRoute: typeof TestCreateRoute
-  TestMockResultRoute: typeof TestMockResultRoute
   TestPaymentRoute: typeof TestPaymentRoute
   DiscoveryIndexRoute: typeof DiscoveryIndexRoute
   InterestIndexRoute: typeof InterestIndexRoute
@@ -364,13 +351,6 @@ declare module '@tanstack/react-router' {
       path: '/test/payment'
       fullPath: '/test/payment'
       preLoaderRoute: typeof TestPaymentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test/mock-result': {
-      id: '/test/mock-result'
-      path: '/test/mock-result'
-      fullPath: '/test/mock-result'
-      preLoaderRoute: typeof TestMockResultRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test/create': {
@@ -527,7 +507,6 @@ const rootRouteChildren: RootRouteChildren = {
   MyPrivacyRoute: MyPrivacyRoute,
   TestTestIdRoute: TestTestIdRoute,
   TestCreateRoute: TestCreateRoute,
-  TestMockResultRoute: TestMockResultRoute,
   TestPaymentRoute: TestPaymentRoute,
   DiscoveryIndexRoute: DiscoveryIndexRoute,
   InterestIndexRoute: InterestIndexRoute,
