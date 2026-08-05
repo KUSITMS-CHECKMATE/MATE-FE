@@ -1,15 +1,47 @@
-import type { QuestionResult } from "./types";
+import type { CardSortResultCategory, MultipleResultOption, QuestionResult } from "./types";
 import type { ParticipateQuestion } from "@/features/test-participate/model/types";
+import { getCompetitionRanks, rankIcon } from "./rank";
+
+// count만 넣으면 percentage/isHighlight가 자동 계산된다 (실제 mapReportItemToQuestionResult와 동일한 규칙)
+function buildOptions(entries: { label: string; count: number }[]): MultipleResultOption[] {
+  const total = entries.reduce((sum, e) => sum + e.count, 0) || 1;
+  const max = Math.max(...entries.map((e) => e.count));
+  return entries.map((e) => ({
+    label: e.label,
+    count: e.count,
+    percentage: Math.round((e.count / total) * 100),
+    isHighlight: e.count === max,
+  }));
+}
+
+// count만 넣으면 등수(rank)/percentage/isHighlight가 동점 규칙에 맞게 자동 계산된다
+function buildCardSortCategory(
+  name: string,
+  entries: { label: string; count: number }[],
+): CardSortResultCategory {
+  const total = entries.reduce((sum, e) => sum + e.count, 0) || 1;
+  const ranks = getCompetitionRanks(entries.map((e) => e.count));
+  return {
+    name,
+    items: entries.map((e, i) => ({
+      rank: rankIcon(ranks[i]),
+      label: e.label,
+      count: e.count,
+      percentage: Math.round((e.count / total) * 100),
+      isHighlight: ranks[i] === 1,
+    })),
+  };
+}
 
 export const MOCK_RESULTS: QuestionResult[] = [
   {
     type: "OBJECTIVE",
     title: "전반적인 사용 경험에 만족하시나요? (동점 케이스)",
-    options: [
-      { label: "프로필", count: 22, percentage: 33, isHighlight: true },
-      { label: "설정", count: 20, percentage: 30, isHighlight: true },
-      { label: "홈", count: 20, percentage: 30, isHighlight: false },
-    ],
+    options: buildOptions([
+      { label: "프로필", count: 22 },
+      { label: "설정", count: 20 },
+      { label: "홈", count: 20 },
+    ]),
   },
   {
     type: "SUBJECTIVE",
@@ -40,90 +72,40 @@ export const MOCK_RESULTS: QuestionResult[] = [
     type: "CARD_SORTING",
     title: "전반적인 사용 경험에 만족하시나요? (동점 케이스)",
     categories: [
-      {
-        name: "상의",
-        items: [
-          {
-            rank: "icon-step-1-mono",
-            label: "티셔츠",
-            count: 20,
-            percentage: 36,
-            isHighlight: true,
-          },
-          {
-            rank: "icon-step-2-mono",
-            label: "반팔티",
-            count: 20,
-            percentage: 36,
-            isHighlight: false,
-          },
-          {
-            rank: "icon-step-3-mono",
-            label: "크롭티",
-            count: 15,
-            percentage: 27,
-            isHighlight: false,
-          },
-        ],
-      },
-      {
-        name: "하의",
-        items: [
-          {
-            rank: "icon-step-1-mono",
-            label: "청바지",
-            count: 32,
-            percentage: 58,
-            isHighlight: true,
-          },
-          {
-            rank: "icon-step-2-mono",
-            label: "반바지",
-            count: 15,
-            percentage: 27,
-            isHighlight: false,
-          },
-        ],
-      },
-      {
-        name: "신발",
-        items: [
-          {
-            rank: "icon-step-1-mono",
-            label: "운동화",
-            count: 32,
-            percentage: 58,
-            isHighlight: true,
-          },
-          {
-            rank: "icon-step-2-mono",
-            label: "슬리퍼",
-            count: 15,
-            percentage: 27,
-            isHighlight: false,
-          },
-        ],
-      },
+      buildCardSortCategory("상의", [
+        { label: "티셔츠", count: 20 },
+        { label: "반팔티", count: 20 },
+        { label: "크롭티", count: 20 },
+      ]),
+      buildCardSortCategory("하의", [
+        { label: "청바지", count: 32 },
+        { label: "반바지", count: 15 },
+        { label: "츄리닝", count: 15 },
+      ]),
+      buildCardSortCategory("신발", [
+        { label: "운동화", count: 32 },
+        { label: "슬리퍼", count: 15 },
+      ]),
     ],
   },
   {
     type: "TREE_TEST",
     title: "내 프로필을 수정하려면 어디로 가야 할까요?",
-    paths: [
-      { label: "프로필", count: 32, percentage: 58, isHighlight: true },
-      { label: "설정", count: 15, percentage: 27, isHighlight: false },
-      { label: "홈", count: 8, percentage: 15, isHighlight: false },
-    ],
+    paths: buildOptions([
+      { label: "프로필", count: 32 },
+      { label: "설정", count: 15 },
+      { label: "홈", count: 8 },
+    ]),
   },
   {
     type: "FIVE_SECOND",
     title: "5초동안 보고 기억에 남는것은?",
     imageUrl: undefined,
-    answers: [
-      { label: "프로필", count: 32, percentage: 58, isHighlight: true },
-      { label: "설정", count: 15, percentage: 27, isHighlight: false },
-      { label: "홈", count: 8, percentage: 15, isHighlight: false },
-    ],
+    answers: buildOptions([
+      { label: "프로필", count: 32 },
+      { label: "설정", count: 15 },
+      { label: "홈", count: 8 },
+    ]),
   },
 ];
 
