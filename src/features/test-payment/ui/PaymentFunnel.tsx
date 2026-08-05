@@ -2,7 +2,22 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { graniteEvent } from "@apps-in-toss/web-framework";
 import { adaptive } from "@toss/tds-colors";
-import { Asset, BottomInfo, Border, CTAButton, FixedBottomCTA, List, ListHeader, ListRow, Post, Spacing, Text, TextField, Top, useToast } from "@toss/tds-mobile";
+import {
+  Asset,
+  BottomInfo,
+  Border,
+  CTAButton,
+  FixedBottomCTA,
+  List,
+  ListHeader,
+  ListRow,
+  Post,
+  Spacing,
+  Text,
+  TextField,
+  Top,
+  useToast,
+} from "@toss/tds-mobile";
 import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW, parseWonAmount } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
@@ -17,7 +32,16 @@ import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
 
-const DownArrowIcon = () => <Asset.Icon frameShape={Asset.frameShape.CleanW24} backgroundColor="transparent" name="icon-arrow-down-mono" color={adaptive.grey400} aria-hidden={true} ratio="1/1" />;
+const DownArrowIcon = () => (
+  <Asset.Icon
+    frameShape={Asset.frameShape.CleanW24}
+    backgroundColor="transparent"
+    name="icon-arrow-down-mono"
+    color={adaptive.grey400}
+    aria-hidden={true}
+    ratio="1/1"
+  />
+);
 
 export function PaymentFunnel() {
   const navigate = useNavigate();
@@ -124,16 +148,12 @@ export function PaymentFunnel() {
   }
 
   if (step === "complete") {
-    return (
-      <PaymentCompleteStep onClose={() => navigate({ to: ROUTES.TEST, replace: true })} />
-    );
+    return <PaymentCompleteStep onClose={() => navigate({ to: ROUTES.TEST, replace: true })} />;
   }
 
   if (step === "app-market-verification-failed" || step === "toss-server-verification-failed") {
     if (verificationFailureCount >= 4) {
-      return (
-        <PaymentGiveUpStep onConfirm={() => navigate({ to: ROUTES.TEST, replace: true })} />
-      );
+      return <PaymentGiveUpStep onConfirm={() => navigate({ to: ROUTES.TEST, replace: true })} />;
     }
     return (
       <PaymentSystemErrorStep
@@ -156,11 +176,17 @@ export function PaymentFunnel() {
     );
   }
 
-  const iapSku = testerCount != null && rewardAmount != null ? skuMap[rewardAmount]?.[testerCount] : undefined;
-  const iapProduct = iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
-  const actualTotal = iapProduct?.displayAmount != null ? parseWonAmount(iapProduct.displayAmount) : undefined;
+  const iapSku =
+    testerCount != null && rewardAmount != null ? skuMap[rewardAmount]?.[testerCount] : undefined;
+  const iapProduct =
+    iapSku != null ? iapProducts?.find((product) => product.sku === iapSku) : undefined;
+  const actualTotal =
+    iapProduct?.displayAmount != null ? parseWonAmount(iapProduct.displayAmount) : undefined;
 
-  const payment = testerCount != null && rewardAmount != null ? calcPayment(testerCount, rewardAmount, actualTotal) : null;
+  const payment =
+    testerCount != null && rewardAmount != null
+      ? calcPayment(testerCount, rewardAmount, actualTotal)
+      : null;
   const displayTotal = iapProduct?.displayAmount ?? (payment != null ? toKRW(payment.total) : null);
 
   return (
@@ -225,7 +251,11 @@ export function PaymentFunnel() {
                 rightAlignment="center"
                 titleWidthRatio={0.6}
                 title={
-                  <ListHeader.TitleParagraph color={adaptive.grey800} fontWeight="bold" typography="t4">
+                  <ListHeader.TitleParagraph
+                    color={adaptive.grey800}
+                    fontWeight="bold"
+                    typography="t4"
+                  >
                     결제 금액
                   </ListHeader.TitleParagraph>
                 }
@@ -288,17 +318,18 @@ export function PaymentFunnel() {
                   <ListRow.Texts
                     type="1RowTypeA"
                     top="결제 합계"
-                    topProps={{ color: adaptive.grey900, fontWeight: "bold" }}
+                    topProps={{ color: adaptive.grey700 }}
                   />
                 }
                 right={
                   <ListRow.Texts
                     type="Right1RowTypeA"
                     top={toKRW(payment.total)}
-                    topProps={{ color: adaptive.grey900, fontWeight: "bold" }}
+                    topProps={{ color: adaptive.grey700 }}
                   />
                 }
               />
+              <Spacing size={16} />
             </List>
             <BottomInfo>
               <Post.H4 paddingBottom={16}>환불 정책</Post.H4>
