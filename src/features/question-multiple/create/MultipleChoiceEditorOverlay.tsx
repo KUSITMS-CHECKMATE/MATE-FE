@@ -24,7 +24,6 @@ export function MultipleChoiceEditorOverlay({
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [isFocused, setIsFocused] = useState(false);
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const { isPhotoSheetOpen, openPhotoSheet, closePhotoSheet, handleCamera, handleAlbum } =
     useQuestionImageUpload(setImageUrl);
@@ -56,7 +55,6 @@ export function MultipleChoiceEditorOverlay({
     >
       <main className="flex flex-1 flex-col bg-white">
         <TextField.Clearable
-          ref={inputRef}
           variant="line"
           label="어떤 선택지를 추가할까요?"
           labelOption="sustain"
@@ -65,7 +63,7 @@ export function MultipleChoiceEditorOverlay({
           maxLength={17}
           autoFocus
           onChange={(e) => setChoiceName(e.target.value)}
-          onClear={() => { setChoiceName(""); inputRef.current?.focus(); }}
+          onClear={() => setChoiceName("")}
           onFocus={handleFocus}
           onBlur={handleBlur}
         />

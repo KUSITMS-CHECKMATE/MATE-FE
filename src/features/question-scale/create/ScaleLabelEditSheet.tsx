@@ -18,7 +18,6 @@ export function ScaleLabelEditSheet({
 }: ScaleLabelEditSheetProps) {
   const [value, setValue] = useState(initialValue);
   const initialValueRef = useRef(initialValue);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     initialValueRef.current = initialValue;
@@ -57,7 +56,6 @@ export function ScaleLabelEditSheet({
       ctaContentGap={0}
     >
       <TextField.Clearable
-        ref={inputRef}
         variant="line"
         hasError={false}
         label={label}
@@ -66,10 +64,8 @@ export function ScaleLabelEditSheet({
         placeholder="라벨링을 입력해주세요"
         suffix=""
         prefix=""
-        maxLength={15}
-        autoFocus
         onChange={(e) => setValue(e.target.value)}
-        onClear={() => { setValue(""); inputRef.current?.focus(); }}
+        onClear={() => setValue("")}
       />
     </BottomSheet>
     </>

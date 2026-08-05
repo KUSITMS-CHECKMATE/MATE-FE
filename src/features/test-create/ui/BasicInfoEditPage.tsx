@@ -19,8 +19,6 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
   });
   const [isCategorySheetOpen, setIsCategorySheetOpen] = useState(false);
   const categorySheetSnapshot = useRef<CategoryId[]>([]);
-  const nameInputRef = useRef<HTMLInputElement>(null);
-  const summaryInputRef = useRef<HTMLInputElement>(null);
 
   const categoryDisplayValue = form.categories
     .map((id) => CATEGORIES.find((c) => c.id === id)?.label)
@@ -63,21 +61,15 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
       />
       <main className="flex flex-col flex-1">
         <TextField.Clearable
-          ref={nameInputRef}
           variant="line"
           label="테스트 이름"
           labelOption="sustain"
           value={form.name}
-          onChange={(e) => {
-            if (e.target.value.length > 17) return;
-            form.setName(e.target.value);
-          }}
-          onClear={() => { form.setName(""); nameInputRef.current?.focus(); }}
+          onChange={(e) => form.setName(e.target.value)}
+          onClear={() => form.setName("")}
           placeholder="테스트 이름"
-          help="최대 17자"
         />
         <TextField.Clearable
-          ref={summaryInputRef}
           variant="line"
           label="테스트 한줄 소개"
           labelOption="sustain"
@@ -86,7 +78,7 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
             if (e.target.value.length > 60) return;
             form.setSummary(e.target.value);
           }}
-          onClear={() => { form.setSummary(""); summaryInputRef.current?.focus(); }}
+          onClear={() => form.setSummary("")}
           placeholder="테스트 한줄 소개"
           help="최대 60자"
         />

@@ -110,7 +110,6 @@ async function uploadBase64(dataUri: string): Promise<string | undefined> {
   await ky.put(uploadUrl, {
     body: blob,
     headers: { "x-ms-blob-type": "BlockBlob" },
-    timeout: 30000,
   });
 
   return fileKey;
@@ -129,7 +128,7 @@ async function resolveImageKey(value: string | undefined): Promise<string | unde
 }
 
 async function mapQuestion(question: PendingQuestion): Promise<QuestionRequestItem | null> {
-  if (!question.data) return { type: question.typeId } as QuestionRequestItem;
+  if (!question.data) return null;
   const data = question.data;
 
   switch (data.typeId) {

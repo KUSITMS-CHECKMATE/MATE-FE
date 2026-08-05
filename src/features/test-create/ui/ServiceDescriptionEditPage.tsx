@@ -24,7 +24,6 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
     description: form.description,
   });
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const serviceNameInputRef = useRef<HTMLInputElement>(null);
 
   const handleCancel = () => {
     form.setServiceName(snapshot.current.serviceName);
@@ -73,13 +72,12 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
       />
       <main className="flex flex-col flex-1">
         <TextField.Clearable
-          ref={serviceNameInputRef}
           variant="line"
           label="서비스 이름"
           value={form.serviceName}
           placeholder="서비스 이름"
           onChange={handleServiceNameChange}
-          onClear={() => { form.setServiceName(""); serviceNameInputRef.current?.focus(); }}
+          onClear={() => form.setServiceName("")}
           enterKeyHint="done"
         />
         <TextArea variant="line" label="서비스 소개" value={form.description} placeholder="서비스 소개" onChange={handleDescriptionChange} enterKeyHint="done" />

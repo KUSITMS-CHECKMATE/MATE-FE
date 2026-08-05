@@ -5,7 +5,8 @@ import type { QuestionAnswerProps } from "@/features/test-participate/model/type
 type Props = QuestionAnswerProps<"SUBJECTIVE">;
 
 export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
-  const { title, description, imageUrl, placeholder } = question.data;
+  const { title, description, imageUrl, placeholder, maxLength } =
+    question.data;
 
   const text = answer?.text ?? "";
 
@@ -33,6 +34,7 @@ export function SubjectiveAnswerPage({ question, answer, onChange }: Props) {
         value={text}
         placeholder={placeholder || "답변을 입력해주세요"}
         height={200}
+        maxLength={maxLength ?? undefined}
         onChange={(e) => onChange({ type: "SUBJECTIVE", text: e.target.value })}
       />
     </div>

@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Top, TextArea, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
@@ -21,7 +20,6 @@ function isWithinLimit(value: string, maxWithSpace: number, maxWithoutSpace: num
 
 export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, onServiceNameConfirm }: TestDescriptionStepProps) {
   const { serviceName, setServiceName, description, setDescription } = useTestCreateForm();
-  const serviceNameInputRef = useRef<HTMLInputElement>(null);
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -71,14 +69,13 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
         />
       ) : null}
       <TextField.Clearable
-        ref={serviceNameInputRef}
         variant="line"
         hasError={false}
         label="서비스 이름"
         value={serviceName}
         placeholder="서비스 이름"
         onChange={handleServiceNameChange}
-        onClear={() => { setServiceName(""); serviceNameInputRef.current?.focus(); }}
+        onClear={() => setServiceName("")}
         onFocus={onFocus}
         onBlur={onBlur}
         onKeyDown={(e) => { if (e.key === "Enter") onServiceNameConfirm?.(); }}

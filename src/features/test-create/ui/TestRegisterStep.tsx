@@ -34,9 +34,6 @@ interface TestRegisterStepProps {
   isQuestionTypeSheetOpen: boolean;
   onOpenQuestionTypeSheet: () => void;
   onCloseQuestionTypeSheet: () => void;
-  isManageSheetOpen: boolean;
-  onOpenManageSheet: () => void;
-  onCloseManageSheet: () => void;
 }
 
 export function TestRegisterStep({
@@ -47,11 +44,9 @@ export function TestRegisterStep({
   isQuestionTypeSheetOpen,
   onOpenQuestionTypeSheet,
   onCloseQuestionTypeSheet,
-  isManageSheetOpen,
-  onOpenManageSheet,
-  onCloseManageSheet,
 }: TestRegisterStepProps) {
   const form = useTestCreateForm();
+  const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
   const [pendingQuestions, setPendingQuestions] = useState<PendingQuestion[]>([]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -74,12 +69,12 @@ export function TestRegisterStep({
 
   const openEditSheet = () => {
     setPendingQuestions([...form.questions]);
-    onOpenManageSheet();
+    setIsManageSheetOpen(true);
   };
 
   const closeManageSheet = () => {
     setPendingQuestions([]);
-    onCloseManageSheet();
+    setIsManageSheetOpen(false);
   };
 
   const handleSaveManage = () => {
@@ -98,7 +93,7 @@ export function TestRegisterStep({
         </div>
 
         {activeTab === "questions" ? (
-          <div className="flex flex-col flex-1 mb-3">
+          <div className="flex flex-col flex-1 mt-6 mb-3">
             <ListRow
               as="button"
               className="text-left"
@@ -130,16 +125,6 @@ export function TestRegisterStep({
 
             {hasQuestions ? (
               <>
-                <ListHeader
-                  size="small"
-                  horizontalPadding="medium"
-                  verticalPadding="medium"
-                  descriptionPosition="bottom"
-                  rightAlignment="center"
-                  a11yRightReflow={false}
-                  titleWidthRatio={0.6}
-                  title={<ListHeader.TitleParagraph color={adaptive.grey600}>질문 목록</ListHeader.TitleParagraph>}
-                />
                 {form.questions.map((q) => {
                   const type = QUESTION_TYPES.find((t) => t.id === q.typeId);
                   if (!type) return null;
@@ -341,7 +326,12 @@ export function TestRegisterStep({
 
       <AnimatePresence>
         {isQuestionTypeSheetOpen && (
-          <QuestionTypeSelectSheet existingCount={form.questions.length} onConfirm={handleConfirmQuestionTypes} onCancel={onCloseQuestionTypeSheet} onShowGuide={onGuideView} />
+          <QuestionTypeSelectSheet
+            existingCount={form.questions.length}
+            onConfirm={handleConfirmQuestionTypes}
+            onCancel={onCloseQuestionTypeSheet}
+            onShowGuide={onGuideView}
+          />
         )}
         {isManageSheetOpen && (
           <QuestionManageSheet
