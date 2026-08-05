@@ -491,6 +491,7 @@ export function FivesecCreatePage({ questionId, onClose }: FivesecCreatePageProp
       <FivesecAnswerTypeSheet
         open={isAnswerTypeSheetOpen}
         answerType={answerType}
+        choiceCount={choices.length}
         onClose={() => setIsAnswerTypeSheetOpen(false)}
         onSelect={setAnswerType}
       />
