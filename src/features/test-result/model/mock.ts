@@ -4,11 +4,11 @@ import type { ParticipateQuestion } from "@/features/test-participate/model/type
 export const MOCK_RESULTS: QuestionResult[] = [
   {
     type: "OBJECTIVE",
-    title: "전반적인 사용 경험에 만족하시나요?",
+    title: "전반적인 사용 경험에 만족하시나요? (동점 케이스)",
     options: [
-      { label: "프로필", count: 32, percentage: 58, isHighlight: true },
-      { label: "설정", count: 15, percentage: 27, isHighlight: false },
-      { label: "홈", count: 8, percentage: 15, isHighlight: false },
+      { label: "프로필", count: 22, percentage: 33, isHighlight: true },
+      { label: "설정", count: 20, percentage: 30, isHighlight: true },
+      { label: "홈", count: 20, percentage: 30, isHighlight: false },
     ],
   },
   {
@@ -38,28 +38,70 @@ export const MOCK_RESULTS: QuestionResult[] = [
   },
   {
     type: "CARD_SORTING",
-    title: "전반적인 사용 경험에 만족하시나요?",
+    title: "전반적인 사용 경험에 만족하시나요? (동점 케이스)",
     categories: [
       {
         name: "상의",
         items: [
-          { rank: "icon-step-1-mono", label: "티셔츠", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "반팔티", count: 15, percentage: 27, isHighlight: false },
-          { rank: "icon-step-3-mono", label: "크롭티", count: 8, percentage: 15, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "티셔츠",
+            count: 20,
+            percentage: 36,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "반팔티",
+            count: 20,
+            percentage: 36,
+            isHighlight: false,
+          },
+          {
+            rank: "icon-step-3-mono",
+            label: "크롭티",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
         ],
       },
       {
         name: "하의",
         items: [
-          { rank: "icon-step-1-mono", label: "청바지", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "반바지", count: 15, percentage: 27, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "청바지",
+            count: 32,
+            percentage: 58,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "반바지",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
         ],
       },
       {
         name: "신발",
         items: [
-          { rank: "icon-step-1-mono", label: "운동화", count: 32, percentage: 58, isHighlight: true },
-          { rank: "icon-step-2-mono", label: "슬리퍼", count: 15, percentage: 27, isHighlight: false },
+          {
+            rank: "icon-step-1-mono",
+            label: "운동화",
+            count: 32,
+            percentage: 58,
+            isHighlight: true,
+          },
+          {
+            rank: "icon-step-2-mono",
+            label: "슬리퍼",
+            count: 15,
+            percentage: 27,
+            isHighlight: false,
+          },
         ],
       },
     ],
