@@ -7,7 +7,7 @@ const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
   { label: string; placeholder: string; maxLength?: number; help?: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름" },
+  name: { label: "테스트 이름", placeholder: "테스트 이름", maxLength: 17, help: "최대 17자" },
   summary: {
     label: "테스트 한줄 소개",
     placeholder: "테스트 한줄 소개",
@@ -36,6 +36,16 @@ function setSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore, value
       form.setSummary(value);
       break;
   }
+}
+
+function handleSubStepChange(
+  subStep: Exclude<BasicSubStep, "category">,
+  form: TestCreateFormStore,
+  value: string,
+) {
+  const config = STEP_CONFIG[subStep];
+  if (config.maxLength && value.length > config.maxLength) return;
+  setSubStepValue(subStep, form, value);
 }
 
 interface TestBasicInfoStepProps {
@@ -93,14 +103,11 @@ export function TestBasicInfoStep({
             label={STEP_CONFIG[subStep].label}
             labelOption="appear"
             value={getSubStepValue(subStep, form)}
-            onChange={(e) => {
-              const config = STEP_CONFIG[subStep];
-              if (config.maxLength && e.target.value.length > config.maxLength) return;
-              setSubStepValue(subStep, form, e.target.value);
-            }}
+            onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
             onClear={() => setSubStepValue(subStep, form, "")}
             placeholder={STEP_CONFIG[subStep].placeholder}
             help={STEP_CONFIG[subStep].help}
+            maxLength={STEP_CONFIG[subStep].maxLength}
             onFocus={onFocus}
             onBlur={onBlur}
           />
@@ -128,7 +135,8 @@ export function TestBasicInfoStep({
             label={STEP_CONFIG[s].label}
             labelOption="sustain"
             value={getSubStepValue(s, form)}
-            onChange={(e) => setSubStepValue(s, form, e.target.value)}
+            onChange={(e) => handleSubStepChange(s, form, e.target.value)}
+            maxLength={STEP_CONFIG[s].maxLength}
           />
         );
       })}
