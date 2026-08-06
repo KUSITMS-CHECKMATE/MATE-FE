@@ -4,6 +4,7 @@ import { Asset, Border, FixedBottomCTA } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
@@ -15,9 +16,10 @@ import { ScaleCreateOptionSection } from "./ScaleCreateOptionSection";
 interface ScaleCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
-export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
+export function ScaleCreatePage({ questionId, onClose, registerCommit }: ScaleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingScale = existing?.typeId === "SCALE" ? existing : null;
@@ -44,6 +46,20 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
     useQuestionImageUpload(setQuestionImageUrl);
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
+
+  const buildQuestionData = () => ({
+    typeId: "SCALE" as const,
+    title: questionTitle,
+    description: questionDescription,
+    scaleCount,
+    minLabel,
+    maxLabel,
+    ...(questionImageUrl.trim() ? { imageUrl: questionImageUrl.trim() } : {}),
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const dismissKeyboard = () => {
     if (blurTimer.current) clearTimeout(blurTimer.current);
@@ -148,15 +164,7 @@ export function ScaleCreatePage({ questionId, onClose }: ScaleCreatePageProps) {
             onDismissKeyboard={dismissKeyboard}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "SCALE",
-                title: questionTitle,
-                description: questionDescription,
-                scaleCount,
-                minLabel,
-                maxLabel,
-                ...(questionImageUrl.trim() ? { imageUrl: questionImageUrl.trim() } : {}),
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />

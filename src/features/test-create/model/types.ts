@@ -118,6 +118,39 @@ export interface PendingQuestion {
   data?: QuestionData;
 }
 
+/**
+ * 각 question-* create 페이지의 isCompleteDisabled와 동일한 기준으로
+ * "완료하기"가 눌릴 수 있는 상태인지 판별한다. 임시저장으로 인해
+ * data가 항상 존재할 수 있어(미완성 상태 포함), 완료 여부는 data 존재가 아니라
+ * 이 기준으로 판단해야 한다.
+ */
+export function isQuestionDataComplete(data: QuestionData | undefined): boolean {
+  if (!data) return false;
+  const hasTitle = data.title.trim().length > 0;
+  switch (data.typeId) {
+    case "OBJECTIVE":
+      return hasTitle && data.choices.length >= 2;
+    case "SUBJECTIVE":
+      return hasTitle;
+    case "SCALE":
+      return hasTitle;
+    case "AB_TEST":
+      return hasTitle && data.imageUrlA.trim().length > 0 && data.imageUrlB.trim().length > 0;
+    case "CARD_SORTING":
+      return hasTitle && data.categories.length > 0 && data.cards.length > 0;
+    case "TREE_TEST":
+      return hasTitle && data.nodes.length > 0 && data.nodes.every((node) => node.children.length > 0);
+    case "FIVE_SECOND":
+      return (
+        hasTitle &&
+        data.imageUrl.trim().length > 0 &&
+        (data.answerType !== "multiple" || data.choices.length >= 2)
+      );
+    default:
+      return false;
+  }
+}
+
 export interface TestCreateFormData {
   name: string;
   summary: string;
