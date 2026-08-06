@@ -5,15 +5,16 @@ import { adaptive } from "@toss/tds-colors";
 interface Props {
   open: boolean;
   answerType: "multiple" | "subjective";
+  choiceCount: number;
   onClose: () => void;
   onSelect: (type: "multiple" | "subjective") => void;
 }
 
-export function FivesecAnswerTypeSheet({ open, answerType, onClose, onSelect }: Props) {
+export function FivesecAnswerTypeSheet({ open, answerType, choiceCount, onClose, onSelect }: Props) {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   function handleSelectSubjective() {
-    if (answerType === "multiple") {
+    if (answerType === "multiple" && choiceCount > 0) {
       setIsConfirmOpen(true);
     } else {
       onSelect("subjective");

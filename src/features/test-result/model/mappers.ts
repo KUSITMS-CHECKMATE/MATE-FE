@@ -1,5 +1,6 @@
 import type { ReportItem, QuestionType } from "@/shared/api/report";
 import type { QuestionResult } from "./types";
+import { getCompetitionRanks, rankIcon } from "./rank";
 
 const MAX_BAR_HEIGHT = 115;
 
@@ -11,12 +12,6 @@ export const QUESTION_TYPE_LABEL: Record<QuestionType, string> = {
   AB_TEST: "A/B 테스트",
   CARD_SORTING: "카드 소팅",
   TREE_TEST: "트리 테스트",
-};
-
-const RANK_ICON: Record<number, string> = {
-  1: "icon-step-1-mono",
-  2: "icon-step-2-mono",
-  3: "icon-step-3-mono",
 };
 
 export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult {
@@ -108,16 +103,19 @@ export function mapReportItemToQuestionResult(item: ReportItem): QuestionResult 
       return {
         type: "CARD_SORTING",
         title: item.title,
-        categories: item.result.byCategory.map((cat) => ({
-          name: cat.category,
-          items: cat.cards.map((card) => ({
-            rank: RANK_ICON[card.rank] ?? `icon-step-${card.rank}-mono`,
-            label: card.cardName,
-            count: card.count,
-            percentage: Math.round(card.ratio * 100),
-            isHighlight: card.rank === 1,
-          })),
-        })),
+        categories: item.result.byCategory.map((cat) => {
+          const ranks = getCompetitionRanks(cat.cards.map((card) => card.count));
+          return {
+            name: cat.category,
+            items: cat.cards.map((card, i) => ({
+              rank: rankIcon(ranks[i]),
+              label: card.cardName,
+              count: card.count,
+              percentage: Math.round(card.ratio * 100),
+              isHighlight: ranks[i] === 1,
+            })),
+          };
+        }),
       };
 
     case "TREE_TEST": {

@@ -502,6 +502,7 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
       <FivesecAnswerTypeSheet
         open={isAnswerTypeSheetOpen}
         answerType={answerType}
+        choiceCount={choices.length}
         onClose={() => setIsAnswerTypeSheetOpen(false)}
         onSelect={setAnswerType}
       />

@@ -3,6 +3,16 @@ import { adaptive } from "@toss/tds-colors";
 import type { DoughnutAnswerItem } from "../model/types";
 import { ResultDoughnutChart } from "./ResultDoughnutChart";
 
+const LEGEND_COLORS = ["#5571cf", adaptive.greyOpacity400, adaptive.greyOpacity200];
+
+// 값이 같으면 같은 등수(색상)를 공유하도록 dense rank를 매긴다 (동점 처리)
+function getRankColorIndexes(items: { count: number }[]): number[] {
+  const distinctCountsDesc = Array.from(new Set(items.map((item) => item.count))).sort(
+    (a, b) => b - a,
+  );
+  return items.map((item) => distinctCountsDesc.indexOf(item.count));
+}
+
 export type { DoughnutAnswerItem };
 
 export function CardWrapper({ children }: { children: React.ReactNode }) {
@@ -133,15 +143,17 @@ export function TextAnswerScrollList({ texts }: { texts: string[] }) {
 }
 
 export function DoughnutAnswerSection({ items }: { items: DoughnutAnswerItem[] }) {
+  const colorIndexes = getRankColorIndexes(items);
+
   return (
     <>
-      <ResultDoughnutChart items={items} />
+      <ResultDoughnutChart items={items} colorIndexes={colorIndexes} />
       <Spacing size={16} />
       <div className="w-full flex flex-col gap-1 items-center">
         {items.map((item, i) => (
           <AnswerRow
             key={i}
-            iconColor={item.isHighlight ? "#5571cf" : i === 1 ? adaptive.greyOpacity400 : adaptive.greyOpacity200}
+            iconColor={LEGEND_COLORS[colorIndexes[i]] ?? adaptive.greyOpacity200}
             labelColor={item.isHighlight ? "#4365cc" : adaptive.grey700}
             label={item.label}
             count={`${item.count}개 (${item.percentage}%)`}
