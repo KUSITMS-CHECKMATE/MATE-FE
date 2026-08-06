@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { TextField } from "@toss/tds-mobile";
 import { useTestCreateForm, type TestCreateFormStore } from "../model/useTestCreateForm";
@@ -7,7 +8,7 @@ const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
   { label: string; placeholder: string; maxLength?: number; help?: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름" },
+  name: { label: "테스트 이름", placeholder: "테스트 이름", maxLength: 17, help: "최대 17자" },
   summary: {
     label: "테스트 한줄 소개",
     placeholder: "테스트 한줄 소개",
@@ -38,6 +39,16 @@ function setSubStepValue(subStep: BasicSubStep, form: TestCreateFormStore, value
   }
 }
 
+function handleSubStepChange(
+  subStep: Exclude<BasicSubStep, "category">,
+  form: TestCreateFormStore,
+  value: string,
+) {
+  const { maxLength } = STEP_CONFIG[subStep];
+  if (maxLength && value.length > maxLength) return;
+  setSubStepValue(subStep, form, value);
+}
+
 interface TestBasicInfoStepProps {
   subStep: BasicSubStep;
   onOpenCategorySheet: () => void;
@@ -52,6 +63,7 @@ export function TestBasicInfoStep({
   onBlur,
 }: TestBasicInfoStepProps) {
   const form = useTestCreateForm();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const categoryDisplayValue = form.categories
     .map((id) => CATEGORIES.find((c) => c.id === id)?.label)
@@ -88,17 +100,14 @@ export function TestBasicInfoStep({
           transition={{ duration: 0.2 }}
         >
           <TextField.Clearable
+            ref={inputRef}
             variant="line"
             hasError={false}
             label={STEP_CONFIG[subStep].label}
             labelOption="appear"
             value={getSubStepValue(subStep, form)}
-            onChange={(e) => {
-              const config = STEP_CONFIG[subStep];
-              if (config.maxLength && e.target.value.length > config.maxLength) return;
-              setSubStepValue(subStep, form, e.target.value);
-            }}
-            onClear={() => setSubStepValue(subStep, form, "")}
+            onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
+            onClear={() => { setSubStepValue(subStep, form, ""); inputRef.current?.focus(); }}
             placeholder={STEP_CONFIG[subStep].placeholder}
             help={STEP_CONFIG[subStep].help}
             onFocus={onFocus}
@@ -128,7 +137,7 @@ export function TestBasicInfoStep({
             label={STEP_CONFIG[s].label}
             labelOption="sustain"
             value={getSubStepValue(s, form)}
-            onChange={(e) => setSubStepValue(s, form, e.target.value)}
+            onChange={(e) => handleSubStepChange(s, form, e.target.value)}
           />
         );
       })}

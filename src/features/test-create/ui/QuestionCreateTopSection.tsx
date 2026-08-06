@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Asset,
@@ -139,6 +139,8 @@ export function QuestionCreateTopSection({
     questionTitle.trim().length > 0 ? "detail" : "title",
   );
   const [isEditing, setIsEditing] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descInputRef = useRef<HTMLInputElement>(null);
 
   const titleFocus = useFocusState();
   const descFocus = useFocusState();
@@ -275,6 +277,7 @@ export function QuestionCreateTopSection({
             transition={{ duration: 0.2 }}
           >
             <TextField.Clearable
+              ref={titleInputRef}
               variant="line"
               label="어떻게 질문할까요?"
               labelOption="sustain"
@@ -283,7 +286,7 @@ export function QuestionCreateTopSection({
               maxLength={34}
               autoFocus
               onChange={(e) => onChangeTitle(e.target.value.slice(0, 34))}
-              onClear={() => onChangeTitle("")}
+              onClear={() => { onChangeTitle(""); titleInputRef.current?.focus(); }}
               onFocus={titleFocus.onFocus}
               onBlur={titleFocus.onBlur}
             />
@@ -319,6 +322,7 @@ export function QuestionCreateTopSection({
               transition={{ duration: 0.2 }}
             >
               <TextField.Clearable
+                ref={descInputRef}
                 variant="line"
                 label="(선택) 추가 설명을 할까요?"
                 labelOption="sustain"
@@ -326,7 +330,7 @@ export function QuestionCreateTopSection({
                 placeholder="추가 설명을 입력해주세요"
                 maxLength={55}
                 onChange={(e) => onChangeDescription(e.target.value.slice(0, 55))}
-                onClear={() => onChangeDescription("")}
+                onClear={() => { onChangeDescription(""); descInputRef.current?.focus(); }}
                 onFocus={descFocus.onFocus}
                 onBlur={descFocus.onBlur}
               />

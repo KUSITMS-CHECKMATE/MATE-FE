@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { BottomSheet, TextField } from "@toss/tds-mobile";
 
@@ -29,6 +30,8 @@ export function QuestionEditSheet({
   onConfirm,
   onDraftChange,
 }: QuestionEditSheetProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <BottomSheet
       header={<BottomSheet.Header>{config.header}</BottomSheet.Header>}
@@ -51,6 +54,7 @@ export function QuestionEditSheet({
       {fieldVisible && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <TextField.Clearable
+            ref={inputRef}
             variant="line"
             hasError={false}
             label={config.label}
@@ -60,7 +64,7 @@ export function QuestionEditSheet({
             maxLength={config.maxLength}
             autoFocus
             onChange={(e) => onDraftChange(e.target.value.slice(0, config.maxLength))}
-            onClear={() => onDraftChange("")}
+            onClear={() => { onDraftChange(""); inputRef.current?.focus(); }}
           />
         </motion.div>
       )}

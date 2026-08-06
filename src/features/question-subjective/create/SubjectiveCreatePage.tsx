@@ -5,6 +5,7 @@ import { adaptive } from "@toss/tds-colors";
 import { SubjectiveAnswerPage } from "@/features/question-subjective/answer/SubjectiveAnswerPage";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
 import { useQuestionImageUpload } from "@/features/test-create/model/useQuestionImageUpload";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { QuestionImageUploadSection } from "@/features/test-create/ui/QuestionImageUploadSection";
 import { PhotoSelectSheet } from "@/features/test-create/ui/PhotoSelectSheet";
@@ -14,9 +15,10 @@ import { SubjectiveCreateBottomCTA } from "./SubjectiveCreateBottomCTA";
 interface SubjectiveCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
-export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePageProps) {
+export function SubjectiveCreatePage({ questionId, onClose, registerCommit }: SubjectiveCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingSubjective = existing?.typeId === "SUBJECTIVE" ? existing : null;
@@ -35,6 +37,20 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
     useQuestionImageUpload(setQuestionImageUrl);
 
   const isCompleteDisabled = questionTitle.trim().length === 0;
+
+  const buildQuestionData = () => ({
+    typeId: "SUBJECTIVE" as const,
+    title: questionTitle,
+    description: questionDescription,
+    imageUrl: questionImageUrl,
+    placeholder,
+    maxLength,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    updateQuestion(questionId, buildQuestionData());
+  });
+
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewAnswer, setPreviewAnswer] = useState<{ type: "SUBJECTIVE"; text: string }>({
     type: "SUBJECTIVE",
@@ -112,14 +128,7 @@ export function SubjectiveCreatePage({ questionId, onClose }: SubjectiveCreatePa
             isCompleteDisabled={isCompleteDisabled}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "SUBJECTIVE",
-                title: questionTitle,
-                description: questionDescription,
-                imageUrl: questionImageUrl,
-                placeholder,
-                maxLength,
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />
