@@ -65,9 +65,14 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           label="테스트 이름"
           labelOption="sustain"
           value={form.name}
-          onChange={(e) => form.setName(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.length > 17) return;
+            form.setName(e.target.value);
+          }}
           onClear={() => form.setName("")}
           placeholder="테스트 이름"
+          help="최대 17자"
+          maxLength={17}
         />
         <TextField.Clearable
           variant="line"
@@ -81,6 +86,7 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           onClear={() => form.setSummary("")}
           placeholder="테스트 한줄 소개"
           help="최대 60자"
+          maxLength={60}
         />
         <TextField.Button
           variant="line"
