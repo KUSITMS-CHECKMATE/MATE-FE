@@ -21,6 +21,7 @@ export function CardSortItemBottomSheet({
   const [value, setValue] = useState(initialValue);
   const [fieldVisible, setFieldVisible] = useState(false);
   const initialValueRef = useRef(initialValue);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     initialValueRef.current = initialValue;
@@ -72,13 +73,14 @@ export function CardSortItemBottomSheet({
     >
       <div style={{ opacity: fieldVisible ? 1 : 0, transition: fieldVisible ? "opacity 0.15s ease-in" : "none" }}>
         <TextField.Clearable
+          ref={inputRef}
           variant="line"
           hasError={false}
           value={value}
           placeholder={placeholder}
           maxLength={MAX_LENGTH}
           onChange={(e) => setValue(e.target.value)}
-          onClear={() => setValue("")}
+          onClear={() => { setValue(""); inputRef.current?.focus(); }}
           autoFocus
         />
       </div>

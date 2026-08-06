@@ -48,7 +48,7 @@ function SortableQuestionItem({ question, onDeleteRequest }: SortableItemProps) 
         contents={
           <ListRow.Texts
             type="2RowTypeA"
-            top={question.data?.title ?? "미입력"}
+            top={question.data?.title?.trim() || "미입력"}
             topProps={{ color: adaptive.grey800, fontWeight: "semibold" }}
             bottom={type.label}
             bottomProps={{ color: adaptive.grey600 }}

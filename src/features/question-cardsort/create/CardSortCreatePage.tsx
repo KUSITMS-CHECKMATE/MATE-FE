@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FixedBottomCTA } from "@toss/tds-mobile";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 import { CardSortAnswerPage } from "@/features/question-cardsort/answer";
 import type { CardSortCard, CardSortCategory } from "../model";
@@ -13,13 +14,14 @@ import { CardSortItemBottomSheet } from "./CardSortItemBottomSheet";
 interface CardSortCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePageProps) {
+export function CardSortCreatePage({ questionId, onClose, registerCommit }: CardSortCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingCardSort = existing?.typeId === "CARD_SORTING" ? existing : null;
@@ -52,6 +54,19 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
 
   const isCompleteDisabled =
     questionTitle.trim().length === 0 || categories.length === 0 || cards.length === 0;
+
+  const buildQuestionData = () => ({
+    typeId: "CARD_SORTING" as const,
+    title: questionTitle,
+    description: questionDescription,
+    categories,
+    cards,
+    requireAllPlaced: false,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const handleOpenAddCategory = () => {
     setEditingCategoryId(null);
@@ -128,14 +143,7 @@ export function CardSortCreatePage({ questionId, onClose }: CardSortCreatePagePr
             isCompleteDisabled={isCompleteDisabled}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "CARD_SORTING",
-                title: questionTitle,
-                description: questionDescription,
-                categories,
-                cards,
-                requireAllPlaced: false,
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />

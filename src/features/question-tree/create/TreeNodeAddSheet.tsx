@@ -66,7 +66,7 @@ export function TreeNodeAddSheet({
         placeholder="기능 이름"
         maxLength={17}
         onChange={(e) => setName(e.target.value.slice(0, 17))}
-        onClear={() => setName("")}
+        onClear={() => { setName(""); inputRef.current?.focus(); }}
       />
     </BottomSheet>
   );

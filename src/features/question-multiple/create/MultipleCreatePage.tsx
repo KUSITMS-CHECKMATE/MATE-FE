@@ -7,15 +7,17 @@ import { MultipleCreateBottomCTA } from "./MultipleCreateBottomCTA";
 import { MultipleChoiceEditorOverlay } from "./MultipleChoiceEditorOverlay";
 import { MultipleCreateOptionSection } from "./MultipleCreateOptionSection";
 import { useTestCreateForm } from "@/features/test-create/model/useTestCreateForm";
+import { usePendingQuestionCommit, type RegisterQuestionCommit } from "@/features/test-create/model/usePendingQuestionCommit";
 import { QuestionCreateTopSection } from "@/features/test-create/ui/QuestionCreateTopSection";
 import { TesterPreviewListRow } from "@/features/test-create/ui/TesterPreviewListRow";
 
 interface MultipleCreatePageProps {
   questionId: string;
   onClose: () => void;
+  registerCommit?: RegisterQuestionCommit;
 }
 
-export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePageProps) {
+export function MultipleCreatePage({ questionId, onClose, registerCommit }: MultipleCreatePageProps) {
   const { updateQuestion, questions } = useTestCreateForm();
   const existing = questions.find((q) => q.id === questionId)?.data;
   const existingMultiple = existing?.typeId === "OBJECTIVE" ? existing : null;
@@ -46,6 +48,21 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
 
   const editingChoice = choices.find((choice) => choice.id === editingChoiceId) ?? null;
   const isCompleteDisabled = questionTitle.trim().length === 0 || choices.length < 2;
+
+  const buildQuestionData = () => ({
+    typeId: "OBJECTIVE" as const,
+    title: questionTitle,
+    description: questionDescription,
+    choices,
+    isMultiSelectEnabled,
+    isOtherInputEnabled,
+    minSelectCount,
+    maxSelectCount,
+  });
+
+  usePendingQuestionCommit(registerCommit, () => {
+    updateQuestion(questionId, buildQuestionData());
+  });
 
   const handleOpenCreateChoiceEditor = () => {
     setEditingChoiceId(null);
@@ -116,16 +133,7 @@ export function MultipleCreatePage({ questionId, onClose }: MultipleCreatePagePr
             isCompleteDisabled={isCompleteDisabled}
             onCancel={onClose}
             onComplete={() => {
-              updateQuestion(questionId, {
-                typeId: "OBJECTIVE",
-                title: questionTitle,
-                description: questionDescription,
-                choices,
-                isMultiSelectEnabled,
-                isOtherInputEnabled,
-                minSelectCount,
-                maxSelectCount,
-              });
+              updateQuestion(questionId, buildQuestionData());
               onClose();
             }}
           />
