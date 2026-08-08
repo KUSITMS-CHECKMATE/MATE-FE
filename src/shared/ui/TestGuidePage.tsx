@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Top, Post, FixedBottomCTA } from "@toss/tds-mobile";
+import { Top, Post } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { GuideAccordionItem } from "./GuideAccordionItem";
 
-interface TestGuidePageProps {
-  onClose: () => void;
-}
-
-export function TestGuidePage({ onClose }: TestGuidePageProps) {
+export function TestGuidePage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const accordionProps = (index: number) => ({
@@ -19,7 +15,7 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 overflow-y-auto bg-white pb-28"
+      className="fixed inset-0 z-50 overflow-y-auto bg-white"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -38,7 +34,7 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           </Top.TitleParagraph>
         }
         subtitleBottom={
-          <Top.SubtitleParagraph size={15}>총 8가지의 테스트 방식이 있어요</Top.SubtitleParagraph>
+          <Top.SubtitleParagraph size={15}>총 7가지의 테스트 방식이 있어요</Top.SubtitleParagraph>
         }
         right={
           <Top.RightAssetContent
@@ -68,14 +64,14 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
 
       <GuideAccordionItem title="3. 척도 질문" {...accordionProps(2)}>
         <Post.Paragraph paddingBottom={8} typography="t6">
-          1~5점 척도로 평가하는 질문이에요.
+          1~5점, 1~7점 등 척도로 평가하는 질문이에요.
         </Post.Paragraph>
       </GuideAccordionItem>
 
       <GuideAccordionItem title="4. A/B 테스트" {...accordionProps(3)}>
         <Post.H4 paddingBottom={16}>A/B 테스트 방식</Post.H4>
         <Post.Paragraph paddingBottom={8} typography="t6">
-          두 디자인 중 하나를 고르는 테스트예요.
+          두 선택지 중 하나를 고르는 테스트예요.
         </Post.Paragraph>
       </GuideAccordionItem>
 
@@ -86,14 +82,14 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           직접 묶어보게 하면서, 사용자의 멘탈 모델을 기반으로 정보 구조(IA)를 설계할 수 있어요.
         </Post.Paragraph>
         <Post.H4 paddingBottom={16}>어떻게 진행되나요?</Post.H4>
-        <Post.Ol paddingBottom={16}>
+        <Post.Ol paddingBottom={16} typography="t6">
           <Post.Li>테스터에게 기능/콘텐츠 이름이 적힌 카드를 보여줘요.</Post.Li>
           <Post.Li>카드를 선택한 뒤, 해당 카드가 속한다고 생각하는 카테고리를 골라요.</Post.Li>
           <Post.Li>모든 카드에 대해 반복해요.</Post.Li>
           <Post.Li>여러 테스터의 결과를 모아 공통된 분류 패턴을 분석해요.</Post.Li>
         </Post.Ol>
         <Post.H4 paddingBottom={16}>무엇을 알 수 있나요?</Post.H4>
-        <Post.Ul paddingBottom={8}>
+        <Post.Ul paddingBottom={8} typography="t6">
           <Post.Li>사용자가 기능/콘텐츠를 어떤 기준으로 묶는지</Post.Li>
           <Post.Li>어떤 항목들이 자연스럽게 같은 카테고리로 인식되는지</Post.Li>
           <Post.Li>메뉴 이름이나 카테고리 레벨을 어떻게 붙여야 할지</Post.Li>
@@ -107,14 +103,14 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
           없이 메뉴 계층 구조만 텍스트로 보여주고, 사용자가 특정 항목을 찾아가는 과정을 관찰해요.
         </Post.Paragraph>
         <Post.H4 paddingBottom={16}>어떻게 진행되나요?</Post.H4>
-        <Post.Ol paddingBottom={16}>
+        <Post.Ol paddingBottom={16} typography="t6">
           <Post.Li>테스터에게 앱/사이트의 메뉴 구조를 테스트 트리 형태로 보여줘요.</Post.Li>
           <Post.Li>"OO 기능을 찾아보세요" 같은 과제를 제시해요.</Post.Li>
           <Post.Li>테스터가 메뉴를 탐색하며 정답을 선택해요.</Post.Li>
           <Post.Li>어디서 헤매는지, 어디서 잘 들어가는지를 분석해요.</Post.Li>
         </Post.Ol>
         <Post.H4 paddingBottom={16}>무엇을 알 수 있나요?</Post.H4>
-        <Post.Ul paddingBottom={8}>
+        <Post.Ul paddingBottom={8} typography="t6">
           <Post.Li>메뉴 이름이 직관적인지</Post.Li>
           <Post.Li>카테고리 분류가 사용자 멘탈 모델과 맞는지</Post.Li>
           <Post.Li>특정 항목이 어디 있어야 할지 예측 가능한지</Post.Li>
@@ -124,19 +120,10 @@ export function TestGuidePage({ onClose }: TestGuidePageProps) {
       <GuideAccordionItem title="7. 5초 테스트" {...accordionProps(6)}>
         <Post.H4 paddingBottom={16}>5초 테스트 방식</Post.H4>
         <Post.Paragraph paddingBottom={8} typography="t6">
-          5초 후 기억나는 것을 답하는 테스트예요.
+          화면을 5초간 보여준 뒤 기억나는 것을 답하게 해서, 첫인상이나 핵심 메시지가 잘
+          전달되는지 파악하는 데 활용하기 좋아요.
         </Post.Paragraph>
       </GuideAccordionItem>
-
-      <GuideAccordionItem title="8. 히트맵/도트맵" {...accordionProps(7)}>
-        <Post.H4 paddingBottom={16}>히트맵/도트맵이란?</Post.H4>
-        <Post.Paragraph paddingBottom={8} typography="t6">
-          화면에서 눈길 가는 곳을 표시하는 테스트예요.
-        </Post.Paragraph>
-      </GuideAccordionItem>
-      <FixedBottomCTA color="dark" variant="weak" onClick={onClose}>
-        닫기
-      </FixedBottomCTA>
     </motion.div>
   );
 }
