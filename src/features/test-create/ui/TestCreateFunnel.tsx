@@ -463,7 +463,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
         {editPhase === "basic" && <BasicInfoEditPage key="edit-basic" onClose={() => setEditPhase(null)} />}
         {editPhase === "service" && <ServiceDescriptionEditPage key="edit-service" onClose={() => setEditPhase(null)} />}
         {editPhase === "image" && <TestImageEditPage key="edit-image" onClose={() => setEditPhase(null)} />}
-        {showGuide && <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />}
+        {showGuide && <TestGuidePage key="guide" />}
         {activeQuestion?.typeId === "OBJECTIVE" && <MultipleCreatePage key="question-multiple" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
         {activeQuestion?.typeId === "SUBJECTIVE" && <SubjectiveCreatePage key="question-subjective" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
         {activeQuestion?.typeId === "SCALE" && <ScaleCreatePage key="question-scale" questionId={activeQuestion.id} onClose={() => setActiveQuestion(null)} registerCommit={registerQuestionCommit} />}
