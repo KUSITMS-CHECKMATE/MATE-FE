@@ -38,7 +38,7 @@ function MyPage() {
       <MyServiceSection />
       <BottomTabBar activeTab="my" disableExit={showGuide} />
       <AnimatePresence>
-        {showGuide && <TestGuidePage key="guide" onClose={() => setShowGuide(false)} />}
+        {showGuide && <TestGuidePage key="guide" />}
       </AnimatePresence>
     </div>
   );
