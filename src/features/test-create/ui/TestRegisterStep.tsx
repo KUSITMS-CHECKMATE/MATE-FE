@@ -202,10 +202,8 @@ export function TestRegisterStep({
             <Spacing size={16} />
             <ListRow
               style={{
-                backgroundColor: "var(--adaptiveCardBgGrey)",
-                backdropFilter: "blur(0px)",
+                backgroundColor: adaptive.greyOpacity100,
                 borderRadius: "999px",
-                opacity: 1,
                 margin: "0 20px",
               }}
               left={<ListRow.AssetIcon name="icon-phone" backgroundColor={adaptive.greyOpacity100} />}
@@ -273,10 +271,10 @@ export function TestRegisterStep({
                     type="2RowTypeF"
                     top="보상 머니"
                     topProps={{ color: adaptive.grey500 }}
-                    bottom="200원"
+                    bottom="결제할 때 선택할 수 있어요"
                     bottomProps={{
-                      color: adaptive.grey800,
-                      fontWeight: "bold",
+                      color: adaptive.grey500,
+                      fontWeight: "medium",
                     }}
                   />
                 }
@@ -305,11 +303,11 @@ export function TestRegisterStep({
                   left={<ListRow.AssetIcon size="medium" name="icon-loudspeaker" backgroundColor={adaptive.red50} />}
                   contents={
                     <ListRow.Texts
-                      type="2RowTypeC"
+                      type="2RowTypeF"
                       top="서비스 소개"
-                      topProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+                      topProps={{ color: adaptive.grey500 }}
                       bottom="진행될 테스트의 서비스를 소개할게요"
-                      bottomProps={{ color: adaptive.grey500 }}
+                      bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
                     />
                   }
                   verticalPadding="small"
