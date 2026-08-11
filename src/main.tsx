@@ -3,9 +3,14 @@ import { createRoot } from 'react-dom/client'
 import { TDSMobileAITProvider } from '@toss/tds-mobile-ait'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
+import { trackPageView } from './shared/lib/analytics'
 import './index.css'
 
 const router = createRouter({ routeTree })
+
+router.subscribe('onResolved', ({ toLocation }) => {
+  trackPageView(toLocation.pathname + toLocation.search)
+})
 
 declare module '@tanstack/react-router' {
   interface Register {
