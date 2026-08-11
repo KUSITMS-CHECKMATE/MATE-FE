@@ -9,7 +9,7 @@ import './index.css'
 const router = createRouter({ routeTree })
 
 router.subscribe('onResolved', ({ toLocation }) => {
-  trackPageView(toLocation.pathname + toLocation.search)
+  trackPageView(toLocation.href)
 })
 
 declare module '@tanstack/react-router' {
