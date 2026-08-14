@@ -11,6 +11,7 @@ import {
   type listLikedTestsResponse,
   type LikedTestSummaryItem,
 } from "@/shared/api/generated/test";
+import { trackEvent } from "@/shared/lib/analytics";
 
 type Props = {
   id: number;
@@ -78,6 +79,9 @@ export function TestCard({
       setPendingLiked(true);
       return { prevTests, prevLikedTests };
     },
+    onSuccess: () => {
+      trackEvent("add_to_wishlist", { test_id: String(id) });
+    },
     onError: (_, __, context) => {
       setPendingLiked(null);
       if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
@@ -130,6 +134,9 @@ export function TestCard({
 
       setPendingLiked(false);
       return { prevTests, prevLikedTests };
+    },
+    onSuccess: () => {
+      trackEvent("remove_from_wishlist", { test_id: String(id) });
     },
     onError: (_, __, context) => {
       setPendingLiked(null);

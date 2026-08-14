@@ -26,6 +26,7 @@ import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
 import { useQuery } from "@tanstack/react-query";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
+import { trackEvent } from "@/shared/lib/analytics";
 
 interface Props {
   testId: string;
@@ -64,6 +65,10 @@ export function TestResultPage({ testId }: Props) {
   });
   const testTitle = (testDetailData?.data?.data as { title?: string } | undefined)?.title ?? testId;
 
+  useEffect(() => {
+    trackEvent("test_page_view", { test_id: testId });
+  }, [testId]);
+
   const { openToast } = useToast();
   const { generate: generatePdf, isGenerating: isPdfGenerating } = usePdfDownload(testId, testTitle);
   const { generate: generateCsv, isGenerating: isCsvGenerating } = useCsvDownload(testId, testTitle);
@@ -98,6 +103,10 @@ export function TestResultPage({ testId }: Props) {
 
   const { data: reportData, isLoading, isError, refetch } = useGetReportQuery(Number(testId));
   const report = reportData?.data;
+
+  useEffect(() => {
+    if (report) trackEvent("feedback_view", { test_id: testId });
+  }, [report, testId]);
 
   const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
   const { data: previewQuestion } = useGetQuestionDetailQuery(Number(testId), selectedQuestionId);
@@ -139,6 +148,7 @@ export function TestResultPage({ testId }: Props) {
     try {
       if (format === "pdf") await generatePdf();
       if (format === "csv") await generateCsv();
+      trackEvent("report_download", { test_id: testId, report_format: format });
     } catch {
       openToast("다운로드에 실패했습니다. 다시 시도해주세요.", { type: "bottom" });
     }
