@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { TestList } from "@/features/discovery/ui";
 import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export const Route = createFileRoute("/discovery/")({
   component: HomePage,
@@ -14,6 +16,10 @@ function HomePage() {
     queryKey: [getListTestsUrl()],
     queryFn: listTests,
   });
+
+  useEffect(() => {
+    if (data) trackEvent("view_item_list", { list_name: "discovery" });
+  }, [data]);
 
   type TestsPayload = { testCount?: number; tests?: { id?: number; title?: string; description?: string; reward?: number; thumbnailUrl?: string; isLiked?: boolean }[] };
   const rawTests = (data?.data?.data as TestsPayload | undefined)?.tests;

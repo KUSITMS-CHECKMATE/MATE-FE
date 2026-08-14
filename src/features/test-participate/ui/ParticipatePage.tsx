@@ -11,6 +11,7 @@ import { useParticipateTestQuery } from "../api/useParticipateTestQuery";
 import { useSubmitAnswersMutation } from "../api/useSubmitAnswersMutation";
 import { mapAnswersToApiRequest } from "../api/mappers";
 import { getListTestsUrl } from "@/shared/api/generated/test";
+import { trackEvent } from "@/shared/lib/analytics";
 import type { ParticipateTest } from "../model/types";
 
 interface Props {
@@ -65,6 +66,12 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
   const [submitted, setSubmitted] = useState(false);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
+  const startTimeRef = useRef(Date.now());
+
+  useEffect(() => {
+    trackEvent("test_start", { test_id: String(testId) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (submitted) return;
@@ -94,6 +101,10 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
       { testId, body },
       {
         onSuccess: () => {
+          trackEvent("test_complete", {
+            test_id: String(testId),
+            duration: Math.round((Date.now() - startTimeRef.current) / 1000),
+          });
           queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
           setSubmitted(true);
         },
@@ -191,7 +202,19 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
           </ConfirmDialog.CancelButton>
         }
         confirmButton={
-          <ConfirmDialog.ConfirmButton color="danger" size="xlarge" onClick={() => navigate({ to: ROUTES.DISCOVERY })}>
+          <ConfirmDialog.ConfirmButton
+            color="danger"
+            size="xlarge"
+            onClick={() => {
+              trackEvent("test_exit", {
+                test_id: String(testId),
+                exit_step: currentQuestion.id,
+                progress_rate: Math.round(progress * 100),
+                duration: Math.round((Date.now() - startTimeRef.current) / 1000),
+              });
+              navigate({ to: ROUTES.DISCOVERY });
+            }}
+          >
             나가기
           </ConfirmDialog.ConfirmButton>
         }

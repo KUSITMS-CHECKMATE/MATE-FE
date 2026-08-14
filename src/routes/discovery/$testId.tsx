@@ -10,6 +10,7 @@ import {
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export const Route = createFileRoute("/discovery/$testId")({
   component: TestDetailPage,
@@ -45,6 +46,12 @@ function TestDetailPage() {
 
   const detail = data?.data?.data;
 
+  useEffect(() => {
+    if (detail) {
+      trackEvent("view_item", { test_id: testId, test_category: detail.categories?.[0] });
+    }
+  }, [detail, testId]);
+
   if (isLoading || !detail) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
@@ -78,13 +85,14 @@ function TestDetailPage() {
       <div className="fixed bottom-0 left-0 w-full">
         <BottomCTA.Single
           disabled={isDisabled}
-          onClick={() =>
+          onClick={() => {
+            trackEvent("join_test", { test_id: testId, reward_amount: detail.reward });
             navigate({
               to: ROUTES.TEST_PARTICIPATE,
               params: { testId },
               search: { reward: detail.reward },
-            })
-          }
+            });
+          }}
         >
           {ctaLabel}
         </BottomCTA.Single>
