@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Asset, BottomCTA, Result } from "@toss/tds-mobile";
@@ -30,9 +30,12 @@ function InterestTestDetailPage() {
   const detail = data?.data?.data;
   const isClosed = CLOSED_TEST_IDS.has(Number(testId));
 
+  // 리페치 시 view_item이 중복 발생하지 않도록 testId당 최초 1회만 전송한다.
+  const trackedTestIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (detail) {
+    if (detail && trackedTestIdRef.current !== testId) {
       trackEvent("view_item", { test_id: testId, test_category: detail.categories?.[0] });
+      trackedTestIdRef.current = testId;
     }
   }, [detail, testId]);
 

@@ -104,8 +104,13 @@ export function TestResultPage({ testId }: Props) {
   const { data: reportData, isLoading, isError, refetch } = useGetReportQuery(Number(testId));
   const report = reportData?.data;
 
+  // 리페치 시 feedback_view가 중복 발생하지 않도록 testId당 최초 1회만 전송한다.
+  const trackedTestIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (report) trackEvent("feedback_view", { test_id: testId });
+    if (report && trackedTestIdRef.current !== testId) {
+      trackEvent("feedback_view", { test_id: testId });
+      trackedTestIdRef.current = testId;
+    }
   }, [report, testId]);
 
   const { data: questionSummary = [] } = useGetQuestionSummaryQuery(Number(testId));
