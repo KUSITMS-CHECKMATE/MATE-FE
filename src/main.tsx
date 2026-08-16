@@ -3,8 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { TDSMobileAITProvider } from '@toss/tds-mobile-ait'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import { trackPageView } from './shared/lib/analytics'
+import { initAnalytics, trackPageView } from './shared/lib/analytics'
 import './index.css'
+
+initAnalytics()
 
 const router = createRouter({ routeTree })
 
