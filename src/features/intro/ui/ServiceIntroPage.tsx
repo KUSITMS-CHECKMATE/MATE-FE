@@ -7,6 +7,7 @@ import { hasSession } from "@/shared/api/client";
 import { runTossLogin } from "@/features/login/model/login";
 import { ROUTES } from "@/shared/constants/routes";
 import { recoverPendingOrders } from "@/features/test-payment/model/pendingOrderRecovery";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export function ServiceIntroPage() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ export function ServiceIntroPage() {
 
   const loginMutation = useMutation({
     mutationFn: runTossLogin,
-    onSuccess: () => {
+    onSuccess: ({ isNewUser }) => {
+      trackEvent(isNewUser ? "sign_up" : "login", { method: "toss" });
       recoverPendingOrders();
       navigate({ to: ROUTES.DISCOVERY });
     },

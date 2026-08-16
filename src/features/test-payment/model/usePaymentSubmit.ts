@@ -43,6 +43,7 @@ export function usePaymentSubmit() {
 
   const mutation = useMutation({
     mutationFn: async ({ draftId, testerCount, rewardAmount, responsePeriod }: PaymentSubmitInput) => {
+      let orderId: string | undefined;
       const closedAt = new Date(Date.now() + responsePeriod * 24 * 60 * 60 * 1000)
         .toISOString()
         .slice(0, 10);
@@ -86,9 +87,10 @@ export function usePaymentSubmit() {
           const cleanup = IAP.createOneTimePurchaseOrder({
             options: {
               sku,
-              processProductGrant: async ({ orderId }) => {
+              processProductGrant: async ({ orderId: grantedOrderId }) => {
+                orderId = grantedOrderId;
                 try {
-                  const result = await grantPayment({ orderId, draftId });
+                  const result = await grantPayment({ orderId: grantedOrderId, draftId });
                   if (!result.success) grantFailureReason = { code: result.code, message: result.message };
                   return result.success;
                 } catch (e) {
@@ -116,6 +118,8 @@ export function usePaymentSubmit() {
         const detail = grantFailureReason?.message ?? (e instanceof Error ? e.message : String(e));
         throw new IapPaymentError(`[IAP 결제 실패] ${detail}`, code);
       }
+
+      return { orderId };
     },
     onError: async (error) => {
       const code = error instanceof IapPaymentError ? error.code : undefined;
