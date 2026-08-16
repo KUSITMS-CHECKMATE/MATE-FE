@@ -31,6 +31,7 @@ import { PaymentGiveUpStep } from "./PaymentGiveUpStep";
 import { ResponsePeriodSheet } from "./ResponsePeriodSheet";
 import { ROUTES } from "@/shared/constants/routes";
 import { Route } from "@/routes/test/payment";
+import { trackEvent } from "@/shared/lib/analytics";
 
 const DownArrowIcon = () => (
   <Asset.Icon
@@ -168,7 +169,17 @@ export function PaymentFunnel() {
               responsePeriod,
             },
             {
-              onSuccess: () => setStep("complete"),
+              onSuccess: ({ orderId }) => {
+                const retryTotal = calcPayment(testerCount!, rewardAmount!).total;
+                trackEvent("purchase", {
+                  transaction_id: orderId ?? "unknown",
+                  test_id: String(draftId),
+                  value: retryTotal,
+                  currency: "KRW",
+                });
+                trackEvent("create_test", { test_id: String(draftId), target_count: testerCount! });
+                setStep("complete");
+              },
             },
           )
         }
@@ -361,7 +372,12 @@ export function PaymentFunnel() {
             }
             rightButton={
               <CTAButton
-                onClick={() =>
+                onClick={() => {
+                  trackEvent("begin_checkout", {
+                    test_id: String(draftId),
+                    value: payment?.total,
+                    currency: "KRW",
+                  });
                   submitPayment(
                     {
                       draftId,
@@ -370,10 +386,19 @@ export function PaymentFunnel() {
                       responsePeriod,
                     },
                     {
-                      onSuccess: () => setStep("complete"),
+                      onSuccess: ({ orderId }) => {
+                        trackEvent("purchase", {
+                          transaction_id: orderId ?? "unknown",
+                          test_id: String(draftId),
+                          value: payment?.total ?? 0,
+                          currency: "KRW",
+                        });
+                        trackEvent("create_test", { test_id: String(draftId), target_count: testerCount! });
+                        setStep("complete");
+                      },
                     },
-                  )
-                }
+                  );
+                }}
                 disabled={isPending}
               >
                 {displayTotal} 결제하기

@@ -1,9 +1,11 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { TestList } from "@/features/discovery/ui";
 import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export const Route = createFileRoute("/discovery/")({
   component: HomePage,
@@ -14,6 +16,15 @@ function HomePage() {
     queryKey: [getListTestsUrl()],
     queryFn: listTests,
   });
+
+  // 포커스 복귀 등으로 인한 리페치 시 view_item_list가 중복 발생하지 않도록 최초 1회만 전송한다.
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (data && !trackedRef.current) {
+      trackEvent("view_item_list", { list_name: "discovery" });
+      trackedRef.current = true;
+    }
+  }, [data]);
 
   type TestsPayload = { testCount?: number; tests?: { id?: number; title?: string; description?: string; reward?: number; thumbnailUrl?: string; isLiked?: boolean }[] };
   const rawTests = (data?.data?.data as TestsPayload | undefined)?.tests;

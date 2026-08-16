@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Asset, BottomCTA, Result } from "@toss/tds-mobile";
@@ -8,6 +9,7 @@ import {
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
+import { trackEvent } from "@/shared/lib/analytics";
 
 // mock: 종료된 테스트 ID (API에 testStatus 필드 추가되면 대체)
 const CLOSED_TEST_IDS = new Set([2]);
@@ -27,6 +29,15 @@ function InterestTestDetailPage() {
 
   const detail = data?.data?.data;
   const isClosed = CLOSED_TEST_IDS.has(Number(testId));
+
+  // 리페치 시 view_item이 중복 발생하지 않도록 testId당 최초 1회만 전송한다.
+  const trackedTestIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (detail && trackedTestIdRef.current !== testId) {
+      trackEvent("view_item", { test_id: testId, test_category: detail.categories?.[0] });
+      trackedTestIdRef.current = testId;
+    }
+  }, [detail, testId]);
 
   if (isLoading) {
     return <div className="flex flex-col min-h-screen bg-white" />;
@@ -76,9 +87,10 @@ function InterestTestDetailPage() {
           <BottomCTA.Single disabled>종료된 설문이에요</BottomCTA.Single>
         ) : (
           <BottomCTA.Single
-            onClick={() =>
-              navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } })
-            }
+            onClick={() => {
+              trackEvent("join_test", { test_id: testId, reward_amount: detail.reward });
+              navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } });
+            }}
           >
             테스트 참여하기
           </BottomCTA.Single>

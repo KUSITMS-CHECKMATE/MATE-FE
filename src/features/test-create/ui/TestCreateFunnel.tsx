@@ -25,6 +25,7 @@ import { isQuestionDataComplete } from "../model/types";
 import type { BasicSubStep, EditPhase, QuestionTypeId } from "../model/types";
 import { getDraft } from "@/shared/api/generated/testDraft";
 import { ROUTES } from "@/shared/constants/routes";
+import { trackEvent } from "@/shared/lib/analytics";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { useTempSaveAccessoryButton } from "@/shared/hooks/useTempSaveAccessoryButton";
 import { MultipleCreatePage } from "@/features/question-multiple/create";
@@ -226,11 +227,29 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
   }, []);
 
   const handleExitConfirm = () => {
+    trackEvent("create_test_exit", {
+      test_type: form.categories[0],
+      exit_step: funnel.step,
+      progress_rate: Math.round((funnel.currentIndex / (funnel.totalSteps - 1)) * 100),
+    });
     exitUnsubscribeRef.current?.();
     exitUnsubscribeRef.current = null;
     setIsExitDialogOpen(false);
     navigate({ to: ROUTES.TEST });
   };
+
+  const handleAcceptServiceDescription = () => {
+    if (showServiceDescription) return;
+    trackEvent("test_intro_accept", { test_id: String(currentDraftId ?? "pending") });
+    setShowServiceDescription(true);
+  };
+
+  useEffect(() => {
+    if (funnel.step === "service") {
+      trackEvent("test_intro_prompt_view", { test_id: String(currentDraftId ?? "pending") });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [funnel.step]);
 
   const showSavedToast = () => {
     openToast("임시 저장을 완료했어요.", {
@@ -309,7 +328,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
     blurTimerRef.current = setTimeout(() => {
       setIsFocused(false);
       if (funnel.step === "service" && !showServiceDescription && form.serviceName.trim().length > 0) {
-        setShowServiceDescription(true);
+        handleAcceptServiceDescription();
       }
       if (funnel.step === "basic") {
         if (basicSubStep === "name" && form.name.trim().length > 0) {
@@ -353,7 +372,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           if (funnel.step === "service") {
             dismissKeyboard();
             if (!showServiceDescription && form.serviceName.trim().length > 0) {
-              setShowServiceDescription(true);
+              handleAcceptServiceDescription();
             }
           } else if (funnel.step === "basic") {
             handleBasicConfirm();
@@ -362,6 +381,12 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
           }
         }}
         onNext={() => {
+          if (funnel.step === "service") {
+            const testId = String(currentDraftId ?? "pending");
+            trackEvent(form.description.trim().length > 0 ? "test_intro_complete" : "test_intro_skip", {
+              test_id: testId,
+            });
+          }
           funnel.next();
         }}
         onCancel={() => {
@@ -425,7 +450,7 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
               onBlur={handleBlur}
               onServiceNameConfirm={() => {
                 if (!showServiceDescription && form.serviceName.trim().length > 0) {
-                  setShowServiceDescription(true);
+                  handleAcceptServiceDescription();
                 }
               }}
             />
