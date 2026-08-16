@@ -8,7 +8,11 @@ import { markOnboarded } from "./session";
 // - 이미 연결된 사용자 → 창 없이 인가 코드를 반환(무음 로그인)
 // - 연결 안 됨/해제됨 → 약관 동의 화면을 노출한 뒤 인가 코드 반환
 // 부팅 자동 로그인(AuthGuard)과 인트로의 "시작하기"가 모두 이 함수를 사용한다.
-export async function runTossLogin(): Promise<void> {
+export interface TossLoginResult {
+  isNewUser: boolean;
+}
+
+export async function runTossLogin(): Promise<TossLoginResult> {
   // 1) 토스 인가 코드 받기
   let authorizationCode: string;
   let referrer: string;
@@ -41,6 +45,8 @@ export async function runTossLogin(): Promise<void> {
   setToken(token);
   if (refreshToken) setRefreshToken(refreshToken);
   await markOnboarded();
+
+  return { isNewUser: body.data?.isNewUser ?? false };
 }
 
 function errorMessage(e: unknown): string {

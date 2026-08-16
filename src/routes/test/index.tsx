@@ -8,6 +8,7 @@ import { TestCreateButton, TestList } from "@/features/test/ui";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ROUTES } from "@/shared/constants/routes";
 import { deleteDraft, listMyDrafts } from "@/shared/api/generated/testDraft";
+import { trackEvent } from "@/shared/lib/analytics";
 
 const STATUS_MAP: Record<string, UserTest["status"]> = {
   IN_PROGRESS: "active",
@@ -116,9 +117,10 @@ function MakerHomePage() {
         }
       />
       <TestCreateButton
-        onClick={() =>
-          navigate({ to: ROUTES.TEST_CREATE, search: { draftId: undefined, payment: false, resume: false } })
-        }
+        onClick={() => {
+          trackEvent("create_test_start", {});
+          navigate({ to: ROUTES.TEST_CREATE, search: { draftId: undefined, payment: false, resume: false } });
+        }}
       />
 
       <BottomTabBar activeTab="test" />

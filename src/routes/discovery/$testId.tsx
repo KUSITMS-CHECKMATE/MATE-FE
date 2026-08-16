@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { graniteEvent } from "@apps-in-toss/web-framework";
@@ -10,6 +10,7 @@ import {
   TestDetailInfo,
 } from "@/features/discovery-detail/ui";
 import { ROUTES } from "@/shared/constants/routes";
+import { trackEvent } from "@/shared/lib/analytics";
 
 export const Route = createFileRoute("/discovery/$testId")({
   component: TestDetailPage,
@@ -45,6 +46,15 @@ function TestDetailPage() {
 
   const detail = data?.data?.data;
 
+  // 리페치 시 view_item이 중복 발생하지 않도록 testId당 최초 1회만 전송한다.
+  const trackedTestIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (detail && trackedTestIdRef.current !== testId) {
+      trackEvent("view_item", { test_id: testId, test_category: detail.categories?.[0] });
+      trackedTestIdRef.current = testId;
+    }
+  }, [detail, testId]);
+
   if (isLoading || !detail) {
     return <div className="flex flex-col min-h-screen bg-white" />;
   }
@@ -78,13 +88,14 @@ function TestDetailPage() {
       <div className="fixed bottom-0 left-0 w-full">
         <BottomCTA.Single
           disabled={isDisabled}
-          onClick={() =>
+          onClick={() => {
+            trackEvent("join_test", { test_id: testId, reward_amount: detail.reward });
             navigate({
               to: ROUTES.TEST_PARTICIPATE,
               params: { testId },
               search: { reward: detail.reward },
-            })
-          }
+            });
+          }}
         >
           {ctaLabel}
         </BottomCTA.Single>
