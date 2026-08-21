@@ -1,6 +1,6 @@
 import { adaptive } from "@toss/tds-colors";
 import { Checkbox, CTAButton, FixedBottomCTA, ListRow, Top } from "@toss/tds-mobile";
-import { REWARD_AMOUNT_OPTIONS, type RewardAmount } from "../model/types";
+import { AFFILIATE_REWARD_AMOUNT, REWARD_AMOUNT_OPTIONS, type RewardAmount } from "../model/types";
 import { toKRW } from "../model/calcPayment";
 
 interface Props {
@@ -8,9 +8,11 @@ interface Props {
   onSelect: (amount: RewardAmount) => void;
   onConfirm: () => void;
   onClose: () => void;
+  // 제휴 단체 전용가 상품이 콘솔에 등록돼 있고 결제 가능할 때만 true.
+  affiliateAvailable?: boolean;
 }
 
-export function RewardAmountStep({ draft, onSelect, onConfirm, onClose }: Props) {
+export function RewardAmountStep({ draft, onSelect, onConfirm, onClose, affiliateAvailable }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Top
@@ -20,6 +22,22 @@ export function RewardAmountStep({ draft, onSelect, onConfirm, onClose }: Props)
           </Top.TitleParagraph>
         }
       />
+      {affiliateAvailable && (
+        <ListRow
+          role="checkbox"
+          aria-checked={draft === AFFILIATE_REWARD_AMOUNT}
+          contents={
+            <ListRow.Texts
+              type="1RowTypeA"
+              top="제휴 단체 전용가"
+              topProps={{ color: adaptive.grey700 }}
+            />
+          }
+          right={<Checkbox.Circle size={24} checked={draft === AFFILIATE_REWARD_AMOUNT} />}
+          verticalPadding="large"
+          onClick={() => onSelect(AFFILIATE_REWARD_AMOUNT)}
+        />
+      )}
       {REWARD_AMOUNT_OPTIONS.map((amount) => (
         <ListRow
           key={amount}
