@@ -18,7 +18,7 @@ import {
   Top,
   useToast,
 } from "@toss/tds-mobile";
-import { type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
+import { AFFILIATE_REWARD_AMOUNT, type PaymentStep, type TesterCount, type RewardAmount } from "../model/types";
 import { calcPayment, toKRW, parseWonAmount } from "../model/calcPayment";
 import { usePaymentSubmit } from "../model/usePaymentSubmit";
 import { useIapProducts } from "../model/useIapProducts";
@@ -127,6 +127,15 @@ export function PaymentFunnel() {
         onSelect={setDraftTesterCount}
         onConfirm={() => {
           setTesterCount(draftTesterCount);
+          // 제휴 단체 전용가는 테스터 수별 전용 SKU라서, 테스터 수를 바꿔서 그 SKU가
+          // 더 이상 없어지면(예: 100명 → 50명) 선택했던 리워드 금액을 초기화해야 한다.
+          // 안 그러면 등록되지 않은 조합(50명 + 제휴가)으로 결제를 시도하게 된다.
+          const stillAffiliateAvailable =
+            draftTesterCount != null && skuMap[AFFILIATE_REWARD_AMOUNT]?.[draftTesterCount] != null;
+          if (rewardAmount === AFFILIATE_REWARD_AMOUNT && !stillAffiliateAvailable) {
+            setRewardAmount(null);
+            setDraftRewardAmount(null);
+          }
           setStep("main");
         }}
         onClose={() => setStep("main")}
@@ -135,6 +144,7 @@ export function PaymentFunnel() {
   }
 
   if (step === "reward-amount") {
+    const affiliateSku = testerCount != null ? skuMap[AFFILIATE_REWARD_AMOUNT]?.[testerCount] : undefined;
     return (
       <RewardAmountStep
         draft={draftRewardAmount}
@@ -144,6 +154,7 @@ export function PaymentFunnel() {
           setStep("main");
         }}
         onClose={() => setStep("main")}
+        affiliateAvailable={affiliateSku != null}
       />
     );
   }
@@ -244,7 +255,13 @@ export function PaymentFunnel() {
             hasError={false}
             label="리워드 금액"
             labelOption="sustain"
-            value={rewardAmount != null ? toKRW(rewardAmount) : ""}
+            value={
+              rewardAmount === AFFILIATE_REWARD_AMOUNT
+                ? "제휴 단체 전용가"
+                : rewardAmount != null
+                  ? toKRW(rewardAmount)
+                  : ""
+            }
             placeholder="선택해주세요"
             right={<DownArrowIcon />}
             onClick={() => {
