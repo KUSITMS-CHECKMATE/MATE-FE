@@ -3,6 +3,10 @@ import { Top, TextArea, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
+// serviceName/description 모두 백엔드 글자수 제한이 삭제되어 폭주 방지용 상한만 둔다.
+const SERVICE_NAME_MAX_LENGTH = 250;
+const DESCRIPTION_MAX_LENGTH = 250;
+
 interface TestDescriptionStepProps {
   showDescriptionField: boolean;
   onFocus: () => void;
@@ -15,11 +19,13 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
   const serviceNameInputRef = useRef<HTMLInputElement>(null);
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setServiceName(e.target.value);
+    const value = e.target.value;
+    if (value.length <= SERVICE_NAME_MAX_LENGTH) setServiceName(value);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
+    const value = e.target.value;
+    if (value.length <= DESCRIPTION_MAX_LENGTH) setDescription(value);
   };
 
   return (
@@ -53,6 +59,7 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
           onFocus={onFocus}
           onBlur={onBlur}
           enterKeyHint="done"
+          maxLength={DESCRIPTION_MAX_LENGTH}
         />
       ) : null}
       <TextField.Clearable
@@ -68,6 +75,7 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
         onBlur={onBlur}
         onKeyDown={(e) => { if (e.key === "Enter") onServiceNameConfirm?.(); }}
         enterKeyHint="done"
+        maxLength={SERVICE_NAME_MAX_LENGTH}
       />
     </div>
   );

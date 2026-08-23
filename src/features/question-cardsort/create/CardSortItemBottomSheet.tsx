@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { BottomSheet, TextField } from "@toss/tds-mobile";
 
+// 백엔드가 카드/카테고리 이름의 글자수 제한(@Size)을 없애서, 폭주 방지용 상한만 둔다.
+const MAX_LENGTH = 250;
+
 interface CardSortItemBottomSheetProps {
   open: boolean;
   title: string;
@@ -77,6 +80,7 @@ export function CardSortItemBottomSheet({
           hasError={false}
           value={value}
           placeholder={placeholder}
+          maxLength={MAX_LENGTH}
           onChange={(e) => setValue(e.target.value)}
           onClear={() => { setValue(""); inputRef.current?.focus(); }}
           autoFocus
