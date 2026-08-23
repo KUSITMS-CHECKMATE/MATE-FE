@@ -26,7 +26,6 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
           description: q.description ?? "",
           imageUrl: q.imageUrl ?? "",
           placeholder: q.placeholder ?? "",
-          maxLength: q.maxLength ?? null,
         },
       };
     case "OBJECTIVE":

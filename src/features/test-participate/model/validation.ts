@@ -9,15 +9,7 @@ export function isAnswerValid(
   switch (question.type) {
     case "SUBJECTIVE": {
       const a = answer as Extract<Answer, { type: "SUBJECTIVE" }>;
-      const text = a.text.trim();
-      if (text.length === 0) return false;
-      if (
-        question.data.maxLength != null &&
-        text.length > question.data.maxLength
-      ) {
-        return false;
-      }
-      return true;
+      return a.text.trim().length > 0;
     }
     case "OBJECTIVE": {
       const a = answer as Extract<Answer, { type: "OBJECTIVE" }>;
