@@ -284,7 +284,8 @@ export function QuestionCreateTopSection({
               value={questionTitle}
               placeholder={placeholder}
               autoFocus
-              onChange={(e) => onChangeTitle(e.target.value)}
+              maxLength={250}
+              onChange={(e) => onChangeTitle(e.target.value.slice(0, 250))}
               onClear={() => { onChangeTitle(""); titleInputRef.current?.focus(); }}
               onFocus={titleFocus.onFocus}
               onBlur={titleFocus.onBlur}
@@ -327,7 +328,8 @@ export function QuestionCreateTopSection({
                 labelOption="sustain"
                 value={questionDescription}
                 placeholder="추가 설명을 입력해주세요"
-                onChange={(e) => onChangeDescription(e.target.value)}
+                maxLength={250}
+                onChange={(e) => onChangeDescription(e.target.value.slice(0, 250))}
                 onClear={() => { onChangeDescription(""); descInputRef.current?.focus(); }}
                 onFocus={descFocus.onFocus}
                 onBlur={descFocus.onBlur}

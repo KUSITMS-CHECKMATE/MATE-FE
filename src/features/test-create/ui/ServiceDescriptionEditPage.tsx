@@ -4,6 +4,10 @@ import { TextField, TextArea, FixedBottomCTA, CTAButton, Top, ConfirmDialog } fr
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
+// ServiceDescriptionStep과 동일: 백엔드 글자수 제한이 삭제되어 폭주 방지용 상한만 둔다.
+const SERVICE_NAME_MAX_LENGTH = 250;
+const DESCRIPTION_MAX_LENGTH = 250;
+
 interface ServiceDescriptionEditPageProps {
   onClose: () => void;
 }
@@ -41,11 +45,13 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
   };
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    form.setServiceName(e.target.value);
+    const value = e.target.value;
+    if (value.length <= SERVICE_NAME_MAX_LENGTH) form.setServiceName(value);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    form.setDescription(e.target.value);
+    const value = e.target.value;
+    if (value.length <= DESCRIPTION_MAX_LENGTH) form.setDescription(value);
   };
 
   return (
@@ -68,8 +74,17 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
           onChange={handleServiceNameChange}
           onClear={() => { form.setServiceName(""); serviceNameInputRef.current?.focus(); }}
           enterKeyHint="done"
+          maxLength={SERVICE_NAME_MAX_LENGTH}
         />
-        <TextArea variant="line" label="서비스 소개" value={form.description} placeholder="서비스 소개" onChange={handleDescriptionChange} enterKeyHint="done" />
+        <TextArea
+          variant="line"
+          label="서비스 소개"
+          value={form.description}
+          placeholder="서비스 소개"
+          onChange={handleDescriptionChange}
+          enterKeyHint="done"
+          maxLength={DESCRIPTION_MAX_LENGTH}
+        />
       </main>
       <FixedBottomCTA.Double
         leftButton={

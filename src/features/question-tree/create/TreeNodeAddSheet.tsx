@@ -64,6 +64,7 @@ export function TreeNodeAddSheet({
         labelOption="sustain"
         value={name}
         placeholder="기능 이름"
+        maxLength={250}
         onChange={(e) => setName(e.target.value)}
         onClear={() => { setName(""); inputRef.current?.focus(); }}
       />
