@@ -10,12 +10,13 @@ const MAX_LENGTH = 250;
 
 const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
-  { label: string; placeholder: string }
+  { label: string; placeholder: string; help: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름" },
+  name: { label: "테스트 이름", placeholder: "테스트 이름", help: "최대 250자" },
   summary: {
     label: "테스트 한줄 소개",
     placeholder: "테스트 한줄 소개",
+    help: "최대 250자",
   },
 };
 
@@ -111,6 +112,7 @@ export function TestBasicInfoStep({
             onClear={() => { setSubStepValue(subStep, form, ""); inputRef.current?.focus(); }}
             placeholder={STEP_CONFIG[subStep].placeholder}
             maxLength={MAX_LENGTH}
+            help={STEP_CONFIG[subStep].help}
             onFocus={onFocus}
             onBlur={onBlur}
           />

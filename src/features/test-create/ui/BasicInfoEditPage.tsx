@@ -75,6 +75,7 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           onClear={() => { form.setName(""); nameInputRef.current?.focus(); }}
           placeholder="테스트 이름"
           maxLength={MAX_LENGTH}
+          help="최대 250자"
         />
         <TextField.Clearable
           ref={summaryInputRef}
@@ -86,6 +87,7 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           onClear={() => { form.setSummary(""); summaryInputRef.current?.focus(); }}
           placeholder="테스트 한줄 소개"
           maxLength={MAX_LENGTH}
+          help="최대 250자"
         />
         <TextField.Button
           variant="line"
