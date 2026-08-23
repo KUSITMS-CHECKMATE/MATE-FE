@@ -130,7 +130,6 @@ export const MOCK_PREVIEW_QUESTIONS: ParticipateQuestion[] = [
       description: "자유롭게 작성해주세요",
       imageUrl: "",
       placeholder: "답변을 입력해주세요",
-      maxLength: 200,
     },
   },
   {

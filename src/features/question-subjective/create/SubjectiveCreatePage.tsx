@@ -29,7 +29,6 @@ export function SubjectiveCreatePage({ questionId, onClose, registerCommit }: Su
   );
   const [questionImageUrl, setQuestionImageUrl] = useState(existingSubjective?.imageUrl ?? "");
   const [placeholder] = useState(existingSubjective?.placeholder ?? "");
-  const [maxLength] = useState<number | null>(existingSubjective?.maxLength ?? null);
   const [isQuestionInputCompleted, setIsQuestionInputCompleted] = useState(
     (existingSubjective?.title ?? "").trim().length > 0,
   );
@@ -44,7 +43,6 @@ export function SubjectiveCreatePage({ questionId, onClose, registerCommit }: Su
     description: questionDescription,
     imageUrl: questionImageUrl,
     placeholder,
-    maxLength,
   });
 
   usePendingQuestionCommit(registerCommit, () => {
@@ -159,7 +157,6 @@ export function SubjectiveCreatePage({ questionId, onClose, registerCommit }: Su
                 description: questionDescription,
                 imageUrl: questionImageUrl,
                 placeholder,
-                maxLength,
               },
             }}
             answer={previewAnswer}

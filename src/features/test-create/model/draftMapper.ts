@@ -73,7 +73,6 @@ export function mapRawQuestion(raw: RawQuestion): QuestionData | null {
         description,
         imageUrl: str(raw.imageKey),
         placeholder: "",
-        maxLength: null,
       };
 
     case "SCALE":
