@@ -4,15 +4,6 @@ import { TextField, TextArea, FixedBottomCTA, CTAButton, Top, ConfirmDialog } fr
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
-const SERVICE_NAME_MAX_WITH_SPACE = 17;
-const SERVICE_NAME_MAX_WITHOUT_SPACE = 15;
-const DESCRIPTION_MAX_WITH_SPACE = 70;
-const DESCRIPTION_MAX_WITHOUT_SPACE = 60;
-
-function isWithinLimit(value: string, maxWithSpace: number, maxWithoutSpace: number) {
-  return value.length <= maxWithSpace && value.replace(/\s/g, "").length <= maxWithoutSpace;
-}
-
 interface ServiceDescriptionEditPageProps {
   onClose: () => void;
 }
@@ -50,15 +41,11 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
   };
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isWithinLimit(e.target.value, SERVICE_NAME_MAX_WITH_SPACE, SERVICE_NAME_MAX_WITHOUT_SPACE)) {
-      form.setServiceName(e.target.value);
-    }
+    form.setServiceName(e.target.value);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (isWithinLimit(e.target.value, DESCRIPTION_MAX_WITH_SPACE, DESCRIPTION_MAX_WITHOUT_SPACE)) {
-      form.setDescription(e.target.value);
-    }
+    form.setDescription(e.target.value);
   };
 
   return (

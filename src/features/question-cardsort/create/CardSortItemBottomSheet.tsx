@@ -38,7 +38,6 @@ export function CardSortItemBottomSheet({
     };
   }, [open]);
 
-  const MAX_LENGTH = 16;
   const isDisabled = value.trim().length === 0;
 
   return (
@@ -78,7 +77,6 @@ export function CardSortItemBottomSheet({
           hasError={false}
           value={value}
           placeholder={placeholder}
-          maxLength={MAX_LENGTH}
           onChange={(e) => setValue(e.target.value)}
           onClear={() => { setValue(""); inputRef.current?.focus(); }}
           autoFocus

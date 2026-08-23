@@ -6,7 +6,6 @@ export interface EditSheetConfig {
   header: string;
   label: string;
   fieldPlaceholder: string;
-  maxLength: number;
 }
 
 interface QuestionEditSheetProps {
@@ -61,9 +60,8 @@ export function QuestionEditSheet({
             labelOption="sustain"
             value={draft}
             placeholder={config.fieldPlaceholder}
-            maxLength={config.maxLength}
             autoFocus
-            onChange={(e) => onDraftChange(e.target.value.slice(0, config.maxLength))}
+            onChange={(e) => onDraftChange(e.target.value)}
             onClear={() => { onDraftChange(""); inputRef.current?.focus(); }}
           />
         </motion.div>
