@@ -443,7 +443,6 @@ export function FivesecCreatePage({ questionId, onClose, registerCommit }: Fives
           value={choiceNameDraft}
           placeholder="선택지명"
           autoFocus
-          maxLength={17}
           onChange={(e) => setChoiceNameDraft(e.target.value)}
           onClear={() => { setChoiceNameDraft(""); choiceNameInputRef.current?.focus(); }}
         />

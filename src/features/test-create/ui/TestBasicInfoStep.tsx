@@ -6,14 +6,12 @@ import { BASIC_SUB_STEPS, CATEGORIES, type BasicSubStep } from "../model/types";
 
 const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
-  { label: string; placeholder: string; maxLength?: number; help?: string }
+  { label: string; placeholder: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름", maxLength: 17, help: "최대 17자" },
+  name: { label: "테스트 이름", placeholder: "테스트 이름" },
   summary: {
     label: "테스트 한줄 소개",
     placeholder: "테스트 한줄 소개",
-    maxLength: 60,
-    help: "최대 60자",
   },
 };
 
@@ -44,8 +42,6 @@ function handleSubStepChange(
   form: TestCreateFormStore,
   value: string,
 ) {
-  const { maxLength } = STEP_CONFIG[subStep];
-  if (maxLength && value.length > maxLength) return;
   setSubStepValue(subStep, form, value);
 }
 
@@ -109,7 +105,6 @@ export function TestBasicInfoStep({
             onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
             onClear={() => { setSubStepValue(subStep, form, ""); inputRef.current?.focus(); }}
             placeholder={STEP_CONFIG[subStep].placeholder}
-            help={STEP_CONFIG[subStep].help}
             onFocus={onFocus}
             onBlur={onBlur}
           />
