@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
-import { createDraft, updateDraft } from "@/shared/api/generated/testDraft";
+import { createDraft, deleteDraft, updateDraft } from "@/shared/api/generated/testDraft";
 import { useTestCreateForm } from "./useTestCreateForm";
 import { buildDraftPayload } from "./draftPayload";
 
@@ -33,21 +33,26 @@ export function useSaveDraft(draftId: number | undefined, onDraftCreated?: (draf
 
   return useMutation({
     mutationFn: async () => {
+      const isNewDraft = !draftId;
       let id = draftId;
       if (!id) {
         const res = await createDraft();
         id = res.data.data?.draftId;
         if (!id) throw new Error("초안 생성에 실패했습니다. 다시 시도해주세요.");
-        onDraftCreated?.(id);
       }
 
       const payload = await buildDraftPayload(useTestCreateForm.getState());
       try {
         await updateDraft(id, payload);
       } catch (e) {
-        throw new Error(`[테스트 초안 저장 실패] ${e instanceof Error ? e.message : String(e)}`);
+        // 이번 호출에서 새로 만든 초안이면, 내용 저장 실패 시 "제목 없는 테스트"로
+        // 서버에 방치되지 않도록 롤백한다. (기존 초안 이어쓰기 중 실패한 경우는 보존)
+        if (isNewDraft) await deleteDraft(id).catch(() => {});
+        // 백엔드가 내려주는 code/message(예: 필드별 글자수 제한)를 그대로 노출한다.
+        throw new Error(`[테스트 초안 저장 실패] ${await toMessage(e)}`);
       }
 
+      if (isNewDraft) onDraftCreated?.(id);
       return id;
     },
     onSuccess: () => {

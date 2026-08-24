@@ -288,11 +288,8 @@ export function TestRegisterStep({
                     type="2RowTypeF"
                     top="테스트 한줄 소개"
                     topProps={{ color: adaptive.grey500 }}
-                    bottom={form.summary || "테스트 한 줄 소개 최대 60자"}
-                    bottomProps={{
-                      color: adaptive.grey700,
-                      fontWeight: "medium",
-                    }}
+                    bottom={form.summary || "테스트 한 줄 소개"}
+                    bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
                   />
                 }
                 verticalPadding="small"

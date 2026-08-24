@@ -4,16 +4,19 @@ import { TextField } from "@toss/tds-mobile";
 import { useTestCreateForm, type TestCreateFormStore } from "../model/useTestCreateForm";
 import { BASIC_SUB_STEPS, CATEGORIES, type BasicSubStep } from "../model/types";
 
+// 백엔드가 title/summary의 글자수 제한(@Size)을 없앴지만, 입력 폭주 방지용으로
+// 느슨한 상한은 프론트에 남겨둔다. (백엔드 문의 결과 255자면 충분 → 여유있게 250)
+const MAX_LENGTH = 250;
+
 const STEP_CONFIG: Record<
   Exclude<BasicSubStep, "category">,
-  { label: string; placeholder: string; maxLength?: number; help?: string }
+  { label: string; placeholder: string; help: string }
 > = {
-  name: { label: "테스트 이름", placeholder: "테스트 이름", maxLength: 17, help: "최대 17자" },
+  name: { label: "테스트 이름", placeholder: "테스트 이름", help: "최대 250자" },
   summary: {
     label: "테스트 한줄 소개",
     placeholder: "테스트 한줄 소개",
-    maxLength: 60,
-    help: "최대 60자",
+    help: "최대 250자",
   },
 };
 
@@ -44,8 +47,7 @@ function handleSubStepChange(
   form: TestCreateFormStore,
   value: string,
 ) {
-  const { maxLength } = STEP_CONFIG[subStep];
-  if (maxLength && value.length > maxLength) return;
+  if (value.length > MAX_LENGTH) return;
   setSubStepValue(subStep, form, value);
 }
 
@@ -109,6 +111,7 @@ export function TestBasicInfoStep({
             onChange={(e) => handleSubStepChange(subStep, form, e.target.value)}
             onClear={() => { setSubStepValue(subStep, form, ""); inputRef.current?.focus(); }}
             placeholder={STEP_CONFIG[subStep].placeholder}
+            maxLength={MAX_LENGTH}
             help={STEP_CONFIG[subStep].help}
             onFocus={onFocus}
             onBlur={onBlur}

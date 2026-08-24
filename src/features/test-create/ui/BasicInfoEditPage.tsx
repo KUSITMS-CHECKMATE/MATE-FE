@@ -6,6 +6,9 @@ import { CategorySelectSheet } from "./CategorySelectSheet";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 import { CATEGORIES, type CategoryId } from "../model/types";
 
+// TestBasicInfoStep과 동일한 상한 (백엔드 글자수 제한 삭제에 맞춘 프론트 폭주 방지용)
+const MAX_LENGTH = 250;
+
 interface BasicInfoEditPageProps {
   onClose: () => void;
 }
@@ -68,13 +71,11 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           label="테스트 이름"
           labelOption="sustain"
           value={form.name}
-          onChange={(e) => {
-            if (e.target.value.length > 17) return;
-            form.setName(e.target.value);
-          }}
+          onChange={(e) => { if (e.target.value.length <= MAX_LENGTH) form.setName(e.target.value); }}
           onClear={() => { form.setName(""); nameInputRef.current?.focus(); }}
           placeholder="테스트 이름"
-          help="최대 17자"
+          maxLength={MAX_LENGTH}
+          help="최대 250자"
         />
         <TextField.Clearable
           ref={summaryInputRef}
@@ -82,13 +83,11 @@ export function BasicInfoEditPage({ onClose }: BasicInfoEditPageProps) {
           label="테스트 한줄 소개"
           labelOption="sustain"
           value={form.summary}
-          onChange={(e) => {
-            if (e.target.value.length > 60) return;
-            form.setSummary(e.target.value);
-          }}
+          onChange={(e) => { if (e.target.value.length <= MAX_LENGTH) form.setSummary(e.target.value); }}
           onClear={() => { form.setSummary(""); summaryInputRef.current?.focus(); }}
           placeholder="테스트 한줄 소개"
-          help="최대 60자"
+          maxLength={MAX_LENGTH}
+          help="최대 250자"
         />
         <TextField.Button
           variant="line"

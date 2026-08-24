@@ -4,14 +4,9 @@ import { TextField, TextArea, FixedBottomCTA, CTAButton, Top, ConfirmDialog } fr
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
-const SERVICE_NAME_MAX_WITH_SPACE = 17;
-const SERVICE_NAME_MAX_WITHOUT_SPACE = 15;
-const DESCRIPTION_MAX_WITH_SPACE = 70;
-const DESCRIPTION_MAX_WITHOUT_SPACE = 60;
-
-function isWithinLimit(value: string, maxWithSpace: number, maxWithoutSpace: number) {
-  return value.length <= maxWithSpace && value.replace(/\s/g, "").length <= maxWithoutSpace;
-}
+// ServiceDescriptionStep과 동일: 백엔드 글자수 제한이 삭제되어 폭주 방지용 상한만 둔다.
+const SERVICE_NAME_MAX_LENGTH = 250;
+const DESCRIPTION_MAX_LENGTH = 250;
 
 interface ServiceDescriptionEditPageProps {
   onClose: () => void;
@@ -50,15 +45,13 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
   };
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isWithinLimit(e.target.value, SERVICE_NAME_MAX_WITH_SPACE, SERVICE_NAME_MAX_WITHOUT_SPACE)) {
-      form.setServiceName(e.target.value);
-    }
+    const value = e.target.value;
+    if (value.length <= SERVICE_NAME_MAX_LENGTH) form.setServiceName(value);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (isWithinLimit(e.target.value, DESCRIPTION_MAX_WITH_SPACE, DESCRIPTION_MAX_WITHOUT_SPACE)) {
-      form.setDescription(e.target.value);
-    }
+    const value = e.target.value;
+    if (value.length <= DESCRIPTION_MAX_LENGTH) form.setDescription(value);
   };
 
   return (
@@ -81,8 +74,17 @@ export function ServiceDescriptionEditPage({ onClose }: ServiceDescriptionEditPa
           onChange={handleServiceNameChange}
           onClear={() => { form.setServiceName(""); serviceNameInputRef.current?.focus(); }}
           enterKeyHint="done"
+          maxLength={SERVICE_NAME_MAX_LENGTH}
         />
-        <TextArea variant="line" label="서비스 소개" value={form.description} placeholder="서비스 소개" onChange={handleDescriptionChange} enterKeyHint="done" />
+        <TextArea
+          variant="line"
+          label="서비스 소개"
+          value={form.description}
+          placeholder="서비스 소개"
+          onChange={handleDescriptionChange}
+          enterKeyHint="done"
+          maxLength={DESCRIPTION_MAX_LENGTH}
+        />
       </main>
       <FixedBottomCTA.Double
         leftButton={

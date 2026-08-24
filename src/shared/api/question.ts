@@ -137,7 +137,6 @@ export function mapQuestionRawToParticipate(raw: QuestionRaw): ParticipateQuesti
           description: raw.description,
           imageUrl: raw.imageUrl ?? "",
           placeholder: "",
-          maxLength: null,
         },
       };
 

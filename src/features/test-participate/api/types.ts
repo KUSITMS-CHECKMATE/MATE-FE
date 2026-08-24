@@ -45,7 +45,6 @@ export interface ApiSubjectiveQuestion {
   description?: string;
   imageUrl?: string;
   placeholder?: string;
-  maxLength?: number | null;
 }
 
 export interface ApiObjectiveQuestion {
