@@ -46,13 +46,13 @@ export function useEditSheet(questionType: string, titlePlaceholder: string) {
           header: "어떻게 질문할까요?",
           label: `${questionType} 질문`,
           fieldPlaceholder: titlePlaceholder,
-          maxLength: 34,
+          maxLength: 250,
         }
       : {
           header: "(선택) 질문에 대한 추가 설명을 할까요?",
           label: "추가 설명",
           fieldPlaceholder: "추가 설명을 입력해주세요",
-          maxLength: 55,
+          maxLength: 250,
         };
 
   return {

@@ -62,8 +62,8 @@ export function MultipleChoiceEditorOverlay({
           labelOption="sustain"
           value={choiceName}
           placeholder="선택지명을 입력해주세요"
-          maxLength={17}
           autoFocus
+          maxLength={250}
           onChange={(e) => setChoiceName(e.target.value)}
           onClear={() => { setChoiceName(""); inputRef.current?.focus(); }}
           onFocus={handleFocus}

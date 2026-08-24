@@ -12,7 +12,6 @@ const MOCK_TEST_1: ParticipateTest = {
         description: "좋은 하루 보내셨길 바랍니다",
         imageUrl: "",
         placeholder: "답변 쓰는중임",
-        maxLength: null,
       },
     },
     {
@@ -23,7 +22,6 @@ const MOCK_TEST_1: ParticipateTest = {
         description: "좋은 하루 보내셨길 바랍니다",
         imageUrl: "",
         placeholder: "답변 쓰는중임",
-        maxLength: null,
       },
     },
     {
@@ -190,7 +188,6 @@ const MOCK_TEST_1: ParticipateTest = {
         description: "좋은 하루 보내셨길 바랍니다",
         imageUrl: "",
         placeholder: "답변을 작성해주세요",
-        maxLength: null,
       },
     },
     {
@@ -201,7 +198,6 @@ const MOCK_TEST_1: ParticipateTest = {
         description: "자유롭게 작성해주세요",
         imageUrl: "placeholder",
         placeholder: "답변을 작성해주세요",
-        maxLength: null,
       },
     },
     {

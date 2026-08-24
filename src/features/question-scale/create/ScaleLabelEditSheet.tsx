@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { BottomSheet, TextField } from "@toss/tds-mobile";
 
+// 백엔드 minLabel/maxLabel은 여전히 @Size(max=100)로 제한 중 → 그대로 맞춘다.
+const MAX_LENGTH = 100;
+
 interface ScaleLabelEditSheetProps {
   open: boolean;
   label: string;
@@ -66,7 +69,7 @@ export function ScaleLabelEditSheet({
         placeholder="라벨링을 입력해주세요"
         suffix=""
         prefix=""
-        maxLength={15}
+        maxLength={MAX_LENGTH}
         autoFocus
         onChange={(e) => setValue(e.target.value)}
         onClear={() => { setValue(""); inputRef.current?.focus(); }}

@@ -3,20 +3,15 @@ import { Top, TextArea, TextField } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
 import { useTestCreateForm } from "../model/useTestCreateForm";
 
+// serviceName/description 모두 백엔드 글자수 제한이 삭제되어 폭주 방지용 상한만 둔다.
+const SERVICE_NAME_MAX_LENGTH = 250;
+const DESCRIPTION_MAX_LENGTH = 250;
+
 interface TestDescriptionStepProps {
   showDescriptionField: boolean;
   onFocus: () => void;
   onBlur: () => void;
   onServiceNameConfirm?: () => void;
-}
-
-const SERVICE_NAME_MAX_WITH_SPACE = 17;
-const SERVICE_NAME_MAX_WITHOUT_SPACE = 15;
-const DESCRIPTION_MAX_WITH_SPACE = 70;
-const DESCRIPTION_MAX_WITHOUT_SPACE = 60;
-
-function isWithinLimit(value: string, maxWithSpace: number, maxWithoutSpace: number) {
-  return value.length <= maxWithSpace && value.replace(/\s/g, "").length <= maxWithoutSpace;
 }
 
 export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, onServiceNameConfirm }: TestDescriptionStepProps) {
@@ -25,16 +20,12 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
 
   const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (isWithinLimit(value, SERVICE_NAME_MAX_WITH_SPACE, SERVICE_NAME_MAX_WITHOUT_SPACE)) {
-      setServiceName(value);
-    }
+    if (value.length <= SERVICE_NAME_MAX_LENGTH) setServiceName(value);
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    if (isWithinLimit(value, DESCRIPTION_MAX_WITH_SPACE, DESCRIPTION_MAX_WITHOUT_SPACE)) {
-      setDescription(value);
-    }
+    if (value.length <= DESCRIPTION_MAX_LENGTH) setDescription(value);
   };
 
   return (
@@ -68,6 +59,7 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
           onFocus={onFocus}
           onBlur={onBlur}
           enterKeyHint="done"
+          maxLength={DESCRIPTION_MAX_LENGTH}
         />
       ) : null}
       <TextField.Clearable
@@ -83,6 +75,7 @@ export function ServiceDescriptionStep({ showDescriptionField, onFocus, onBlur, 
         onBlur={onBlur}
         onKeyDown={(e) => { if (e.key === "Enter") onServiceNameConfirm?.(); }}
         enterKeyHint="done"
+        maxLength={SERVICE_NAME_MAX_LENGTH}
       />
     </div>
   );
