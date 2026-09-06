@@ -248,13 +248,13 @@ export function TestResultPage({ testId }: Props) {
 
           {selectedTabIndex === 1 && !isEnded && (
             <Result
-              title="아직 진행하고 있는 테스트에요"
-              description="테스트가 끝나고 결과를 알려드릴게요"
+              title="진행중인 테스트예요"
+              description="응답이 50% 이상 모이면 통계를 볼 수 있어요."
               className="my-10"
               figure={
-                <Asset.Image
+                <Asset.Lottie
                   frameShape={Asset.frameShape.CleanW60}
-                  src="https://static.toss.im/2d-emojis/png/4x/u1F50D.png"
+                  src="https://static.toss.im/lotties-common/empty-spot.json"
                   aria-hidden={true}
                 />
               }
