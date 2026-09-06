@@ -3,6 +3,7 @@ import { graniteEvent } from "@apps-in-toss/web-framework";
 import {
   Asset,
   Button,
+  ConfirmDialog,
   ListHeader,
   Result,
   Skeleton,
@@ -21,10 +22,11 @@ import { mapReportItemToQuestionResult } from "../model/mappers";
 import { STATUS_BADGE } from "../model/constants";
 import { usePdfDownload } from "../model/usePdfDownload";
 import { useCsvDownload } from "../model/useCsvDownload";
+import { useCloseTestMutation } from "../model/useCloseTest";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 import { trackEvent } from "@/shared/lib/analytics";
 
@@ -58,7 +60,10 @@ function TestResultSkeleton() {
 export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
+  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+  const closeTestMutation = useCloseTestMutation();
   const { data: testDetailData } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
@@ -160,6 +165,20 @@ export function TestResultPage({ testId }: Props) {
     setIsDownloadSheetOpen(false);
   }
 
+  async function handleCloseTest() {
+    if (closeTestMutation.isPending) return;
+    setIsCloseDialogOpen(false);
+    try {
+      await closeTestMutation.mutateAsync(Number(testId));
+      await Promise.all([
+        refetch(),
+        queryClient.invalidateQueries({ queryKey: [getGetTestUrl(Number(testId))] }),
+      ]);
+    } catch {
+      openToast("테스트 종료에 실패했어요. 잠시 후 다시 시도해 주세요.", { type: "bottom" });
+    }
+  }
+
   return (
     <div>
       {isEnded && (
@@ -214,14 +233,25 @@ export function TestResultPage({ testId }: Props) {
       ) : (
         <>
           <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
-            <Button
-              size="large"
-              display="block"
-              disabled={!isEnded}
-              onClick={() => setIsDownloadSheetOpen(true)}
-            >
-              통계 다운받기
-            </Button>
+            {isEnded ? (
+              <Button
+                size="large"
+                display="block"
+                onClick={() => setIsDownloadSheetOpen(true)}
+              >
+                통계 다운받기
+              </Button>
+            ) : (
+              <Button
+                size="large"
+                variant="weak"
+                display="block"
+                disabled={closeTestMutation.isPending}
+                onClick={() => setIsCloseDialogOpen(true)}
+              >
+                테스트 종료하기
+              </Button>
+            )}
           </div>
 
           <Tab
@@ -246,7 +276,8 @@ export function TestResultPage({ testId }: Props) {
             />
           )}
 
-          {selectedTabIndex === 1 && !isEnded && (
+          {/* 응답률 50% 미만: 아직 집계 전 → 빈 화면 */}
+          {selectedTabIndex === 1 && !isEnded && results.length === 0 && (
             <Result
               title="진행중인 테스트예요"
               description="응답이 50% 이상 모이면 통계를 볼 수 있어요."
@@ -261,7 +292,10 @@ export function TestResultPage({ testId }: Props) {
             />
           )}
 
-          {selectedTabIndex === 1 && isEnded && <ResultTabContent results={results} />}
+          {/* 응답률 50% 이상(즉석 통계) 또는 종료(최종 통계). 통계 발급 안내는 종료 후에만 노출 */}
+          {selectedTabIndex === 1 && (results.length > 0 || isEnded) && (
+            <ResultTabContent results={results} showDownloadGuide={isEnded} />
+          )}
         </>
       )}
 
@@ -276,6 +310,25 @@ export function TestResultPage({ testId }: Props) {
         onClose={() => setIsDownloadSheetOpen(false)}
         onDownload={handleDownload}
         isGenerating={isGenerating}
+      />
+
+      <ConfirmDialog
+        open={isCloseDialogOpen}
+        title="테스트를 종료할까요?"
+        description={
+          "종료하면 이제 응답을 받을 수 없어요.\n지금까지 나온 결과로 보고서를 만들어드려요."
+        }
+        cancelButton={
+          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsCloseDialogOpen(false)}>
+            닫기
+          </ConfirmDialog.CancelButton>
+        }
+        confirmButton={
+          <ConfirmDialog.ConfirmButton size="xlarge" onClick={handleCloseTest}>
+            종료하기
+          </ConfirmDialog.ConfirmButton>
+        }
+        onClose={() => setIsCloseDialogOpen(false)}
       />
     </div>
   );

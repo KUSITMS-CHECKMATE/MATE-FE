@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getReport } from "./generated/report";
 
@@ -107,7 +108,14 @@ export interface ReportResponse {
 
 // ─── useQuery 훅 ──────────────────────────────────────────────────────────────
 
+/** 종료 직후 리포트 집계 구간 폴링 설정: 5초 간격, 최대 60초 후 중단 */
+const AGGREGATING_POLL_INTERVAL = 5_000;
+const AGGREGATING_POLL_TIMEOUT = 60_000;
+
 export const useGetReportQuery = (testId: number) => {
+  // 집계 중(testStatus COMPLETED · reportStatus IN_PROGRESS) 진입 시각. 폴링 상한 계산용.
+  const pollStartedAtRef = useRef<number | null>(null);
+
   return useQuery({
     queryKey: ["report", testId],
     queryFn: async () => {
@@ -115,5 +123,24 @@ export const useGetReportQuery = (testId: number) => {
       return res.data as ReportResponse;
     },
     enabled: !!testId,
+    // 테스트 종료 후 리포트 집계가 끝날 때까지만 폴링한다.
+    // 집계는 보통 수십 초 내 완료되므로 60초까지만 시도하고 이후엔 중단(자동 갱신 없음).
+    refetchInterval: (query) => {
+      const data = query.state.data?.data;
+      const isAggregating =
+        data?.testStatus === "COMPLETED" && data?.reportStatus === "IN_PROGRESS";
+
+      if (!isAggregating) {
+        pollStartedAtRef.current = null;
+        return false;
+      }
+      if (pollStartedAtRef.current == null) {
+        pollStartedAtRef.current = Date.now();
+      }
+      if (Date.now() - pollStartedAtRef.current > AGGREGATING_POLL_TIMEOUT) {
+        return false;
+      }
+      return AGGREGATING_POLL_INTERVAL;
+    },
   });
 };

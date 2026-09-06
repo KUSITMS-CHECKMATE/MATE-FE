@@ -11,9 +11,11 @@ import type { QuestionResult } from "../model/types";
 
 interface Props {
   results: QuestionResult[];
+  /** 하단 "파일로 발급 받아봐요" 안내를 노출할지 여부. 테스트 종료 전(즉석 통계)에는 숨긴다. */
+  showDownloadGuide?: boolean;
 }
 
-export function ResultTabContent({ results }: Props) {
+export function ResultTabContent({ results, showDownloadGuide = true }: Props) {
   return (
     <div className="w-full flex flex-col bg-[#f2f4f6] pb-21.5">
       <div className="w-full  p-5 flex flex-col gap-4 items-center">
@@ -67,22 +69,24 @@ export function ResultTabContent({ results }: Props) {
         })}
       </div>
 
-      <div className="w-full ">
-        <ListRow
-          left={<ListRow.AssetIcon size="xsmall" shape="original" name="icon-graph-circle" />}
-          contents={
-            <ListRow.Texts
-              type="2RowTypeF"
-              top="모든 결과를 보고 싶다면"
-              topProps={{ color: adaptive.grey500 }}
-              bottom="파일로 발급 받아봐요"
-              bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
-            />
-          }
-          right={<Button size="small">통계 발급받기</Button>}
-          verticalPadding="xlarge"
-        />
-      </div>
+      {showDownloadGuide && (
+        <div className="w-full ">
+          <ListRow
+            left={<ListRow.AssetIcon size="xsmall" shape="original" name="icon-graph-circle" />}
+            contents={
+              <ListRow.Texts
+                type="2RowTypeF"
+                top="모든 결과를 보고 싶다면"
+                topProps={{ color: adaptive.grey500 }}
+                bottom="파일로 발급 받아봐요"
+                bottomProps={{ color: adaptive.grey800, fontWeight: "bold" }}
+              />
+            }
+            right={<Button size="small">통계 발급받기</Button>}
+            verticalPadding="xlarge"
+          />
+        </div>
+      )}
     </div>
   );
 }
