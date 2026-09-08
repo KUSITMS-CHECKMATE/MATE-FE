@@ -23,7 +23,7 @@ interface PaymentGrantResult {
 export async function grantPayment({ orderId, draftId }: PaymentGrantInput): Promise<PaymentGrantResult> {
   try {
     const res = await grant({ orderId, draftId });
-    return { success: res.data.data === true, code: res.data.code, message: res.data.message };
+    return { success: res.data.success === true, code: res.data.code, message: res.data.message };
   } catch (e) {
     if (e instanceof HTTPError) {
       try {
