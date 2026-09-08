@@ -3,6 +3,7 @@ import { graniteEvent } from "@apps-in-toss/web-framework";
 import {
   Asset,
   Button,
+  ConfirmDialog,
   ListHeader,
   Result,
   Skeleton,
@@ -21,10 +22,11 @@ import { mapReportItemToQuestionResult } from "../model/mappers";
 import { STATUS_BADGE } from "../model/constants";
 import { usePdfDownload } from "../model/usePdfDownload";
 import { useCsvDownload } from "../model/useCsvDownload";
+import { useCloseTestMutation } from "../model/useCloseTest";
 import { useGetReportQuery } from "@/shared/api/report";
 import type { TestStatus } from "@/shared/api/report";
 import { useGetQuestionDetailQuery, useGetQuestionSummaryQuery } from "@/shared/api/question";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTest, getGetTestUrl } from "@/shared/api/generated/test";
 import { trackEvent } from "@/shared/lib/analytics";
 
@@ -58,7 +60,10 @@ function TestResultSkeleton() {
 export function TestResultPage({ testId }: Props) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [isDownloadSheetOpen, setIsDownloadSheetOpen] = useState(false);
+  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+  const closeTestMutation = useCloseTestMutation();
   const { data: testDetailData } = useQuery({
     queryKey: [getGetTestUrl(Number(testId))],
     queryFn: () => getTest(Number(testId)),
@@ -122,6 +127,12 @@ export function TestResultPage({ testId }: Props) {
   const showParticipant = testStatus === "IN_PROGRESS" || testStatus === "COMPLETED";
   const results = (report?.reports ?? []).map(mapReportItemToQuestionResult);
 
+  const achievementRate = report?.achievementRate ?? 0;
+  // 달성률 20% 이상일 때만 수동 종료 가능. 그 전에는 버튼을 흐리게(비활성) 노출한다.
+  const canCloseTest = achievementRate >= 0.2;
+  // 달성률 50% 이상이면 즉석 통계, 종료됐으면 최종 통계를 결과 탭에 보여준다.
+  const canShowResult = achievementRate >= 0.5 || isEnded;
+
   if (isLoading) {
     return <TestResultSkeleton />;
   }
@@ -158,6 +169,20 @@ export function TestResultPage({ testId }: Props) {
       openToast("다운로드에 실패했습니다. 다시 시도해주세요.", { type: "bottom" });
     }
     setIsDownloadSheetOpen(false);
+  }
+
+  async function handleCloseTest() {
+    if (closeTestMutation.isPending) return;
+    setIsCloseDialogOpen(false);
+    try {
+      await closeTestMutation.mutateAsync(Number(testId));
+      await Promise.all([
+        refetch(),
+        queryClient.invalidateQueries({ queryKey: [getGetTestUrl(Number(testId))] }),
+      ]);
+    } catch {
+      openToast("테스트 종료에 실패했어요. 잠시 후 다시 시도해 주세요.", { type: "bottom" });
+    }
   }
 
   return (
@@ -214,14 +239,25 @@ export function TestResultPage({ testId }: Props) {
       ) : (
         <>
           <div className="w-full h-fit bg-white flex flex-col justify-start items-start px-5 pb-3">
-            <Button
-              size="large"
-              display="block"
-              disabled={!isEnded}
-              onClick={() => setIsDownloadSheetOpen(true)}
-            >
-              통계 다운받기
-            </Button>
+            {isEnded ? (
+              <Button
+                size="large"
+                display="block"
+                onClick={() => setIsDownloadSheetOpen(true)}
+              >
+                통계 다운받기
+              </Button>
+            ) : (
+              <Button
+                size="large"
+                variant="weak"
+                display="block"
+                disabled={!canCloseTest || closeTestMutation.isPending}
+                onClick={() => setIsCloseDialogOpen(true)}
+              >
+                테스트 종료하기
+              </Button>
+            )}
           </div>
 
           <Tab
@@ -246,22 +282,26 @@ export function TestResultPage({ testId }: Props) {
             />
           )}
 
-          {selectedTabIndex === 1 && !isEnded && (
+          {/* 달성률 50% 미만이면서 미종료: 아직 통계 공개 전 → 빈 화면 */}
+          {selectedTabIndex === 1 && !canShowResult && (
             <Result
-              title="아직 진행하고 있는 테스트에요"
-              description="테스트가 끝나고 결과를 알려드릴게요"
+              title="진행중인 테스트예요"
+              description="응답이 50% 이상 모이면 통계를 볼 수 있어요."
               className="my-10"
               figure={
-                <Asset.Image
+                <Asset.Lottie
                   frameShape={Asset.frameShape.CleanW60}
-                  src="https://static.toss.im/2d-emojis/png/4x/u1F50D.png"
+                  src="https://static.toss.im/lotties-common/empty-spot.json"
                   aria-hidden={true}
                 />
               }
             />
           )}
 
-          {selectedTabIndex === 1 && isEnded && <ResultTabContent results={results} />}
+          {/* 달성률 50% 이상(즉석 통계) 또는 종료(최종 통계). 통계 발급 안내는 종료 후에만 노출 */}
+          {selectedTabIndex === 1 && canShowResult && (
+            <ResultTabContent results={results} showDownloadGuide={isEnded} />
+          )}
         </>
       )}
 
@@ -276,6 +316,25 @@ export function TestResultPage({ testId }: Props) {
         onClose={() => setIsDownloadSheetOpen(false)}
         onDownload={handleDownload}
         isGenerating={isGenerating}
+      />
+
+      <ConfirmDialog
+        open={isCloseDialogOpen}
+        title="테스트를 종료할까요?"
+        description={
+          "종료하면 이제 응답을 받을 수 없어요.\n지금까지 나온 결과로 보고서를 만들어드려요."
+        }
+        cancelButton={
+          <ConfirmDialog.CancelButton size="xlarge" onClick={() => setIsCloseDialogOpen(false)}>
+            닫기
+          </ConfirmDialog.CancelButton>
+        }
+        confirmButton={
+          <ConfirmDialog.ConfirmButton size="xlarge" onClick={handleCloseTest}>
+            종료하기
+          </ConfirmDialog.ConfirmButton>
+        }
+        onClose={() => setIsCloseDialogOpen(false)}
       />
     </div>
   );
