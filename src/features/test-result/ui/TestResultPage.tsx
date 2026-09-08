@@ -127,6 +127,12 @@ export function TestResultPage({ testId }: Props) {
   const showParticipant = testStatus === "IN_PROGRESS" || testStatus === "COMPLETED";
   const results = (report?.reports ?? []).map(mapReportItemToQuestionResult);
 
+  const achievementRate = report?.achievementRate ?? 0;
+  // 달성률 20% 이상일 때만 수동 종료 가능. 그 전에는 버튼을 흐리게(비활성) 노출한다.
+  const canCloseTest = achievementRate >= 0.2;
+  // 달성률 50% 이상이면 즉석 통계, 종료됐으면 최종 통계를 결과 탭에 보여준다.
+  const canShowResult = achievementRate >= 0.5 || isEnded;
+
   if (isLoading) {
     return <TestResultSkeleton />;
   }
@@ -246,7 +252,7 @@ export function TestResultPage({ testId }: Props) {
                 size="large"
                 variant="weak"
                 display="block"
-                disabled={closeTestMutation.isPending}
+                disabled={!canCloseTest || closeTestMutation.isPending}
                 onClick={() => setIsCloseDialogOpen(true)}
               >
                 테스트 종료하기
@@ -276,8 +282,8 @@ export function TestResultPage({ testId }: Props) {
             />
           )}
 
-          {/* 응답률 50% 미만: 아직 집계 전 → 빈 화면 */}
-          {selectedTabIndex === 1 && !isEnded && results.length === 0 && (
+          {/* 달성률 50% 미만이면서 미종료: 아직 통계 공개 전 → 빈 화면 */}
+          {selectedTabIndex === 1 && !canShowResult && (
             <Result
               title="진행중인 테스트예요"
               description="응답이 50% 이상 모이면 통계를 볼 수 있어요."
@@ -292,8 +298,8 @@ export function TestResultPage({ testId }: Props) {
             />
           )}
 
-          {/* 응답률 50% 이상(즉석 통계) 또는 종료(최종 통계). 통계 발급 안내는 종료 후에만 노출 */}
-          {selectedTabIndex === 1 && (results.length > 0 || isEnded) && (
+          {/* 달성률 50% 이상(즉석 통계) 또는 종료(최종 통계). 통계 발급 안내는 종료 후에만 노출 */}
+          {selectedTabIndex === 1 && canShowResult && (
             <ResultTabContent results={results} showDownloadGuide={isEnded} />
           )}
         </>
