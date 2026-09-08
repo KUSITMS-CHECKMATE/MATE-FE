@@ -96,6 +96,8 @@ export interface ReportData {
   reportStatus: ReportStatus;
   questionCount: number;
   participantCount: number;
+  /** 목표 달성률 (참여 인원 / 목표 인원). 0~1, 종료 시 1.0 */
+  achievementRate: number;
   reports: ReportItem[];
 }
 
