@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { IAP } from "@apps-in-toss/web-framework";
 
 export function useIapProducts() {
+  // enabled: IAP != null 이라 IAP 자체가 없으면 queryFn(위 로그 포함)이 아예 실행되지 않는다 —
+  // "IAP 상품 목록" 로그가 안 찍히는 게 매칭 문제가 아니라 이것 때문인지 확인하는 용도.
+  console.log("IAP 객체 존재 여부", IAP != null);
+
   return useQuery({
     queryKey: ["iapProducts"],
     queryFn: async () => {
