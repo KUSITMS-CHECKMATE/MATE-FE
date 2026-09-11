@@ -101,8 +101,12 @@ export function usePaymentSubmit() {
               if (event.type === "success") {
                 if (orderId) {
                   try {
-                    // completeProductGrant가 응답 없이 멈추더라도 전체 흐름(30초 예산)을 잡아먹지
-                    // 않도록 격리한다 — 버퍼링 원인이 grant()인지 이쪽인지 구분하기 위한 임시 조치.
+                    // 실기기에서 completeProductGrant 호출이 에러도 없이 그냥 응답을 안 주고
+                    // 멈추는 경우가 확인됐다(원인 불명 — 네이티브 브릿지 쪽으로 추정). 이걸 그냥
+                    // await하면 결제 성공 화면이 무한 버퍼링하다 SDK의 30초 예산을 넘겨 토스가
+                    // 환불 페이지로 보내버린다. 지급 자체(processProductGrant)는 이미 끝난 뒤라
+                    // completeProductGrant는 "토스 쪽 표시 상태 전환"일 뿐이므로, 타임아웃 나면
+                    // 포기하고 흐름을 계속 진행한다.
                     await Promise.race([
                       IAP.completeProductGrant({ params: { orderId } }),
                       new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000)),
