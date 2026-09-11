@@ -99,8 +99,18 @@ export function usePaymentSubmit() {
                 }
               },
             },
-            onEvent: (event) => {
+            onEvent: async (event) => {
               if (event.type === "success") {
+                // processProductGrant(서버 커밋)만으로는 토스 결제 내역이 "결제 완료"에 머무른다.
+                // "상품 지급 완료"로 전환하려면 completeProductGrant를 명시적으로 호출해야 한다.
+                // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#completeproductgrant
+                if (orderId) {
+                  try {
+                    await IAP.completeProductGrant({ params: { orderId } });
+                  } catch (e) {
+                    console.error("상품 지급 완료 처리 실패", orderId, e);
+                  }
+                }
                 cleanup();
                 resolve();
               }
