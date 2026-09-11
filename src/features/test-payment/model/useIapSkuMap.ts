@@ -30,7 +30,7 @@ const AFFILIATE_DESCRIPTION_PATTERN = /(\d+)인\s*기준/;
 function buildIapSkuMap(products: { sku: string; displayName: string; description?: string }[]): IapSkuMap {
   const map: IapSkuMap = {};
   for (const product of products) {
-    const override = NAME_OVERRIDES[product.displayName];
+    const override = NAME_OVERRIDES[product.displayName.trim()];
     if (override) {
       (map[override.rewardAmount] ??= {})[override.testerCount] = product.sku;
       continue;
