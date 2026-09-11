@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useDialog } from "@toss/tds-mobile";
 import { HTTPError } from "ky";
 import { IAP } from "@apps-in-toss/web-framework";
-import { updateDraft, getDraft } from "@/shared/api/generated/testDraft";
+import { updateDraft, publishCheck } from "@/shared/api/generated/testDraft";
 import { grantPayment } from "./paymentGrant";
 import { extractIapErrorCode, IapPaymentError } from "./iapPaymentError";
 import { useIapErrorDialog } from "./useIapErrorDialog";
@@ -49,26 +49,19 @@ export function usePaymentSubmit() {
         .slice(0, 10);
 
       try {
-        const draftRes = await getDraft(draftId);
-        const status = draftRes.data.data?.status;
-        const BLOCKED: Record<string, string> = {
-          PUBLISHING: "발행 처리 중인 테스트입니다.",
-          PUBLISHED: "이미 발행된 테스트입니다.",
-          PUBLISH_FAILED: "발행에 실패한 테스트입니다. 새 테스트를 만들어 주세요.",
-          EXPIRED: "만료된 테스트입니다.",
-        };
-        if (status && status !== "DRAFT") {
-          throw new Error(BLOCKED[status] ?? `결제할 수 없는 상태입니다. (${status})`);
-        }
-      } catch (e) {
-        if (e instanceof Error && !e.message.startsWith("[")) throw e;
-        throw await stepError("초안 상태 조회 실패", e);
-      }
-
-      try {
         await updateDraft(draftId, { goalPpl: testerCount, reward: rewardAmount, closedAt });
       } catch (e) {
         throw await stepError("초안 업데이트 실패", e);
+      }
+
+      // Toss 인앱결제 실행 직전 필수 사전 검증. 여기서 걸러야 할 걸 건너뛰면, 결제(과금) 자체는
+      // 성공한 뒤 grant(발행) 단계에서야 실패해 processProductGrant가 false를 반환하고
+      // 토스가 환불 페이지로 보내버린다 — 반드시 결제 전에 호출해야 한다.
+      // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase
+      try {
+        await publishCheck(draftId);
+      } catch (e) {
+        throw await stepError("테스트 초안 검증 실패", e);
       }
 
       // IAP 결제 (mock 결제는 사용하지 않음 — 리워드/테스터 수 조합 상품이 등록돼 있고 토스 앱 환경이어야 함)
@@ -99,18 +92,12 @@ export function usePaymentSubmit() {
                 }
               },
             },
-            onEvent: async (event) => {
+            onEvent: (event) => {
+              // completeProductGrant는 getPendingOrders로 조회되는 "미결(pending)" 주문 전용 API다
+              // (pendingOrderRecovery.ts에서 사용). processProductGrant가 true를 반환한 정상 주문에
+              // 다시 호출하면 토스가 비정상 상태로 간주해 환불 페이지로 리다이렉트한다.
+              // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#createonetimepurchaseorder
               if (event.type === "success") {
-                // processProductGrant(서버 커밋)만으로는 토스 결제 내역이 "결제 완료"에 머무른다.
-                // "상품 지급 완료"로 전환하려면 completeProductGrant를 명시적으로 호출해야 한다.
-                // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#completeproductgrant
-                if (orderId) {
-                  try {
-                    await IAP.completeProductGrant({ params: { orderId } });
-                  } catch (e) {
-                    console.error("상품 지급 완료 처리 실패", orderId, e);
-                  }
-                }
                 cleanup();
                 resolve();
               }
