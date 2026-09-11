@@ -101,7 +101,12 @@ export function usePaymentSubmit() {
               if (event.type === "success") {
                 if (orderId) {
                   try {
-                    await IAP.completeProductGrant({ params: { orderId } });
+                    // completeProductGrant가 응답 없이 멈추더라도 전체 흐름(30초 예산)을 잡아먹지
+                    // 않도록 격리한다 — 버퍼링 원인이 grant()인지 이쪽인지 구분하기 위한 임시 조치.
+                    await Promise.race([
+                      IAP.completeProductGrant({ params: { orderId } }),
+                      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000)),
+                    ]);
                   } catch (e) {
                     console.error("상품 지급 완료 처리 실패", orderId, e);
                   }
