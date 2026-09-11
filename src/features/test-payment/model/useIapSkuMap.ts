@@ -54,7 +54,10 @@ function buildIapSkuMap(products: { sku: string; displayName: string; descriptio
       if (!TESTER_COUNT_OPTIONS.includes(testerCount)) continue;
 
       (map[AFFILIATE_REWARD_AMOUNT] ??= {})[testerCount] = product.sku;
+      continue;
     }
+
+    console.warn("SKU 매핑 규칙에 안 걸린 IAP 상품", product.sku, product.displayName);
   }
   return map;
 }
