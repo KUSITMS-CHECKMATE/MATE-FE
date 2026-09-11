@@ -92,12 +92,20 @@ export function usePaymentSubmit() {
                 }
               },
             },
-            onEvent: (event) => {
-              // completeProductGrant는 getPendingOrders로 조회되는 "미결(pending)" 주문 전용 API다
-              // (pendingOrderRecovery.ts에서 사용). processProductGrant가 true를 반환한 정상 주문에
-              // 다시 호출하면 토스가 비정상 상태로 간주해 환불 페이지로 리다이렉트한다.
-              // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#createonetimepurchaseorder
+            onEvent: async (event) => {
+              // processProductGrant가 true를 반환해도 토스 쪽 주문 상태는 PAYMENT_COMPLETED(결제
+              // 완료, 지급 미완료)에 머문다 — completeProductGrant를 명시적으로 호출해야 PURCHASED로
+              // 전환된다. 이걸 안 부르면 네이티브 쪽이 그 신호를 기다리다 30초 후 타임아웃돼 환불
+              // 페이지로 이동하는 것까지 실제로 재현됐다 (콘솔 상태 실측 + 무한 버퍼링 재현).
+              // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#completeproductgrant
               if (event.type === "success") {
+                if (orderId) {
+                  try {
+                    await IAP.completeProductGrant({ params: { orderId } });
+                  } catch (e) {
+                    console.error("상품 지급 완료 처리 실패", orderId, e);
+                  }
+                }
                 cleanup();
                 resolve();
               }
