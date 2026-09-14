@@ -16,6 +16,12 @@ export type IapSkuMap = Partial<Record<RewardAmount, Partial<Record<TesterCount,
 // 목록에서 매번 새로 매핑해서 쓴다.
 const NAME_PATTERN = /^(\d+)명-리워드\s*(\d+)$/;
 
+// 이름을 패턴에 맞게 바꿀 수 없는 예외 상품. QA용 "테스트"(440원) 상품처럼 콘솔 상품명이
+// "{n}명-리워드 {m}" 규칙을 따르지 않는 경우에만 여기 추가한다.
+const NAME_OVERRIDES: Record<string, { testerCount: TesterCount; rewardAmount: RewardAmount }> = {
+  "테스트": { testerCount: 2, rewardAmount: 10 },
+};
+
 // 제휴 단체 전용가 상품명 규칙: "제휴 단체 전용가 - 옵션N", 설명 "제휴 단체 전용가 - {테스터 수}인 기준".
 // 테스터 수는 상품명이 아니라 설명(description)에서 파싱한다.
 const AFFILIATE_NAME_PATTERN = /^제휴\s*단체\s*전용가/;
@@ -24,6 +30,12 @@ const AFFILIATE_DESCRIPTION_PATTERN = /(\d+)인\s*기준/;
 function buildIapSkuMap(products: { sku: string; displayName: string; description?: string }[]): IapSkuMap {
   const map: IapSkuMap = {};
   for (const product of products) {
+    const override = NAME_OVERRIDES[product.displayName.trim()];
+    if (override) {
+      (map[override.rewardAmount] ??= {})[override.testerCount] = product.sku;
+      continue;
+    }
+
     const match = product.displayName.match(NAME_PATTERN);
     if (match) {
       const testerCount = Number(match[1]) as TesterCount;
