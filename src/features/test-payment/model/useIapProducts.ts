@@ -6,7 +6,7 @@ export function useIapProducts() {
     queryKey: ["iapProducts"],
     queryFn: async () => {
       const res = await IAP.getProductItemList();
-      return res.products;
+      return res?.products;
     },
     enabled: IAP != null,
     staleTime: 5 * 60 * 1000,
