@@ -276,7 +276,8 @@ export function TestCreateFunnel({ draftId, fromPayment = false, resume = false 
       // 실패 토스트는 useSaveDraft.onError에서 처리
     }
   };
-  useTempSaveAccessoryButton(handleTempSave);
+  // 문항(항목) 생성/편집 화면에서는 미완성 입력이 그대로 저장되는 것을 막기 위해 버튼을 숨긴다.
+  useTempSaveAccessoryButton(handleTempSave, activeQuestion === null);
 
   // "테스트 만들기" CTA: 별도 확인 다이얼로그 없이 항상 임시저장 후 결제로 이동
   const handleSubmitCreate = async () => {
