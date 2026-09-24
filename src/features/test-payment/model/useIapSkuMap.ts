@@ -4,6 +4,7 @@ import {
   TESTER_COUNT_OPTIONS,
   REWARD_AMOUNT_OPTIONS,
   AFFILIATE_REWARD_AMOUNT,
+  PAYMENT_TEST_OPTIONS_ENABLED,
   type TesterCount,
   type RewardAmount,
 } from "./types";
@@ -18,8 +19,10 @@ const NAME_PATTERN = /^(\d+)명-리워드\s*(\d+)$/;
 
 // 이름을 패턴에 맞게 바꿀 수 없는 예외 상품. QA용 "테스트"(440원) 상품처럼 콘솔 상품명이
 // "{n}명-리워드 {m}" 규칙을 따르지 않는 경우에만 여기 추가한다.
+// "테스트" 상품 매핑은 PAYMENT_TEST_OPTIONS_ENABLED가 꺼진 빌드에서는 TESTER_COUNT_OPTIONS에
+// 2명이 없어 매핑돼도 선택 UI에 노출되지 않지만, SKU 조회 자체도 불필요하므로 함께 뺀다.
 const NAME_OVERRIDES: Record<string, { testerCount: TesterCount; rewardAmount: RewardAmount }> = {
-  "테스트": { testerCount: 2, rewardAmount: 10 },
+  ...(PAYMENT_TEST_OPTIONS_ENABLED && { "테스트": { testerCount: 2, rewardAmount: 10 } }),
 };
 
 // 제휴 단체 전용가 상품명 규칙: "제휴 단체 전용가 - 옵션N", 설명 "제휴 단체 전용가 - {테스터 수}인 기준".

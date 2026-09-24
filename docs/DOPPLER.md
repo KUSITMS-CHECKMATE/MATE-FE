@@ -41,7 +41,8 @@ pnpm doppler:whoami
 |------|------|
 | `pnpm dev` | Doppler 주입 후 `granite dev` |
 | `pnpm dev:plain` | Doppler 없이 dev (CLI 미설치·오프라인 등) |
-| `pnpm build` | Doppler 주입 후 `ait build` |
+| `pnpm build:dev` | Doppler(`dev` config) 주입 후 `ait build` — 로컬 개발/QA용, 콘솔 업로드 금지 |
+| `pnpm build:release` | Doppler `prd` config 고정 주입 후 `ait build` — 앱인토스 콘솔 업로드용 `.ait`는 반드시 이 명령으로 |
 | `pnpm build:plain` | Doppler 없이 `ait build` |
 | `pnpm build:vite` | Doppler 주입 후 `tsc -b && vite build` (CI·토스 CLI 없이 빌드 검증용) |
 | `pnpm preview` / `deploy` | 동일하게 `doppler run` 적용 |
@@ -59,4 +60,4 @@ pnpm doppler:whoami
 
 `doppler.yaml`을 커밋하지 않는 팀은 워크플로 `build` 잡에 `DOPPLER_PROJECT`, `DOPPLER_CONFIG` 환경 변수를 넣도록 수정하세요.
 
-워크플로: `.github/workflows/ci.yml` — `pnpm build:vite`로 타입 체크 + Vite 빌드를 돌립니다. **`pnpm build`(`ait build`)** 는 앱인토스 인증이 필요할 수 있어 CI에는 기본 넣지 않았습니다. 필요하면 같은 방식으로 `doppler run -- ait build` 단계를 추가하면 됩니다.
+워크플로: `.github/workflows/ci.yml` — `pnpm build:vite`로 타입 체크 + Vite 빌드를 돌립니다. **`pnpm build:dev`/`build:release`(`ait build`)** 는 앱인토스 인증이 필요할 수 있어 CI에는 기본 넣지 않았습니다. 필요하면 같은 방식으로 `doppler run --config prd -- ait build` 단계를 추가하면 됩니다.
