@@ -106,7 +106,8 @@ pnpm dev:plain    # Doppler 없이 실행
 
 ```bash
 pnpm dev             # 개발 서버
-pnpm build           # 앱인토스 빌드
+pnpm build:dev       # 앱인토스 빌드 (dev config, 로컬/QA용)
+pnpm build:release   # 앱인토스 빌드 (prd config 고정 — 콘솔 업로드용 .ait는 항상 이걸로)
 pnpm lint            # ESLint
 pnpm orval           # API 코드 재생성 (Swagger 스펙 변경 시)
 pnpm test:e2e        # E2E 테스트 (헤드리스)
