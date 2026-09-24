@@ -41,13 +41,24 @@ export interface PaymentRestoreRequest {
   draftId?: number;
 }
 
-export type ApiResponseVoidData = { [key: string]: unknown };
+export type PaymentPublishResponseStatus = typeof PaymentPublishResponseStatus[keyof typeof PaymentPublishResponseStatus];
 
-export interface ApiResponseVoid {
+
+export const PaymentPublishResponseStatus = {
+  PUBLISHED: 'PUBLISHED',
+  PUBLISH_PENDING: 'PUBLISH_PENDING',
+  FAILED: 'FAILED',
+} as const;
+
+export interface PaymentPublishResponse {
+  status?: PaymentPublishResponseStatus;
+}
+
+export interface ApiResponsePaymentPublishResponse {
   success?: boolean;
   code?: string;
   message?: string;
-  data?: ApiResponseVoidData;
+  data?: PaymentPublishResponse;
 }
 
 export interface PaymentGrantRequest {
@@ -128,7 +139,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 export type restoreResponse200 = {
-  data: ApiResponseVoid
+  data: ApiResponsePaymentPublishResponse
   status: 200
 }
 
@@ -246,7 +257,7 @@ export function useRestore<TData = Awaited<ReturnType<typeof restore>>, TError =
 
 
 export type grantResponse200 = {
-  data: ApiResponseVoid
+  data: ApiResponsePaymentPublishResponse
   status: 200
 }
 
@@ -268,7 +279,11 @@ export const getGrantUrl = () => {
 /**
  * Toss 인앱결제 SDK의 processProductGrant 콜백에서 호출하는 엔드포인트입니다.<br>
 orderId로 Toss 결제 상태를 검증(PURCHASED 또는 PAYMENT_COMPLETED)한 뒤, 테스트를 게시하고 결제 내역을 저장합니다.<br>
-지급에 성공하면 200을 반환하고, 실패하면 원인별 에러 코드와 함께 4xx/5xx를 반환합니다.<br>
+결제에 성공하면 200을 반환하며, data.status로 테스트 발행 결과를 구분합니다.<br>
+- PUBLISHED: 결제와 테스트 발행이 모두 완료됨<br>
+- PUBLISH_PENDING: 결제는 완료됐지만 테스트 발행은 실패해 재시도가 필요함(추후 자동 재시도 또는 /restore 호출)<br>
+- FAILED: /restore 재시도 한도를 이미 초과해 더 이상 자동 재시도되지 않음(고객센터 문의 필요)<br>
+결제 자체가 실패하면 원인별 에러 코드와 함께 4xx/5xx를 반환합니다.<br>
 PAYMENT_013(409, 결제 진행 중)은 잠시 후 재시도하면 성공할 수 있는 케이스입니다.
 
  * @summary ✅ 인앱결제 상품 지급 처리
