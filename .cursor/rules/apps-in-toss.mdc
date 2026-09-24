@@ -31,6 +31,7 @@ alwaysApply: true
 ## 2. 기술 스택
 
 - **pnpm만** 사용 · Vite + React (Next.js 기준 금지)
+- 빌드/배포(Doppler `dev`/`stg`/`prd` config): `build:dev`/`deploy:dev`(로컬·QA) vs `build:release`/`deploy:release`(콘솔 업로드·실배포, prd 고정) — 이름 없는 `build`/`deploy`는 없음, 콘솔 업로드는 반드시 `:release`
 - API: **ky** (`fetch` 직접 최소화), 로직은 컴포넌트 밖으로 분리
   - orval로 Swagger → TanStack Query hooks 자동 생성 (`pnpm orval`) — 생성 파일 직접 수정 금지
   - GET → `useXxx()` hook / POST·PUT·DELETE → `useMutation` 래핑 (orval이 POST를 useQuery로 잘못 생성하는 경우 있음)
@@ -75,7 +76,7 @@ alwaysApply: true
 
 ## 8. 금지
 
-- TDS 없이 UI · pnpm 외 패키지 매니저 · 서버 데이터를 Zustand에 저장 · FSD 파괴 · 무단 대규모 리팩터 · 앱인토스 문맥 무시
+- TDS 없이 UI · pnpm 외 패키지 매니저 · `build:dev`/`deploy:dev` 산출물을 콘솔 업로드·실배포에 사용 · 서버 데이터를 Zustand에 저장 · FSD 파괴 · 무단 대규모 리팩터 · 앱인토스 문맥 무시
 
 ## 9. AI 역할
 
