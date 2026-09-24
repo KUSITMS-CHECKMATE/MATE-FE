@@ -11,9 +11,6 @@ import {
 import { ROUTES } from "@/shared/constants/routes";
 import { trackEvent } from "@/shared/lib/analytics";
 
-// mock: 종료된 테스트 ID (API에 testStatus 필드 추가되면 대체)
-const CLOSED_TEST_IDS = new Set([2]);
-
 export const Route = createFileRoute("/interest/$testId")({
   component: InterestTestDetailPage,
 });
@@ -28,7 +25,18 @@ function InterestTestDetailPage() {
   });
 
   const detail = data?.data?.data;
-  const isClosed = CLOSED_TEST_IDS.has(Number(testId));
+  const isWaiting = detail?.testStatus === "WAITING";
+  const isCompleted = detail?.testStatus === "COMPLETED";
+  const hasResponded = detail?.hasResponded ?? false;
+  const isDisabled = isWaiting || isCompleted || hasResponded;
+
+  const ctaLabel = isWaiting
+    ? "검토중인 테스트예요"
+    : isCompleted
+      ? "종료된 설문이에요"
+      : hasResponded
+        ? "참여한 테스트예요"
+        : "테스트 참여하기";
 
   // 리페치 시 view_item이 중복 발생하지 않도록 testId당 최초 1회만 전송한다.
   const trackedTestIdRef = useRef<string | null>(null);
@@ -83,18 +91,15 @@ function InterestTestDetailPage() {
       </div>
 
       <div className="fixed bottom-0 left-0 w-full">
-        {isClosed ? (
-          <BottomCTA.Single disabled>종료된 설문이에요</BottomCTA.Single>
-        ) : (
-          <BottomCTA.Single
-            onClick={() => {
-              trackEvent("join_test", { test_id: testId, reward_amount: detail.reward });
-              navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } });
-            }}
-          >
-            테스트 참여하기
-          </BottomCTA.Single>
-        )}
+        <BottomCTA.Single
+          disabled={isDisabled}
+          onClick={() => {
+            trackEvent("join_test", { test_id: testId, reward_amount: detail.reward });
+            navigate({ to: ROUTES.TEST_PARTICIPATE, params: { testId }, search: { reward: detail.reward } });
+          }}
+        >
+          {ctaLabel}
+        </BottomCTA.Single>
       </div>
     </div>
   );
