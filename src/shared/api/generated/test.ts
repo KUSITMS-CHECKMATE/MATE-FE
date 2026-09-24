@@ -185,6 +185,8 @@ export interface LikedTestSummaryItem {
   description?: string;
   /** 보상 금액(머니) */
   reward?: number;
+  /** 현재 로그인한 사용자의 테스트 응답 여부. true면 참여 버튼 비활성화 */
+  hasResponded?: boolean;
 }
 
 /**
@@ -969,6 +971,7 @@ export const getListLikedTestsUrl = () => {
 - **title**: 테스트명
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
+- **hasResponded**: 현재 로그인한 사용자가 이미 응답했으면 true. true면 참여 버튼 비활성화
 
  * @summary ✅ 찜한 테스트 목록 조회
  */

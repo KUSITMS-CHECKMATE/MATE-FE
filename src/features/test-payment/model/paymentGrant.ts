@@ -8,8 +8,8 @@ interface PaymentGrantInput {
 
 interface PaymentGrantResult {
   success: boolean;
-  // 실패 시 서버가 내려주는 사유. ApiResponseBoolean.code/message를 그대로 보존한다
-  // (기존엔 data만 보고 true/false로 뭉개서, 지급이 왜 실패했는지 화면 어디서도 알 수 없었다).
+  // 실패 시 서버가 내려주는 사유(code/message)를 그대로 보존한다 — 지급이 왜 실패했는지
+  // 화면에서 안내하려면 success:false 여부만으로는 부족하다.
   code?: string;
   message?: string;
 }
@@ -17,11 +17,17 @@ interface PaymentGrantResult {
 // Toss IAP processProductGrant 콜백에서 호출. 검증 성공 시 서버에 Payment(orderId+draftId)가
 // 커밋되고 게시(publish)가 실패해도 롤백되지 않으므로, 이후 restore(orderId)만으로 복구 가능하다.
 //
-// grant는 "지급 실패"를 두 가지 다른 방식으로 표현한다: 200 응답에 data:false(+code/message),
-// 또는 400 등 에러 상태 코드. 후자는 ky가 HTTPError로 던지기 때문에, 응답 본문의 code/message를
-// 직접 파싱하지 않으면 "Request failed with status code 400" 같은 의미 없는 메시지만 남는다.
+// grant는 "지급 실패"를 두 가지 다른 방식으로 표현한다: 200 응답 + data.status: "FAILED"
+// (재시도 한도 초과 — PublishStatus, 서버 PR #323), 또는 400 등 에러 상태 코드. 후자는 ky가
+// HTTPError로 던지기 때문에, 응답 본문의 code/message를 직접 파싱하지 않으면
+// "Request failed with status code 400" 같은 의미 없는 메시지만 남는다.
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// ky 기본 타임아웃(10초)이 grant()엔 너무 짧다 — 서버가 결제 검증 + 테스트 발행(질문 생성 등)을
+// 동기로 처리해서 10초를 넘기는 경우가 실기기에서 "Request timed out: POST .../grant"로 실제
+// 재현됐다. Toss 문서상 processProductGrant 전체 예산이 30초라 그 안에서 여유를 두고 25초로 늘린다.
+const GRANT_TIMEOUT_MS = 25000;
 
 // PAYMENT_013(409)은 "토스 쪽 결제 상태가 아직 완전히 반영되지 않았다"는 일시적 신호일 뿐 실패가
 // 아니다 — API 문서에도 "잠시 후 재시도하면 성공할 수 있다"고 명시돼 있다. 재시도 없이 바로
@@ -35,8 +41,17 @@ const PAYMENT_IN_PROGRESS_RETRY_DELAYS_MS = [1500, 3000];
 export async function grantPayment({ orderId, draftId }: PaymentGrantInput): Promise<PaymentGrantResult> {
   for (let attempt = 0; ; attempt++) {
     try {
-      const res = await grant({ orderId, draftId });
-      return { success: res.data.success === true, code: res.data.code, message: res.data.message };
+      const res = await grant({ orderId, draftId }, { timeout: GRANT_TIMEOUT_MS } as RequestInit);
+      // res.data.success는 응답 envelope 필드라 200이면 항상 true다 — 서버가 지급/발행 실패를
+      // 감지해도 200으로 응답하며(#323), 실제 결과는 res.data.data.status에만 들어있다.
+      // 이걸 안 보면 발행이 영구 실패(FAILED)해도 Toss엔 지급 성공으로 보고하게 된다.
+      const status = res.data.data?.status;
+      if (status === "FAILED") {
+        return { success: false, code: res.data.code, message: res.data.message };
+      }
+      // PUBLISHED / PUBLISH_PENDING: 결제(지급) 자체는 끝났고, 발행은 스케줄러·restore가
+      // 이어서 재시도하므로 IAP 관점에선 지급 성공으로 처리한다.
+      return { success: true, code: res.data.code, message: res.data.message };
     } catch (e) {
       if (e instanceof HTTPError) {
         let body: { code?: string; message?: string } = {};
