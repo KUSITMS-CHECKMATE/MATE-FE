@@ -38,6 +38,20 @@
 - 패키지 매니저는 **pnpm만 사용**
 - Vite + React 기준으로 작성 (Next.js 기준 금지)
 
+#### 빌드 / 배포 (Doppler)
+
+환경변수는 **Doppler**(`dev` / `stg` / `prd` config)로 주입한다. `doppler.yaml`(커밋됨)의 기본 config가 `dev`라서, 이름 없는 `pnpm build`/`pnpm deploy`는 존재하지 않는다 — 항상 아래처럼 용도별 스크립트를 명시한다.
+
+```bash
+pnpm build:dev        # 로컬 개발/QA 빌드 (dev config)
+pnpm build:release    # 콘솔 업로드용 .ait — 반드시 이것만 사용 (prd config 고정)
+pnpm deploy:dev       # 개발/QA 배포
+pnpm deploy:release   # 실서비스 배포 — 반드시 이것만 사용 (prd config 고정)
+```
+
+- **콘솔에 올리는 `.ait`는 반드시 `build:release`로 생성** — `build:dev`로 만든 산출물을 업로드하면 QA 전용 값(예: 결제 테스트 상품)이 프로덕션에 노출될 수 있다.
+- 새 환경변수(`VITE_` 접두사)를 추가할 때는 `.env.example`에 예시를 남기고, QA 전용 값은 `dev`/`stg` config에만 넣는다.
+
 ### API
 
 - `fetch` 대신 **ky 사용**
@@ -233,6 +247,7 @@ pnpm test:e2e:debug    # 스텝별 디버그
 
 - TDS 확인 없이 UI 구현
 - pnpm 아닌 명령어 사용
+- `build:dev`/`deploy:dev` 산출물을 콘솔 업로드·실배포에 사용 (반드시 `:release`)
 - 서버 데이터 Zustand 저장
 - FSD 구조 깨기
 - 대규모 리팩터링 무단 수행
