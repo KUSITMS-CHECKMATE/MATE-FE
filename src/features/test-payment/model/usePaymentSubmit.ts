@@ -93,10 +93,12 @@ export function usePaymentSubmit() {
               },
             },
             onEvent: async (event) => {
-              // processProductGrant가 true를 반환해도 토스 쪽 주문 상태는 PAYMENT_COMPLETED(결제
-              // 완료, 지급 미완료)에 머문다 — completeProductGrant를 명시적으로 호출해야 PURCHASED로
-              // 전환된다. 이걸 안 부르면 네이티브 쪽이 그 신호를 기다리다 30초 후 타임아웃돼 환불
-              // 페이지로 이동하는 것까지 실제로 재현됐다 (콘솔 상태 실측 + 무한 버퍼링 재현).
+              // 공식 문서만 보면 completeProductGrant는 getPendingOrders로 조회되는 "미결 주문"
+              // 전용이라고 돼 있어서 한때 여기서 제거해봤는데, 실기기 재현 결과 문서와 다르게
+              // 정상 흐름(결제 성공 모달의 "확인" 시점)에서도 이 호출이 실제로 필요했다 — 안 부르면
+              // 토스 쪽이 PAYMENT_COMPLETED(결제 완료, 지급 미완료) 상태로 응답을 기다리다 타임아웃돼
+              // 환불 페이지로 이동하는 게 그대로 재현됨(2026-09-24 재확인). 문서보다 이 실측 결과를
+              // 따른다.
               // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#completeproductgrant
               if (event.type === "success") {
                 if (orderId) {
