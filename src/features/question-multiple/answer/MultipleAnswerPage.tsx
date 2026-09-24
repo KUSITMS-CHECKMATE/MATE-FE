@@ -25,14 +25,21 @@ export function MultipleAnswerPage({ question, answer, onChange }: Props) {
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText });
     }
   }
 
   function handleOtherRowClick() {
+    if (!otherChoice) return;
+    if (selectedIds.includes(otherChoice.id)) {
+      const next = selectedIds.filter((s) => s !== otherChoice.id);
+      onChange({ type: "OBJECTIVE", selectedIds: next, otherText: "" });
+      otherFieldRef.current?.querySelector("input")?.blur();
+      return;
+    }
     otherFieldRef.current?.querySelector("input")?.focus();
   }
 

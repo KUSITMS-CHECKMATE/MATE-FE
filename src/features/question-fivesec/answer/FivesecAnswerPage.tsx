@@ -52,16 +52,19 @@ export function FivesecAnswerPage({ question, answer, onChange, onPrev, onGoNext
   }
 
   function handleSelect(id: string) {
+    // 기타를 재클릭해서 해제하는 경우에만 입력해둔 텍스트를 지운다.
+    const isDeselectingOther = id === otherChoice?.id && selectedIds.includes(id);
+    const text = isDeselectingOther ? "" : (answer?.text ?? "");
     if (isMultiSelectEnabled) {
       const next = selectedIds.includes(id)
         ? selectedIds.filter((s) => s !== id)
         : selectedIds.length < maxSelectCount
           ? [...selectedIds, id]
           : selectedIds;
-      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text });
     } else {
       const next = selectedIds.includes(id) ? [] : [id];
-      onChange({ type: "FIVE_SECOND", selectedIds: next, text: "" });
+      onChange({ type: "FIVE_SECOND", selectedIds: next, text });
     }
   }
 
