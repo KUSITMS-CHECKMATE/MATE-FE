@@ -54,10 +54,10 @@ export interface ApiObjectiveQuestion {
   title: string;
   description?: string;
   options: ApiObjectiveOption[];
-  isMultiSelectEnabled: boolean;
-  isOtherInputEnabled: boolean;
-  minSelectCount: number;
-  maxSelectCount: number;
+  isDuplicate: boolean;
+  isOther: boolean;
+  minSelect: number | null;
+  maxSelect: number | null;
 }
 
 export interface ApiScaleQuestion {
