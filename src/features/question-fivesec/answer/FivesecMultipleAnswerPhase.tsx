@@ -45,6 +45,12 @@ export function FivesecMultipleAnswerPhase({
   const [isOtherFieldFocused, setIsOtherFieldFocused] = useState(false);
 
   function handleOtherRowClick() {
+    if (!otherChoice) return;
+    if (selectedIds.includes(otherChoice.id)) {
+      onSelect(otherChoice.id);
+      otherFieldRef.current?.querySelector("input")?.blur();
+      return;
+    }
     otherFieldRef.current?.querySelector("input")?.focus();
   }
 
