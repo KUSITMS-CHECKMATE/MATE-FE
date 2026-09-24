@@ -10,6 +10,7 @@
     "dev:plain": "granite dev",
     "build": "doppler run -- ait build",
     "build:plain": "ait build",
+    "build:release": "doppler run --config prd -- ait build",
     "compile:web": "tsc -b && vite build",
     "build:vite": "doppler run -- pnpm run compile:web",
     "build:vite:plain": "pnpm run compile:web",
