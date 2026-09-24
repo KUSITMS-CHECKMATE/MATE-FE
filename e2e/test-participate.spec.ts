@@ -195,4 +195,250 @@ test.describe("테스트 참여 퍼널", () => {
     await grape.click();
     await expect(grape).toHaveAttribute("aria-checked", "false");
   });
+
+  test("객관식 기타 항목을 다시 클릭하면 선택이 해제된다 (단일/복수 선택 공통)", async ({ page }) => {
+    const mockOther = (
+      questionId: number,
+      isDuplicate: boolean,
+      maxSelect: number,
+    ) => ({
+      questionId,
+      objectiveId: questionId,
+      type: "OBJECTIVE",
+      sequence: 1,
+      title: isDuplicate ? "복수 선택 기타 문항입니다" : "단일 선택 기타 문항입니다",
+      description: "",
+      isDuplicate,
+      minSelect: 1,
+      maxSelect,
+      isOther: true,
+      options: [
+        { objectiveOptionId: 21, content: "사과", imageUrl: null, sequence: 1, isOtherOption: false },
+        { objectiveOptionId: 22, content: "배", imageUrl: null, sequence: 2, isOtherOption: false },
+        { objectiveOptionId: 23, content: "기타 (직접 입력)", imageUrl: null, sequence: 3, isOtherOption: true },
+      ],
+    });
+
+    // 1) 단일 선택
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 98, questions: [mockOther(1, false, 1)] },
+        }),
+      });
+    });
+
+    await page.goto("/test/participate/98");
+    await expect(page.getByText("단일 선택 기타 문항입니다").first()).toBeVisible();
+
+    const otherRowSingle = page.getByRole("checkbox", { name: "기타" });
+    await otherRowSingle.click();
+    await expect(otherRowSingle).toHaveAttribute("aria-checked", "true");
+    // 다시 클릭하면 해제되어야 한다 (기존 버그: 해제되지 않음)
+    await otherRowSingle.click();
+    await expect(otherRowSingle).toHaveAttribute("aria-checked", "false");
+
+    // 2) 복수 선택
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 97, questions: [mockOther(2, true, 3)] },
+        }),
+      });
+    });
+
+    await page.goto("/test/participate/97");
+    await expect(page.getByText("복수 선택 기타 문항입니다").first()).toBeVisible();
+
+    const apple = page.getByRole("checkbox", { name: "사과" });
+    const otherRowMulti = page.getByRole("checkbox", { name: "기타" });
+
+    await apple.click();
+    await otherRowMulti.click();
+    await expect(apple).toHaveAttribute("aria-checked", "true");
+    await expect(otherRowMulti).toHaveAttribute("aria-checked", "true");
+
+    // 기타만 해제되고 사과는 유지되어야 한다
+    await otherRowMulti.click();
+    await expect(otherRowMulti).toHaveAttribute("aria-checked", "false");
+    await expect(apple).toHaveAttribute("aria-checked", "true");
+  });
+
+  test("기타 텍스트를 입력한 뒤 다른 선택지를 클릭해도 입력값이 사라지지 않는다 (단일/복수 선택 공통)", async ({ page }) => {
+    const mockOther = (
+      questionId: number,
+      isDuplicate: boolean,
+      maxSelect: number,
+    ) => ({
+      questionId,
+      objectiveId: questionId,
+      type: "OBJECTIVE",
+      sequence: 1,
+      title: isDuplicate ? "복수 선택 기타 텍스트 문항입니다" : "단일 선택 기타 텍스트 문항입니다",
+      description: "",
+      isDuplicate,
+      minSelect: 1,
+      maxSelect,
+      isOther: true,
+      options: [
+        { objectiveOptionId: 31, content: "사과", imageUrl: null, sequence: 1, isOtherOption: false },
+        { objectiveOptionId: 32, content: "배", imageUrl: null, sequence: 2, isOtherOption: false },
+        { objectiveOptionId: 33, content: "기타 (직접 입력)", imageUrl: null, sequence: 3, isOtherOption: true },
+      ],
+    });
+
+    // 1) 단일 선택: 기타에 텍스트 입력 후 다른 선택지 클릭 → 텍스트는 필드에 남아있어야 한다
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 96, questions: [mockOther(1, false, 1)] },
+        }),
+      });
+    });
+
+    await page.goto("/test/participate/96");
+    await expect(page.getByText("단일 선택 기타 텍스트 문항입니다").first()).toBeVisible();
+
+    await page.getByPlaceholder("").fill("나만의 답변");
+    await page.getByText("사과", { exact: true }).click();
+    await expect(page.getByPlaceholder("")).toHaveValue("나만의 답변");
+
+    // 2) 복수 선택: 기타에 텍스트 입력 후 다른 선택지 추가 선택 → 기타는 선택 유지 + 텍스트도 유지
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 95, questions: [mockOther(2, true, 3)] },
+        }),
+      });
+    });
+
+    await page.goto("/test/participate/95");
+    await expect(page.getByText("복수 선택 기타 텍스트 문항입니다").first()).toBeVisible();
+
+    await page.getByPlaceholder("").fill("복수 응답 텍스트");
+    await page.getByText("배", { exact: true }).click();
+    await expect(page.getByPlaceholder("")).toHaveValue("복수 응답 텍스트");
+    await expect(page.getByRole("checkbox", { name: "기타" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("checkbox", { name: "배" })).toHaveAttribute("aria-checked", "true");
+  });
+
+  test("5초 테스트 객관식도 기타 재클릭 해제 및 텍스트 유지가 동일하게 동작한다 (단일/복수 선택 공통)", async ({ page }) => {
+    test.setTimeout(60000);
+
+    const mockFiveSecOther = (
+      questionId: number,
+      isDuplicate: boolean,
+      maxSelect: number,
+    ) => ({
+      questionId,
+      sequence: 1,
+      type: "FIVE_SECOND",
+      title: isDuplicate ? "5초 복수 선택 기타 문항입니다" : "5초 단일 선택 기타 문항입니다",
+      description: "",
+      answerType: "multiple",
+      isDuplicate,
+      isMultiSelectEnabled: isDuplicate,
+      isOther: true,
+      minSelect: 1,
+      maxSelect,
+      options: [
+        { fiveSecondOptionId: 41, content: "사과", sequence: 1, isOtherOption: false },
+        { fiveSecondOptionId: 42, content: "배", sequence: 2, isOtherOption: false },
+        { fiveSecondOptionId: 43, content: "기타 (직접 입력)", sequence: 3, isOtherOption: true },
+      ],
+    });
+
+    const goToAnswerPhase = async (testId: number) => {
+      await page.goto(`/test/participate/${testId}`);
+      await page.getByRole("button", { name: "다음으로" }).click();
+      await page.getByText("눌러서 확인하기").click();
+    };
+
+    // 1) 단일 선택
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 94, questions: [mockFiveSecOther(1, false, 1)] },
+        }),
+      });
+    });
+
+    await goToAnswerPhase(94);
+    await expect(page.getByText("5초 단일 선택 기타 문항입니다")).toBeVisible({ timeout: 8000 });
+
+    const otherSingle = page.getByRole("checkbox", { name: "기타" });
+    // 재클릭하면 해제되어야 한다
+    await otherSingle.click();
+    await expect(otherSingle).toHaveAttribute("aria-checked", "true");
+    await otherSingle.click();
+    await expect(otherSingle).toHaveAttribute("aria-checked", "false");
+
+    // 텍스트 입력 후 다른 선택지 클릭해도 텍스트가 유지되어야 한다
+    await page.getByPlaceholder("").fill("5초 단일 답변");
+    await page.getByText("사과", { exact: true }).click();
+    await expect(page.getByPlaceholder("")).toHaveValue("5초 단일 답변");
+
+    // 2) 복수 선택
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: { testId: 93, questions: [mockFiveSecOther(2, true, 3)] },
+        }),
+      });
+    });
+
+    await goToAnswerPhase(93);
+    await expect(page.getByText("5초 복수 선택 기타 문항입니다")).toBeVisible({ timeout: 8000 });
+
+    const otherMulti = page.getByRole("checkbox", { name: "기타" });
+    const pear = page.getByRole("checkbox", { name: "배" });
+
+    await otherMulti.click();
+    await expect(otherMulti).toHaveAttribute("aria-checked", "true");
+    await otherMulti.click();
+    await expect(otherMulti).toHaveAttribute("aria-checked", "false");
+
+    await otherMulti.click();
+    await page.getByPlaceholder("").fill("5초 복수 답변");
+    await pear.click();
+    await expect(page.getByPlaceholder("")).toHaveValue("5초 복수 답변");
+    await expect(otherMulti).toHaveAttribute("aria-checked", "true");
+    await expect(pear).toHaveAttribute("aria-checked", "true");
+  });
 });
