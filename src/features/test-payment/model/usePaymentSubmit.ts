@@ -92,29 +92,16 @@ export function usePaymentSubmit() {
                 }
               },
             },
-            onEvent: async (event) => {
-              // processProductGrant가 true를 반환해도 토스 쪽 주문 상태는 PAYMENT_COMPLETED(결제
-              // 완료, 지급 미완료)에 머문다 — completeProductGrant를 명시적으로 호출해야 PURCHASED로
-              // 전환된다. 이걸 안 부르면 네이티브 쪽이 그 신호를 기다리다 30초 후 타임아웃돼 환불
-              // 페이지로 이동하는 것까지 실제로 재현됐다 (콘솔 상태 실측 + 무한 버퍼링 재현).
+            onEvent: (event) => {
+              // completeProductGrant는 여기서 부르지 않는다 — 공식 문서상 이 함수는
+              // getPendingOrders로 조회되는 "미결 주문" 전용이고, processProductGrant가 true를
+              // 반환하면 그걸로 지급은 이미 끝난 것으로 처리된다. 한때 여기서도 호출했었는데
+              // (문서에 없는 용도라 그런지) 실기기에서 응답 없이 멈추는 현상이 있었고, 그게
+              // processProductGrant의 30초 타임아웃 예산을 갉아먹어 환불 페이지로 넘어가는
+              // 원인으로 의심된다. 혹시 정말 미지급으로 남는 케이스는 pendingOrderRecovery.ts가
+              // 다음 로그인 시 getPendingOrders + completeProductGrant로 정상 복구한다.
               // https://developers-apps-in-toss.toss.im/documentation/common/monetization/iap/in-app-purchase#completeproductgrant
               if (event.type === "success") {
-                if (orderId) {
-                  try {
-                    // 실기기에서 completeProductGrant 호출이 에러도 없이 그냥 응답을 안 주고
-                    // 멈추는 경우가 확인됐다(원인 불명 — 네이티브 브릿지 쪽으로 추정). 이걸 그냥
-                    // await하면 결제 성공 화면이 무한 버퍼링하다 SDK의 30초 예산을 넘겨 토스가
-                    // 환불 페이지로 보내버린다. 지급 자체(processProductGrant)는 이미 끝난 뒤라
-                    // completeProductGrant는 "토스 쪽 표시 상태 전환"일 뿐이므로, 타임아웃 나면
-                    // 포기하고 흐름을 계속 진행한다.
-                    await Promise.race([
-                      IAP.completeProductGrant({ params: { orderId } }),
-                      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000)),
-                    ]);
-                  } catch (e) {
-                    console.error("상품 지급 완료 처리 실패", orderId, e);
-                  }
-                }
                 cleanup();
                 resolve();
               }
