@@ -40,10 +40,10 @@ function mapApiQuestionToLocal(q: ApiQuestion): ParticipateQuestion {
             name: c.content,
             imageUrl: c.imageUrl ?? "",
           })),
-          isMultiSelectEnabled: q.isMultiSelectEnabled,
-          isOtherInputEnabled: q.isOtherInputEnabled,
-          minSelectCount: q.minSelectCount,
-          maxSelectCount: q.maxSelectCount,
+          isMultiSelectEnabled: q.isDuplicate ?? false,
+          isOtherInputEnabled: q.isOther ?? false,
+          minSelectCount: q.minSelect ?? 1,
+          maxSelectCount: q.maxSelect ?? (q.options ?? []).length,
         },
       };
     case "SCALE":

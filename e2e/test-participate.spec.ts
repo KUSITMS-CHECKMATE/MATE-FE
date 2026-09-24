@@ -139,4 +139,60 @@ test.describe("테스트 참여 퍼널", () => {
     // 완료 후 Discovery 페이지 등으로 이동하는지 확인
     await expect(page).toHaveURL(/.*\/discovery/);
   });
+  test("서버 응답의 isDuplicate 객관식은 복수 선택으로 표시되고 여러 개 선택할 수 있다", async ({ page }) => {
+    // Swagger 스펙(GET /api/v1/tests/{testId}/questions)과 동일한 필드명으로 응답을 모킹한다.
+    await page.route("**/api/v1/tests/*/questions", async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          code: "200",
+          message: "문항을 조회했습니다.",
+          data: {
+            testId: 99,
+            questions: [
+              {
+                questionId: 1,
+                objectiveId: 1,
+                type: "OBJECTIVE",
+                sequence: 1,
+                title: "복수 선택 문항입니다",
+                description: "",
+                isDuplicate: true,
+                minSelect: 1,
+                maxSelect: 2,
+                isOther: false,
+                options: [
+                  { objectiveOptionId: 11, content: "사과", imageUrl: null, sequence: 1, isOtherOption: false },
+                  { objectiveOptionId: 12, content: "배", imageUrl: null, sequence: 2, isOtherOption: false },
+                  { objectiveOptionId: 13, content: "포도", imageUrl: null, sequence: 3, isOtherOption: false },
+                ],
+              },
+            ],
+          },
+        }),
+      });
+    });
+
+    await page.goto("/test/participate/99");
+
+    await expect(page.getByText("복수 선택 문항입니다").first()).toBeVisible();
+    await expect(page.getByText("복수 선택", { exact: true })).toBeVisible();
+
+    const apple = page.getByRole("checkbox", { name: "사과" });
+    const pear = page.getByRole("checkbox", { name: "배" });
+    const grape = page.getByRole("checkbox", { name: "포도" });
+
+    await apple.click();
+    await pear.click();
+    // 단일 선택으로 잘못 매핑되면 사과가 해제된다.
+    await expect(apple).toHaveAttribute("aria-checked", "true");
+    await expect(pear).toHaveAttribute("aria-checked", "true");
+
+    // maxSelect=2 이므로 세 번째는 선택되지 않는다.
+    await grape.click();
+    await expect(grape).toHaveAttribute("aria-checked", "false");
+  });
 });
