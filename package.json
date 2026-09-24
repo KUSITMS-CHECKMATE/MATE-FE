@@ -8,7 +8,7 @@
     "doppler:whoami": "doppler me",
     "dev": "doppler run -- granite dev",
     "dev:plain": "granite dev",
-    "build": "doppler run -- ait build",
+    "build:dev": "doppler run -- ait build",
     "build:plain": "ait build",
     "build:release": "doppler run --config prd -- ait build",
     "compile:web": "tsc -b && vite build",

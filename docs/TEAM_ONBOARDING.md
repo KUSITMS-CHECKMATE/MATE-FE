@@ -108,7 +108,8 @@ pnpm dev:plain
 | `pnpm dev` | 개발 서버 (Doppler + Granite) |
 | `pnpm dev:plain` | Doppler 없이 개발 서버 |
 | `pnpm lint` | ESLint (Doppler 불필요) |
-| `pnpm build` | 앱인토스 빌드 (`ait build`, Doppler) |
+| `pnpm build:dev` | 앱인토스 빌드 (`ait build`, Doppler `dev` config) — 로컬 개발/QA용 |
+| `pnpm build:release` | 앱인토스 빌드 (`ait build`, Doppler `prd` config 고정) — 콘솔 업로드용 `.ait`는 항상 이 명령으로 |
 | `pnpm build:vite` | `tsc` + Vite만 빌드 (Doppler, CI와 동일 계열) |
 | `pnpm preview` | 프로덕션 빌드 미리보기 (Doppler) |
 
