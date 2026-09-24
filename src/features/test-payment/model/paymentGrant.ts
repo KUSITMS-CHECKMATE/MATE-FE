@@ -24,6 +24,11 @@ interface PaymentGrantResult {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// ky 기본 타임아웃(10초)이 grant()엔 너무 짧다 — 서버가 결제 검증 + 테스트 발행(질문 생성 등)을
+// 동기로 처리해서 10초를 넘기는 경우가 실기기에서 "Request timed out: POST .../grant"로 실제
+// 재현됐다. Toss 문서상 processProductGrant 전체 예산이 30초라 그 안에서 여유를 두고 25초로 늘린다.
+const GRANT_TIMEOUT_MS = 25000;
+
 // PAYMENT_013(409)은 "토스 쪽 결제 상태가 아직 완전히 반영되지 않았다"는 일시적 신호일 뿐 실패가
 // 아니다 — API 문서에도 "잠시 후 재시도하면 성공할 수 있다"고 명시돼 있다. 재시도 없이 바로
 // false를 반환하면 processProductGrant가 실패로 처리돼 토스가 환불 페이지로 보내버리는데, 실제
@@ -36,7 +41,7 @@ const PAYMENT_IN_PROGRESS_RETRY_DELAYS_MS = [1500, 3000];
 export async function grantPayment({ orderId, draftId }: PaymentGrantInput): Promise<PaymentGrantResult> {
   for (let attempt = 0; ; attempt++) {
     try {
-      const res = await grant({ orderId, draftId });
+      const res = await grant({ orderId, draftId }, { timeout: GRANT_TIMEOUT_MS } as RequestInit);
       // res.data.success는 응답 envelope 필드라 200이면 항상 true다 — 서버가 지급/발행 실패를
       // 감지해도 200으로 응답하며(#323), 실제 결과는 res.data.data.status에만 들어있다.
       // 이걸 안 보면 발행이 영구 실패(FAILED)해도 Toss엔 지급 성공으로 보고하게 된다.
