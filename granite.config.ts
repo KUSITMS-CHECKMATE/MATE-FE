@@ -26,5 +26,6 @@ export default defineConfig({
   },
   navigationBar: {
     withHomeButton: true,
+    withBackButton: false,
   },
 });
