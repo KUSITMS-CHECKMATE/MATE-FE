@@ -18,8 +18,10 @@ const NAME_PATTERN = /^(\d+)명-리워드\s*(\d+)$/;
 
 // 이름을 패턴에 맞게 바꿀 수 없는 예외 상품. QA용 "테스트"(440원) 상품처럼 콘솔 상품명이
 // "{n}명-리워드 {m}" 규칙을 따르지 않는 경우에만 여기 추가한다.
+// "테스트" 상품은 TESTER_COUNT_OPTIONS에서 2명이 빠지면 매핑돼도 선택 UI에 노출되지 않는다 —
+// 결제 테스트 브랜치(test/payment)에서만 아래 주석을 해제해 사용한다.
 const NAME_OVERRIDES: Record<string, { testerCount: TesterCount; rewardAmount: RewardAmount }> = {
-  "테스트": { testerCount: 2, rewardAmount: 10 },
+  // "테스트": { testerCount: 2, rewardAmount: 10 },
 };
 
 // 제휴 단체 전용가 상품명 규칙: "제휴 단체 전용가 - 옵션N", 설명 "제휴 단체 전용가 - {테스터 수}인 기준".
