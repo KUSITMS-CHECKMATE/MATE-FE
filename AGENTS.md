@@ -19,6 +19,19 @@ OpenAI Codex 및 기타 `AGENTS.md`를 읽는 도구용. **전체 규칙은 [`AI
 - Layout: **FSD** — `shared`, `features`, `entities`, `pages`
 - Question-type features use **`question-{type}` naming** (not `test-{type}`); each has `model/` · `create/` · `answer/` sub-folders. Funnels (`test-create`, `test-participate`) import from these; reverse imports are forbidden.
 
+## Build / Deploy (Doppler)
+
+Env vars are injected via **Doppler** (`dev` / `stg` / `prd` config). The committed `doppler.yaml` defaults to `dev`, so there is no bare `pnpm build`/`pnpm deploy` — always use the explicit script:
+
+```bash
+pnpm build:dev        # local/QA build (dev config)
+pnpm build:release    # .ait for console upload — always use this (pins prd config)
+pnpm deploy:dev       # dev/QA deploy
+pnpm deploy:release   # production deploy — always use this (pins prd config)
+```
+
+**Never upload a `build:dev` artifact to the console or run `deploy:dev` against production** — dev/stg-only values (e.g. QA payment test items) would leak in.
+
 ## UI
 
 Check TDS for buttons, inputs, modals. Consider mobile/webview (touch, scroll).
@@ -37,6 +50,6 @@ Conventional commits (`feat|fix|refactor|chore`). Branches: `type/#issue`. PR ti
 
 ## Do not
 
-Implement UI without checking TDS; use npm/yarn; store server data in Zustand; break FSD; large refactors without scope; ignore Apps in Toss constraints; commit with failing Playwright tests.
+Implement UI without checking TDS; use npm/yarn; ship `build:dev`/`deploy:dev` output to console/production; store server data in Zustand; break FSD; large refactors without scope; ignore Apps in Toss constraints; commit with failing Playwright tests.
 
 For Korean prose norms and full bullet list, read `AI_RULES.md`.
