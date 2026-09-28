@@ -24,7 +24,4 @@ export default defineConfig({
     pullToRefreshEnabled: false,
     overScrollMode: "never",
   },
-  navigationBar: {
-    withHomeButton: true,
-  },
 });
