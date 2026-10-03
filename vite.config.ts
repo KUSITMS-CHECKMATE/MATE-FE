@@ -4,9 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 import tanstackRouter from "@tanstack/router-plugin/vite";
 import path from "path";
 
+import aitDevtools from "@apps-in-toss/devtools/unplugin";
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    aitDevtools.vite(),
     tanstackRouter({ routesDirectory: "./src/routes", generatedRouteTree: "./src/routeTree.gen.ts" }),
     tailwindcss(),
     react(),
