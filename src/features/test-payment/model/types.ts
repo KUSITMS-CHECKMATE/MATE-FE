@@ -12,7 +12,10 @@ export const TESTER_COUNT_OPTIONS: readonly TesterCount[] = PAYMENT_TEST_OPTIONS
   ? ALL_TESTER_COUNT_OPTIONS
   : ALL_TESTER_COUNT_OPTIONS.filter((count) => count !== 2);
 
-export const REWARD_AMOUNT_OPTIONS = [10, 200, 300, 500] as const;
+const ALL_REWARD_AMOUNT_OPTIONS = [10, 200, 300, 500] as const;
+export const REWARD_AMOUNT_OPTIONS: readonly (typeof ALL_REWARD_AMOUNT_OPTIONS)[number][] = PAYMENT_TEST_OPTIONS_ENABLED
+  ? ALL_REWARD_AMOUNT_OPTIONS
+  : ALL_REWARD_AMOUNT_OPTIONS.filter((amount) => amount !== 10);
 
 // 제휴 단체 전용가(콘솔 상품 "제휴 단체 전용가 - 옵션N") 전용 리워드 금액.
 // 일반 REWARD_AMOUNT_OPTIONS 목록에는 노출하지 않고, 테스터 수 100명 이상일 때만
