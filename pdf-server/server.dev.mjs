@@ -11,96 +11,87 @@ const HTML_PATH = path.resolve(__dirname, './stats-report.html');
 
 const MOCK_DATA = {
   data: {
-    participantCount: 50,
+    participantCount: 76,
     reports: [
+      // 1. 가로 막대 — 긴 선택지 텍스트 (truncation 검증)
       {
         type: 'OBJECTIVE',
-        title: '가장 자주 사용하는 기능은?',
+        title: 'UAM에 탑승한다고 가정했을 때 가장 기대되는 점은 무엇인가요?',
         result: {
           isDuplicate: false,
           options: [
-            { content: '프로필', count: 29, ratio: 0.58 },
-            { content: '설정', count: 14, ratio: 0.27 },
-            { content: '홈', count: 8, ratio: 0.15 },
+            { content: '교통체증 없는 빠른 이동', count: 29, ratio: 0.38 },
+            { content: '특수수단을 이용하는 특별한 경험', count: 18, ratio: 0.24 },
+            { content: '먼 지역까지 편리한 이동', count: 17, ratio: 0.22 },
+            { content: '하늘에서 경관을 감상하는 경험', count: 12, ratio: 0.16 },
+            { content: '프라이빗하게 이동하는 전용 공간', count: 0, ratio: 0.00 },
+            { content: '기타 (직접 입력)', count: 0, ratio: 0.00 },
           ],
         },
       },
+      // 2. 척도 — 긴 min/max 라벨 (vbar label truncation 검증)
       {
-        type: 'OBJECTIVE',
-        title: '불편한 기능을 모두 선택해주세요',
+        type: 'SCALE',
+        title: 'UAM에 대해 얼마나 알고 있나요?',
         result: {
-          isDuplicate: true,
-          options: [
-            { content: '검색', count: 36, ratio: 0.72 },
-            { content: '알림', count: 25, ratio: 0.50 },
-            { content: '마이페이지', count: 16, ratio: 0.32 },
+          distribution: [
+            { score: 1, count: 57 },
+            { score: 2, count: 8 },
+            { score: 3, count: 5 },
+            { score: 4, count: 4 },
+            { score: 5, count: 2 },
           ],
+          mostVoted: 1,
+          average: 1.47,
+          endValue: {
+            minLabel: '전혀 들어본 적 없음',
+            maxLabel: '설명할 수 있을 정도로 자세히 알고 있음',
+          },
         },
       },
+      // 3. 주관식 — AI 요약 있음 + 응답 다수 (subjective overflow 검증)
       {
-        type: 'OBJECTIVE',
-        title: '개선이 필요한 부분은?',
+        type: 'SUBJECTIVE',
+        title: '위와 같이 응답한 이유는 무엇인가요?',
         result: {
-          isDuplicate: false,
-          options: [
-            { content: '속도', count: 22, ratio: 0.44 },
-            { content: 'UI', count: 18, ratio: 0.36 },
-            { content: '기타', count: 10, ratio: 0.20 },
-          ],
-          aiSummary: '응답자들은 주로 앱 속도 개선을 원하며, UI 개선 및 다크모드 지원에 대한 요구도 높게 나타났습니다.',
+          aiSummary: '응답자들은 UAM을 경험해본 적 없는 새로운 이동수단에 대한 호기심과 탑승 기대감을 가장 많이 표현하였으며, 동시에 안전성 검증 부족과 높은 요금에 대한 우려를 주요 이용 장벽으로 언급하였다. 교통체증 없는 빠른 이동과 접근성 향상을 긍정적 요인으로 꼽은 응답자도 다수 존재하며, 안전이 보장된다면 이용 의향이 있다는 조건부 긍정 반응이 두드러졌다.',
           clusters: [],
-          otherTexts: ['알림이 너무 많아요', '검색 결과가 느려요', '다크모드 지원해주세요', '폰트가 작아요'],
-        },
-      },
-      {
-        type: 'FIVE_SECOND',
-        title: '5초 후 기억에 남는 요소를 선택해주세요',
-        result: {
-          isDuplicate: false,
-          options: [
-            { content: '상단 배너', count: 24, ratio: 0.48 },
-            { content: '검색창', count: 18, ratio: 0.36 },
-            { content: '네비게이션 바', count: 8, ratio: 0.16 },
+          texts: [
+            '한 번도 경험해보지 않은 수단이라서 궁금하다',
+            '궁금해서 한 번 정도는 타보고 싶어요!!',
+            '새로운 이동수단에 대한 호기심',
+            '신기해서',
+            '새롭게 접하는 교통수단이어서',
+            'Uam에 대해 잘 알지는 못하지만 타보고 싶음',
+            '하버드 경험해보지 못한 서비스여서 궁금하다',
+            '비현실적이라고 생각했는데 완전 현실에서도 가능할 것 같아요',
+            '일상생활에서 쉽게 접할 수 있는 이용수단이 아니기 때문에 실제 탑승했을 때를 상상해보기가 어려웠는데, 체험 후에는 실제 탑승하면 어떨지 구체적으로 그려볼 수 있을 것 같습니다.',
+            '새롭게 알게되어 인식이 달라진 않고 빨리 상용화됐으면 좋겠다',
+            '실제 탑승시에 어떤 모습일지 조금 더 그려지게 되었다',
+            '편리할 것 같다',
+            '편리하겠다',
           ],
         },
       },
+      // 4. 주관식 — AI 요약 없음 + 짧은 응답 다수 (응답 모음 케이스)
       {
-        type: 'FIVE_SECOND',
-        title: '5초 후 기억에 남는 요소를 모두 선택해주세요',
+        type: 'SUBJECTIVE',
+        title: 'UAM 서비스 이용 시 가장 걱정되는 점은?',
         result: {
-          isDuplicate: true,
-          options: [
-            { content: '상단 배너', count: 38, ratio: 0.76 },
-            { content: '검색창', count: 27, ratio: 0.54 },
-            { content: '네비게이션 바', count: 15, ratio: 0.30 },
-          ],
-        },
-      },
-      {
-        type: 'FIVE_SECOND',
-        title: '5초 후 기억에 남는 것을 선택하거나 직접 입력해주세요',
-        result: {
-          isDuplicate: false,
-          options: [
-            { content: '상단 배너', count: 20, ratio: 0.40 },
-            { content: '검색창', count: 16, ratio: 0.32 },
-            { content: '기타', count: 14, ratio: 0.28 },
-          ],
-          aiSummary: '대부분의 응답자가 상단 배너와 검색창을 기억했으며, 일부는 로고와 색상을 언급했습니다.',
+          aiSummary: null,
           clusters: [],
-          otherTexts: ['로고가 눈에 띄었어요', '파란색 배경이 인상적이었어요', '전체적으로 깔끔했어요'],
-        },
-      },
-      {
-        type: 'FIVE_SECOND',
-        title: '5초 동안 본 화면에서 가장 먼저 떠오르는 것은?',
-        result: {
-          aiSummary: '응답자들은 주로 중앙의 큰 이미지와 파란색 버튼을 가장 먼저 인식했다고 답했습니다.',
-          clusters: [
-            { representative: '큰 이미지', count: 18, responses: ['중앙 이미지가 눈에 들어왔어요', '큰 사진이 인상적이었어요'] },
-            { representative: '파란색 버튼', count: 12, responses: ['파란 버튼이 눈에 띄었어요', 'CTA 버튼이 먼저 보였어요'] },
+          texts: [
+            '안전 문제',
+            '비용이 너무 비쌀 것 같다',
+            '기상 조건에 따른 결항',
+            '소음 문제',
+            '인프라 부족',
+            '해킹 및 보안 취약점',
+            '배터리 방전 시 대처 방안',
+            '좁은 공간에서의 불편함',
+            '탑승 절차가 복잡할 것 같다',
+            '일반 대중이 이용하기엔 아직 이른 것 같다',
           ],
-          texts: ['큰 이미지', '파란색 버튼', '헤더 텍스트', '상단 메뉴'],
         },
       },
     ],
@@ -187,7 +178,8 @@ const server = http.createServer(async (req, res) => {
         console.log('[pdf-server] 렌더링 완료, PDF 생성 시작');
 
         const pdfBuffer = await page.pdf({
-          format: 'A4',
+          width: '595px',
+          height: '842px',
           printBackground: true,
           margin: { top: '0', right: '0', bottom: '0', left: '0' },
         });
@@ -268,7 +260,8 @@ const server = http.createServer(async (req, res) => {
         console.log('[pdf-server] 렌더링 완료 확인, PDF 생성 시작');
 
         const pdfBuffer = await page.pdf({
-          format: 'A4',
+          width: '595px',
+          height: '842px',
           printBackground: true,
           margin: { top: '0', right: '0', bottom: '0', left: '0' },
         });
