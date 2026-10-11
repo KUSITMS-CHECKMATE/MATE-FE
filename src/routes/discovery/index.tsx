@@ -48,7 +48,7 @@ function HomePage() {
     navigate({ to: ROUTES.DISCOVERY_DETAIL, params: { testId: String(testId) } });
 
   return (
-    <div className="flex flex-col pb-19">
+    <div className="flex flex-col pb-44">
       <ServiceBanner />
       <div className="pt-6 flex flex-col gap-8">
         <RewardCarousel images={REWARD_CAROUSEL_IMAGES} />
