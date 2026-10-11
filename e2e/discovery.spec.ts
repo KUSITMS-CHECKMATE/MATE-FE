@@ -99,11 +99,13 @@ test.describe("발견 탭 (/discovery)", () => {
     await expect(page).toHaveURL("/discovery/1");
   });
 
-  test("종료 테스트 섹션이 최대 4개 그리드로 보인다", async ({ page }) => {
+  // TODO: 종료 테스트 목록 API 연동 시 "최대 4개 그리드 + 4개 초과 시 더 보기" 케이스로 교체
+  test("종료 테스트 데이터가 없으면 종료 섹션을 숨긴다", async ({ page }) => {
     await mockListTests(page, makeTests(3));
     await page.goto("/discovery");
 
-    await expect(page.getByText("다양한 서비스 구경해요")).toBeVisible();
-    await expect(page.getByTestId("closed-test-card")).toHaveCount(4);
+    await expect(availableCards(page)).toHaveCount(3);
+    await expect(page.getByText("다양한 서비스 구경해요")).toBeHidden();
+    await expect(page.getByTestId("closed-test-card")).toHaveCount(0);
   });
 });
