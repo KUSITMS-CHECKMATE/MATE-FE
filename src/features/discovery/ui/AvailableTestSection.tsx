@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Asset, Result, Skeleton, Text } from "@toss/tds-mobile";
-import { adaptive } from "@toss/tds-colors";
+import { Asset, Result, Skeleton, Spacing } from "@toss/tds-mobile";
 import type { DiscoveryTest } from "../model";
 import { AvailableTestCard } from "./AvailableTestCard";
+import { MoreFooter } from "./MoreFooter";
 import { SectionHeader } from "./SectionHeader";
 
 const PAGE_SIZE = 3;
@@ -76,23 +76,10 @@ export function AvailableTestSection({ tests, isLoading, isError, onRetry, onSel
             ))}
           </div>
           {hasMore && (
-            <button
-              type="button"
-              className="flex flex-row items-center justify-center gap-1 self-center px-4 py-3 mt-3"
-              onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-            >
-              <Text color={adaptive.grey600} typography="t6" fontWeight="medium">
-                더 보기
-              </Text>
-              <Asset.Icon
-                frameShape={{ width: 16, height: 16 }}
-                backgroundColor="transparent"
-                name="icon-arrow-down-mono"
-                color={adaptive.grey600}
-                aria-hidden={true}
-                ratio="1/1"
-              />
-            </button>
+            <>
+              <Spacing size={16} />
+              <MoreFooter onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)} />
+            </>
           )}
         </>
       )}
