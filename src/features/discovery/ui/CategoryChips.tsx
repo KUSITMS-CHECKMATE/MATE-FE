@@ -12,9 +12,10 @@ export function CategoryChips({ categories }: Props) {
   return (
     <div className="flex flex-row flex-wrap gap-x-1.5 gap-y-1">
       {categories.map((category) => (
+        // flex로 감싸야 Text(inline-block)가 기준선에 얹히며 위쪽에만 생기는 여백이 없어진다
         <span
           key={category}
-          className="w-fit h-fit rounded p-px"
+          className="flex w-fit h-fit rounded px-1 py-px"
           style={{ backgroundColor: "#4E596828" }}
         >
           <Text color={adaptive.grey700} typography="st13" fontWeight="semibold">

@@ -27,13 +27,8 @@ export function ClosedTestCard({ test, onClick }: Props) {
         className="w-full aspect-square"
       />
       <div className="flex flex-col gap-1.5">
-        <Text
-          display="block"
-          color={adaptive.grey800}
-          typography="t5"
-          fontWeight="semibold"
-          className="line-clamp-2"
-        >
+        {/* TDS Text가 인라인 style로 display를 지정해 line-clamp가 덮이므로 important로 적용 */}
+        <Text color={adaptive.grey800} typography="t5" fontWeight="semibold" className="line-clamp-2!">
           {test.title}
         </Text>
         <CategoryChips categories={test.categories} />

@@ -20,11 +20,11 @@ export function LikeThumbnail({ thumbnailUrl, isLiked, onToggleLike, className =
       }}
     >
       <div
-        className="w-full h-20 flex flex-row justify-end items-center p-6"
+        className="w-full h-12 flex flex-row justify-end items-center pb-1"
         style={{ background: `linear-gradient(180deg, rgba(0,23,51,0) 0%, ${adaptive.greyOpacity500} 301.68%)` }}
       >
         {/* IconButton은 터치 영역용 padding(12px)이 있어 아이콘이 디자인의 padding 24 위치에 오도록 상쇄 */}
-        <div className="-m-3 flex">
+        <div className="flex">
           <IconButton
             src={
               isLiked
