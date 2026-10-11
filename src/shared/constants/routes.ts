@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: "/",
   DISCOVERY: "/discovery",
   DISCOVERY_GUIDE: "/discovery/guide",
+  DISCOVERY_DETAIL: "/discovery/$testId",
   INTEREST: "/interest",
   INTEREST_DETAIL: "/interest/$testId",
   MY: "/my",

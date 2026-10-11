@@ -1,17 +1,23 @@
 import { useEffect, useRef } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ServiceBanner } from "@/shared/ui/ServiceBanner";
-import { TestList } from "@/features/discovery/ui";
+import { AvailableTestSection, ClosedTestSection, RewardCarousel } from "@/features/discovery/ui";
+import { MOCK_AVAILABLE_TESTS, MOCK_CLOSED_TESTS, REWARD_CAROUSEL_IMAGES, type DiscoveryTest } from "@/features/discovery/model";
 import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
 import { trackEvent } from "@/shared/lib/analytics";
+import { ROUTES } from "@/shared/constants/routes";
+
+// TODO: 임시 — 참여 가능 테스트를 mock으로 노출. API 연동 확인 시 false로 바꾸고 mock 제거
+const USE_MOCK_AVAILABLE_TESTS = true;
 
 export const Route = createFileRoute("/discovery/")({
   component: HomePage,
 });
 
 function HomePage() {
+  const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [getListTestsUrl()],
     queryFn: listTests,
@@ -26,21 +32,35 @@ function HomePage() {
     }
   }, [data]);
 
-  type TestsPayload = { testCount?: number; tests?: { id?: number; title?: string; description?: string; reward?: number; thumbnailUrl?: string; isLiked?: boolean }[] };
-  const rawTests = (data?.data?.data as TestsPayload | undefined)?.tests;
-  const tests = (Array.isArray(rawTests) ? rawTests : []).map((item) => ({
+  const apiTests: DiscoveryTest[] = (data?.data?.data?.tests ?? []).map((item) => ({
     id: item.id ?? 0,
     title: item.title ?? "",
     description: item.description ?? "",
     reward: item.reward ?? 0,
     thumbnailUrl: item.thumbnailUrl ?? "",
     liked: item.isLiked ?? false,
+    categories: item.categories ?? [],
   }));
+
+  const tests = USE_MOCK_AVAILABLE_TESTS ? MOCK_AVAILABLE_TESTS : apiTests;
+
+  const goToDetail = (testId: number) =>
+    navigate({ to: ROUTES.DISCOVERY_DETAIL, params: { testId: String(testId) } });
 
   return (
     <div className="flex flex-col pb-19">
       <ServiceBanner />
-      <TestList tests={tests} isLoading={isLoading} isError={isError} onRetry={refetch} />
+      <div className="pt-6 flex flex-col gap-8">
+        <RewardCarousel images={REWARD_CAROUSEL_IMAGES} />
+        <AvailableTestSection
+          tests={tests}
+          isLoading={!USE_MOCK_AVAILABLE_TESTS && isLoading}
+          isError={!USE_MOCK_AVAILABLE_TESTS && isError}
+          onRetry={refetch}
+          onSelect={goToDetail}
+        />
+        <ClosedTestSection tests={MOCK_CLOSED_TESTS} onSelect={goToDetail} />
+      </div>
       <BottomTabBar activeTab="discover" />
     </div>
   );
