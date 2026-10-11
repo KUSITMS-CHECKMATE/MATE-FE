@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
 import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { AvailableTestSection, ClosedTestSection, RewardCarousel } from "@/features/discovery/ui";
-import { MOCK_AVAILABLE_TESTS, MOCK_CLOSED_TESTS, REWARD_CAROUSEL_IMAGES, type DiscoveryTest } from "@/features/discovery/model";
+import { REWARD_CAROUSEL_IMAGES, type ClosedTest, type DiscoveryTest } from "@/features/discovery/model";
 import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
 import { trackEvent } from "@/shared/lib/analytics";
 import { ROUTES } from "@/shared/constants/routes";
 
-// TODO: 임시 — 참여 가능 테스트를 mock으로 노출. API 연동 확인 시 false로 바꾸고 mock 제거
-const USE_MOCK_AVAILABLE_TESTS = true;
+// TODO: 종료 테스트 목록 API 없음 (백엔드 요청 필요). 연동 전까지 빈 배열이라 섹션이 숨겨진다
+const CLOSED_TESTS: ClosedTest[] = [];
 
 export const Route = createFileRoute("/discovery/")({
   component: HomePage,
@@ -32,7 +32,7 @@ function HomePage() {
     }
   }, [data]);
 
-  const apiTests: DiscoveryTest[] = (data?.data?.data?.tests ?? []).map((item) => ({
+  const tests: DiscoveryTest[] = (data?.data?.data?.tests ?? []).map((item) => ({
     id: item.id ?? 0,
     title: item.title ?? "",
     description: item.description ?? "",
@@ -41,8 +41,6 @@ function HomePage() {
     liked: item.isLiked ?? false,
     categories: item.categories ?? [],
   }));
-
-  const tests = USE_MOCK_AVAILABLE_TESTS ? MOCK_AVAILABLE_TESTS : apiTests;
 
   const goToDetail = (testId: number) =>
     navigate({ to: ROUTES.DISCOVERY_DETAIL, params: { testId: String(testId) } });
@@ -54,12 +52,12 @@ function HomePage() {
         <RewardCarousel images={REWARD_CAROUSEL_IMAGES} />
         <AvailableTestSection
           tests={tests}
-          isLoading={!USE_MOCK_AVAILABLE_TESTS && isLoading}
-          isError={!USE_MOCK_AVAILABLE_TESTS && isError}
+          isLoading={isLoading}
+          isError={isError}
           onRetry={refetch}
           onSelect={goToDetail}
         />
-        <ClosedTestSection tests={MOCK_CLOSED_TESTS} onSelect={goToDetail} />
+        <ClosedTestSection tests={CLOSED_TESTS} onSelect={goToDetail} />
       </div>
       <BottomTabBar activeTab="discover" />
     </div>
