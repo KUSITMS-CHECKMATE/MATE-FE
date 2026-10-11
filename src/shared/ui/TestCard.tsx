@@ -1,17 +1,6 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Asset, Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import {
-  likeTest,
-  unlikeTest,
-  getListTestsUrl,
-  getListLikedTestsUrl,
-  type listTestsResponse,
-  type listLikedTestsResponse,
-  type LikedTestSummaryItem,
-} from "@/shared/api/generated/test";
-import { trackEvent } from "@/shared/lib/analytics";
+import { useTestLike } from "@/shared/hooks/useTestLike";
 
 type Props = {
   id: number;
@@ -32,131 +21,11 @@ export function TestCard({
   liked,
   onClick,
 }: Props) {
-  const [pendingLiked, setPendingLiked] = useState<boolean | null>(null);
-  const isLiked = pendingLiked ?? liked;
-
-  const queryClient = useQueryClient();
-
-  const { mutate: like } = useMutation({
-    mutationFn: () => likeTest(id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: [getListTestsUrl()] });
-      await queryClient.cancelQueries({ queryKey: [getListLikedTestsUrl()] });
-
-      const prevTests = queryClient.getQueryData<listTestsResponse>([getListTestsUrl()]);
-      const prevLikedTests = queryClient.getQueryData<listLikedTestsResponse>([getListLikedTestsUrl()]);
-
-      queryClient.setQueryData<listTestsResponse>([getListTestsUrl()], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...old.data.data,
-              tests: old.data.data?.tests?.map((t) => (t.id === id ? { ...t, isLiked: true } : t)),
-            },
-          },
-        };
-      });
-
-      queryClient.setQueryData<listLikedTestsResponse>([getListLikedTestsUrl()], (old) => {
-        if (!old) return old;
-        const newItem: LikedTestSummaryItem = { id, title, description, reward, thumbnailUrl };
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...old.data?.data,
-              testCount: (old.data?.data?.testCount ?? 0) + 1,
-              tests: [newItem, ...(old.data?.data?.tests ?? [])],
-            },
-          },
-        };
-      });
-
-      setPendingLiked(true);
-      return { prevTests, prevLikedTests };
-    },
-    onSuccess: () => {
-      trackEvent("add_to_wishlist", { test_id: String(id) });
-    },
-    onError: (_, __, context) => {
-      setPendingLiked(null);
-      if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
-      if (context?.prevLikedTests) queryClient.setQueryData([getListLikedTestsUrl()], context.prevLikedTests);
-    },
-    onSettled: () => {
-      setPendingLiked(null);
-      queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
-      queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
-    },
-  });
-
-  const { mutate: unlike } = useMutation({
-    mutationFn: () => unlikeTest(id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: [getListTestsUrl()] });
-      await queryClient.cancelQueries({ queryKey: [getListLikedTestsUrl()] });
-
-      const prevTests = queryClient.getQueryData<listTestsResponse>([getListTestsUrl()]);
-      const prevLikedTests = queryClient.getQueryData<listLikedTestsResponse>([getListLikedTestsUrl()]);
-
-      queryClient.setQueryData<listTestsResponse>([getListTestsUrl()], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...old.data.data,
-              tests: old.data.data?.tests?.map((t) => (t.id === id ? { ...t, isLiked: false } : t)),
-            },
-          },
-        };
-      });
-
-      queryClient.setQueryData<listLikedTestsResponse>([getListLikedTestsUrl()], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...old.data?.data,
-              testCount: Math.max((old.data?.data?.testCount ?? 1) - 1, 0),
-              tests: old.data?.data?.tests?.filter((t) => t.id !== id) ?? [],
-            },
-          },
-        };
-      });
-
-      setPendingLiked(false);
-      return { prevTests, prevLikedTests };
-    },
-    onSuccess: () => {
-      trackEvent("remove_from_wishlist", { test_id: String(id) });
-    },
-    onError: (_, __, context) => {
-      setPendingLiked(null);
-      if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
-      if (context?.prevLikedTests) queryClient.setQueryData([getListLikedTestsUrl()], context.prevLikedTests);
-    },
-    onSettled: () => {
-      setPendingLiked(null);
-      queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
-      queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
-    },
-  });
+  const { isLiked, toggleLike } = useTestLike({ id, title, description, reward, thumbnailUrl, liked });
 
   function handleLikeToggle(e: React.MouseEvent) {
     e.stopPropagation();
-    if (isLiked) {
-      unlike();
-    } else {
-      like();
-    }
+    toggleLike();
   }
 
   return (
