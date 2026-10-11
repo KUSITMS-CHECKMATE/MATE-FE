@@ -35,6 +35,12 @@ export const MOCK_CLOSED_TESTS: ClosedTest[] = [
     thumbnailUrl: "https://static.toss.im/3d-emojis/u1F957.png",
     categories: ["FOOD", "HEALTH"],
   },
+  {
+    id: 5,
+    title: "판매자 신뢰도 판단 테스트",
+    thumbnailUrl: "https://static.toss.im/3d-emojis/u1F4AC.png",
+    categories: ["SHOPPING"],
+  },
 ];
 
 // TODO: 임시 — 로컬에서 참여 가능 목록 확인용. API 데이터 확인 후 route의 USE_MOCK_AVAILABLE_TESTS를 false로

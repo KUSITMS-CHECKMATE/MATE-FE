@@ -17,7 +17,7 @@ export function ClosedTestCard({ test, onClick }: Props) {
   return (
     <div
       data-testid="closed-test-card"
-      className="min-w-0 flex flex-col gap-3 cursor-pointer"
+      className="min-w-0 flex flex-col gap-3 cursor-pointer pb-4"
       onClick={onClick}
     >
       <LikeThumbnail
