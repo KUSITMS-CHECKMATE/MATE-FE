@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type InfiniteData, type QueryKey } from "@tanstack/react-query";
 import {
   likeTest,
   unlikeTest,
   getListTestsUrl,
+  getListCompletedTestsUrl,
   getListLikedTestsUrl,
   type listTestsResponse,
+  type listCompletedTestsResponse,
   type listLikedTestsResponse,
   type LikedTestSummaryItem,
 } from "@/shared/api/generated/test";
@@ -15,7 +17,15 @@ type LikeTarget = Required<Pick<LikedTestSummaryItem, "id" | "title" | "descript
   liked: boolean;
 };
 
-// 테스트 찜/찜 취소. 발견·관심 목록 캐시를 낙관적으로 갱신하고 실패 시 되돌린다.
+// 발견 탭 목록 캐시 키의 접두사. 페이지·size별 쿼리를 한 번에 갱신하기 위해 접두사로 매칭한다.
+const AVAILABLE_KEY: QueryKey = [getListTestsUrl()];
+const COMPLETED_KEY: QueryKey = [getListCompletedTestsUrl()];
+const LIKED_KEY: QueryKey = [getListLikedTestsUrl()];
+
+type AvailablePages = InfiniteData<listTestsResponse>;
+type Snapshot = [QueryKey, unknown][];
+
+// 테스트 찜/찜 취소. 발견(참여 가능·종료)·관심 목록 캐시를 낙관적으로 갱신하고 실패 시 되돌린다.
 export function useTestLike({ id, title, description, reward, thumbnailUrl, liked }: LikeTarget) {
   const [pendingLiked, setPendingLiked] = useState<boolean | null>(null);
   const isLiked = pendingLiked ?? liked;
@@ -25,27 +35,32 @@ export function useTestLike({ id, title, description, reward, thumbnailUrl, like
   const { mutate } = useMutation({
     mutationFn: (nextLiked: boolean) => (nextLiked ? likeTest(id) : unlikeTest(id)),
     onMutate: async (nextLiked) => {
-      await queryClient.cancelQueries({ queryKey: [getListTestsUrl()] });
-      await queryClient.cancelQueries({ queryKey: [getListLikedTestsUrl()] });
+      await Promise.all([AVAILABLE_KEY, COMPLETED_KEY, LIKED_KEY].map((queryKey) => queryClient.cancelQueries({ queryKey })));
 
-      const prevTests = queryClient.getQueryData<listTestsResponse>([getListTestsUrl()]);
-      const prevLikedTests = queryClient.getQueryData<listLikedTestsResponse>([getListLikedTestsUrl()]);
+      const snapshot: Snapshot = [AVAILABLE_KEY, COMPLETED_KEY, LIKED_KEY].flatMap((queryKey) =>
+        queryClient.getQueriesData({ queryKey }),
+      );
 
-      queryClient.setQueryData<listTestsResponse>([getListTestsUrl()], (old) => {
-        if (!old) return old;
+      const toggle = <T extends { id?: number; isLiked?: boolean }>(t: T): T =>
+        t.id === id ? { ...t, isLiked: nextLiked } : t;
+
+      queryClient.setQueriesData<AvailablePages>({ queryKey: AVAILABLE_KEY }, (old) => {
+        if (!old?.pages) return old;
         return {
           ...old,
-          data: {
-            ...old.data,
-            data: {
-              ...old.data.data,
-              tests: old.data.data?.tests?.map((t) => (t.id === id ? { ...t, isLiked: nextLiked } : t)),
-            },
-          },
+          pages: old.pages.map((page) => ({
+            ...page,
+            data: { ...page.data, data: { ...page.data.data, tests: page.data.data?.tests?.map(toggle) } },
+          })),
         };
       });
 
-      queryClient.setQueryData<listLikedTestsResponse>([getListLikedTestsUrl()], (old) => {
+      queryClient.setQueriesData<listCompletedTestsResponse>({ queryKey: COMPLETED_KEY }, (old) => {
+        if (!old?.data) return old;
+        return { ...old, data: { ...old.data, data: { ...old.data.data, tests: old.data.data?.tests?.map(toggle) } } };
+      });
+
+      queryClient.setQueryData<listLikedTestsResponse>(LIKED_KEY, (old) => {
         if (!old) return old;
         const prevCount = old.data?.data?.testCount ?? 0;
         const prevItems = old.data?.data?.tests ?? [];
@@ -64,20 +79,18 @@ export function useTestLike({ id, title, description, reward, thumbnailUrl, like
       });
 
       setPendingLiked(nextLiked);
-      return { prevTests, prevLikedTests };
+      return { snapshot };
     },
     onSuccess: (_, nextLiked) => {
       trackEvent(nextLiked ? "add_to_wishlist" : "remove_from_wishlist", { test_id: String(id) });
     },
     onError: (_, __, context) => {
       setPendingLiked(null);
-      if (context?.prevTests) queryClient.setQueryData([getListTestsUrl()], context.prevTests);
-      if (context?.prevLikedTests) queryClient.setQueryData([getListLikedTestsUrl()], context.prevLikedTests);
+      context?.snapshot.forEach(([queryKey, data]) => queryClient.setQueryData(queryKey, data));
     },
     onSettled: () => {
       setPendingLiked(null);
-      queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
-      queryClient.invalidateQueries({ queryKey: [getListLikedTestsUrl()] });
+      [AVAILABLE_KEY, COMPLETED_KEY, LIKED_KEY].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
     },
   });
 

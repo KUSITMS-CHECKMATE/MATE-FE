@@ -1,2 +1,3 @@
 export { REWARD_CAROUSEL_IMAGES } from "./mock";
-export type { ClosedTest, DiscoveryTest } from "./types";
+export { toDiscoveryTest } from "./mapper";
+export type { DiscoveryTest } from "./types";
