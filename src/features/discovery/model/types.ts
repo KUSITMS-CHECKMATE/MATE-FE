@@ -7,10 +7,3 @@ export interface DiscoveryTest {
   liked: boolean;
   categories: string[];
 }
-
-export interface ClosedTest {
-  id: number;
-  title: string;
-  thumbnailUrl: string;
-  categories: string[];
-}

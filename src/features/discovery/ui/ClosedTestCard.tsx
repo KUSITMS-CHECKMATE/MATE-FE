@@ -1,18 +1,17 @@
-import { useState } from "react";
 import { Text } from "@toss/tds-mobile";
 import { adaptive } from "@toss/tds-colors";
-import type { ClosedTest } from "../model";
+import { useTestLike } from "@/shared/hooks/useTestLike";
+import type { DiscoveryTest } from "../model";
 import { CategoryChips } from "./CategoryChips";
 import { LikeThumbnail } from "./LikeThumbnail";
 
 interface Props {
-  test: ClosedTest;
+  test: DiscoveryTest;
   onClick: () => void;
 }
 
 export function ClosedTestCard({ test, onClick }: Props) {
-  // TODO: 종료 테스트 API 연동 시 useTestLike로 교체 (현재 mock이라 로컬 상태만 토글)
-  const [isLiked, setIsLiked] = useState(false);
+  const { isLiked, toggleLike } = useTestLike(test);
 
   return (
     <div
@@ -23,7 +22,7 @@ export function ClosedTestCard({ test, onClick }: Props) {
       <LikeThumbnail
         thumbnailUrl={test.thumbnailUrl}
         isLiked={isLiked}
-        onToggleLike={() => setIsLiked((prev) => !prev)}
+        onToggleLike={toggleLike}
         className="w-full aspect-square"
       />
       <div className="flex flex-col gap-1.5">

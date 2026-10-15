@@ -1,25 +1,22 @@
-import { useState } from "react";
 import { Asset, Result, Skeleton, Spacing } from "@toss/tds-mobile";
 import type { DiscoveryTest } from "../model";
 import { AvailableTestCard } from "./AvailableTestCard";
 import { MoreFooter } from "./MoreFooter";
 import { SectionHeader } from "./SectionHeader";
 
-const PAGE_SIZE = 3;
+const SKELETON_COUNT = 3;
 
 interface Props {
   tests: DiscoveryTest[];
   isLoading: boolean;
   isError: boolean;
+  hasMore: boolean;
   onRetry: () => void;
+  onLoadMore: () => void;
   onSelect: (testId: number) => void;
 }
 
-export function AvailableTestSection({ tests, isLoading, isError, onRetry, onSelect }: Props) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const visibleTests = tests.slice(0, visibleCount);
-  const hasMore = tests.length > visibleCount;
-
+export function AvailableTestSection({ tests, isLoading, isError, hasMore, onRetry, onLoadMore, onSelect }: Props) {
   return (
     <section className="flex flex-col">
       <SectionHeader
@@ -30,7 +27,7 @@ export function AvailableTestSection({ tests, isLoading, isError, onRetry, onSel
 
       {isLoading ? (
         <div className="flex flex-col gap-3 px-6 pt-3">
-          {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+          {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <Skeleton key={i} custom={["card"]} repeatLastItemCount={0} background="greyOpacity100" />
           ))}
         </div>
@@ -71,14 +68,14 @@ export function AvailableTestSection({ tests, isLoading, isError, onRetry, onSel
       ) : (
         <>
           <div className="flex flex-col gap-3 px-6 pt-3">
-            {visibleTests.map((test) => (
+            {tests.map((test) => (
               <AvailableTestCard key={test.id} test={test} onClick={() => onSelect(test.id)} />
             ))}
           </div>
           {hasMore && (
             <>
               <Spacing size={16} />
-              <MoreFooter onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)} />
+              <MoreFooter onClick={onLoadMore} />
             </>
           )}
         </>
