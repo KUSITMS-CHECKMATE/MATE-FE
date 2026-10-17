@@ -75,18 +75,13 @@ test.describe("발견 탭 (/discovery)", () => {
     await mockCompletedTests(page, []);
   });
 
-  test("배너 밑에 리워드 캐러셀이 보이고 넘길 수 있다", async ({ page }) => {
+  test("배너 밑에 리워드 배너가 보이고, 1장이면 페이지 표시가 없다", async ({ page }) => {
     await mockListTests(page, makeTests(3));
     await page.goto("/discovery");
 
     await expect(page.getByText("1분 응답하고")).toBeVisible();
-    await expect(page.getByText("1/5")).toBeVisible();
-
-    await page.getByRole("button", { name: "다음 배너" }).click();
-    await expect(page.getByText("2/5")).toBeVisible();
-
-    await page.getByRole("button", { name: "이전 배너" }).click();
-    await expect(page.getByText("1/5")).toBeVisible();
+    await expect(page.locator('[style*="mate_banner_1"]')).toBeVisible();
+    await expect(page.getByRole("button", { name: "다음 배너" })).toBeHidden();
   });
 
   test("참여 가능 테스트는 3개씩 보이고 더 보기로 3개씩 추가된다", async ({ page }) => {
