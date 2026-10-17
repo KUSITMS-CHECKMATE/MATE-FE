@@ -37,7 +37,7 @@ export function RewardCarousel({ images }: Props) {
         }
       />
       <div className="px-6">
-        <div className="relative h-37 rounded-2xl overflow-hidden" style={{ backgroundColor: adaptive.grey200 }}>
+        <div className="relative aspect-[670/288] rounded-2xl overflow-hidden" style={{ backgroundColor: adaptive.grey200 }}>
           <div
             ref={scrollRef}
             className="flex h-full overflow-x-auto scrollbar-hide snap-x snap-mandatory"
