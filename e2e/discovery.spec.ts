@@ -88,7 +88,7 @@ test.describe("발견 탭 (/discovery)", () => {
     await mockListTests(page, makeTests(7));
     await page.goto("/discovery");
 
-    await expect(page.getByText("리워드는 토스뱅크에 바로 지급돼요")).toBeVisible();
+    await expect(page.getByText("리워드는 테스트 참여 후 바로 지급돼요")).toBeVisible();
     await expect(availableCards(page)).toHaveCount(3);
 
     const moreButton = page.getByRole("button", { name: "더 보기" });
@@ -123,6 +123,7 @@ test.describe("발견 탭 (/discovery)", () => {
     await page.goto("/discovery");
 
     await expect(page.getByText("참여할 수 있는 테스트가 없어요")).toBeVisible();
+    await expect(page.getByRole("button", { name: "다시 시도하기" })).toBeHidden();
   });
 
   test("참여 가능 테스트 카드를 누르면 상세로 이동한다", async ({ page }) => {
@@ -138,7 +139,7 @@ test.describe("발견 탭 (/discovery)", () => {
     await mockCompletedTests(page, makeTests(6));
     await page.goto("/discovery");
 
-    await expect(page.getByText("다양한 서비스 구경해요")).toBeVisible();
+    await expect(page.getByText("종료됐지만 이런 테스트도 있었어요")).toBeVisible();
     await expect(page.getByTestId("closed-test-card")).toHaveCount(4);
     await expect(page.getByRole("button", { name: "더 보기" })).toHaveCount(1);
   });
@@ -158,7 +159,7 @@ test.describe("발견 탭 (/discovery)", () => {
     await page.goto("/discovery");
 
     await expect(availableCards(page)).toHaveCount(3);
-    await expect(page.getByText("다양한 서비스 구경해요")).toBeHidden();
+    await expect(page.getByText("종료됐지만 이런 테스트도 있었어요")).toBeHidden();
     await expect(page.getByTestId("closed-test-card")).toHaveCount(0);
   });
 });

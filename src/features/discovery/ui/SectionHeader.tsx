@@ -3,8 +3,9 @@ import { adaptive } from "@toss/tds-colors";
 
 interface Props {
   title: string;
-  description: string;
-  iconSrc: string;
+  /** 없으면 아이콘+설명 줄을 그리지 않는다 */
+  description?: string;
+  iconSrc?: string;
 }
 
 export function SectionHeader({ title, description, iconSrc }: Props) {
@@ -20,18 +21,22 @@ export function SectionHeader({ title, description, iconSrc }: Props) {
         titleWidthRatio={0.6}
         title={<ListHeader.TitleParagraph color={adaptive.grey800}>{title}</ListHeader.TitleParagraph>}
       />
-      <ListRow
-        left={
-          <ListRow.AssetImage
-            src={iconSrc}
-            shape="squircle"
-            backgroundColor="rgba(2, 32, 71, 0)"
-            size="xsmall"
-          />
-        }
-        contents={<ListRow.Texts type="1RowTypeA" top={description} topProps={{ color: adaptive.grey600 }} />}
-        verticalPadding="small"
-      />
+      {description && (
+        <ListRow
+          left={
+            iconSrc ? (
+              <ListRow.AssetImage
+                src={iconSrc}
+                shape="squircle"
+                backgroundColor="rgba(2, 32, 71, 0)"
+                size="xsmall"
+              />
+            ) : undefined
+          }
+          contents={<ListRow.Texts type="1RowTypeA" top={description} topProps={{ color: adaptive.grey600 }} />}
+          verticalPadding="small"
+        />
+      )}
     </>
   );
 }

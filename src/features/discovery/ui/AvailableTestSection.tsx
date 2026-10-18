@@ -21,7 +21,7 @@ export function AvailableTestSection({ tests, isLoading, isError, hasMore, onRet
     <section className="flex flex-col">
       <SectionHeader
         title="테스트 참여하고 리워드 받아가기 어때요?"
-        description="리워드는 토스뱅크에 바로 지급돼요"
+        description="리워드는 테스트 참여 후 바로 지급돼요"
         iconSrc="https://static.toss.im/2d-icons/color/png/4x/icon-alltab-finance-grey.png"
       />
 
@@ -58,11 +58,6 @@ export function AvailableTestSection({ tests, isLoading, isError, hasMore, onRet
               src="https://static.toss.im/lotties-common/empty-spot.json"
               aria-hidden={true}
             />
-          }
-          button={
-            <Result.Button color="dark" variant="weak" onClick={onRetry}>
-              다시 시도하기
-            </Result.Button>
           }
         />
       ) : (

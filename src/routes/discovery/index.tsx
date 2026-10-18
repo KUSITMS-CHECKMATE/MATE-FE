@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
-import { ServiceBanner } from "@/shared/ui/ServiceBanner";
 import { AvailableTestSection, ClosedTestSection, RewardCarousel } from "@/features/discovery/ui";
 import { REWARD_CAROUSEL_IMAGES } from "@/features/discovery/model";
 import { useAvailableTests, useCompletedTestsPreview } from "@/features/discovery/api";
@@ -32,8 +31,7 @@ function HomePage() {
 
   return (
     <div className="flex flex-col pb-44">
-      <ServiceBanner />
-      <div className="pt-6 flex flex-col gap-8">
+      <div className="pt-6 flex flex-col gap-2">
         <RewardCarousel images={REWARD_CAROUSEL_IMAGES} />
         <AvailableTestSection
           tests={available.tests}
