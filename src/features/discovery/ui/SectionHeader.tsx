@@ -19,7 +19,11 @@ export function SectionHeader({ title, description, iconSrc }: Props) {
         rightAlignment="center"
         a11yRightReflow={false}
         titleWidthRatio={0.6}
-        title={<ListHeader.TitleParagraph color={adaptive.grey800}>{title}</ListHeader.TitleParagraph>}
+        title={
+          <ListHeader.TitleParagraph color={adaptive.grey800}>
+            <span className="whitespace-pre">{title}</span>
+          </ListHeader.TitleParagraph>
+        }
       />
       {description && (
         <ListRow
