@@ -20,7 +20,7 @@ export function AvailableTestSection({ tests, isLoading, isError, hasMore, onRet
   return (
     <section className="flex flex-col">
       <SectionHeader
-        title="테스트 참여하고 리워드 받아가기 어때요?"
+        title={"테스트 참여하고\n리워드 받아가기 어때요?"}
         description="리워드는 테스트 참여 후 바로 지급돼요"
         iconSrc="https://static.toss.im/2d-icons/color/png/4x/icon-alltab-finance-grey.png"
       />

@@ -14,7 +14,7 @@ export function ClosedTestSection({ tests, hasMore, onSelect }: Props) {
 
   return (
     <section className="flex flex-col">
-      <SectionHeader title="종료됐지만 이런 테스트도 있었어요" />
+      <SectionHeader title={"종료됐지만\n이런 테스트도 있었어요"} />
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-6 pt-3">
         {tests.map((test) => (
           <ClosedTestCard key={test.id} test={test} onClick={() => onSelect(test.id)} />
