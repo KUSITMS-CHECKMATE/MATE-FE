@@ -77,8 +77,14 @@ export interface TestSummaryResponse {
  * 테스트 목록 조회 응답
  */
 export interface TestSummaryListResponse {
-  /** 참여 가능한 전체 테스트 개수 */
+  /** 참여 가능한 전체 테스트 개수 (현재 페이지가 아닌 전체 기준) */
   testCount?: number;
+  /** 요청한 페이지 (1부터 시작) */
+  page?: number;
+  /** 페이지 크기 */
+  size?: number;
+  /** 다음 페이지 존재 여부. false면 더보기 버튼 미노출 */
+  hasNext?: boolean;
   /** 테스트 목록 */
   tests?: TestSummaryResponse[];
 }
@@ -205,6 +211,35 @@ export interface ApiResponseLikedTestSummaryResponse {
   message?: string;
   data?: LikedTestSummaryResponse;
 }
+
+/**
+ * 종료 테스트 목록 조회 응답
+ */
+export interface CompletedTestListResponse {
+  /** 다음 페이지 존재 여부. false면 더보기 버튼 미노출 및 무한 스크롤 종료 */
+  hasNext?: boolean;
+  /** 다음 페이지 요청 시 cursor로 그대로 전달할 값. 다음 페이지가 없으면 null */
+  nextCursor?: string;
+  /** 종료 테스트 목록 (최근 종료 순) */
+  tests?: TestSummaryResponse[];
+}
+
+export interface ApiResponseCompletedTestListResponse {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: CompletedTestListResponse;
+}
+
+export type ListTestsParams = {
+page?: number;
+size?: number;
+};
+
+export type ListCompletedTestsParams = {
+cursor?: string;
+size?: number;
+};
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -683,19 +718,30 @@ export type listTestsResponseSuccess = (listTestsResponse200) & {
 
 export type listTestsResponse = (listTestsResponseSuccess)
 
-export const getListTestsUrl = () => {
+export const getListTestsUrl = (params?: ListTestsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/tests`
+  return stringifiedParams.length > 0 ? `/api/v1/tests?${stringifiedParams}` : `/api/v1/tests`
 }
 
 /**
- * 전체 테스트 요약 목록을 최신순으로 조회합니다. 발견 탭 HM_01 57 화면에 해당하는 api 입니다.
-추후 페이지네이션 적용하여 무한 스크롤 지원하도록 리팩토링이 필요합니다.
+ * 발견 탭의 참여 가능 테스트 목록을 페이지 단위로 조회합니다. 발견 탭 HM_01 57 화면에 해당하는 api 입니다.<br>
+진행 중·검수 중이고 모집기간 내이며 아직 참여하지 않은 테스트를 반환합니다.<br>
+정렬: 진행 중 우선 → 마감 임박순 → 최신 등록순
 
+- **page**: 1부터 시작 (기본값 1)
+- **size**: 페이지 크기 (기본값 3, 최대 100). 더보기 1회당 3개씩 추가하려면 page를 1씩 늘려 요청
 - **testCount**: 참여 가능한 전체 테스트 개수
+- **hasNext**: 다음 페이지 존재 여부. false면 더보기 버튼 미노출
 - **thumbnailUrl**: 업로드된 이미지 중 첫 번째의 Public URL, 없으면 null을 반환
 - **description**: 테스트 한 줄 소개
 - **reward**: 보상 금액(머니)
@@ -703,9 +749,9 @@ export const getListTestsUrl = () => {
 
  * @summary ✅ 테스트 목록 조회
  */
-export const listTests = async ( options?: RequestInit): Promise<listTestsResponse> => {
+export const listTests = async (params?: ListTestsParams, options?: RequestInit): Promise<listTestsResponse> => {
 
-  return kyMutator<listTestsResponse>(getListTestsUrl(),
+  return kyMutator<listTestsResponse>(getListTestsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -718,8 +764,8 @@ export const listTests = async ( options?: RequestInit): Promise<listTestsRespon
 
 
 export const getListTestsMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
-): UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,{params?: ListTestsParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,{params?: ListTestsParams}, TContext> => {
 
 const mutationKey = ['listTests'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -731,10 +777,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listTests>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listTests>>, {params?: ListTestsParams}> = (props) => {
+          const {params} = props ?? {};
 
-
-          return  listTests(requestOptions)
+          return  listTests(params,requestOptions)
         }
 
 
@@ -752,11 +798,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary ✅ 테스트 목록 조회
  */
 export const useListTests = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,void, TContext>, request?: SecondParameter<typeof kyMutator>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listTests>>, TError,{params?: ListTestsParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof listTests>>,
         TError,
-        void,
+        {params?: ListTestsParams},
         TContext
       > => {
       return useMutation(getListTestsMutationOptions(options), queryClient);
@@ -1032,4 +1078,102 @@ export const useListLikedTests = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getListLikedTestsMutationOptions(options), queryClient);
+    }
+
+export type listCompletedTestsResponse200 = {
+  data: ApiResponseCompletedTestListResponse
+  status: 200
+}
+
+export type listCompletedTestsResponseSuccess = (listCompletedTestsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listCompletedTestsResponse = (listCompletedTestsResponseSuccess)
+
+export const getListCompletedTestsUrl = (params?: ListCompletedTestsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/tests/completed?${stringifiedParams}` : `/api/v1/tests/completed`
+}
+
+/**
+ * 발견 탭의 종료 테스트 목록을 최근 종료 순으로 조회합니다. 커서 기반 페이지네이션입니다.<br>
+발견 탭에서는 size=4로 첫 페이지만, 종료 테스트 전체보기 화면에서는 무한 스크롤로 사용합니다.
+
+- **cursor**: 첫 요청은 생략하고, 이후에는 직전 응답의 nextCursor를 그대로 전달 (형식이 잘못되면 COMMON_002)
+- **size**: 페이지 크기 (기본값 4, 최대 100)
+- **hasNext**: 다음 페이지 존재 여부. false면 더보기 버튼 미노출 및 무한 스크롤 종료
+- **nextCursor**: 다음 페이지 요청용 커서. 다음 페이지가 없으면 null
+- ui상 사용하지 않는 필드: reward, likeCount
+
+ * @summary ✅ 종료 테스트 목록 조회
+ */
+export const listCompletedTests = async (params?: ListCompletedTestsParams, options?: RequestInit): Promise<listCompletedTestsResponse> => {
+
+  return kyMutator<listCompletedTestsResponse>(getListCompletedTestsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+export const getListCompletedTestsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listCompletedTests>>, TError,{params?: ListCompletedTestsParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof listCompletedTests>>, TError,{params?: ListCompletedTestsParams}, TContext> => {
+
+const mutationKey = ['listCompletedTests'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listCompletedTests>>, {params?: ListCompletedTestsParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  listCompletedTests(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListCompletedTestsMutationResult = NonNullable<Awaited<ReturnType<typeof listCompletedTests>>>
+
+    export type ListCompletedTestsMutationError = ErrorType<unknown>
+
+    /**
+ * @summary ✅ 종료 테스트 목록 조회
+ */
+export const useListCompletedTests = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listCompletedTests>>, TError,{params?: ListCompletedTestsParams}, TContext>, request?: SecondParameter<typeof kyMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listCompletedTests>>,
+        TError,
+        {params?: ListCompletedTestsParams},
+        TContext
+      > => {
+      return useMutation(getListCompletedTestsMutationOptions(options), queryClient);
     }

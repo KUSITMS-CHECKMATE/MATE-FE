@@ -23,7 +23,7 @@ export function TestDetailImageCarousel({ images }: Props) {
           {images.map((src, i) => (
             <div
               key={i}
-              className="snap-start shrink-0 w-full h-48.25 rounded-2xl bg-cover bg-center"
+              className="snap-start shrink-0 w-full aspect-square rounded-2xl bg-cover bg-center"
               style={{
                 backgroundImage: `url(${src})`,
                 boxShadow:

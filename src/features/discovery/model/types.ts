@@ -5,4 +5,5 @@ export interface DiscoveryTest {
   reward: number;
   thumbnailUrl: string;
   liked: boolean;
+  categories: string[];
 }
