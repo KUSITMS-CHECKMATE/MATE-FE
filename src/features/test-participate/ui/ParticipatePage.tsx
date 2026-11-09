@@ -9,6 +9,8 @@ import { ROUTES } from "@/shared/constants/routes";
 import { QuestionRenderer } from "./QuestionRenderer";
 import { useParticipateTestQuery } from "../api/useParticipateTestQuery";
 import { useSubmitAnswersMutation } from "../api/useSubmitAnswersMutation";
+import { MY_ANSWERS_QUERY_KEY, useMyAnswersQuery } from "../api/useMyAnswersQuery";
+import { useRequestNotificationAgreement } from "@/features/notification-agreement/model";
 import { mapAnswersToApiRequest } from "../api/mappers";
 import { getListTestsUrl } from "@/shared/api/generated/test";
 import { trackEvent } from "@/shared/lib/analytics";
@@ -67,6 +69,13 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const exitUnsubscribeRef = useRef<(() => void) | null>(null);
   const startTimeRef = useRef(Date.now());
+  const requestNotificationAgreement = useRequestNotificationAgreement();
+  // 풀이 중에 미리 불러둔 내 응답 수로 "가입 후 첫 완료"를 판별한다(로드 실패/미완료면 요청 생략).
+  const { data: myAnswers } = useMyAnswersQuery();
+  const isFirstCompletionRef = useRef(false);
+  useEffect(() => {
+    isFirstCompletionRef.current = myAnswers?.length === 0;
+  }, [myAnswers]);
 
   useEffect(() => {
     trackEvent("test_start", { test_id: String(testId) });
@@ -106,7 +115,9 @@ function ParticipateFunnelContent({ test, testId, reward }: FunnelProps) {
             duration: Math.round((Date.now() - startTimeRef.current) / 1000),
           });
           queryClient.invalidateQueries({ queryKey: [getListTestsUrl()] });
+          queryClient.invalidateQueries({ queryKey: MY_ANSWERS_QUERY_KEY });
           setSubmitted(true);
+          if (isFirstCompletionRef.current) requestNotificationAgreement();
         },
       },
     );
