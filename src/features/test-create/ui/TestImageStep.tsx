@@ -305,7 +305,7 @@ export function TestImageStep({
           }
           subtitleBottom={
             <Top.SubtitleParagraph size={15} color={adaptive.grey600}>
-              16:9 비율이 최적이에요.
+              1:1 비율이 최적이에요.
             </Top.SubtitleParagraph>
           }
         />

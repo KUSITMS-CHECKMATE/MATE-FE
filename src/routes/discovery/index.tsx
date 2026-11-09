@@ -1,21 +1,21 @@
 import { useEffect, useRef } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BottomTabBar } from "@/shared/ui/BottomTabBar";
-import { ServiceBanner } from "@/shared/ui/ServiceBanner";
-import { TestList } from "@/features/discovery/ui";
-import { listTests, getListTestsUrl } from "@/shared/api/generated/test";
+import { AvailableTestSection, ClosedTestSection, RewardCarousel } from "@/features/discovery/ui";
+import { REWARD_CAROUSEL_IMAGES } from "@/features/discovery/model";
+import { useAvailableTests, useCompletedTestsPreview } from "@/features/discovery/api";
 import { trackEvent } from "@/shared/lib/analytics";
+import { ROUTES } from "@/shared/constants/routes";
 
 export const Route = createFileRoute("/discovery/")({
   component: HomePage,
 });
 
 function HomePage() {
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [getListTestsUrl()],
-    queryFn: listTests,
-  });
+  const navigate = useNavigate();
+  const available = useAvailableTests();
+  const completed = useCompletedTestsPreview();
+  const { data } = available;
 
   // 포커스 복귀 등으로 인한 리페치 시 view_item_list가 중복 발생하지 않도록 최초 1회만 전송한다.
   const trackedRef = useRef(false);
@@ -26,21 +26,26 @@ function HomePage() {
     }
   }, [data]);
 
-  type TestsPayload = { testCount?: number; tests?: { id?: number; title?: string; description?: string; reward?: number; thumbnailUrl?: string; isLiked?: boolean }[] };
-  const rawTests = (data?.data?.data as TestsPayload | undefined)?.tests;
-  const tests = (Array.isArray(rawTests) ? rawTests : []).map((item) => ({
-    id: item.id ?? 0,
-    title: item.title ?? "",
-    description: item.description ?? "",
-    reward: item.reward ?? 0,
-    thumbnailUrl: item.thumbnailUrl ?? "",
-    liked: item.isLiked ?? false,
-  }));
+  const goToDetail = (testId: number) =>
+    navigate({ to: ROUTES.DISCOVERY_DETAIL, params: { testId: String(testId) } });
 
   return (
-    <div className="flex flex-col pb-19">
-      <ServiceBanner />
-      <TestList tests={tests} isLoading={isLoading} isError={isError} onRetry={refetch} />
+    <div className="flex flex-col pb-44">
+      <div className="pt-6 flex flex-col gap-2">
+        <RewardCarousel images={REWARD_CAROUSEL_IMAGES} />
+        <AvailableTestSection
+          tests={available.tests}
+          isLoading={available.isLoading}
+          isError={available.isError}
+          hasMore={available.hasNextPage}
+          onRetry={() => available.refetch()}
+          onLoadMore={() => {
+            if (!available.isFetchingNextPage) available.fetchNextPage();
+          }}
+          onSelect={goToDetail}
+        />
+        <ClosedTestSection tests={completed.tests} hasMore={completed.hasMore} onSelect={goToDetail} />
+      </div>
       <BottomTabBar activeTab="discover" />
     </div>
   );
