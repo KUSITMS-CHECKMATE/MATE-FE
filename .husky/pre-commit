@@ -1,0 +1,4 @@
+# 지침 문서가 바뀐 커밋에서만 연결 검사
+if git diff --cached --name-only | grep -qE '^(AGENTS\.md|CLAUDE\.md|\.claude/.*\.md)$'; then
+  pnpm -s docs:check
+fi
