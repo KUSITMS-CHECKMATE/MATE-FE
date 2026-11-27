@@ -10,6 +10,7 @@
 2. 경로별 규칙(`.claude/rules/*.md`)은 frontmatter `paths`에 맞는 파일을 다룰 때 읽음 (Claude Code는 자동)
 3. 아래 "작업별 시작 문서"를 읽고, 각 문서 맨 아래 `이럴 때 더 읽기`에서 **조건에 맞는 것만** 따라 읽음
 4. 끝내기 전 `pnpm lint` · `pnpm docs:check` (지침 문서를 고쳤다면), 화면을 고쳤다면 관련 e2e
+5. 끝내기 전 이번 변경이 문서와 어긋나는지 확인하고 고침 — 새 feature·라우트·orval 도메인·스크립트·규칙을 추가했다면 `.claude/docs/architecture.md`와 해당 `.claude/rules/*.md`에 반영 (작성법은 `.claude/docs/writing-docs.md`)
 
 ## 명령어
 
