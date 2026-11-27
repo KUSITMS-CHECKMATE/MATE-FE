@@ -6,7 +6,7 @@
 
 ## 작업 순서
 
-1. 앱인토스 기능은 **공식 문서 → TDS → MCP** 순서로 확인한 뒤 구현 (추측 금지, 문서에 없으면 "확인 필요"로 표시. 플랫폼 제약을 일반 웹 기준으로 단정하지 않음)
+1. 앱인토스 기능은 **공식 문서 → TDS → MCP** 순서로 확인한 뒤 구현 (`ait` 플러그인을 설치했다면 `ait-docs` MCP 포함 → `.claude/docs/ait-plugin.md`) (추측 금지, 문서에 없으면 "확인 필요"로 표시. 플랫폼 제약을 일반 웹 기준으로 단정하지 않음)
 2. 경로별 규칙(`.claude/rules/*.md`)은 frontmatter `paths`에 맞는 파일을 다룰 때 읽음 (Claude Code는 자동)
 3. 아래 "작업별 시작 문서"를 읽고, 각 문서 맨 아래 `이럴 때 더 읽기`에서 **조건에 맞는 것만** 따라 읽음
 4. 끝내기 전 `pnpm lint` · `pnpm docs:check` (지침 문서를 고쳤다면), 화면을 고쳤다면 관련 e2e
@@ -40,4 +40,5 @@
 - 통계 PDF 서버: `.claude/rules/pdf-server.md`
 - 빌드·배포·환경변수: `.claude/docs/deploy.md`
 - 커밋·브랜치·PR: `.claude/docs/git.md`
+- 검수 전 점검·문구 점검(앱인토스 `ait` 플러그인): `.claude/docs/ait-plugin.md`
 - 지침 문서 수정: `.claude/docs/writing-docs.md`
