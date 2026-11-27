@@ -8,3 +8,5 @@
 - 기본 브랜치는 `dev`. 머지는 **Merge commit 또는 Rebase merge** (Squash 금지 — 기여자별 커밋 이력 유지), 최소 1명 승인 후 머지, Gemini 리뷰는 참고
 - Playwright 실패 상태로 커밋 금지
 - `git push --force`·`--no-verify`는 요청 없이 사용하지 않음
+- 커밋 메시지와 PR 본문에 `Co-Authored-By`·`Generated with Claude` 등 **AI 작성 표시를 넣지 않음** (`.claude/settings.json`의 `attribution`을 비워 둠)
+- 커밋·PR 절차는 스킬로: `.claude/skills/commit/SKILL.md` · `.claude/skills/pr/SKILL.md`

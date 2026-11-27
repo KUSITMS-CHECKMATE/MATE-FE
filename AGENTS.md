@@ -40,6 +40,8 @@
 - 테스트: `.claude/rules/e2e-test.md`
 - 통계 PDF 서버: `.claude/rules/pdf-server.md`
 - 빌드·배포·환경변수: `.claude/docs/deploy.md`
-- 커밋·브랜치·PR: `.claude/docs/git.md`
+- 커밋·브랜치·PR 규칙: `.claude/docs/git.md`
+- 커밋 절차: `.claude/skills/commit/SKILL.md` (Claude Code는 `/commit` 또는 "커밋해줘")
+- PR 절차: `.claude/skills/pr/SKILL.md` (Claude Code는 `/pr` 또는 "PR 올려줘")
 - 검수 전 점검·문구 점검(앱인토스 `ait` 플러그인): `.claude/docs/ait-plugin.md`
 - 지침 문서 수정: `.claude/docs/writing-docs.md`
