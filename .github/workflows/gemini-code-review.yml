@@ -143,7 +143,7 @@ jobs:
             }
 
             // PR 댓글 게시
-            const body = `## 🤖 Gemini Code Review\n\n${reviewText}\n\n---\n*powered by gemini-2.5-flash — [MATE-FE 코딩 규칙](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/AGENTS.md)*`;
+            const body = `## 🤖 Gemini Code Review\n\n${reviewText}\n\n---\n*powered by gemini-2.5-flash — [MATE-FE 코딩 규칙](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/dev/AGENTS.md)*`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,

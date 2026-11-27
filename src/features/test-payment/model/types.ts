@@ -1,7 +1,7 @@
 export type PaymentStep = "main" | "tester-count" | "reward-amount" | "complete" | "app-market-verification-failed" | "toss-server-verification-failed";
 
 // 2명/10원 QA 테스트 상품(콘솔 440원) 노출 여부. Doppler 등으로 QA 빌드에만
-// VITE_ENABLE_PAYMENT_TEST_OPTIONS=true를 주입하고, 프로덕션(main 배포)에는 설정하지 않는다.
+// VITE_ENABLE_PAYMENT_TEST_OPTIONS=true를 주입하고, 프로덕션(build:release)에는 설정하지 않는다.
 export const PAYMENT_TEST_OPTIONS_ENABLED = import.meta.env.VITE_ENABLE_PAYMENT_TEST_OPTIONS === "true";
 
 // 2명/10원은 실제 서비스 옵션이 아니라 콘솔에 등록된 440원짜리 "테스트" 상품 전용 —

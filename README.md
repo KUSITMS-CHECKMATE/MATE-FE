@@ -124,7 +124,7 @@ pnpm pdf:server      # PDF 생성 서버 실행 (port 3001)
 | 브랜치  | `type/#이슈번호` (예: `feat/#12`)                         |
 | 커밋    | Conventional Commits (`feat`, `fix`, `refactor`, `chore`) |
 | PR 제목 | `[TYPE] 한 줄 요약`                                       |
-| 머지    | Squash Merge                                              |
+| 머지    | Merge commit / Rebase merge (Squash 금지)                 |
 
 ---
 

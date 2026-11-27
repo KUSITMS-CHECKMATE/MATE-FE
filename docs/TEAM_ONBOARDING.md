@@ -122,7 +122,7 @@ pnpm dev:plain
 - **브랜치:** `type/#이슈번호` (예: `feat/#12`)
 - **커밋:** Conventional — `feat`, `fix`, `refactor`, `chore` 등
 - **PR 제목:** `[TYPE] 한 줄 요약`
-- **머지:** Squash merge (저장소 설정 기준)
+- **머지:** Merge commit 또는 Rebase merge (Squash 금지, 원본 커밋 유지)
 - PR 본문은 **디스코드 웹훅**으로도 읽히므로, 맥락·테스트 방법을 짧게 적어 두면 좋습니다.
 
 상세한 코딩·스택 규칙은 루트 **`AGENTS.md`** 를 참고하세요.
