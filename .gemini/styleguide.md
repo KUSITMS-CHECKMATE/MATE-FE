@@ -105,17 +105,27 @@ pnpm orval:watch  # 감시 모드
 features/
 ├── test-create/          ← 생성 퍼널 (오케스트레이터)
 ├── test-participate/     ← 진행 퍼널 (오케스트레이터)
+├── test-payment/         ← 결제 (인앱결제)
+├── test-result/          ← 결과/통계 화면
+├── test/                 ← 내 테스트 목록·카드·임시저장 실패 상세
+├── discovery/            ← 발견 탭
+├── discovery-detail/     ← 발견 테스트 상세
+├── interest/             ← 관심 탭
+├── intro/                ← 서비스 소개·가이드
+├── my/                   ← 마이페이지 (공지·약관·결제내역 등)
+├── login/                ← AuthGuard·토스 로그인·세션
 ├── question-multiple/    ← 객관식 도메인
 ├── question-subjective/  ← 주관식 도메인
 ├── question-tree/        ← 트리 테스트 도메인
 ├── question-fivesec/     ← 5초 테스트 도메인
 ├── question-scale/       ← 척도 질문 도메인
 ├── question-ab/          ← A/B 테스트 도메인
+├── question-cardsort/    ← 카드 소팅 도메인
 │   (각 question-* 내부)
 │   ├── model/            ← 공유 타입
 │   ├── create/           ← 생성 UI
 │   └── answer/           ← 진행 응답 UI
-└── ...
+└── ...                   ← 그 외 feature는 ui/ · model/ · api/ 로 구성
 ```
 
 - 질문 유형 feature는 **`question-{type}` 네이밍** (`test-{type}` 사용 금지)

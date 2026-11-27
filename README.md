@@ -132,4 +132,4 @@ pnpm pdf:server      # PDF 생성 서버 실행 (port 3001)
 
 - [`docs/TEAM_ONBOARDING.md`](docs/TEAM_ONBOARDING.md) — 로컬 환경 세팅
 - [`docs/DOPPLER.md`](docs/DOPPLER.md) — 환경변수 상세
-- [`CLAUDE.md`](CLAUDE.md) — AI 작업 규칙
+- [`AGENTS.md`](AGENTS.md) — AI 작업 규칙
